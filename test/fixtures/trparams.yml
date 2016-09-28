@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pxx: 1.5
+  pkz: 1.5
+  snom: 1.5
+  ukz: 1.5
+  io: 1.5
+  qkz: 1.5
+
+two:
+  pxx: 1.5
+  pkz: 1.5
+  snom: 1.5
+  ukz: 1.5
+  io: 1.5
+  qkz: 1.5

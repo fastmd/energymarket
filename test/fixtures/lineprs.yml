@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  l1: 1.5
+  l2: 1.5
+  p1: 1.5
+  p2: 1.5
+
+two:
+  l1: 1.5
+  l2: 1.5
+  p1: 1.5
+  p2: 1.5
