@@ -1,2 +1,10 @@
 <h1>Mpoints#new</h1>
+<%= @cp.id %>
+	<%= form_for :mpoint, url: mpoints_path do |f| %>
+  	<%= f.label :"Наименование"%>
+  	<%= text_field_tag 'pname'%> 
+  	<%= hidden_field_tag :co_id, @cp.id %>                      	
+  	</div>
+  <%= f.submit "Сохранить" %>
+  	<% end %>
 <p>Find me in app/views/mpoints/new.html.erb</p>

@@ -1,6 +1,6 @@
 class MvaluesController < ApplicationController
   
-   def create
+  def create
     @mp = Mpoint.find(params[:mpoint_id])
     #@mv = @mp.mvalues.create(params[:mvalue])
     @mv = @mp.mvalues.new

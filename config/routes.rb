@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
 post 'companys/show'
 post 'mpoints/show'
+
 resources :companys 
 resources :mpoints  do
   resources :mvalues

@@ -1,4 +1,8 @@
 <h1><%= @cp.name %></h1>
+<% comp = @cp %>
+<%= link_to "Добавить присоединение", :controller => "mpoints", 
+            :action => "new", 
+            :cnum => @cp.id %>
 <table id="mcl" border="0" cellspacing="5" cellpadding="5">
 		<thead>
 			<tr>
