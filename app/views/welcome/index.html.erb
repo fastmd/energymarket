@@ -16,7 +16,10 @@
 					<tr>
 						<td><%= i = i + 1 %></td>
 						<td><%= cl.name %></td>
-						<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
+						<td><%= link_to "Открыть", company_path(cl) %></td>
+						<!--
+		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
+						-->	
 					</tr>		
 					<% end %>
 			

@@ -3,7 +3,7 @@ class CompanysController < ApplicationController
   end
 
   def show
-   @cp =  Company.find(params[:num])
+   @cp =  Company.find(params[:id])
    @mp =  @cp.mpoints.all
   end
 

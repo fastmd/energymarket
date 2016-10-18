@@ -1,7 +1,7 @@
 class MpointsController < ApplicationController
   def new
     @cp =  Company.find(params[:cnum])
-    @nmv = @cp.mpoints.new
+    
     
     #@nmv.save
   end
@@ -9,8 +9,11 @@ class MpointsController < ApplicationController
   def create
     
   @cp =  Company.find(params[:co_id])
+  @nmv = @cp.mpoints.new
+  @nmv.pname = params[:pname]
+  @nmv.save
   
-  redirect_to root_path
+  redirect_to company_path(@cp)
   
   #redirect_to @cp
     
