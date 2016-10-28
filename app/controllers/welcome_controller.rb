@@ -1,7 +1,24 @@
 class WelcomeController < ApplicationController
   def index
+    if current_user.has_role? :usercd
+      redirect_to welcome_cdindex_path
+    end 
+    
+    if current_user.has_role? :usersetsu
+      redirect_to welcome_setsuindex_path
+    end
     
     @companies = Company.all
-    
   end
+  
+  def cdindex 
+    @companies = Company.all
+  end
+  
+  def setsuindex 
+    @companies = Company.all
+  end
+  
+ 
+  
 end

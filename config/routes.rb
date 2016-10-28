@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'welcome/cdindex'
+  get 'welcome/setsuindex'
+  
   get 'mvalues/new'
 
   get 'mvalues/edit'

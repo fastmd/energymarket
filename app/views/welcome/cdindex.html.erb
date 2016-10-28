@@ -1,11 +1,6 @@
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
-<% if current_user.has_role? :usercd %>
-  Hello CD user
-<% end %>
-<% if current_user.has_role? :usersetsu %>
-  Hello SETSU user
-<% end %>
+
 <h1>Список потребителей</h1>
 
 <table id="mcl" border="0" cellspacing="5" cellpadding="5">
@@ -13,6 +8,7 @@
 			<tr>
 			   <th>№</th>
 			   <th>Наименование</th>
+			   <th>Текущие показания</th>
 			   <th>Действие</th>
 			</tr>	
 		</thead>
@@ -22,6 +18,7 @@
 					<tr>
 						<td><%= i = i + 1 %></td>
 						<td><%= cl.name %></td>
+						<td><%= cl.mpoints.first.mvalues.last.val %></td>
 						<td><%= link_to "Открыть", company_path(cl) %></td>
 						<!--
 		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>

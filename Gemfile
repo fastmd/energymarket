@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'jquery-datatables-rails'
+
 gem 'devise'
 gem 'cancancan'
 gem 'rolify'

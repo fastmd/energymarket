@@ -6,6 +6,11 @@ class CompanysController < ApplicationController
    @cp =  Company.find(params[:id])
    @mp =  @cp.mpoints.all
   end
+  
+  def setsushow
+   @cp =  Company.find(params[:id])
+   @mp =  @cp.mpoints.all
+  end
 
   def index
   end
