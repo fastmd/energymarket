@@ -52,7 +52,10 @@ post 'mpoints/show'
 resources :companys 
 resources :mpoints  do
   resources :mvalues
-    end  
+end
+resources :mpoints  do  
+  resources :trparams
+end  
 
   root to: 'welcome#index'
   devise_for :users

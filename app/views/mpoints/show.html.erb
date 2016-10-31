@@ -3,7 +3,7 @@
 <center>
 <h1><%= @mp.pname %></h1>
 
-<% if current_user.has_role? :usersetsu %>
+<% if current_user.has_role? :setsu %>
   <%= render "setsu" %>
 <% end %>
 

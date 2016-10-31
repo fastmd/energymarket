@@ -1,1 +1,37 @@
-Hello SETSU USER!!!!
+<h3>Ввод нового транформатора </h3>
+  	<% @my_arr = [1,2,3,4,5]%>
+  	<%= form_for([@mp,@mp.trparams.build]) do |f| %>
+  	<%= f.label :"Потери холостого хода :"%>
+  	<%= text_field_tag 'pxx'%><br>
+  	<%= f.label :"Потери короткого замыкания : "%>
+  	<%= text_field_tag 'pkz'%><br>
+  	<%= f.label :"Номинальная мощность : "%>
+  	<%= text_field_tag 'snom'%><br>
+  	                       	
+  	</div>
+  <%= f.submit "Сохранить" %>
+  	<% end %>
+<h3>Транформаторы </h3>
+<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Pxx</th>
+			   <th>Pкз</th>
+			   <th>Действие</th>
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<%  %>
+					<% @trp.each do |cl| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.pxx %></td>
+						<td><%= cl.pkz %></td>
+						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+					</tr>		
+					<% end %>
+					
+		</tbody>
+</table>
