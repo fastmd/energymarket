@@ -22,7 +22,7 @@ class MpointsController < ApplicationController
 
   def show
      @mp =  Mpoint.find(params[:id])
-     @mv =  @mp.mvalues.all
+     @mv =  @mp.mvalues.all.reverse
   end
 
   def index

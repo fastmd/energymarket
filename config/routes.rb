@@ -1,4 +1,20 @@
 Rails.application.routes.draw do
+  get 'trparams/new'
+
+  get 'trparams/show'
+
+  get 'trparams/index'
+
+  get 'trparams/edit'
+
+  get 'lineprs/new'
+
+  get 'lineprs/show'
+
+  get 'lineprs/index'
+
+  get 'lineprs/edit'
+
   get 'welcome/cdindex'
   get 'welcome/setsuindex'
   

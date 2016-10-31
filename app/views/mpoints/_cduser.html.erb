@@ -1,0 +1,37 @@
+<h3>Ввод текущих показаний </h3>
+  	<% @my_arr = [1,2,3,4,5]%>
+  	<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
+  	<%= f.label :"Текущая величина"%>
+  	<%= text_field_tag 'val'%>
+  	<%= f.label :"Описание"%>
+  	<%= text_field_tag 'comment'%>
+  	<%= f.label :"Дата начала договора"%>
+  	
+  		<%= f.text_field :order_date, :value => Date.today.to_s, :id => "modelname" %>
+                           	
+  	</div>
+  <%= f.submit "Сохранить" %>
+  	<% end %>
+<h3>История показаний </h3>
+<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Величина</th>
+			   <th>Описание</th>
+			   <th>Действие</th>
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<% @mv.each do |cl| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.val %></td>
+						<td><%= cl.comment %></td>
+						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+					</tr>		
+					<% end %>
+			
+		</tbody>
+</table>
