@@ -24,6 +24,7 @@ class MpointsController < ApplicationController
      @mp =  Mpoint.find(params[:id])
      @mv =  @mp.mvalues.all.reverse
      @trp =  @mp.trparams.all
+     @lnp =  @mp.lineprs.all
   end
 
   def index

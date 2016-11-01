@@ -1,27 +1,49 @@
-<h3>Ввод нового транформатора </h3>
-  	<% @my_arr = [1,2,3,4,5]%>
+<style>
+.page { background:#ffff66; width:900px; overflow:hidden; }
+.centercol {
+    float:left; background:#ccff66; 
+    width:800px; border-right:1px solid #ff9900;
+ }
+
+.leftcol {
+    float:left; background:#ccff66; 
+    width:350px; border-right:1px solid #ff9900;
+ }
+.rightcol { padding-left:350px; background:#ccff66; }
+.rightcol .content { background:#ffff66; border-left:1px solid #ff9900; }
+</style>
+
+<div class="page">
+	<div class="centercol">
+		
+	</div>	
+    <div class="leftcol">
+        <h3>Ввод нового транформатора </h3>
+        <% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.trparams.build]) do |f| %>
-  	<%= f.label :"Потери холостого хода :"%>
-  	<%= text_field_tag 'pxx'%><br>
-  	<%= f.label :"Потери короткого замыкания : "%>
-  	<%= text_field_tag 'pkz'%><br>
-  	<%= f.label :"Номинальная мощность : "%>
-  	<%= text_field_tag 'snom'%><br>
-  	                       	
-  	</div>
-  <%= f.submit "Сохранить" %>
+  		<%= f.label :"Потери холостого хода :"%>
+  		<%= text_field_tag 'pxx'%><br>
+  		<%= f.label :"Потери короткого замыкания : "%>
+  		<%= text_field_tag 'pkz'%><br>
+  		<%= f.label :"Номинальная мощность : "%>
+  		<%= text_field_tag 'snom'%><br>
+  		<%= f.submit "Сохранить" %>
   	<% end %>
-<h3>Транформаторы </h3>
-<table id="mcl" border="0" cellspacing="5" cellpadding="5">
-		<thead>
-			<tr>
-			   <th>№</th>
-			   <th>Pxx</th>
-			   <th>Pкз</th>
-			   <th>Действие</th>
-			</tr>	
-		</thead>
-		<tbody>
+    </div>
+
+    <div class="rightcol">
+        <div class="content">
+        	<h3>Транформаторы </h3>
+				<table id="mcl" border="1" cellspacing="1" cellpadding="1">
+				<thead>
+					<tr>
+			   			<th>№</th>
+			   			<th>Pxx</th>
+			   			<th>Pкз</th>
+			   			<th>Действие</th>
+					</tr>	
+				</thead>
+				<tbody>
 					<% i = 0%>
 					<%  %>
 					<% @trp.each do |cl| %>
@@ -33,5 +55,59 @@
 					</tr>		
 					<% end %>
 					
-		</tbody>
-</table>
+				</tbody>	
+				</table>
+		    <br><br>
+        </div>
+    </div>
+    </div>    
+    <br><br>
+   <div class="page">
+        
+    <div class="leftcol">
+        <h3>Ввод новой линии </h3>
+        <% @my_arr = [1,2,3,4,5]%>
+  	<%= form_for([@mp,@mp.lineprs.build]) do |f| %>
+  		<%= f.label :"Длина линии :"%>
+  		<%= text_field_tag 'l1'%><br>
+  		<%= f.label :"Сопративление линии : "%>
+  		<%= text_field_tag 'p1'%><br>
+  		<%= f.submit "Сохранить" %>
+  	<% end %>
+    </div>
+
+    <div class="rightcol">
+        <div class="content">
+        	<h3>Линии </h3>
+				<table id="mcl" border="1" cellspacing="1" cellpadding="1">
+				<thead>
+					<tr>
+			   			<th>№</th>
+			   			<th>Длина линии</th>
+			   			<th>Сопративление линии</th>
+			   			<th>Действие</th>
+					</tr>	
+				</thead>
+				<tbody>
+					<% i = 0%>
+					<%  %>
+					<% @lnp.each do |cl| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.l1 %></td>
+						<td><%= cl.p1 %></td>
+						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+					</tr>		
+					<% end %>
+					
+				</tbody>	
+				</table>
+		    <br><br>
+        </div>
+    </div>
+
+</div>
+</div>
+
+
+  	

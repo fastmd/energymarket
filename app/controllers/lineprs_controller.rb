@@ -2,17 +2,17 @@ class LineprsController < ApplicationController
   def create
     @mp = Mpoint.find(params[:mpoint_id])
     #@mv = @mp.mvalues.create(params[:mvalue])
-    @mv = @mp.mvalues.new
-    @mv.val = params[:val]
-    @mv.comment = params[:comment]
-    @mv.save
+    @ln = @mp.lineprs.new
+    @ln.p1 = params[:p1]
+    @ln.l1 = params[:l1]
+    @ln.save
     params[:num] = @mp.id
     redirect_to mpoint_path(@mp)
   end
   
   def new
     @mp = Mpoint.find(params[:mpoint_id])
-    @mv = @mp.mvalues.create(mvalue_params)
+    @ln = @mp.lineprs.create(linepr_params)
   #  redirect_to contract_path(@contract.id)
   end
 

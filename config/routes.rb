@@ -55,7 +55,11 @@ resources :mpoints  do
 end
 resources :mpoints  do  
   resources :trparams
-end  
+end
+
+resources :mpoints  do  
+  resources :lineprs
+end    
 
   root to: 'welcome#index'
   devise_for :users

@@ -1,7 +1,11 @@
+
+
 <%= link_to "Назад", company_path(@mp.company.id) %>
 
 <center>
 <h1><%= @mp.pname %></h1>
+	
+
 
 <% if current_user.has_role? :setsu %>
   <%= render "setsu" %>
@@ -11,4 +15,5 @@
 <% if current_user.has_role? :usercd %>
 	<%= render "cduser" %>
 <% end %>
+	
 </center>
