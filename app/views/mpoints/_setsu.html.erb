@@ -1,32 +1,24 @@
-<style>
-.page { background:#ffff66; width:900px; overflow:hidden; }
-.centercol {
-    float:left; background:#ccff66; 
-    width:800px; border-right:1px solid #ff9900;
- }
-
-.leftcol {
-    float:left; background:#ccff66; 
-    width:350px; border-right:1px solid #ff9900;
- }
-.rightcol { padding-left:350px; background:#ccff66; }
-.rightcol .content { background:#ffff66; border-left:1px solid #ff9900; }
-</style>
-
+	
+	
 <div class="page">
-	<div class="centercol">
-		
-	</div>	
+		<h1><%= @mp.pname %></h1>
     <div class="leftcol">
         <h3>Ввод нового транформатора </h3>
         <% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.trparams.build]) do |f| %>
-  		<%= f.label :"Потери холостого хода :"%>
+  		<%= f.label :"Потери холостого хода,кВт :"%>
   		<%= text_field_tag 'pxx'%><br>
-  		<%= f.label :"Потери короткого замыкания : "%>
+  		<%= f.label :"Потери короткого замыкания,кВт : "%>
   		<%= text_field_tag 'pkz'%><br>
   		<%= f.label :"Номинальная мощность : "%>
   		<%= text_field_tag 'snom'%><br>
+  		<%= f.label :"Время наибольших потерь, : "%>
+  		<%= text_field_tag 'tau'%><br>
+  		<%= f.label :"T,Расчетный период,час : "%>
+  		<%= text_field_tag 'trab'%><br>
+  		<%= f.label :"Tm,Время использования максимальной нагрузки, : "%>
+  		<%= text_field_tag 'tmax'%><br>
+  		
   		<%= f.submit "Сохранить" %>
   	<% end %>
     </div>
@@ -83,7 +75,7 @@
 				<thead>
 					<tr>
 			   			<th>№</th>
-			   			<th>Длина линии</th>
+			   			<th>Длина линии,км</th>
 			   			<th>Сопративление линии</th>
 			   			<th>Действие</th>
 					</tr>	

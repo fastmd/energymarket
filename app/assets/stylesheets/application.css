@@ -14,3 +14,22 @@
  
  *= require_self
  */
+<style>
+.center {
+    padding: 70px 0;
+    border: 3px solid green;
+}
+
+.page { background:#f0f0f3; width:900px; overflow:hidden;}
+.centercol {
+    float:left; background:#f0f0f3; border="1";
+    width:900px; border-right:1px solid #f0f0f3;
+ }
+
+.leftcol {
+    float:left; background:#f0f0f3; border="1";
+    width:350px; border-right:1px solid #f0f0f3;
+ }
+.rightcol { padding-left:350px; background:#f0f0f3; }
+.rightcol .content { background:#f0f0f3; border-left:1px solid #f0f0f3; }
+</style>
