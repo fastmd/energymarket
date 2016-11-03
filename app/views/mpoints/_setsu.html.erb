@@ -16,7 +16,7 @@
   		<%= text_field_tag 'tau'%><br>
   		<%= f.label :"T,Расчетный период,час : "%>
   		<%= text_field_tag 'trab'%><br>
-  		<%= f.label :"Tm,Время использования максимальной нагрузки, : "%>
+  		<%= f.label :"Tm,Время максимальной нагрузки, час: "%>
   		<%= text_field_tag 'tmax'%><br>
   		
   		<%= f.submit "Сохранить" %>
@@ -32,6 +32,8 @@
 			   			<th>№</th>
 			   			<th>Pxx</th>
 			   			<th>Pкз</th>
+			   			<th>Sном</th>
+			   			<th>Tau</th>
 			   			<th>Действие</th>
 					</tr>	
 				</thead>
@@ -43,6 +45,8 @@
 						<td><%= i = i + 1 %></td>
 						<td><%= cl.pxx %></td>
 						<td><%= cl.pkz %></td>
+						<td><%= cl.snom %></td>
+						
 						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>
