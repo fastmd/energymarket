@@ -1,8 +1,9 @@
 	
-	
+	<h1><%= @mp.pname %></h1>
 <div class="page">
-		<h1><%= @mp.pname %></h1>
+		
     <div class="leftcol">
+    <div class="content">
         <h3>Ввод нового транформатора </h3>
         <% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.trparams.build]) do |f| %>
@@ -12,15 +13,15 @@
   		<%= text_field_tag 'pkz'%><br>
   		<%= f.label :"Номинальная мощность : "%>
   		<%= text_field_tag 'snom'%><br>
-  		<%= f.label :"Время наибольших потерь, : "%>
-  		<%= text_field_tag 'tau'%><br>
-  		<%= f.label :"T,Расчетный период,час : "%>
-  		<%= text_field_tag 'trab'%><br>
-  		<%= f.label :"Tm,Время максимальной нагрузки, час: "%>
-  		<%= text_field_tag 'tmax'%><br>
+  		<%= f.label :"Uкз, кВ : "%><br>
+  		<%= text_field_tag 'ukz'%><br>
+  		<%= f.label :"Io : "%><br>
+  		<%= text_field_tag 'io'%><br>
+  		
   		
   		<%= f.submit "Сохранить" %>
   	<% end %>
+  	</div>
     </div>
 
     <div class="rightcol">
@@ -33,7 +34,8 @@
 			   			<th>Pxx</th>
 			   			<th>Pкз</th>
 			   			<th>Sном</th>
-			   			<th>Tau</th>
+			   			<th>Uкз</th>
+			   			<th>Io</th>
 			   			<th>Действие</th>
 					</tr>	
 				</thead>
@@ -46,7 +48,8 @@
 						<td><%= cl.pxx %></td>
 						<td><%= cl.pkz %></td>
 						<td><%= cl.snom %></td>
-						
+						<td><%= cl.ukz %></td>
+						<td><%= cl.io %></td>
 						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>

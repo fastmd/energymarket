@@ -6,6 +6,8 @@ class TrparamsController < ApplicationController
     @tr.pxx = params[:pxx]
     @tr.pkz = params[:pkz]
     @tr.snom = params[:snom]
+    @tr.ukz = params[:ukz]
+    @tr.io = params[:io]
     @tr.save
     params[:num] = @mp.id
     redirect_to mpoint_path(@mp)
