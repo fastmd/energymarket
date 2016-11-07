@@ -4,15 +4,12 @@
 
 <center>
 
-	
-
-
 <% if current_user.has_role? :setsu %>
   <%= render "setsu" %>
 <% end %>
 
 
-<% if current_user.has_role? :usercd %>
+<% if current_user.has_role? :cduser %>
 	<%= render "cduser" %>
 <% end %>
 	
