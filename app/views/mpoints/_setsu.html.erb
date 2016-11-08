@@ -50,7 +50,7 @@
 						<td><%= cl.snom %></td>
 						<td><%= cl.ukz %></td>
 						<td><%= cl.io %></td>
-						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+						<td><%= button_to "Изменить" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>
 					
@@ -95,7 +95,7 @@
 						<td><%= i = i + 1 %></td>
 						<td><%= cl.l1 %></td>
 						<td><%= cl.p1 %></td>
-						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+						<td><%= button_to "Изменить" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>
 					

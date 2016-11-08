@@ -3,11 +3,13 @@ class TrparamsController < ApplicationController
     @mp = Mpoint.find(params[:mpoint_id])
     #@mv = @mp.mvalues.create(params[:mvalue])
     @tr = @mp.trparams.new
-    @tr.pxx = params[:pxx]
-    @tr.pkz = params[:pkz]
-    @tr.snom = params[:snom]
-    @tr.ukz = params[:ukz]
-    @tr.io = params[:io]
+    @tr.pxx = params[:pxx].to_f
+    @tr.pkz = params[:pkz].to_f
+    @tr.snom = params[:snom].to_f
+    @tr.ukz = params[:ukz].to_f
+    @tr.io = params[:io].to_f
+    @tr.qkz = Math.sqrt(((params[:ukz].to_f*params[:ukz].to_f)*(params[:snom].to_f*params[:snom].to_f))/10000 - 
+    ((params[:pkz].to_f*params[:pkz].to_f)))
     @tr.save
     params[:num] = @mp.id
     redirect_to mpoint_path(@mp)
