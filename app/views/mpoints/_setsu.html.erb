@@ -1,5 +1,7 @@
-	
-	<h1><%= @mp.pname %></h1>
+
+ <%= render "messages" %>   
+    	
+	<center><h1><%= @mp.pname %></h1></center>
 <div class="page">
 		
     <div class="leftcol">
@@ -7,6 +9,8 @@
         <h3>Ввод нового транформатора </h3>
         <% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.trparams.build]) do |f| %>
+  	
+  	  
   		<%= f.label :"Потери холостого хода,кВт :"%><br>
   		<%= text_field_tag 'pxx'%><br>
   		<%= f.label :"Потери короткого замыкания,кВт : "%><br>
@@ -36,6 +40,7 @@
 			   			<th>Sном</th>
 			   			<th>Uкз</th>
 			   			<th>Io</th>
+			   			<th>Qkz</th>
 			   			<th>Действие</th>
 					</tr>	
 				</thead>
@@ -50,6 +55,7 @@
 						<td><%= cl.snom %></td>
 						<td><%= cl.ukz %></td>
 						<td><%= cl.io %></td>
+						<td><%= cl.qkz %></td>
 						<td><%= button_to "Изменить" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>

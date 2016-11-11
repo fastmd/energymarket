@@ -1,10 +1,13 @@
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
-<% if current_user.has_role? :usercd %>
-  Hello CD user
+	<%= render "mpoints/messages" %>   
+<% if current_user.has_role? :cduser %>
+<%= link_to "Добавить потребителя", :controller => "companys", 
+            :action => "new" %>
+  
 <% end %>
 <% if current_user.has_role? :usersetsu %>
-  Hello SETSU user
+  
 <% end %>
 <div class="page">
 	<div class="centercol">

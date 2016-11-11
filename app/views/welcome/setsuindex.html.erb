@@ -16,8 +16,10 @@ $('#example').DataTable({
   
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
+	 <%= render "mpoints/messages" %>   
 <div class="page">
 	<div class="centercol">
+		
 <h1>Список потребителей</h1>
 
 <table id="mcl" border="0" cellspacing="5" cellpadding="5">

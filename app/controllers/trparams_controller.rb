@@ -8,8 +8,18 @@ class TrparamsController < ApplicationController
     @tr.snom = params[:snom].to_f
     @tr.ukz = params[:ukz].to_f
     @tr.io = params[:io].to_f
-    @tr.qkz = Math.sqrt(((params[:ukz].to_f*params[:ukz].to_f)*(params[:snom].to_f*params[:snom].to_f))/10000 - 
-    ((params[:pkz].to_f*params[:pkz].to_f)))
+    ukz2 = params[:ukz].to_f*params[:ukz].to_f
+    snom2 = params[:snom].to_f*params[:snom].to_f
+    pkz2 = (params[:pkz].to_f*params[:pkz].to_f)
+    tmp = ((ukz2*snom2)/10000 - pkz2)
+    if (tmp > 0)
+      @tr.qkz = Math.sqrt(tmp).round(10) #Math.sqrt
+      redirect_to :back, flash: {success: "Транформатор успешно создан."}
+      return
+    else
+      redirect_to :back, flash: {error: "Введенные вами данные не верны."}
+      return
+    end  
     @tr.save
     params[:num] = @mp.id
     redirect_to mpoint_path(@mp)

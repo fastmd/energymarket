@@ -1,2 +1,23 @@
-<h1>Companys#new</h1>
-<p>Find me in app/views/companys/new.html.erb</p>
+<%= link_to "Назад", :back %>
+
+<center>
+	<h1>Ввод нового потребителя </h1>
+	<div class="page">
+	<div class="centercol">
+			
+			<%= form_for :company, url: companys_path do |f| %>
+  			<%= f.label :"Наименование потребителя :"%><br>
+  			<%= text_field_tag 'coname', nil, :maxlength => 40, :size => 40 %> <br>
+  			<%= f.label :"Код потребителя :"%><br>
+  			<%= text_field_tag 'pcod'%><br>
+  			<%= f.label :"Комментарий"%><br>
+  			<%= text_area_tag 'comment'%><br>
+  			
+  			                      
+  			<%= f.submit "Сохранить"%>
+  			<% end %>
+  		
+	</div>
+	</div>
+	
+</div>	

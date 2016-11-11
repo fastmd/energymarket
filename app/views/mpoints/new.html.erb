@@ -1,10 +1,38 @@
-<h1>Mpoints#new</h1>
-<%= @cp.id %>
-	<%= form_for :mpoint, url: mpoints_path do |f| %>
-  	<%= f.label :"Наименование"%>
-  	<%= text_field_tag 'pname'%> 
-  	<%= hidden_field_tag :co_id, @cp.id %>                      	
-  	</div>
-  <%= f.submit "Сохранить",:num => @cp.id %>
-  	<% end %>
-<p>Find me in app/views/mpoints/new.html.erb</p>
+<%= link_to "Назад", :back %>
+
+<center>
+	<h1>Ввод новой точки учета</h1>
+	<div class="page">
+	<div class="centercol">
+			
+			<%= form_for :mpoint, url: mpoints_path do |f| %>
+  			<%= f.label :"Наименование потребителя :"%><br>
+  			<%= text_field_tag 'pname', nil, :maxlength => 40, :size => 40 %> <br>
+  			<%= f.label :"Подстанция подключения ME :"%><br>
+  			<%= text_field_tag 'messtation'%><br>
+  			<%= f.label :"Наименование фидера ME :"%><br>
+  			<%= text_field_tag 'meconname'%><br>
+  			<%= f.label :"Наименование подстанции потребителя : "%><br>
+  			<%= text_field_tag 'clsstation'%><br>
+  			<%= f.label :"Наименование присоединения потребителя : "%><br>
+  			<%= text_field_tag 'clconname'%><br>
+  			<%= f.label :"Класс напряжения"%><br>
+  			<%= text_field_tag 'voltcl'%><br>
+  			<%= f.label :"Тип счетчика"%><br>
+  			<%= text_field_tag 'metertype'%><br>
+  			<%= f.label :"Заводской № счетчика"%><br>
+  			<%= text_field_tag 'meternum'%><br>
+  			<%= f.label :"Коэфициент трансформатора тока :"%><br>
+  			<%= text_field_tag 'koeftt'%><br>
+  			<%= f.label :"Коэфициент трансформатора напряжения :"%><br>
+  			<%= text_field_tag 'koeftn'%><br>
+  			<%= f.label :"Расчтный коэфициент счетчика :"%><br>
+  			<%= text_field_tag 'koefcalc'%><br>
+  			<%= hidden_field_tag :co_id, @cp.id %>                      
+  			<%= f.submit "Сохранить",:num => @cp.id %>
+  			<% end %>
+  		
+	</div>
+	</div>
+	
+</div>	
