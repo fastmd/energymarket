@@ -1,4 +1,9 @@
+<% if current_user.has_role? :cduser %>
+<%= link_to "Назад", welcome_cdindex_path %>
+<% end %>
+<% if current_user.has_role? :usersetsu %>
 <%= link_to "Назад", welcome_setsuindex_path %>
+<% end %>
 <center>
 	<div class="page">
 	<div class="centercol">

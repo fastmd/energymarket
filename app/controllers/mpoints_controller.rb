@@ -10,7 +10,17 @@ class MpointsController < ApplicationController
     
   @cp =  Company.find(params[:co_id])
   @nmv = @cp.mpoints.new
-  @nmv.pname = params[:pname]
+  @nmv.messtation = params[:messtation]
+  @nmv.pname = params[:meconname]
+  @nmv.pname = params[:clsstation]
+  @nmv.pname = params[:clconname]
+  @nmv.pname = params[:voltcl]
+  @nmv.pname = params[:metertype]
+  @nmv.pname = params[:meternum]
+  @nmv.pname = params[:koeftt]
+  @nmv.pname = params[:koeftn]
+  @nmv.pname = params[:koefcalc]
+  
   @nmv.save
   
   redirect_to company_path(@cp)

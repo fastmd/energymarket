@@ -6,14 +6,14 @@
 	<div class="centercol">
 			
 			<%= form_for :mpoint, url: mpoints_path do |f| %>
-  			<%= f.label :"Наименование потребителя :"%><br>
-  			<%= text_field_tag 'pname', nil, :maxlength => 40, :size => 40 %> <br>
+  			<!-- <%= f.label :"Наименование потребителя :"%><br>
+  			<%= text_field_tag 'pname', nil, :maxlength => 40, :size => 40 %> <br> --></br>
   			<%= f.label :"Подстанция подключения ME :"%><br>
   			<%= text_field_tag 'messtation'%><br>
   			<%= f.label :"Наименование фидера ME :"%><br>
   			<%= text_field_tag 'meconname'%><br>
   			<%= f.label :"Наименование подстанции потребителя : "%><br>
-  			<%= text_field_tag 'clsstation'%><br>
+  			<%= text_field_tag 'clsstation'%><br>  
   			<%= f.label :"Наименование присоединения потребителя : "%><br>
   			<%= text_field_tag 'clconname'%><br>
   			<%= f.label :"Класс напряжения"%><br>
