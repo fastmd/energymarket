@@ -1,23 +1,51 @@
 <h3>Ввод текущих показаний </h3>
-  	<% @my_arr = [1,2,3,4,5]%>
+<table id="mcl" border="1" cellspacing="3" cellpadding="3">
+	<% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
-  	<%= f.label :"Текущая величина"%>
-  	<%= text_field_tag 'val'%>
-  	<%= f.label :"Описание"%>
-  	<%= text_field_tag 'comment'%>
-  	<%= f.label :"Дата начала договора"%>
+	<thead>
+			<tr>
+		
+			   <th>№</th>
+			   <th>Дата актирования</th>
+			   <th><%= f.label :"Активный прием (1-8-0)"%></th>
+			   <th><%= f.label :"Активный отдача (2-8-0)"%></th>
+			   <th><%= f.label :"Реактивный прием (3-8-0)"%></th>
+			   <th><%= f.label :"Реактивный отдача (4-8-0)"%></th>
+			   <th><%= f.label :"Описание"%></th>
+			   <th>Действие</th>
+			</tr>	
+	</thead>
+	<tbody>
+					<% i = 0%>
+					
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td>
+						<td><%= text_field_tag 'actp180'%><br></td>
+						<td><%= text_field_tag 'actp280'%></td>
+						<td><%= text_field_tag 'actp380'%></td>
+						<td><%= text_field_tag 'actp480'%></td>
+						<td><%= text_field_tag 'comment'%></td>
+						
+						<td><%= f.submit "Сохранить" %></td>
+					</tr>		
+					
+			
+	</tbody>
+	
+  	<% end %>		
+</table>
   	
-  		<%= f.text_field :order_date, :value => Date.today.to_s, :id => "modelname" %>
-                           	
-  	</div>
-  <%= f.submit "Сохранить" %>
-  	<% end %>
 <h3>История показаний </h3>
-<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+<table id="mcl" border="1" cellspacing="3" cellpadding="3">
 		<thead>
 			<tr>
 			   <th>№</th>
-			   <th>Величина</th>
+			   <th>Дата актирования</th>
+			   <th>1.8.0</th>
+			   <th>2.8.0</th>
+			   <th>3.8.0</th>
+			   <th>4.8.0</th>
 			   <th>Описание</th>
 			   <th>Действие</th>
 			</tr>	
@@ -27,8 +55,13 @@
 					<% @mv.each do |cl| %>
 					<tr>
 						<td><%= i = i + 1 %></td>
-						<td><%= cl.val %></td>
+						<td><%= cl.actdate %></td>
+						<td><%= cl.actp180 %></td>
+						<td><%= cl.actp280 %></td>
+						<td><%= cl.actp380 %></td>
+						<td><%= cl.actp480 %></td>
 						<td><%= cl.comment %></td>
+						
 						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
 					</tr>		
 					<% end %>

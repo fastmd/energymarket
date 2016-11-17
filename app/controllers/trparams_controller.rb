@@ -14,14 +14,15 @@ class TrparamsController < ApplicationController
     tmp = ((ukz2*snom2)/10000 - pkz2)
     if (tmp > 0)
       @tr.qkz = Math.sqrt(tmp).round(10) #Math.sqrt
+      @tr.save
+      params[:num] = @mp.id
       redirect_to :back, flash: {success: "Транформатор успешно создан."}
       return
     else
       redirect_to :back, flash: {error: "Введенные вами данные не верны."}
       return
     end  
-    @tr.save
-    params[:num] = @mp.id
+    
     redirect_to mpoint_path(@mp)
   end
   

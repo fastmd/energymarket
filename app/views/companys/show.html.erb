@@ -17,7 +17,8 @@
 		<thead>
 			<tr>
 			   <th>№</th>
-			   <th>Наименование</th>
+			   <th>Подстанция</th>
+			   <th>Присоединение</th>
 			   <th>Действие</th>
 			</tr>	
 		</thead>
@@ -26,8 +27,8 @@
 					<% @mp.each do |cl| %>
 					<tr>
 						<td><%= i = i + 1 %></td>
-						<td><%= cl.pname %></td>
-						
+						<td><%= cl.messtation %></td>
+						<td><%= cl.meconname %></td>
   						<td><%= link_to "Открыть" , mpoint_path(cl)%></td>
 					</tr>		
 					<% end %>
