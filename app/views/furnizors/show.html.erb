@@ -1,0 +1,32 @@
+<div class="page">
+	<div class="centercol">
+<h1>Список потребителей</h1>
+
+<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Наименование</th>
+			   <th>Действие</th>
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<% @companies.each do |cl| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.name %></td>
+						<td><%= link_to "Открыть", company_path(cl) %></td>
+						<!--
+		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
+						-->	
+					</tr>		
+					<% end %>
+			
+		</tbody>
+</table>
+</center>
+
+<p></p>
+</div>
+</div>

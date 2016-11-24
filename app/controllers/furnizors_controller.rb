@@ -7,4 +7,9 @@ class FurnizorsController < ApplicationController
 
   def edit
   end
+  
+  def show
+    @fr =  Furnizor.find(params[:id])
+    @companies = @fr.companys.all
+  end
 end
