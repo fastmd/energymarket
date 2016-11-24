@@ -8,7 +8,9 @@ class WelcomeController < ApplicationController
       redirect_to welcome_setsuindex_path
     end
     
+    @furns = Furnizor.all
     @companies = Company.all
+    
   end
   
   def cdindex 

@@ -1,6 +1,32 @@
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
  <%= render "messages" %>   
+<h1>Список поставщиков</h1> 
+<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Наименование</th>
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<% @furns.each do |fr| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= fr.name %></td>
+						<td></td>
+						<td><%= link_to "Открыть", furnizor_path(fr) %></td>
+						<!--
+		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
+						-->	
+					</tr>		
+					<% end %>
+			
+		</tbody>
+</table>
+
+ 
 <h1>Список потребителей</h1>
 
 <%= link_to "Добавить потребителя", :controller => "companys", 

@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  get 'furnizors/show'
+  
+  get 'furnizors/new'
+
+  get 'furnizors/index'
+
+  get 'furnizors/edit'
+
   get 'trparams/new'
 
   get 'trparams/show'
@@ -49,6 +57,7 @@ Rails.application.routes.draw do
 post 'companys/show'
 post 'mpoints/show'
 
+resources :furnizors
 resources :companys 
 resources :mpoints  do
   resources :mvalues

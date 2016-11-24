@@ -1,0 +1,2 @@
+module FurnizorsHelper
+end

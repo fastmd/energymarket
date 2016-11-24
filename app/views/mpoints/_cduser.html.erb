@@ -11,7 +11,7 @@
 			   <th><%= f.label :"Активный отдача (2-8-0)"%></th>
 			   <th><%= f.label :"Реактивный прием (3-8-0)"%></th>
 			   <th><%= f.label :"Реактивный отдача (4-8-0)"%></th>
-			   <th><%= f.label :"Описание"%></th>
+			   <th><%= f.label :"Описание"%></th><br>
 			   <th>Действие</th>
 			</tr>	
 	</thead>
@@ -21,7 +21,7 @@
 					<tr>
 						<td><%= i = i + 1 %></td>
 						<td><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td>
-						<td><%= text_field_tag 'actp180'%><br></td>
+						<td><%= text_field_tag 'actp180'%></td>
 						<td><%= text_field_tag 'actp280'%></td>
 						<td><%= text_field_tag 'actp380'%></td>
 						<td><%= text_field_tag 'actp480'%></td>
@@ -35,7 +35,21 @@
 	
   	<% end %>		
 </table>
-  	
+
+<div class="page">
+<div class="centercol">
+						
+						<td><%= label_tag "Дата актирования "%><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td><br>
+						<td><%= label_tag "Активный прием (1-8-0) "%><%= text_field_tag 'actp180'%></td><br>
+						<td><%= label_tag "Активный отдача (2-8-0) "%><%= text_field_tag 'actp280'%></td><br>
+						<td><%= label_tag "Реактивный прием (3-8-0) "%><%= text_field_tag 'actp380'%></td><br>
+						<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= text_field_tag 'actp480'%></td><br>
+						<td><%= text_field_tag 'comment'%></td>
+						
+						
+</div>	
+
+ <div class="centercol"> 	
 <h3>История показаний </h3>
 <table id="mcl" border="1" cellspacing="3" cellpadding="3">
 		<thead>
@@ -68,3 +82,6 @@
 			
 		</tbody>
 </table>
+
+</div>
+</div>
