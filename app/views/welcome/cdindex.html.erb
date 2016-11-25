@@ -10,9 +10,22 @@
   <script src="js/foundation/foundation.js"></script>
   <script src="js/foundation/foundation.magellan.js"></script>--> 
   <!--<link rel="stylesheet" href="/resources/demos/style.css"> --> 
- 
-
-
+ <script> 
+$(document).ready(function() {
+    $('#mcln').DataTable( {
+        "language": {
+            "lengthMenu": "Показать _MENU_ записей на странице",
+            "zeroRecords": "Ничего не найдено, простите",
+            "info": "Показать страницу _PAGE_ из _PAGES_",
+            "infoEmpty": "No records available",
+            "infoFiltered": "(выбрано из _MAX_ total записей)",
+            "search": "Поиск",
+            "previousSibling": "Предыдущий",
+            "nextSibling": "Следующий"
+        }
+    } );
+} );
+</script>
 
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
@@ -33,10 +46,10 @@
 					<% i = 0%>
 					<% @furns.each do |fr| %>
 					<tr>
-						<td><%= i = i + 1 %></td>
-						<td><%= fr.name %></td>
+						<td align="center"><%= i = i + 1 %></td>
+						<td align="center"><%= fr.name %></td>
 						
-						<td><%= link_to "Открыть", furnizor_path(fr) %></td>
+						<td align="center"><%= link_to "Открыть", furnizor_path(fr) %></td>
 		
 		
 			

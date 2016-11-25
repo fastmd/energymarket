@@ -1,6 +1,6 @@
 class WelcomeController < ApplicationController
   def index
-    if current_user.has_role? :usercd
+    if current_user.has_role? :cduser
       redirect_to welcome_cdindex_path
     end 
     
