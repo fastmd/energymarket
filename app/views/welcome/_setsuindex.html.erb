@@ -1,12 +1,25 @@
-<%= link_to "Назад", :back %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
+ <script>
+$('#example').DataTable({
+  responsive: true
+});
+</script>
+<table class="example">
+    <thead>
+        <tr></tr>
+    </thead>
+    
+</table>
+  
 
 <center>
+   
 <div class="page">
 	<div class="centercol">
-<center>		
-		<%= link_to "Добавить потребителя", :controller => "companys", 
-            :action => "new" %>
+		
 <h1>Список потребителей</h1>
 
 <table id="mcl" border="0" cellspacing="5" cellpadding="5">
@@ -23,7 +36,8 @@
 					<tr>
 						<td><%= i = i + 1 %></td>
 						<td><%= cl.name %></td>
-						<td><%= link_to "Открыть", company_path(cl) %></td>
+	<td><%= link_to "Открыть", company_path(cl) %></td>
+	
 						<!--
 		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
 						-->	
@@ -32,9 +46,10 @@
 			
 		</tbody>
 </table>
-</center>
 
 <p></p>
 </div>
 </div>
+
 </center>
+

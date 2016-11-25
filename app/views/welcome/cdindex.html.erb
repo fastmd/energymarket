@@ -1,6 +1,9 @@
 <%= link_to "Выход", destroy_user_session_path, method: :delete %>
 <center>
- <%= render "messages" %>   
+ <%= render "messages" %>
+<div class="page">
+	<div class="centercol">
+<center>		    
 <h1>Список поставщиков</h1> 
 <table id="mcl" border="0" cellspacing="5" cellpadding="5">
 		<thead>
@@ -17,46 +20,19 @@
 						<td><%= fr.name %></td>
 						<td></td>
 						<td><%= link_to "Открыть", furnizor_path(fr) %></td>
-						<!--
-		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
-						-->	
+		
+		
+			
 					</tr>		
 					<% end %>
 			
 		</tbody>
 </table>
-
+	</center>
+	</div>
+	</div>
  
-<h1>Список потребителей</h1>
 
-<%= link_to "Добавить потребителя", :controller => "companys", 
-            :action => "new" %>
-
-<table id="mcl" border="0" cellspacing="5" cellpadding="5">
-		<thead>
-			<tr>
-			   <th>№</th>
-			   <th>Наименование</th>
-			   <th>Текущие показания</th>
-			   <th>Действие</th>
-			</tr>	
-		</thead>
-		<tbody>
-					<% i = 0%>
-					<% @companies.each do |cl| %>
-					<tr>
-						<td><%= i = i + 1 %></td>
-						<td><%= cl.name %></td>
-						<td></td>
-						<td><%= link_to "Открыть", company_path(cl) %></td>
-						<!--
-		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
-						-->	
-					</tr>		
-					<% end %>
-			
-		</tbody>
-</table>
 </center>
 
 <p></p>

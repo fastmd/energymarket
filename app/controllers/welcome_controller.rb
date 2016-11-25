@@ -13,11 +13,13 @@ class WelcomeController < ApplicationController
     
   end
   
-  def cdindex 
+  def cdindex
+     @furns = Furnizor.all
     @companies = Company.all
   end
   
   def setsuindex 
+    @furns = Furnizor.all
     @companies = Company.all
   end
   

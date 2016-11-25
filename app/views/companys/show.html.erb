@@ -1,7 +1,8 @@
+
 <% if current_user.has_role? :cduser %>
 <%= link_to "Назад", welcome_cdindex_path %>
 <% end %>
-<% if current_user.has_role? :usersetsu %>
+<% if current_user.has_role? :setsu %>
 <%= link_to "Назад", welcome_setsuindex_path %>
 <% end %>
 <center>

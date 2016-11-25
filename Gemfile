@@ -1,6 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'jquery-datatables-rails'
+
+
+group :assets do
+  gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
+  gem 'jquery-ui-rails'
+  
+end
+
+gem 'will_paginate'
 
 gem 'devise'
 gem 'cancancan'
