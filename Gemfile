@@ -2,11 +2,7 @@ source 'https://rubygems.org'
 
 
 
-group :assets do
-  gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
-  gem 'jquery-ui-rails'
-  
-end
+gem 'jquery-datatables-rails', '~> 3.4.0'
 
 gem 'will_paginate'
 

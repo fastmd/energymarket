@@ -19,6 +19,7 @@ class CompanysController < ApplicationController
   def show
    @cp =  Company.find(params[:id])
    @mp =  @cp.mpoints.all
+   
   end
   
   def setsushow

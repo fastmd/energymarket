@@ -10,6 +10,7 @@
 			<tr>
 			   <th>№</th>
 			   <th>Наименование</th>
+			   <th>Действие</th>
 			</tr>	
 		</thead>
 		<tbody>
@@ -18,7 +19,7 @@
 					<tr>
 						<td><%= i = i + 1 %></td>
 						<td><%= fr.name %></td>
-						<td></td>
+						
 						<td><%= link_to "Открыть", furnizor_path(fr) %></td>
 			
 					</tr>		
@@ -29,5 +30,5 @@
   
 <% end %>
 <% if current_user.has_role? :setsu %>
-  <%= render "setsuindex" %>
+<!--  <%= render "setsuindex" %>  -->
 <% end %>

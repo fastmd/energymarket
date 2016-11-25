@@ -1,8 +1,8 @@
 <h3>Ввод текущих показаний </h3>
-<table id="mcl" border="1" cellspacing="3" cellpadding="3">
+<!-- <table id="mcl" border="1" cellspacing="3" cellpadding="3"> -->
 	<% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
-	<thead>
+	<!-- <thead>
 			<tr>
 		
 			   <th>№</th>
@@ -14,37 +14,30 @@
 			   <th><%= f.label :"Описание"%></th><br>
 			   <th>Действие</th>
 			</tr>	
-	</thead>
+	</thead>  
 	<tbody>
 					<% i = 0%>
+				-->
 					
-					<tr>
-						<td><%= i = i + 1 %></td>
-						<td><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td>
-						<td><%= text_field_tag 'actp180'%></td>
-						<td><%= text_field_tag 'actp280'%></td>
-						<td><%= text_field_tag 'actp380'%></td>
-						<td><%= text_field_tag 'actp480'%></td>
-						<td><%= text_field_tag 'comment'%></td>
-						
-						<td><%= f.submit "Сохранить" %></td>
-					</tr>		
-					
-			
-	</tbody>
-	
-  	<% end %>		
-</table>
-
-<div class="page">
-<div class="centercol">
-						
 						<td><%= label_tag "Дата актирования "%><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td><br>
 						<td><%= label_tag "Активный прием (1-8-0) "%><%= text_field_tag 'actp180'%></td><br>
 						<td><%= label_tag "Активный отдача (2-8-0) "%><%= text_field_tag 'actp280'%></td><br>
 						<td><%= label_tag "Реактивный прием (3-8-0) "%><%= text_field_tag 'actp380'%></td><br>
 						<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= text_field_tag 'actp480'%></td><br>
 						<td><%= text_field_tag 'comment'%></td>
+						<td><%= f.submit "Сохранить" %></td>
+						
+							
+	<% end %>						
+<!-- 			
+	</tbody>
+	
+  	
+</table> -->
+
+<div class="page">
+<div class="centercol">
+						
 						
 						
 </div>	
