@@ -1,2 +1,59 @@
-<h1>Companys#index</h1>
-<p>Find me in app/views/companys/index.html.erb</p>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  
+<!-- DataTables -->
+ <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+<!--<script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation/foundation.js"></script>
+  <script src="js/foundation/foundation.magellan.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css"> -->
+
+ <script>
+$(document).ready( function () {
+    $('#mcln').dataTable();
+} );
+ 
+</script>   
+ 
+  
+<% if current_user.has_role? :setsu %>
+	<%= link_to "Назад" %>
+<% end %>
+
+<center>
+   
+<div class="page">
+	<div class="centercol">
+		
+<h1>Список потребителей</h1>
+
+<table id="mcln" border="0" cellspacing="5" cellpadding="5">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Наименование</th>
+			   <th>Действие</th>
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<% @companies.each do |cl| %>
+					<tr>
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.name %></td>
+						<td><%= link_to "Открыть", company_path(cl) %></td>
+					</tr>		
+					<% end %>
+			
+		</tbody>
+</table>
+
+<p></p>
+</div>
+</div>
+
+</center>
+

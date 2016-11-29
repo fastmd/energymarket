@@ -9,6 +9,7 @@ class WelcomeController < ApplicationController
     end
     
     @furns = Furnizor.all
+    @filials = Filial.all
     @companies = Company.all
     
     
@@ -22,6 +23,7 @@ class WelcomeController < ApplicationController
   
   def setsuindex 
     @furns = Furnizor.all
+    @filials = Filial.all
     @companies = Company.all
   end
   

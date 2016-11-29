@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  get 'filials/index'
+
+  get 'filials/show'
+
+  get 'filials/edit'
+
+  get 'filials/new'
+
   get 'furnizors/show'
   
   get 'furnizors/new'
@@ -57,6 +65,7 @@ Rails.application.routes.draw do
 post 'companys/show'
 post 'mpoints/show'
 
+resources :filials
 resources :furnizors
 resources :companys 
 resources :mpoints  do

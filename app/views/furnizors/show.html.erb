@@ -1,4 +1,42 @@
-<%= link_to "Назад", :back %>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  
+<!-- DataTables -->
+ <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+
+ 
+<!-- <script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation/foundation.js"></script>
+  <script src="js/foundation/foundation.magellan.js"></script> --> 
+  
+
+ <script> 
+$(document).ready(function() {
+    $('#mcln').DataTable( {
+        "language": {
+            "lengthMenu": "Показать _MENU_ записей на странице",
+            "zeroRecords": "Ничего не найдено, простите",
+            "info": "Показать страницу _PAGE_ из _PAGES_",
+            "infoEmpty": "No records available",
+            "infoFiltered": "(выбрано из _MAX_ total записей)",
+            "search": "Поиск",
+            "previousSibling": "Предыдущий",
+            "nextSibling": "Следующий"
+        }
+    } );
+} );
+</script> 
+
+<% if current_user.has_role? :cduser %>
+<%= link_to "Назад", welcome_cdindex_path %>
+<% end %>
+<% if current_user.has_role? :setsu %>
+
+<%= link_to "Назад", root_path %>
+<% end %>
 
 
 <center>
@@ -9,7 +47,7 @@
             :action => "new" %>
 <h1>Список потребителей</h1>
 
-<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+<table id="mcln" border="0" cellspacing="5" cellpadding="5">
 		<thead>
 			<tr>
 			   <th>№</th>
@@ -21,9 +59,9 @@
 					<% i = 0%>
 					<% @companies.each do |cl| %>
 					<tr>
-						<td><%= i = i + 1 %></td>
-						<td><%= cl.name %></td>
-						<td><%= link_to "Открыть", company_path(cl) %></td>
+						<td align="center"><%= i = i + 1 %></td>
+						<td align="center"><%= cl.name %></td>
+						<td align="center"><%= link_to "Открыть", company_path(cl) %></td>
 						<!--
 		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
 						-->	

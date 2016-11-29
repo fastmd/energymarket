@@ -25,10 +25,10 @@
     border: 3px solid green;
 }
 
-.page { background:#f0f0f3; width:900px; overflow:hidden;}
+.page { background:#f0f0f3; width:1000px; overflow:hidden;}
 .centercol {
     float:left; background:#f0f0f3; border="1";
-    width:900px; border-right:1px solid #f0f0f3;
+    width:1000px; border-right:1px solid #f0f0f3;
  }
 
 .leftcol {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161125094635) do
+ActiveRecord::Schema.define(version: 20161128084652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,7 +27,17 @@ ActiveRecord::Schema.define(version: 20161125094635) do
     t.datetime "updated_at",  null: false
     t.integer  "furnizor_id"
     t.string   "region"
+    t.integer  "filial_id"
+    t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
+  end
+
+  create_table "filials", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "cod_id"
+    t.text     "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "furnizors", force: :cascade do |t|
@@ -139,5 +149,6 @@ ActiveRecord::Schema.define(version: 20161125094635) do
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
   end
 
+  add_foreign_key "companies", "filials"
   add_foreign_key "companies", "furnizors"
 end

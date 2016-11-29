@@ -1,3 +1,36 @@
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  
+<!-- DataTables -->
+ <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+
+ 
+<!-- <script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation/foundation.js"></script>
+  <script src="js/foundation/foundation.magellan.js"></script> --> 
+  
+
+ <script> 
+$(document).ready(function() {
+    $('#mcln').DataTable( {
+        "language": {
+            "lengthMenu": "Показать _MENU_ записей на странице",
+            "zeroRecords": "Ничего не найдено, простите",
+            "info": "Показать страницу _PAGE_ из _PAGES_",
+            "infoEmpty": "No records available",
+            "infoFiltered": "(выбрано из _MAX_ total записей)",
+            "search": "Поиск",
+            "previousSibling": "Предыдущий",
+            "nextSibling": "Следующий"
+        }
+    } );
+} );
+</script> 
+
+
 <h3>Ввод текущих показаний </h3>
 <!-- <table id="mcl" border="1" cellspacing="3" cellpadding="3"> -->
 	<% @my_arr = [1,2,3,4,5]%>
@@ -24,7 +57,7 @@
 						<td><%= label_tag "Активный отдача (2-8-0) "%><%= text_field_tag 'actp280'%></td><br>
 						<td><%= label_tag "Реактивный прием (3-8-0) "%><%= text_field_tag 'actp380'%></td><br>
 						<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= text_field_tag 'actp480'%></td><br>
-						<td><%= text_field_tag 'comment'%></td>
+						<td><%= "Описание "%><%= text_field_tag 'comment'%></td>
 						<td><%= f.submit "Сохранить" %></td>
 						
 							
@@ -44,7 +77,7 @@
 
  <div class="centercol"> 	
 <h3>История показаний </h3>
-<table id="mcl" border="1" cellspacing="3" cellpadding="3">
+<table id="mcln" border="1" cellspacing="3" cellpadding="3">
 		<thead>
 			<tr>
 			   <th>№</th>
@@ -54,7 +87,7 @@
 			   <th>3.8.0</th>
 			   <th>4.8.0</th>
 			   <th>Описание</th>
-			   <th>Действие</th>
+			   <!-- ><th>Действие</th> -->
 			</tr>	
 		</thead>
 		<tbody>
@@ -69,7 +102,7 @@
 						<td><%= cl.actp480 %></td>
 						<td><%= cl.comment %></td>
 						
-						<td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+						<!-- <td><%= button_to "Открыть" , :action => :show, :controller=>"mpoints",:num => cl.id%></td> -->
 					</tr>		
 					<% end %>
 			

@@ -31,10 +31,12 @@ $(document).ready(function() {
 </script> 
 
 <% if current_user.has_role? :cduser %>
-<%= link_to "Назад", welcome_cdindex_path %>
+<% @fr = @cp.furnizor %>
+<%= link_to "Назад", furnizor_path(@fr) %>
 <% end %>
 <% if current_user.has_role? :setsu %>
-<%= link_to "Назад", welcome_setsuindex_path %>
+<% @fr = @cp.furnizor %>
+<%= link_to "Назад", furnizor_path(@fr) %>
 <% end %>
 <center>
 	<div class="page">

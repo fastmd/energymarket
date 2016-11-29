@@ -28,18 +28,20 @@ $(document).ready(function() {
         }
     } );
 } );
-</script>
-  
-  
-<%= link_to "Выход", destroy_user_session_path, method: :delete %>
+</script> 
+
+<%= link_to "Назад", :back %>
+
+
 <center>
-	 <%= render "mpoints/messages" %>    
 <div class="page">
 	<div class="centercol">
-		
+<center>		
+		<%= link_to "Добавить потребителя", :controller => "companys", 
+            :action => "new" %>
 <h1>Список потребителей</h1>
 
-<table id="mcln" border="0" cellspacing="5" cellpadding="5" width="100%">
+<table id="mcln" border="0" cellspacing="5" cellpadding="5">
 		<thead>
 			<tr>
 			   <th>№</th>
@@ -49,22 +51,22 @@ $(document).ready(function() {
 		</thead>
 		<tbody>
 					<% i = 0%>
-					<% @filials.each do |fl| %>
+					<% @companies.each do |cl| %>
 					<tr>
-						<td align="center"><%= i = i + 1 %></td>
-						<td align="center"><%= fl.name %></td>
-						<td align="center"><%= link_to "Открыть", filial_path(fl) %></td>
-	
-						
+						<td><%= i = i + 1 %></td>
+						<td><%= cl.name %></td>
+						<td><%= link_to "Открыть", company_path(cl) %></td>
+						<!--
+		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
+						-->	
 					</tr>		
 					<% end %>
 			
 		</tbody>
 </table>
+</center>
 
 <p></p>
 </div>
 </div>
-
 </center>
-
