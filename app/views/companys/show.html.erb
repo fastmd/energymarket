@@ -35,8 +35,8 @@ $(document).ready(function() {
 <%= link_to "Назад", furnizor_path(@fr) %>
 <% end %>
 <% if current_user.has_role? :setsu %>
-<% @fr = @cp.furnizor %>
-<%= link_to "Назад", filial_path(@fr) %>
+<% @fl = @cp.filial %>
+<%= link_to "Назад", filial_path(@fl) %>
 <% end %>
 <center>
 	<div class="page">
