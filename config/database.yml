@@ -15,3 +15,12 @@ test:
   host: localhost
   username: myrail
   password: 111
+  
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: myapp_development
+  pool: 5
+  host: localhost
+  username: myrail
+  password: 111
