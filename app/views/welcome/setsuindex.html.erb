@@ -37,7 +37,7 @@ $(document).ready(function() {
 <div class="page">
 	<div class="centercol">
 		
-<h1>Список потребителей</h1>
+<h1>Филиалы</h1>
 
 <table id="mcln" border="0" cellspacing="5" cellpadding="5" width="100%">
 		<thead>
@@ -48,15 +48,24 @@ $(document).ready(function() {
 			</tr>	
 		</thead>
 		<tbody>
-					<% i = 0%>
-					<% @filials.each do |fl| %>
+			<% i = 0%>
+					<% if @fpr != 5 %>
+					<% fl = Filial.find(@fpr) %>  
 					<tr>
 						<td align="center"><%= i = i + 1 %></td>
 						<td align="center"><%= fl.name %></td>
 						<td align="center"><%= link_to "Открыть", filial_path(fl) %></td>
-	
-						
 					</tr>		
+					<% end %>
+					
+					<% if @fpr == 5 %>
+					<% @fl.each do |fl| %>  
+					<tr>
+						<td align="center"><%= i = i + 1 %></td>
+						<td align="center"><%= fl.name %></td>
+						<td align="center"><%= link_to "Открыть", filial_path(fl) %></td>	
+					</tr>		
+					<% end %>
 					<% end %>
 			
 		</tbody>

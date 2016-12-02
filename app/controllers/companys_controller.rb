@@ -17,6 +17,21 @@ class CompanysController < ApplicationController
   end
 
   def show
+    if current_user.has_role? :"setsu-nord"
+      @fpr = 1
+    end 
+    if current_user.has_role? :"setsu-nord-vest"
+      @fpr = 2
+    end
+    if current_user.has_role? :"setsu-centru"
+      @fpr = 3
+    end
+    if current_user.has_role? :"setsu-sud"
+      @fpr = 4
+    end
+    if current_user.has_role? :"setsu"
+      @fpr = 5
+    end
    @cp =  Company.find(params[:id])
    @mp =  @cp.mpoints.all
    
