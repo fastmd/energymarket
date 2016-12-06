@@ -4,18 +4,17 @@
 
 <center>
 	
+	
+
+<% if current_user.has_role? :cduser %>
+	<%= render "cduser" %>
+<% else %>
 	<% if @fpr != 5 %>
 		<%= render "setsu" %>
 	<% end %>
 	<% if @fpr == 5 %>
 		<%= render "setsu" %>
-	<% end %>
-
-
-
-
-<% if current_user.has_role? :cduser %>
-	<%= render "cduser" %>
+	<% end %>	
 <% end %>
 	
 </center>
