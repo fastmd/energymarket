@@ -33,6 +33,15 @@ $(document).ready(function() {
 <% if current_user.has_role? :cduser %>
 <%= link_to "Назад", welcome_cdindex_path %>
 <% end %>
+
+<% if current_user.has_role? :"cduser-fee" %>
+<%= link_to "Назад", welcome_cdindex_path %>
+<% end %>
+
+<% if current_user.has_role? :"cduser-fenosa" %>
+<%= link_to "Назад", welcome_cdindex_path %>
+<% end %>
+
 <% if current_user.has_role? :setsu %>
 
 <%= link_to "Назад", root_path %>

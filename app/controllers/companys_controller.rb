@@ -32,6 +32,17 @@ class CompanysController < ApplicationController
     if current_user.has_role? :"setsu"
       @fpr = 5
     end
+    if current_user.has_role? :"cduser-fee"
+      @fpr = 6
+    end
+    if current_user.has_role? :"cduser-fenosa"
+      @fpr = 7
+    end
+    if current_user.has_role? :"cduser"
+      @fpr = 8
+    end
+    
+    
    @cp =  Company.find(params[:id])
    @mp =  @cp.mpoints.all
    

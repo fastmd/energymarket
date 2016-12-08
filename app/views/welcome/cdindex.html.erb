@@ -44,17 +44,22 @@ $(document).ready(function() {
 		</thead>
 		<tbody>
 					<% i = 0%>
+					<% if @fpr == 0%>
 					<% @furns.each do |fr| %>
-					<tr>
+						<tr>
 						<td align="center"><%= i = i + 1 %></td>
 						<td align="center"><%= fr.name %></td>
-						
 						<td align="center"><%= link_to "Открыть", furnizor_path(fr) %></td>
-		
-		
-			
-					</tr>		
+						</tr>
+					<% end %>	
+					<% else %>
 					<% end %>
+					<tr>
+						<td align="center"><%= i = i + 1 %></td>
+						<td align="center"><%= @furns.name %></td>
+						<td align="center"><%= link_to "Открыть", furnizor_path(@furns) %></td>
+					</tr>		
+					
 			
 		</tbody>
 </table>

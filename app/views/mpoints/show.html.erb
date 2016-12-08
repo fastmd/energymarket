@@ -14,7 +14,10 @@
 	<% end %>
 	<% if @fpr == 5 %>
 		<%= render "setsu" %>
-	<% end %>	
+	<% end %>
+	<% if @fpr > 5 %>
+		<%= render "cduser" %>
+	<% end %>		
 <% end %>
 	
 </center>

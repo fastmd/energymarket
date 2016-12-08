@@ -30,11 +30,10 @@ $(document).ready(function() {
 } );
 </script> 
 
-	<% if current_user.has_role? :cduser %>
+	<% if @fpr > 5 %>
 		<% @fr = @cp.furnizor %>
 		<%= link_to "Назад", furnizor_path(@fr) %>
 	<% end %>
-	<% if !(current_user.has_role? :cduser) %>
 	<% if @fpr < 5 %>
 		<% @fl = @cp.filial %>
 		<%= link_to "Назад", filial_path(@fl) %>
@@ -43,7 +42,7 @@ $(document).ready(function() {
 		<% @fl = @cp.filial %>
 		<%= link_to "Назад", filial_path(@fl) %>
 	<% end %>
-	<% end %>
+	
 <center>
 	<div class="page">
 	<div class="centercol">
