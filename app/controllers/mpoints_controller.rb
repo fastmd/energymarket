@@ -46,6 +46,15 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"setsu"
       @fpr = 5
     end
+    if current_user.has_role? :"cduser"
+      @fpr = 6
+    end
+    if current_user.has_role? :"cduser-fee"
+      @fpr = 7
+    end
+    if current_user.has_role? :"cduser-fenosa"
+      @fpr = 8
+    end
      @mp =  Mpoint.find(params[:id])
      @mv =  @mp.mvalues.all.reverse
      @trp =  @mp.trparams.all

@@ -53,12 +53,13 @@ $(document).ready(function() {
 						</tr>
 					<% end %>	
 					<% else %>
-					<% end %>
 					<tr>
 						<td align="center"><%= i = i + 1 %></td>
-						<td align="center"><%= @furns.name %></td>
-						<td align="center"><%= link_to "Открыть", furnizor_path(@furns) %></td>
-					</tr>		
+						<td align="center"><%= @furn.name %></td>
+						<td align="center"><%= link_to "Открыть", furnizor_path(@furn) %></td>
+					</tr>
+					<% end %>
+							
 					
 			
 		</tbody>

@@ -5,6 +5,9 @@ class WelcomeController < ApplicationController
     end
     if current_user.has_role? :"cduser-fee"
       redirect_to welcome_cdindex_path
+    end
+     if current_user.has_role? :"cduser-fenosa"
+      redirect_to welcome_cdindex_path
     end 
     
     if current_user.has_role? :setsu
@@ -23,9 +26,9 @@ class WelcomeController < ApplicationController
       redirect_to welcome_setsuindex_path
     end
     
-    @furns = Furnizor.all
-    @filials = Filial.all
-    @companies = Company.all
+   # @furns = Furnizor.all
+   # @filials = Filial.all
+   # @companies = Company.all
     
     
     
@@ -33,12 +36,12 @@ class WelcomeController < ApplicationController
   
   def cdindex
     if current_user.has_role? :"cduser-fee"
-      @fpr = 1
-      @furns = Furnizor.find(@fpr)
+      @fpr = 2
+      @furn = Furnizor.find(@fpr)
     end 
     if current_user.has_role? :"cduser-fenosa"
-      @fpr = 2
-      @furns = Furnizor.find(@fpr)
+      @fpr = 1
+      @furn = Furnizor.find(@fpr)
     end
     if current_user.has_role? :"cduser"
       @fpr = 0
