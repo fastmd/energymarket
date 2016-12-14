@@ -29,7 +29,7 @@ $(document).ready(function() {
     } );
 } );
 </script> 
-
+<center>
 	<% if @fpr > 5 %>
 		<% @fr = @cp.furnizor %>
 		<%= link_to "Назад", furnizor_path(@fr) %>
@@ -42,6 +42,7 @@ $(document).ready(function() {
 		<% @fl = @cp.filial %>
 		<%= link_to "Назад", filial_path(@fl) %>
 	<% end %>
+</center>	
 	
 <center>
 	<div class="page">

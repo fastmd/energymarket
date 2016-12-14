@@ -1,2 +1,34 @@
-<h1>Trparams#show</h1>
-<p>Find me in app/views/trparams/show.html.erb</p>
+<center>
+	<%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])) %>
+<h1>Редактирование параметров трансфрматора</h1></center>
+<%= params[:tr_id] %>
+<%= params[:id] %>
+
+<center>
+	
+	<div class="page">
+	<div class="centercol">
+			<br>
+			<%= form_for @tr   do |f| %>
+  		    <%= f.label :"Рхх :"%>
+  			<%= text_field_tag 'pxx', @tr.pxx, :maxlength => 15, :size => 15 %><br>
+  			<%= f.label :"Ркз :"%>
+  			<%= text_field_tag 'pkz', @tr.pkz, :maxlength => 15, :size => 15 %><br>
+  			<%= f.label :"Sном :"%>
+  			<%= text_field_tag 'snom', @tr.snom, :maxlength => 15, :size => 15 %><br>
+  			<%= f.label :"Uкз :"%>
+  			<%= text_field_tag 'ukz', @tr.ukz, :maxlength => 15, :size => 15 %><br>
+  			<%= f.label :"Io :"%>
+  			<%= text_field_tag 'io', @tr.io, :maxlength => 15, :size => 15 %><br>
+  			<%= f.label :"Qкз :"%>
+  			<%= text_field_tag 'qkz', @tr.qkz, :maxlength => 15, :size => 15 %><br>
+  			
+  			<%= hidden_field_tag :tr_id, params[:tr_id] %>                      
+  			<%= f.submit "Сохранить",:num => params[:tr_id] %> 
+  			<% end %>
+  		
+	</div>
+	</div>
+	
+</div>	
+

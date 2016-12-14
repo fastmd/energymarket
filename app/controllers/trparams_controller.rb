@@ -33,11 +33,34 @@ class TrparamsController < ApplicationController
   end
 
   def edit
+    @tr = Trparam.find(params[:tr_id])
+    @mp = Mpoint.find(params[:id])
+    params[:mp_id] = @mp.id
+  end
+  
+  def update
+    @tr = Trparam.find(params[:tr_id])
+    @mp = Mpoint.find(@tr.mpoint_id)
+    #params[:mp_id] = @mp.id
+    
+    @tr.pxx = params[:pxx].to_f
+    @tr.pkz = params[:pkz].to_f
+    @tr.snom = params[:snom].to_f
+    @tr.ukz = params[:ukz].to_f
+    @tr.io = params[:io].to_f
+    @tr.save
+    redirect_to mpoint_path(@mp)
   end
 
   def show
+     @tr = Trparam.find(params[:tr_id])
+    @mp = Mpoint.find(params[:id])
+    params[:mp_id] = @mp.id
   end
 
   def index
+  end
+  
+  def export
   end
 end

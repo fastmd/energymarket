@@ -1,6 +1,9 @@
 
  <%= render "messages" %>   
-    	
+<!-- > <%= form_tag 'export.xls' do %>
+ <%= submit_tag 'Печать'%>
+ <% end %>
+ <%= link_to "Export", trparams_export_url %>  -->   	
 	<center><h1><%= @mp.pname %></h1></center>
 <div class="page">
 		
@@ -21,6 +24,7 @@
   		<%= text_field_tag 'ukz'%><br>
   		<%= f.label :"Io : "%><br>
   		<%= text_field_tag 'io'%><br>
+  		
   		
   		
   		<%= f.submit "Сохранить" %>
@@ -56,7 +60,8 @@
 						<td><%= cl.ukz %></td>
 						<td><%= cl.io %></td>
 						<td><%= cl.qkz %></td>
-						<td><%= button_to "Изменить" , :action => :show, :controller=>"mpoints",:num => cl.id%></td>
+						<td><%= button_to "Изменить" , controller: "trparams", 
+						action: "show", method: "post" , :tr_id => cl.id %></td>
 					</tr>		
 					<% end %>
 					
