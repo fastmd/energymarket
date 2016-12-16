@@ -9,7 +9,7 @@
 	<div class="page">
 	<div class="centercol">
 			<br>
-			<%= form_for @tr   do |f| %>
+			<%= form_for :trparam, url: trparam_path(@tr), method: :patch  do |f| %>
   		    <%= f.label :"Рхх :"%>
   			<%= text_field_tag 'pxx', @tr.pxx, :maxlength => 15, :size => 15 %><br>
   			<%= f.label :"Ркз :"%>

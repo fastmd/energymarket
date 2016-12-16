@@ -15,15 +15,15 @@
   	
   	  
   		<%= f.label :"Потери холостого хода,кВт :"%><br>
-  		<%= text_field_tag 'pxx'%><br>
+  		<%= text_field_tag 'pxx'%><br><br>
   		<%= f.label :"Потери короткого замыкания,кВт : "%><br>
-  		<%= text_field_tag 'pkz'%><br>
+  		<%= text_field_tag 'pkz'%><br><br>
   		<%= f.label :"Номинальная мощность : "%><br>
-  		<%= text_field_tag 'snom'%><br>
+  		<%= text_field_tag 'snom'%><br><br>
   		<%= f.label :"Uкз, кВ : "%><br>
-  		<%= text_field_tag 'ukz'%><br>
+  		<%= text_field_tag 'ukz'%><br><br>
   		<%= f.label :"Io : "%><br>
-  		<%= text_field_tag 'io'%><br>
+  		<%= text_field_tag 'io'%><br><br>
   		
   		
   		
@@ -35,7 +35,7 @@
     <div class="rightcol">
         <div class="content">
         	<h3>Транформаторы </h3>
-				<table id="mcl" border="1" cellspacing="1" cellpadding="1">
+				<table  border="1" cellspacing="1" cellpadding="1">
 				<thead>
 					<tr>
 			   			<th>№</th>
@@ -60,8 +60,7 @@
 						<td><%= cl.ukz %></td>
 						<td><%= cl.io %></td>
 						<td><%= cl.qkz %></td>
-						<td><%= button_to "Изменить" , controller: "trparams", 
-						action: "show", method: "post" , :tr_id => cl.id %></td>
+						<td><%= button_to "Изменить" ,:controller => "trparams", :action => "edit", :tr_id => cl.id %></td>
 					</tr>		
 					<% end %>
 					
@@ -79,9 +78,9 @@
         <% @my_arr = [1,2,3,4,5]%>
   	<%= form_for([@mp,@mp.lineprs.build]) do |f| %>
   		<%= f.label :"Длина линии :"%><br>
-  		<%= text_field_tag 'l1'%><br>
+  		<%= text_field_tag 'l1'%><br><br>
   		<%= f.label :"Сопративление линии : "%><br>
-  		<%= text_field_tag 'p1'%><br>
+  		<%= text_field_tag 'p1'%><br><br>
   		<%= f.submit "Сохранить" %>
   	<% end %>
     </div>
@@ -89,7 +88,7 @@
     <div class="rightcol">
         <div class="content">
         	<h3>Линии </h3>
-				<table id="mcl" border="1" cellspacing="1" cellpadding="1">
+				<table  border="1" cellspacing="1" cellpadding="1">
 				<thead>
 					<tr>
 			   			<th>№</th>
