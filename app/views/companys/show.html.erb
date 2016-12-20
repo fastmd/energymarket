@@ -61,6 +61,8 @@ $(document).ready(function() {
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
 			   <th>Действие</th>
+			   <th>Скачать</th>
+			   <th>Скачать</th>			   
 			</tr>	
 		</thead>
 		<tbody>
@@ -70,7 +72,9 @@ $(document).ready(function() {
 						<td align="center"><%= i = i + 1 %></td>
 						<td align="center"><%= cl.messtation %></td>
 						<td align="center"><%= cl.meconname %></td>
-  						<td align="center"><%= link_to "Открыть" , mpoint_path(cl)%></td>
+  						<td align="center"><%= link_to "Открыть" , mpoint_path(cl) %></td>
+  						<td align="center"><%= link_to "XLSX без смс и регистрации", mpoint_path(cl,format: "xlsx") %></td>
+  						<td align="center"><%= link_to "PDF без смс и регистрации", mpoint_path(cl,format: "pdf") %></td>  						
 					</tr>		
 					<% end %>
 			

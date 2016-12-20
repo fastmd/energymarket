@@ -1,6 +1,4 @@
-source 'https://rubygems.org'
-
-
+source 'http://rubygems.org'
 
 gem 'jquery-datatables-rails', '~> 3.4.0'
 
@@ -38,6 +36,14 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+
+#this gem was asked by windows
+gem 'wdm', '>= 0.1.0'
+#gem for pdf
+gem 'prawn'
+gem 'prawn-table'
+#gem for xlsx
+gem 'axlsx_rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -65,9 +65,6 @@ Rails.application.routes.draw do
 post 'companys/show'
 post 'mpoints/show'
 post 'trparams/:id/edit' => 'trparams#edit'
-post 'trparams/export.xls' => 'trparams#export'
-post 'trparams/export' => 'trparams#export'
-post 'mpoints/export.xls' => 'trparams#export'
 
 resources :filials
 resources :trparams

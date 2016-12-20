@@ -57,7 +57,7 @@ $(document).ready(function() {
 						<td><%= label_tag "Активный отдача (2-8-0) "%><%= text_field_tag 'actp280'%></td><br>
 						<td><%= label_tag "Реактивный прием (3-8-0) "%><%= text_field_tag 'actp380'%></td><br>
 						<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= text_field_tag 'actp480'%></td><br>
-						<td><%= "Описание "%><%= text_field_tag 'comment'%></td>
+						<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
 						<td><%= f.submit "Сохранить" %></td>
 						
 							
@@ -107,7 +107,7 @@ $(document).ready(function() {
 					<% @mv.each do |cl| %>
 						<tr>
 						<td><%= i = i + 1 %></td>
-						<td><%= cl.actdate %></td>
+						<td><%= cl.actdate.to_formatted_s(:day_month_year) %></td>
 						<td><%= cl.actp180 %></td>
 						<td><%= cl.actp280 %></td>
 						<td><%= cl.actp380 %></td>
