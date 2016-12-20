@@ -30,97 +30,62 @@ $(document).ready(function() {
 } );
 </script> 
 
-
 <h3>Ввод текущих показаний </h3>
-<!-- <table id="mcl" border="1" cellspacing="3" cellpadding="3"> -->
-	<% @my_arr = [1,2,3,4,5]%>
-  	<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
-	<!-- <thead>
-			<tr>
-		
-			   <th>№</th>
-			   <th>Дата актирования</th>
-			   <th><%= f.label :"Активный прием (1-8-0)"%></th>
-			   <th><%= f.label :"Активный отдача (2-8-0)"%></th>
-			   <th><%= f.label :"Реактивный прием (3-8-0)"%></th>
-			   <th><%= f.label :"Реактивный отдача (4-8-0)"%></th>
-			   <th><%= f.label :"Описание"%></th><br>
-			   <th>Действие</th>
-			</tr>	
-	</thead>  
-	<tbody>
-					<% i = 0%>
-				-->
-					
-						<td><%= label_tag "Дата актирования "%><%= text_field_tag 'actdate', Time.now.strftime("%d/%m/%Y") %></td><br>
-						<td><%= label_tag "Активный прием (1-8-0) "%><%= text_field_tag 'actp180'%></td><br>
-						<td><%= label_tag "Активный отдача (2-8-0) "%><%= text_field_tag 'actp280'%></td><br>
-						<td><%= label_tag "Реактивный прием (3-8-0) "%><%= text_field_tag 'actp380'%></td><br>
-						<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= text_field_tag 'actp480'%></td><br>
-						<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
-						<td><%= f.submit "Сохранить" %></td>
-						
-							
-	<% end %>						
-<!-- 			
-	</tbody>
-	
-  	
-</table> -->
+
+<% @my_arr = [1,2,3,4,5] %>
+<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
+	<td><%= label_tag "Дата актирования "%><%= date_field_tag 'actdate', Date.current %></td><br>
+	<td><%= label_tag "Активный прием (1-8-0) "%><%= number_field_tag 'actp180', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Активный отдача (2-8-0) "%><%= number_field_tag 'actp280', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Реактивный прием (3-8-0) "%><%= number_field_tag 'actp380', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= number_field_tag 'actp480', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
+	<td><%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %></td>
+<% end %>						
 
 <div class="page">
-<div class="centercol">
-						
-						
-						
+<div class="centercol">						
 </div>	
-
- <div class="centercol"> 	
+<div class="centercol"> 	
 <h3>История показаний </h3>
 <table id="mcln" border="1">
-		<thead>
-			<tr>
-			   <th>№</th>
-			   <th>Дата актирования</th>
-			   <th>1.8.0</th>
-			   <th>2.8.0</th>
-			   <th>3.8.0</th>
-			   <th>4.8.0</th>
-			   <th>Описание</th>
-			   <!-- ><th>Действие</th> -->
-			</tr>	
-		</thead>
-		<tbody>
-					<% i = 0%>
-					
-					<% if @mv.count == 0%>
-						<tr>	
-						<td><%=  %></td>
-						<td><%=  %></td>
-						<td><%=  %></td>
-						<td><%=  %></td>
-						<td><%=  %></td>
-						<td><%=  %></td>
-						<td><%=  %></td>
-						</tr>
-					<% else %>
-					<% @mv.each do |cl| %>
-						<tr>
-						<td><%= i = i + 1 %></td>
-						<td><%= cl.actdate.to_formatted_s(:day_month_year) %></td>
-						<td><%= cl.actp180 %></td>
-						<td><%= cl.actp280 %></td>
-						<td><%= cl.actp380 %></td>
-						<td><%= cl.actp480 %></td>
-						<td><%= cl.comment %></td>
-						</tr>  
-					<% end %>	
-						
-						
-					
-					<% end %>
-			
-		</tbody>
+	<thead>
+		<tr>
+		   <th>№</th>
+		   <th>Дата актирования</th>
+		   <th>1.8.0</th>
+		   <th>2.8.0</th>
+		   <th>3.8.0</th>
+		   <th>4.8.0</th>
+		   <th>Комментарий</th>
+		</tr>	
+	</thead>
+	<tbody>					
+		<% if @mv.count == 0%>
+			<tr>	
+				<td><%=  %></td>
+				<td><%=  %></td>
+				<td><%=  %></td>
+				<td><%=  %></td>
+				<td><%=  %></td>
+				<td><%=  %></td>
+				<td><%=  %></td>
+			</tr>
+		<% else %>
+			<% i = 0%>
+			<% @mv.each do |cl| %>
+				<tr>
+					<td><%= i += 1 %></td>
+					<td><%= cl.actdate.to_formatted_s(:day_month_year) %></td>
+					<td><%= cl.actp180 %></td>
+					<td><%= cl.actp280 %></td>
+					<td><%= cl.actp380 %></td>
+					<td><%= cl.actp480 %></td>
+					<td><%= cl.comment %></td>
+				</tr>  
+			<% end %>	
+		<% end %>	
+	</tbody>
 </table>
 
 </div>
