@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   get 'mpoints/edit'
 
   get 'companys/new'
+  post 'companys/new'
 
   get 'companys/show'
 

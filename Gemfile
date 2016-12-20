@@ -38,7 +38,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 #this gem was asked by windows
-#gem 'wdm', '>= 0.1.0'
+gem 'wdm', '>= 0.1.0'
 #gem for pdf
 gem 'prawn'
 gem 'prawn-table'
