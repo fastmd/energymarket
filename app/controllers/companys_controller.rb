@@ -5,7 +5,8 @@ class CompanysController < ApplicationController
   def create
     
     @cp =  Company.new
-    
+    @cp.furnizor_id = 1;
+    @cp.filial_id = 1;
     @cp.name = params[:coname]
     @cp.save
   
