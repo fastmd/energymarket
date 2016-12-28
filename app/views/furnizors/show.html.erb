@@ -1,3 +1,5 @@
+<% provide(:title, 'Потребители') %>
+
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= if (current_user.has_role? :"cduser-fee") || (current_user.has_role? :cduser) || (current_user.has_role? :"cduser-fenosa") 
@@ -7,9 +9,7 @@
   </ul>  
 </nav>
 
-<div class="center">
-	<h1>Список потребителей</h1>
-</div> 	 		           
+<h2 align="center">Список потребителей</h2>	 		           
 
 <table  class="table table-striped">
 		<thead>
@@ -34,6 +34,5 @@
 		</tbody>
 </table>
 
-<small><center>
-	<%= will_paginate @companies, renderer: BootstrapPagination::Rails %>
-</small></center>
+<center><small><%= will_paginate @companies, renderer: BootstrapPagination::Rails %></small></center>
+

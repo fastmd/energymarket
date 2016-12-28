@@ -1,7 +1,13 @@
-<%= link_to "Назад", :back %>
+<% provide(:title, 'Новая точка учета') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", :back %></li>
+  </ul>  
+</nav>
 
 <center>
-	<h1>Ввод новой точки учета</h1>
+	<h2>Ввод новой точки учета</h2>
 	<div class="page">
 	<div class="centercol">
 			
@@ -34,5 +40,5 @@
   		
 	</div>
 	</div>
-	
-</div>	
+</center>
+

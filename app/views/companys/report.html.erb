@@ -1,23 +1,18 @@
-<center>
-	<% if @fpr > 5 %>
-		<% @fr = @cp.furnizor %>
-		<%= link_to "Назад", furnizor_path(@fr) %>
-	<% end %>
-	<% if @fpr < 5 %>
-		<% @fl = @cp.filial %>
-		<%= link_to "Назад", filial_path(@fl) %>
-	<% end %>
-	<% if @fpr == 5 %>
-		<% @fl = @cp.filial %>
-		<%= link_to "Назад", filial_path(@fl) %>
-	<% end %>
+<% provide(:title, 'Отчет') %>
 
-<div class="page">
-<div class="centercol">						
-<h3>Отчет</h3>	
-<table border="0" cellspacing="1" cellpadding="1">	
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", :back %></li>
+    <li><%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25"), '#' %></li>
+    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), '#'  %></li>    
+  </ul>  
+</nav>
+				
+<h3 align="center">Отчет</h3>
+	
+<table class="table table-striped table-condensed">	
   <thead>
-    <tr>
+    <tr class="success">
       <th>Nr</th>
       <th>RRE,SE si liniilor</th>      
       <th>Punctul de evidenta</th>
@@ -28,9 +23,8 @@
       <th>Diferenta indicat.</th>
       <th>Coeficient contor.</th>
       <th>Energie kWh</th> 
-      <th colspan="3"></th>
     </tr>
-    <tr>
+    <tr class="info">
       <th>1</th>
       <th>2</th>      
       <th>3a</th>
@@ -41,7 +35,6 @@
       <th>7</th> 
       <th>8</th>
       <th>9</th> 
-      <th colspan="3"></th>
     </tr>
   </thead>
   <% i=0 %>
@@ -62,7 +55,4 @@
     <% end %>
   </tbody>
 </table>
-</div>
-</div>
-</center>	
-<br>
+

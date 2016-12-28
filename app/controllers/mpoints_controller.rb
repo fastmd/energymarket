@@ -5,22 +5,22 @@ class MpointsController < ApplicationController
   end
   
   def create    
-  @cp =  Company.find(params[:co_id])
-  @nmv = @cp.mpoints.new
-  @nmv.messtation = params[:messtation]
-  @nmv.meconname = params[:meconname]
-  @nmv.clsstation = params[:clsstation]
-  @nmv.clconname = params[:clconname]
-  @nmv.voltcl = params[:voltcl]
-  @nmv.metertype = params[:metertype]
-  @nmv.meternum = params[:meternum]
-  @nmv.koeftt = params[:koeftt]
-  @nmv.koeftn = params[:koeftn]
-  @nmv.koefcalc = params[:koefcalc]
-  @nmv.save 
-  redirect_to company_path(@cp)  
-  #redirect_to @cp  
-  #redirect_to mpoint_path(@cp)
+    @cp =  Company.find(params[:co_id])
+    @nmv = @cp.mpoints.new
+    @nmv.messtation = params[:messtation]
+    @nmv.meconname = params[:meconname]
+    @nmv.clsstation = params[:clsstation]
+    @nmv.clconname = params[:clconname]
+    @nmv.voltcl = params[:voltcl]
+    @nmv.metertype = params[:metertype]
+    @nmv.meternum = params[:meternum]
+    @nmv.koeftt = params[:koeftt]
+    @nmv.koeftn = params[:koeftn]
+    @nmv.koefcalc = params[:koefcalc]
+    @nmv.save 
+    redirect_to company_path(@cp)  
+    #redirect_to @cp  
+    #redirect_to mpoint_path(@cp)
   end
 
   def show
@@ -33,9 +33,7 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
      @mp =  Mpoint.find(params[:id])
- #    @mv =  @mp.mvalues.all.reverse.paginate(:page => params[:page])
-     @perpage = 10
-     @mv =  Mpoint.find(params[:id]).mvalues.all.reverse.paginate(:page => params[:page], :per_page => @perpage )
+     @mv =  @mp.mvalues.all.reverse.paginate(:page => params[:page], :per_page => @perpage = 10)
      @trp =  @mp.trparams.all
      @lnp =  @mp.lineprs.all 
     respond_to do |format|

@@ -1,17 +1,13 @@
-<!-- DataTables CSS -->
- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> 
-  
-<!-- jQuery 
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>  -->
-  
- <!-- DataTables --> 
- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+<% provide(:title, 'Трансформаторы') %>
 
-<center>
-	<%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])) %>
-<h1>Редактирование параметров трансфрматора</h1></center>
-<%= params[:tr_id] %>
-<%= params[:id] %>
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])) end %></li>
+    <li><%= link_to "Добавить трансформатор", :controller => "trparams", :action => "new" %></li>
+  </ul>  
+</nav>
+
+<h2 align="center">Трансформатор</h2>	
 
 <!-- ><center>
 	

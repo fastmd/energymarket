@@ -38,18 +38,20 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 if RUBY_PLATFORM == "i386-mingw32"
-#this gem was asked by windows
-gem 'wdm', '>= 0.1.0'
+   #this gem was asked by windows
+   gem 'wdm', '>= 0.1.0'
 end
+
 #gem for pdf
 gem 'prawn'
 gem 'prawn-table'
+
 #gem for xlsx
 gem 'axlsx_rails'
+
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'autoprefixer-rails'
 gem 'will_paginate-bootstrap'
-gem 'will_paginate'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,11 +1,14 @@
+<% provide(:title, 'Параметры трансформатора') %>
+
 <center>
 	<%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])) %>
-<h1>Редактирование параметров трансфрматора</h1></center>
+<h2>Редактирование параметров трансфоматора</h2>
+</center>
+
 <%= params[:tr_id] %>
 <%= params[:id] %>
 
-<center>
-	
+<center>	
 	<div class="page">
 	<div class="centercol">
 			<br>
@@ -29,6 +32,4 @@
   		
 	</div>
 	</div>
-	
-</div>	
-
+</center>	

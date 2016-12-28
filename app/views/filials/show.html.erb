@@ -1,72 +1,35 @@
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-  
-<!-- DataTables -->
- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+<% provide(:title, 'Потребители') %>
 
- 
-<!-- <script src="js/vendor/jquery.js"></script>
-  <script src="js/foundation/foundation.js"></script>
-  <script src="js/foundation/foundation.magellan.js"></script> --> 
-  
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", welcome_setsuindex_path %></li>
+    <li><%= link_to "Добавить потребителя", :controller => "companys", :action => "new" %></li>
+  </ul>  
+</nav>
 
- <script> 
-$(document).ready(function() {
-    $('#mcln').DataTable( {
-        "language": {
-            "lengthMenu": "Показать _MENU_ записей на странице",
-            "zeroRecords": "Ничего не найдено, простите",
-            "info": "Показать страницу _PAGE_ из _PAGES_",
-            "infoEmpty": "No records available",
-            "infoFiltered": "(выбрано из _MAX_ total записей)",
-            "search": "Поиск",
-            "previousSibling": "Предыдущий",
-            "nextSibling": "Следующий"
-        }
-    } );
-} );
-</script> 
-<center>
-<%= link_to "Назад", welcome_setsuindex_path %>
+<h2 align="center">Список потребителей</h2>	 	
 
-
-
-<div class="page">
-	<div class="centercol">
-<center>		
-		<%= link_to "Добавить потребителя", :controller => "companys", 
-            :action => "new" %>
-<h1>Список потребителей</h1>
-
-<table id="mcln" border="0" cellspacing="5" cellpadding="5">
+<table  class="table table-striped">
 		<thead>
 			<tr>
 			   <th>№</th>
 			   <th>Наименование</th>
 			   <th>Действие</th>
+			   <th>Действие</th>			   
 			</tr>	
 		</thead>
 		<tbody>
 					<% i = 0%>
 					<% @companies.each do |cl| %>
 					<tr>
-						<td align="center"><%= i = i + 1 %></td>
-						<td align="center"><%= cl.name %></td>
-						<td align="center"><%= link_to "Открыть", company_path(cl) %></td>
-						<!--
-		<td><%= button_to "Открыть" , :action => :show, :controller=>"companys",:num => cl.id%></td>
-						-->	
+						<% i = i + 1 %>
+						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+						<td><%= cl.name %></td>
+						<td><%= link_to "Открыть", company_path(cl) %></td>
+                        <td><%= link_to "Отчет", companys_report_path(:id => cl.id) %></td>
 					</tr>		
-					<% end %>
-			
+					<% end %>			
 		</tbody>
 </table>
-</center>
 
-<p></p>
-</div>
-</div>
-</center>
+<center><small><%= will_paginate @companies, renderer: BootstrapPagination::Rails %></small></center>

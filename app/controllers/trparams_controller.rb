@@ -53,7 +53,7 @@ class TrparamsController < ApplicationController
   end
 
   def show
-     @tr = Trparam.find(params[:tr_id])
+    @tr = Trparam.find(params[:tr_id])
     @mp = Mpoint.find(params[:id])
     params[:mp_id] = @mp.id
   end

@@ -1,34 +1,37 @@
-<div class="center hero-unit">
-		    
-<h2>Список поставщиков</h2>
+<% provide(:title, 'Поставщики') %>
+	    
+<h2 align="center">Список поставщиков</h2>
 
 <table class="table table-striped">
-		<thead>
-			<tr>
-			   <th><center>№</center></th>
-			   <th><center>Наименование</center></th>
-			   <th><center>Действие</center></th>
-			</tr>	
-		</thead>
-		<tbody>
-					<% i = 0 %>
-					<% if @fpr == 0 %>
-					<% @furns.each do |fr| %>
-						<tr>
-						<td align="center"><%= i = i + 1 %></td>
-						<td align="center"><%= fr.name %></td>
-						<td align="center"><%= link_to "Открыть", furnizor_path(fr) %></td>
-						</tr>
-					<% end %>	
-					<% else %>
-					<tr>
-						<% i = i + 1 %>	 
-						<td align="center"><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
-						<td align="center"><%= @furn.name %></td>
-						<td align="center"><%= link_to "Открыть", furnizor_path(@furn) %></td>
-					</tr>
-					<% end %>			
-		</tbody>
+  <thead>
+	<tr>
+	  <th><center>№</center></th>
+	  <th><center>Наименование</center></th>
+	  <th><center>Действие</center></th>
+	</tr>	
+  </thead>
+  <tbody>
+	<% i = 0 %>
+	<% if @fpr == 0 %>
+	  <% @furns.each do |fr| %>
+		<tr>
+		   <% i = i + 1 %>	
+		   <td align="center"><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+		   <td align="center"><%= fr.name %></td>
+		   <td align="center"><%= link_to "Открыть", furnizor_path(fr) %></td>
+		</tr>
+	  <% end %>	
+	<% else %>
+ 	    <tr>
+			<% i = i + 1 %>	 
+			<td align="center"><%=  i %></td>
+			<td align="center"><%= @furn.name %></td>
+			<td align="center"><%= link_to "Открыть", furnizor_path(@furn) %></td>
+		</tr>
+	<% end %>			
+  </tbody>
 </table>
-<small><%= will_paginate @furns, renderer: BootstrapPagination::Rails %></small>
-</div>
+
+<% if @fpr == 0 %>
+   <center><small><%= will_paginate @furns, renderer: BootstrapPagination::Rails %></small></center>  
+<% end %>

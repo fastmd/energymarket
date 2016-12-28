@@ -1,7 +1,7 @@
-
 <% provide(:title, 'Показания') %>
 
-<h3>Ввод текущих показаний </h3>
+<center>
+<h3>Ввод текущих показаний</h3>
 
 <% @my_arr = [1,2,3,4,5] %>
 <%= form_for([@mp,@mp.mvalues.build]) do |f| %>
@@ -13,8 +13,9 @@
 	<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
 	<td><%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %></td>
 <% end %>						
+</center>
 			
-<h3>История показаний </h3>
+<h3 align="center">История показаний</h3>
 
 <table class="table table-striped">
 	<thead>
@@ -29,17 +30,6 @@
 		</tr>	
 	</thead>
 	<tbody>					
-		<% if @mv.count == 0%>
-			<tr>	
-				<td><%=  %></td>
-				<td><%=  %></td>
-				<td><%=  %></td>
-				<td><%=  %></td>
-				<td><%=  %></td>
-				<td><%=  %></td>
-				<td><%=  %></td>
-			</tr>
-		<% else %>
 			<% i = 0%>
 			<% @mv.each do |cl| %>
 				<tr>
@@ -53,8 +43,9 @@
 					<td><%= cl.comment %></td>
 				</tr>  
 			<% end %>	
-		<% end %>	
 	</tbody>
 </table>
-<small><%= will_paginate @mv, renderer: BootstrapPagination::Rails %></small>
+
+<center><small><%= will_paginate @mv, renderer: BootstrapPagination::Rails %></small></center>
+
 
