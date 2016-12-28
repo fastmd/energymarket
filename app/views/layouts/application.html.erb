@@ -1,47 +1,17 @@
-<!-- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>-->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"> 
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-  
-<!-- DataTables -->
- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script> 
-
 <!DOCTYPE html>
-<html>
-	
+<html>	
   <head>
-    <title>App</title>
-    <%= csrf_meta_tags %>
-
-     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %> 
+    <title><%= full_title(yield(:title)) %></title>
+     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'true' %>
+     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'true' %>
+     <%= csrf_meta_tags %>
+     <%= render 'layouts/shim' %>
   </head>
-
   <body>
-  	<center>
-  		
-</center>
-<center>
-<div class="page">
-<div class="leftcol">
-	<% if  current_user != nil %>
-  		User : <%= current_user.email %>
-  		<% end %>    
-	
-	</div>
-	
-<div class="rightcol">
-	Выход
-</div>        	
-</div>
-</center>
-    <center><%= image_tag('me.jpg', :alt => "image") %></center><br>
-    <%= yield %> 
-    <br><br>       
-    <center><%= image_tag('octo.jpg', :alt => "image", :width => "60", :height => "60") %></center><br> 
-  </body>
+  	<%= render 'layouts/header' %>
+    <div class="container">
+    	<%= yield %> 
+    	<%= render 'layouts/footer' %>
+    </div>         
+   </body>
 </html>

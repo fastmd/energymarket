@@ -5,7 +5,7 @@
 <%= link_to "Добавить потребителя", :controller => "companys", 
             :action => "new" %>
             <h1>Список поставщиков</h1> 
-<table id="mcl" border="0" cellspacing="5" cellpadding="5">
+<table class="table table-striped">
 		<thead>
 			<tr>
 			   <th>№</th>
@@ -18,13 +18,10 @@
 					<% @furns.each do |fr| %>
 					<tr>
 						<td><%= i = i + 1 %></td>
-						<td><%= fr.name %></td>
-						
-						<td><%= link_to "Открыть", furnizor_path(fr) %></td>
-			
+						<td><%= fr.name %></td>						
+						<td><%= link_to "Открыть", furnizor_path(fr) %></td>			
 					</tr>		
-					<% end %>
-			
+					<% end %>			
 		</tbody>
 </table>
   

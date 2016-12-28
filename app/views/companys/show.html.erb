@@ -1,36 +1,8 @@
-<!-- DataTables CSS -->
- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> 
-  
-<!-- jQuery 
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>  -->
-  
- <!-- DataTables --> 
- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
+<% provide(:title, 'Подстанции') %>
 
- 
-<!-- <script src="js/vendor/jquery.js"></script>
-  <script src="js/foundation/foundation.js"></script>
-  <script src="js/foundation/foundation.magellan.js"></script> --> 
-  
-
- <script> 
-$(document).ready(function() {
-	 //window.location.reload();
-    $('#mcln').DataTable( {
-        "language": {
-            "lengthMenu": "Показать _MENU_ записей на странице",
-            "zeroRecords": "Ничего не найдено, простите",
-            "info": "Показать страницу _PAGE_ из _PAGES_",
-            "infoEmpty": "No records available",
-            "infoFiltered": "(выбрано из _MAX_ total записей)",
-            "search": "Поиск",
-            "previousSibling": "Предыдущий",
-            "nextSibling": "Следующий"
-        }
-    } );
-} );
-</script> 
-<center>
+<h3><%= "Потребитель: #{@cp.name}" %></h3>
+	
+<div class="center">
 	<% if @fpr > 5 %>
 		<% @fr = @cp.furnizor %>
 		<%= link_to "Назад", furnizor_path(@fr) %>
@@ -43,45 +15,39 @@ $(document).ready(function() {
 		<% @fl = @cp.filial %>
 		<%= link_to "Назад", filial_path(@fl) %>
 	<% end %>
-</center>	
-	
-<center>
-	<div class="page">
-	<div class="centercol">
-		
-	<h1><%= @cp.name %></h1>
-<% comp = @cp %>
-<%= link_to "Добавить присоединение", :controller => "mpoints", 
+				
+<%= link_to "Добавить подстанцию", :controller => "mpoints", 
             :action => "new", 
             :cnum => @cp.id %>
-<table id="mcln" border="0" cellspacing="5" cellpadding="5">
+            
+<h3>Подстанции</h3> 
+
+</div>
+           
+<table class="table table-striped">
 		<thead>
 			<tr>
 			   <th>№</th>
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
 			   <th>Действие</th>
-			   <th>Скачать</th>
-			   <th>Скачать</th>			   
+			   <th>Скачать</th>		   
 			</tr>	
 		</thead>
 		<tbody>
 					<% i = 0%>
 					<% @mp.each do |cl| %>
 					<tr>
-						<td align="center"><%= i = i + 1 %></td>
-						<td align="center"><%= cl.messtation %></td>
-						<td align="center"><%= cl.meconname %></td>
-  						<td align="center"><%= link_to "Открыть" , mpoint_path(cl) %></td>
-  						<td align="center"><%= link_to "XLSX без смс и регистрации", mpoint_path(cl,format: "xlsx") %></td>
-  						<td align="center"><%= link_to "PDF без смс и регистрации", mpoint_path(cl,format: "pdf") %></td>  						
+						<% i = i + 1 %>
+						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
+						<td><%= cl.messtation %></td>
+						<td><%= cl.meconname %></td>
+  						<td><%= link_to "Открыть" , mpoint_path(cl) %></td>
+  						<td><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, mpoint_path(cl,format: "xlsx") %>
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), mpoint_path(cl,format: "pdf") %></td>  						
 					</tr>		
-					<% end %>
-			
+					<% end %>			
 		</tbody>
 </table>
+<small><%= will_paginate @mp, renderer: BootstrapPagination::Rails %></small>
 
-</div>
-</div>
-
-</center>

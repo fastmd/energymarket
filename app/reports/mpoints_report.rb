@@ -15,12 +15,16 @@ class MpointsReport < Prawn::Document
     
   def to_pdf(mvalues,mpoints)
     # привязываем шрифты
-    font_families.update(
-      "OpenSans" => {
-        :bold => "d:/aptana/fonts/OpenSans-Bold.ttf",
-        :italic => "d:/aptana/fonts/OpenSans-Italic.ttf",
-        :normal  => "d:/aptana/fonts/OpenSans-Light.ttf" })
-    font "OpenSans", :size => 10
+    if RUBY_PLATFORM == "i386-mingw32"
+      font_families.update(
+        "OpenSans" => {
+                        :bold => "d:/aptana/fonts/OpenSans-Bold.ttf",
+                        :italic => "d:/aptana/fonts/OpenSans-Italic.ttf",
+                        :normal  => "d:/aptana/fonts/OpenSans-Light.ttf" })
+      font "OpenSans", :size => 10
+    else 
+      font "Times-Roman", :size => 10   
+    end
     move_down(1)
     text "История показаний", :size => 15, :style => :bold, :align => :center
     move_down(18)

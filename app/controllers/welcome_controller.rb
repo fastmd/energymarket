@@ -8,8 +8,7 @@ class WelcomeController < ApplicationController
     end
      if current_user.has_role? :"cduser-fenosa"
       redirect_to welcome_cdindex_path
-    end 
-    
+    end    
     if current_user.has_role? :setsu
       redirect_to welcome_setsuindex_path
     end
@@ -24,14 +23,10 @@ class WelcomeController < ApplicationController
     end
     if current_user.has_role? :"setsu-sud"
       redirect_to welcome_setsuindex_path
-    end
-    
+    end   
    # @furns = Furnizor.all
    # @filials = Filial.all
-   # @companies = Company.all
-    
-    
-    
+   # @companies = Company.all         
   end
   
   def cdindex
@@ -45,7 +40,8 @@ class WelcomeController < ApplicationController
     end
     if current_user.has_role? :"cduser"
       @fpr = 0
-      @furns = Furnizor.all
+      @perpage = 10
+      @furns = Furnizor.paginate(:page => params[:page], :per_page => @perpage = 10 )
     end
     @companies = Company.all
   end
@@ -68,10 +64,7 @@ class WelcomeController < ApplicationController
     end
     if current_user.has_role? :"setsu"
       @fpr = 5
-    end
-    
+    end   
   end
-  
- 
-  
+    
 end

@@ -1,34 +1,5 @@
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-  
-<!-- DataTables -->
- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js"></script>
 
- 
-<!-- <script src="js/vendor/jquery.js"></script>
-  <script src="js/foundation/foundation.js"></script>
-  <script src="js/foundation/foundation.magellan.js"></script> --> 
-  
-
- <script> 
-$(document).ready(function() {
-    $('#mcln').DataTable( {
-        "language": {
-            "lengthMenu": "Показать _MENU_ записей на странице",
-            "zeroRecords": "Ничего не найдено, простите",
-            "info": "Показать страницу _PAGE_ из _PAGES_",
-            "infoEmpty": "No records available",
-            "infoFiltered": "(выбрано из _MAX_ total записей)",
-            "search": "Поиск",
-            "previousSibling": "Предыдущий",
-            "nextSibling": "Следующий"
-        }
-    } );
-} );
-</script> 
+<% provide(:title, 'Показания') %>
 
 <h3>Ввод текущих показаний </h3>
 
@@ -42,13 +13,10 @@ $(document).ready(function() {
 	<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
 	<td><%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %></td>
 <% end %>						
-
-<div class="page">
-<div class="centercol">						
-</div>	
-<div class="centercol"> 	
+			
 <h3>История показаний </h3>
-<table id="mcln" border="1">
+
+<table class="table table-striped">
 	<thead>
 		<tr>
 		   <th>№</th>
@@ -75,7 +43,8 @@ $(document).ready(function() {
 			<% i = 0%>
 			<% @mv.each do |cl| %>
 				<tr>
-					<td><%= i += 1 %></td>
+					<% i = i + 1 %>						
+					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>				
 					<td><%= cl.actdate.to_formatted_s(:day_month_year) %></td>
 					<td><%= cl.actp180 %></td>
 					<td><%= cl.actp280 %></td>
@@ -87,6 +56,5 @@ $(document).ready(function() {
 		<% end %>	
 	</tbody>
 </table>
+<small><%= will_paginate @mv, renderer: BootstrapPagination::Rails %></small>
 
-</div>
-</div>

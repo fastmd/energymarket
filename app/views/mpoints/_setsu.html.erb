@@ -79,7 +79,7 @@
   	<%= form_for([@mp,@mp.lineprs.build]) do |f| %>
   		<%= f.label :"Длина линии :"%><br>
   		<%= text_field_tag 'l1'%><br><br>
-  		<%= f.label :"Сопративление линии : "%><br>
+  		<%= f.label :"Сопротивление линии : "%><br>
   		<%= text_field_tag 'p1'%><br><br>
   		<%= f.submit "Сохранить" %>
   	<% end %>
@@ -93,7 +93,7 @@
 					<tr>
 			   			<th>№</th>
 			   			<th>Длина линии,км</th>
-			   			<th>Сопративление линии</th>
+			   			<th>Сопротивление линии</th>
 			   			<th>Действие</th>
 					</tr>	
 				</thead>

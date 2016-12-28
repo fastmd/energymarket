@@ -33,7 +33,9 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
      @mp =  Mpoint.find(params[:id])
-     @mv =  @mp.mvalues.all.reverse
+ #    @mv =  @mp.mvalues.all.reverse.paginate(:page => params[:page])
+     @perpage = 10
+     @mv =  Mpoint.find(params[:id]).mvalues.all.reverse.paginate(:page => params[:page], :per_page => @perpage )
      @trp =  @mp.trparams.all
      @lnp =  @mp.lineprs.all 
     respond_to do |format|

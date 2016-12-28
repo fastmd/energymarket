@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'welcome#index'  
   get 'filials/index'
 
   get 'filials/show'
@@ -53,8 +54,6 @@ Rails.application.routes.draw do
   get 'companys/new'
   post 'companys/new'
 
-  get 'companys/show'
-
   get 'companys/index'
 
   get 'clients/new'
@@ -63,7 +62,10 @@ Rails.application.routes.draw do
 
   get 'clients/show'
 
-post 'companys/show'
+get '/companys/report' => 'companys#report'
+post '/companys/report' => 'companys#report'
+get '/companys/show' => 'companys#show'
+post '/companys/show' => 'companys#show'
 post 'mpoints/show'
 post 'trparams/:id/edit' => 'trparams#edit'
 
@@ -82,7 +84,7 @@ resources :mpoints  do
   resources :lineprs
 end    
 
-  root to: 'welcome#index'
+
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

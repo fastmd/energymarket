@@ -21,13 +21,13 @@
   			<%= f.label :"Тип счетчика"%><br>
   			<%= text_field_tag 'metertype'%><br>
   			<%= f.label :"Заводской № счетчика"%><br>
-  			<%= text_field_tag 'meternum'%><br>
+  			<%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %><br>
   			<%= f.label :"Коэфициент трансформатора тока :"%><br>
-  			<%= text_field_tag 'koeftt'%><br>
+  			<%= number_field_tag 'koeftt', nil , min: 1, max: 999999, step: 1 %><br>
   			<%= f.label :"Коэфициент трансформатора напряжения :"%><br>
-  			<%= text_field_tag 'koeftn'%><br>
-  			<%= f.label :"Расчтный коэфициент счетчика :"%><br>
-  			<%= text_field_tag 'koefcalc'%><br>
+  			<%= number_field_tag 'koeftn', nil , min: 1, max: 999999, step: 1 %><br>
+  			<%= f.label :"Расчетный коэфициент счетчика :"%><br>
+  			<%= number_field_tag 'koefcalc', nil , min: 1, max: 999999, step: 1 %><br>
   			<%= hidden_field_tag :co_id, @cp.id %>                      
   			<%= f.submit "Сохранить",:num => @cp.id %>
   			<% end %>
