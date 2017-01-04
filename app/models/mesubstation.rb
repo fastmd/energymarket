@@ -1,0 +1,2 @@
+class Mesubstation < ApplicationRecord
+end

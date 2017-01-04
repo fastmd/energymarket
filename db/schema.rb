@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161128084652) do
+ActiveRecord::Schema.define(version: 20170104082747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "clients", force: :cascade do |t|
+    t.text     "cname"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "companies", force: :cascade do |t|
     t.text     "name"
@@ -42,6 +48,17 @@ ActiveRecord::Schema.define(version: 20161128084652) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "lineparams", force: :cascade do |t|
+    t.float    "r1"
+    t.float    "r2"
+    t.float    "l1"
+    t.float    "l2"
+    t.integer  "mpoint_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mpoint_id"], name: "index_lineparams_on_mpoint_id", using: :btree
+  end
+
   create_table "lineprs", force: :cascade do |t|
     t.float    "l1"
     t.float    "l2"
@@ -51,6 +68,26 @@ ActiveRecord::Schema.define(version: 20161128084652) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["mpoint_id"], name: "index_lineprs_on_mpoint_id", using: :btree
+  end
+
+  create_table "mesubstations", force: :cascade do |t|
+    t.text     "name"
+    t.text     "vlclass"
+    t.integer  "cod"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "meters", force: :cascade do |t|
+    t.string   "metertype"
+    t.integer  "meternum"
+    t.string   "koeftt"
+    t.string   "koeftn"
+    t.integer  "koefcalc"
+    t.integer  "mpoint_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
   end
 
   create_table "mpoints", force: :cascade do |t|
@@ -64,11 +101,7 @@ ActiveRecord::Schema.define(version: 20161128084652) do
     t.string   "clsstation"
     t.string   "clconname"
     t.string   "voltcl"
-    t.string   "metertype"
-    t.integer  "meternum"
-    t.string   "koeftt"
-    t.string   "koeftn"
-    t.integer  "koefcalc"
+    t.integer  "mess_id"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
@@ -76,16 +109,15 @@ ActiveRecord::Schema.define(version: 20161128084652) do
     t.integer  "vnum"
     t.float    "val"
     t.text     "comment"
-    t.integer  "mpoint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.date     "actdae"
     t.string   "actp180"
     t.string   "actp280"
     t.string   "actp380"
     t.string   "actp480"
     t.date     "actdate"
-    t.index ["mpoint_id"], name: "index_mvalues_on_mpoint_id", using: :btree
+    t.integer  "meter_id"
+    t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 
   create_table "roles", force: :cascade do |t|
@@ -134,4 +166,5 @@ ActiveRecord::Schema.define(version: 20161128084652) do
 
   add_foreign_key "companies", "filials"
   add_foreign_key "companies", "furnizors"
+  add_foreign_key "mvalues", "meters"
 end
