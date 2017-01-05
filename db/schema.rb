@@ -10,16 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170104082747) do
+ActiveRecord::Schema.define(version: 20170104140101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "clients", force: :cascade do |t|
-    t.text     "cname"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "companies", force: :cascade do |t|
     t.text     "name"
@@ -46,17 +40,6 @@ ActiveRecord::Schema.define(version: 20170104082747) do
     t.text     "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "lineparams", force: :cascade do |t|
-    t.float    "r1"
-    t.float    "r2"
-    t.float    "l1"
-    t.float    "l2"
-    t.integer  "mpoint_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["mpoint_id"], name: "index_lineparams_on_mpoint_id", using: :btree
   end
 
   create_table "lineprs", force: :cascade do |t|

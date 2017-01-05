@@ -7,7 +7,7 @@
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), '#'  %></li>
     <li><%= form_tag companys_report_path(:id => @id) do %>
 	            <%= date_field_tag :date_for_report, @ddate %>
-                <%= submit_tag "Пересчет" %>
+                <%= image_submit_tag("vjuh-nevisp.png",class: 'submit_button',:alt => "Пересчет") %>
                 <% end %></li>    
   </ul>  
 </nav>
