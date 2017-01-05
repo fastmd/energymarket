@@ -1,3 +1,3 @@
 class Mvalue < ApplicationRecord
-  belongs_to :mpoint
+  belongs_to :meter
 end

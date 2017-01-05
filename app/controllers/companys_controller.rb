@@ -51,16 +51,19 @@ class CompanysController < ApplicationController
       report_rind[0] = i+1     
       report_rind[1] = "#{item.messtation} (#{item.clsstation})"
       report_rind[2] = "#{item.meconname} (#{item.clconname})"
-      report_rind[3] = item.meternum
-      @mv0 = Mvalue.where("mpoint_id = ? AND (actp180 IS NOT NULL) AND (/*actdate >= ? AND*/ actdate <= ?)", item.id, @ddateb1, @ddateb2)
-      @mv1 = Mvalue.where("mpoint_id = ? AND (actp180 IS NOT NULL) AND (/*actdate >= ? AND*/ actdate <= ?)", item.id, @ddatee1, @ddatee2)
-      if @mv0.count !=0 then report_rind[4] = @mv0.order(:actdate, :created_at, :updated_at).last.actp180 else report_rind[4] = nil end       
-      if @mv1.count !=0 then report_rind[5] = @mv1.order(:actdate, :created_at, :updated_at).last.actp180 else report_rind[5] = nil end
-      report_rind[6] = report_rind[4].to_f - report_rind[5].to_f  
-      if item.koefcalc.nil? then report_rind[7] = 1 else report_rind[7] = item.koefcalc end           
-      report_rind[8] = report_rind[7].to_i * report_rind[6].to_f  
-      @report[i] =  [report_rind[0],report_rind[1],report_rind[2],report_rind[3],report_rind[4],report_rind[5],report_rind[6],report_rind[7],report_rind[8]]      
-      i+=1
+      @met = item.meters.first
+      if !@met.nil? then
+        report_rind[3] = @met.meternum
+        @mv0 = Mvalue.where("meter_id = ? AND (actp180 IS NOT NULL) AND (/*actdate >= ? AND*/ actdate <= ?)", @met.id, @ddateb1, @ddateb2)
+        @mv1 = Mvalue.where("meter_id = ? AND (actp180 IS NOT NULL) AND (/*actdate >= ? AND*/ actdate <= ?)", @met.id, @ddatee1, @ddatee2)
+        if @mv0.count !=0 then report_rind[4] = @mv0.order(:actdate, :created_at, :updated_at).last.actp180 else report_rind[4] = nil end       
+        if @mv1.count !=0 then report_rind[5] = @mv1.order(:actdate, :created_at, :updated_at).last.actp180 else report_rind[5] = nil end
+        report_rind[6] = report_rind[4].to_f - report_rind[5].to_f  
+        if @met.koefcalc.nil? then report_rind[7] = 1 else report_rind[7] = @met.koefcalc end           
+        report_rind[8] = report_rind[7].to_i * report_rind[6].to_f  
+        @report[i] =  [report_rind[0],report_rind[1],report_rind[2],report_rind[3],report_rind[4],report_rind[5],report_rind[6],report_rind[7],report_rind[8]]      
+        i+=1
+      end  
     end    
   end  
   
