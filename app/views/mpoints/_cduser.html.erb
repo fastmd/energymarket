@@ -31,6 +31,7 @@
 	</thead>
 	<tbody>					
 			<% i = 0%>
+			<% if !@mv.nil? %>
 			<% @mv.each do |cl| %>
 				<tr>
 					<% i = i + 1 %>						
@@ -41,11 +42,12 @@
 					<td><%= cl.actp380 %></td>
 					<td><%= cl.actp480 %></td>
 					<td><%= cl.comment %></td>
-				</tr>  
+				</tr>
+			<% end %>	  
 			<% end %>	
 	</tbody>
 </table>
 
-<center><small><%= will_paginate @mv, renderer: BootstrapPagination::Rails %></small></center>
+<center><small><%= if !@mv.nil? then will_paginate @mv, renderer: BootstrapPagination::Rails end %></small></center>
 
 

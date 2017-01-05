@@ -33,13 +33,15 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id])
-    @met = @mp.meters.all
-    @met.each do |item|
-       @mv = item.mvalues.all 
-    end
-    @mv =  @mv.reverse.paginate(:page => params[:page], :per_page => @perpage = 10)
     @trp =  @mp.trparams.all
-    @lnp =  @mp.lineprs.all 
+    @lnp =  @mp.lineprs.all    
+    @met = @mp.meters.first
+    if !@met.nil? then
+       @mv =  @mp.mvalues.all 
+       @mv =  @mv.reverse.paginate(:page => params[:page], :per_page => @perpage = 10)
+    else
+       @mv =  nil 
+    end      
     respond_to do |format|
       format.html
 #      format.csv { send_data @mv.to_csv }

@@ -43,8 +43,10 @@ class MpointsReport < Prawn::Document
     # выборка записей
     i=0      
     data = []
+    if !mvalues.nil? then
     items = mvalues.each do |item|
       data << row(i+=1, item.actdate.to_formatted_s(:day_month_year), item.actp180, item.actp280, item.actp380, item.actp480, item.comment)
+    end
     end
     
     head = make_table([Headers], :column_widths => Widths)
