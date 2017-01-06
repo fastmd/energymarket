@@ -113,7 +113,12 @@ class CompanysController < ApplicationController
         @report[i] =  [nil,'Сумма a/pr',nil,nil,nil,nil,nil,nil,sumaapr]       
         i+=1
         @report[i] =  [nil,'Сумма a/liv',nil,nil,nil,nil,nil,nil,sumaaliv]       
-        i+=1                  
+        i+=1 
+    respond_to do |format|
+      format.html
+      format.pdf { send_data ListaReport.new.to_pdf(@cp,@luna,@report), :type => 'application/pdf', :filename => "lista.pdf" }
+      format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="lista.xlsx"' }
+    end                         
   end  
   
   def index

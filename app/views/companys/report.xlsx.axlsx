@@ -1,0 +1,42 @@
+wb = xlsx_package.workbook
+
+wb.styles do |style|
+    lsimple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true })
+    simple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+	highlight_cell = style.add_style(bg_color: "EFC376",
+                                   border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true  })
+    date_cell = style.add_style(format_code: "dd-mm-yyyy", :b => true, :sz => 14, alignment: { horizontal: :center, vertical: :center })
+    simple_date_cell = style.add_style(format_code: "dd-mm-yyyy", border: Axlsx::STYLE_THIN_BORDER, :b => true, alignment: { horizontal: :center, vertical: :center, wrap_text: :true  })
+    header_cell = style.add_style(:fg_color=> "FFFFFF",
+                                  :b => true,
+                                  :bg_color => "004586",
+                                  :sz => 14, 
+                                  alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+    theader_cell = style.add_style(:b => true,
+                                   :sz => 12,
+                                   border: Axlsx::STYLE_THIN_BORDER, 
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+                                   
+	wb.add_worksheet(name: "Lista") do |sheet|
+	    sheet.add_row [nil, Time.now.strftime("Отчет сгенерирован %e %b %Y в %H:%M")] 
+	    sheet.add_row [""]
+	    sheet.add_row ["","LISTA"], style: [nil, header_cell]
+	    sheet.add_row ["","de calcul a intrarii energiei electrice la #{@cp.name}"], style: [nil, header_cell]
+	    sheet.add_row ["","pentru luna #{@luna} anul #{@ddate.year}"], style: [nil, header_cell]	    
+	    sheet.add_row [""]	    
+	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "N contor.", 
+	                   "Indicatii \n #{@ddatee2.to_formatted_s(:day_month_year)}", "Indicatii \n #{@ddateb2.to_formatted_s(:day_month_year)}",
+	                   "Diferenta indicat.", "Coeficient contor.", "Energie kWh"], 
+    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
+    	i=0
+    	if !@report.nil? then	              
+  		@report.each do |item|
+    		sheet.add_row [item[0], item[1], item[2], nil, item[3], item[4], item[5], item[6], item[7], item[8]], 
+    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell ,simple_cell]
+    	end	              
+  		end 
+    end  
+end 
