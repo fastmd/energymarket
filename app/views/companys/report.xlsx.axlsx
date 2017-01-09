@@ -1,42 +1,86 @@
 wb = xlsx_package.workbook
+xlsx_package.use_autowidth = true
 
 wb.styles do |style|
-    lsimple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
-                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true })
-    simple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
+    defaults =  { :style => :thin, :color => "000000" }
+    borders = Hash.new do |hash, key|
+       hash[key] = wb.styles.add_style :border => defaults.merge( { :edges => key.to_s.split('_').map(&:to_sym) } )
+    end
+    top_row =  [borders[:top_left], borders[:top], borders[:top], borders[:top_right]]
+    middle_row = [borders[:left], nil, nil, borders[:right]]
+    bottom_row = [borders[:bottom_left], borders[:bottom], borders[:bottom], borders[:bottom_right]]     
+
+    lsimple_cell = style.add_style(:border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true})
+    simple_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
                                    alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
-	highlight_cell = style.add_style(bg_color: "EFC376",
-                                   border: Axlsx::STYLE_THIN_BORDER,
-                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true  })
-    date_cell = style.add_style(format_code: "dd-mm-yyyy", :b => true, :sz => 14, alignment: { horizontal: :center, vertical: :center })
-    simple_date_cell = style.add_style(format_code: "dd-mm-yyyy", border: Axlsx::STYLE_THIN_BORDER, :b => true, alignment: { horizontal: :center, vertical: :center, wrap_text: :true  })
-    header_cell = style.add_style(:fg_color=> "FFFFFF",
+    lsimples_cell = style.add_style(:border => { :style => :thin, :color => "000000", :edges => [:top, :bottom] },
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true},
+                                   :b => true, :bg_color => "e6ffe6")
+    simples_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6") 
+    simplesel_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6") 
+    simplese_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6")  
+    header_cell = style.add_style(:fg_color=> "000000",
                                   :b => true,
-                                  :bg_color => "004586",
+                                  :bg_color => "FFFFFF",
                                   :sz => 14, 
-                                  alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+                                  alignment: { horizontal: :center, vertical: :center, wrap_text: :false })
     theader_cell = style.add_style(:b => true,
                                    :sz => 12,
-                                   border: Axlsx::STYLE_THIN_BORDER, 
+                                   :bg_color => "E0E0E0",
+                                   :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] }, 
                                    alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
-                                   
-	wb.add_worksheet(name: "Lista") do |sheet|
-	    sheet.add_row [nil, Time.now.strftime("Отчет сгенерирован %e %b %Y в %H:%M")] 
+    theaderb_cell = style.add_style(:b => true,
+                                   :sz => 12,
+                                   :bg_color => "e6f2ff",
+                                   :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] }, 
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })                                   
+    
+    margins = {:left => 0.7, :right => 0.5, :top => 1.2, :bottom => 1.2, :header => 0.7, :footer => 0.7}
+    setup = {:fit_to_width => 1, :orientation => :portrait, :paper_width => "210mm", :paper_height => "297mm"}
+    options = {:grid_lines => false, :headings => false, :horizontal_centered => true}
+    header_footer = {:different_first => false, :odd_header => '&L&F : &A&R&D &T', :odd_footer => 'pagina &C&P din &N'} 
+
+	wb.add_worksheet(name: "Lista", :page_margins => margins, :page_setup => setup, :print_options => options, :header_footer => header_footer ) do |sheet|
+	    sheet.add_row [nil, Time.now.strftime("Lista a fost generata %d.%m.%Y la %H:%M")] 
 	    sheet.add_row [""]
-	    sheet.add_row ["","LISTA"], style: [nil, header_cell]
-	    sheet.add_row ["","de calcul a intrarii energiei electrice la #{@cp.name}"], style: [nil, header_cell]
-	    sheet.add_row ["","pentru luna #{@luna} anul #{@ddate.year}"], style: [nil, header_cell]	    
-	    sheet.add_row [""]	    
-	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "N contor.", 
+	    sheet.add_row ["LISTA"], style: [header_cell]
+	    sheet.add_row ["de calcul a intrarii energiei electrice la #{@cp.name}"], style: [header_cell]
+	    sheet.add_row ["pentru luna #{@luna} anul #{@ddate.year}"], style: [header_cell]
+	    sheet.merge_cells('A3:J3')
+        sheet.merge_cells('A4:J4')
+        sheet.merge_cells('A5:J5')
+	    sheet.add_row [""]
+	    sheet.add_row [nil, "Denumirea furnizorului:  #{@cp.furnizor.name}"]
+	    sheet.add_row [""] 	    
+	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "№ contor.", 
 	                   "Indicatii \n #{@ddatee2.to_formatted_s(:day_month_year)}", "Indicatii \n #{@ddateb2.to_formatted_s(:day_month_year)}",
 	                   "Diferenta indicat.", "Coeficient contor.", "Energie kWh"], 
-    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
-    	i=0
+    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
+    		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]
+        sheet.merge_cells('C9:D9')    		           
+	    sheet.add_row ["1", "2", "3", "", "4", "5", "6", "7", "8", "9"], 
+    		           style: [theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell],
+    		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]   		           
+        sheet.merge_cells('C10:D10') 
     	if !@report.nil? then	              
   		@report.each do |item|
-    		sheet.add_row [item[0], item[1], item[2], nil, item[3], item[4], item[5], item[6], item[7], item[8]], 
-    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell ,simple_cell]
-    	end	              
-  		end 
-    end  
+  		    if (item[1]!='Сумма a/pr' && item[1]!='Сумма a/liv') then
+    		sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]], 
+    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell ,simple_cell],
+    		              :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]
+    		else
+    		sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]], 
+    		              style: [simplesel_cell, lsimples_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell ,simples_cell],
+    		              :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]    		
+    		end              
+    	end     
+     end 	  		
+  end  
 end 

@@ -9,20 +9,18 @@
 <div class="center">
 	<h2>Ввод нового потребителя</h2>
 	<div class="page">
-	<div class="centercol">
-			
+	<div class="centercol">		
 			<%= form_for :company, url: companys_path do |f| %>
-  			<%= f.label :"Наименование потребителя :"%><br>
-  			<%= text_field_tag 'coname', nil, :maxlength => 40, :size => 40 %> <br>
-  			<%= f.label :"Код потребителя :"%><br>
-  			<%= text_field_tag 'pcod'%><br>
-  			<%= f.label :"Комментарий"%><br>
-  			<%= text_area_tag 'comment'%><br>
-  			
-  			                      
+  			<%= f.label :"Наименование потребителя :" %><br>
+  			<%= text_field_tag 'name', nil, :maxlength => 40, :size => 40 %> <br>
+  			<%= f.label :"Код потребителя :" %><br>
+  			<%= text_field_tag 'region' %><br>
+  			<%= f.label :"Поставщик :" %><br>
+  			<%= select_tag "furnizor_id", options_for_select([ 1, 2 ], 1) %><br>
+  			<%= f.label :"Филиал :" %><br>
+  			<%= select_tag "filial_id", options_for_select([ 1 ], 1) %><br>  						                     
   			<%= f.submit "Сохранить"%>
-  			<% end %>
-  		
+  			<% end %>  		
 	</div>
 	</div>
 </div>
