@@ -5,9 +5,11 @@
     <li><%= if (current_user.has_role? :"cduser-fee") || (current_user.has_role? :cduser) || (current_user.has_role? :"cduser-fenosa") 
     	        then link_to "Назад", welcome_cdindex_path 
     	        else link_to "Назад", root_path end %></li>
-    <li><%= link_to "Добавить потребителя", companys_new_path(:fr => @fr) %></li>
+    <li><%= link_to "Добавить потребителя", companys_new_path(:fr => @fr, :fl => nil) %></li>
   </ul>  
 </nav>
+
+<h4><%= "Поставщик: #{@fr.name}" %></h4>
 
 <h2 align="center">Список потребителей</h2>	 		           
 
@@ -16,6 +18,8 @@
 			<tr>
 			   <th>№</th>
 			   <th>Наименование</th>
+			   <th>Код</th>
+			   <th>Филиал</th>
 			   <th>Действие</th>
 			   <th>Действие</th>			   
 			</tr>	
@@ -27,6 +31,8 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= cl.name %></td>
+						<td><%= cl.region %></td>
+						<td><%= Filial.find(cl.filial_id).name %></td>
 						<td><%= link_to "Открыть", company_path(cl) %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => cl.id) %></td>
 					</tr>		

@@ -23,7 +23,7 @@
   			<%    furns[i] = [item.name, item.id] %>
   			<%    i+=1 %>    
   			<%  end %>  			
-  			<%= select_tag "furnizor_id", options_for_select(furns, params[:fr]) %><br>
+  			<%= select_tag "furnizor_id", options_for_select( furns, if params[:fr].nil? then furns[0][1] else params[:fr] end ) %><br>
   			<%= f.label :"Филиал :" %><br>
   			<%  fil=Filial.all %>
   			<%  fils=Array[] %>
@@ -32,7 +32,7 @@
   			<%    fils[i] = [item.name, item.id] %>
   			<%    i+=1 %>    
   			<%  end %>
-  			<%= select_tag "filial_id", options_for_select(fils,fils[0][1]) %><br><br>  						                     
+  			<%= select_tag "filial_id", options_for_select( fils, if params[:fl].nil? then fils[0][1] else params[:fr] end ) %><br><br>  						                     
   			<%= f.submit "Сохранить"%>
   			<% end %>  		
 	</div>

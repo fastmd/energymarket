@@ -40,7 +40,9 @@ class CompanysController < ApplicationController
     @mp = @cp.mpoints.all
     report_rind = Array[]
     @report = Array[]
-    if (params[:date_for_report]).nil? then @ddate = Date.current else @ddate = params[:date_for_report].to_date end
+    @month_for_report = (params[:month_for_report])
+    if (params[:month_for_report]).nil? then @ddate = Date.current else @ddate = Date.strptime(params[:month_for_report], '%Y-%m') end
+ #   if (params[:date_for_report]).nil? then @ddate = Date.current else @ddate = params[:date_for_report].to_date end
     luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie']  
     @luna = luni[@ddate.month.to_i-1]                               
     @ddateb1 = Date.new(2000, 1, 1)  

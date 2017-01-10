@@ -37,6 +37,7 @@ class ListaReport < Prawn::Document
     text "pentru luna #{luna} anul #{ddate.year}", :size => 15, :style => :bold, :align => :center
     move_down(18) 
     text "Denumirea furnizorului:  #{cp.furnizor.name}", :size => 12, :style => :bold, :align => :left 
+    text "Denumirea filialei:  #{cp.filial.name}", :size => 12, :style => :bold, :align => :left 
     move_down(10)  
     # выборка записей 
     data = []

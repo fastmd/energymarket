@@ -58,6 +58,7 @@ wb.styles do |style|
         sheet.merge_cells('A5:J5')
 	    sheet.add_row [""]
 	    sheet.add_row [nil, "Denumirea furnizorului:  #{@cp.furnizor.name}"]
+	    sheet.add_row [nil, "Denumirea filialei:  #{@cp.filial.name}"]
 	    sheet.add_row [""] 	    
 	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "№ contor.", 
 	                   "Indicatii \n #{@ddatee2.to_formatted_s(:day_month_year)}", "Indicatii \n #{@ddateb2.to_formatted_s(:day_month_year)}",
