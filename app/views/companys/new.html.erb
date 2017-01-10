@@ -16,9 +16,23 @@
   			<%= f.label :"Код потребителя :" %><br>
   			<%= text_field_tag 'region' %><br>
   			<%= f.label :"Поставщик :" %><br>
-  			<%= select_tag "furnizor_id", options_for_select([ 1, 2 ], 1) %><br>
+  			<%  furn=Furnizor.all %>
+  			<%  furns=Array[] %>
+  			<%  i=0 %>     			
+  			<%  furn.each do |item| %>
+  			<%    furns[i] = [item.name, item.id] %>
+  			<%    i+=1 %>    
+  			<%  end %>  			
+  			<%= select_tag "furnizor_id", options_for_select(furns, params[:fr]) %><br>
   			<%= f.label :"Филиал :" %><br>
-  			<%= select_tag "filial_id", options_for_select([ 1 ], 1) %><br>  						                     
+  			<%  fil=Filial.all %>
+  			<%  fils=Array[] %>
+  			<%  i=0 %>     			
+  			<%  fil.each do |item| %>
+  			<%    fils[i] = [item.name, item.id] %>
+  			<%    i+=1 %>    
+  			<%  end %>
+  			<%= select_tag "filial_id", options_for_select(fils,fils[0][1]) %><br><br>  						                     
   			<%= f.submit "Сохранить"%>
   			<% end %>  		
 	</div>

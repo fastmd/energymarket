@@ -28,7 +28,7 @@
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= cl.name %></td>
 						<td><%= link_to "Открыть", company_path(cl) %></td>
-                        <td><%= link_to "Отчет", companys_report_path(:id => cl.id) %></td>
+                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => cl.id) %></td>
 					</tr>		
 					<% end %>			
 		</tbody>
