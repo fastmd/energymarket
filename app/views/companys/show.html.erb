@@ -12,6 +12,8 @@
   </ul>  
 </nav>
 
+<h4><%= "Поставщик: #{@cp.furnizor.name}" %></h4>
+<h4><%= "Филиал: #{@cp.filial.name}" %></h4>
 <h4><%= "Потребитель: #{@cp.name}" %></h4>
 	
 <h2 align="center">Точки учета</h2> 
@@ -22,21 +24,24 @@
 			   <th>№</th>
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
-			   <th>Действие</th>
-			   <th>Скачать</th>		   
+			   <th>Класс напряжения, кВ</th>
+			   <th>Счетчики</th>
+			   <th>Показания</th>	   
 			</tr>	
 		</thead>
 		<tbody>
 					<% i = 0%>
-					<% @mp.each do |cl| %>
+					<% @mp.each do |item| %>
 					<tr>
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
-						<td><%= cl.messtation %></td>
-						<td><%= cl.meconname %></td>
-  						<td><%= link_to "Открыть" , mpoint_path(cl) %></td>
-  						<td><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, mpoint_path(cl,format: "xlsx") %>
-  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), mpoint_path(cl,format: "pdf") %></td>  						
+						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
+						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
+						<td><%= item.voltcl %></td>
+						<td><%= link_to "Открыть" , meters_index_path(:id => item.id) %></td>
+  						<td><%= link_to "Открыть" , mpoint_path(item) %>
+  						    <%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, mpoint_path(item,format: "xlsx") %>
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), mpoint_path(item,format: "pdf") %></td>  						
 					</tr>		
 					<% end %>			
 		</tbody>

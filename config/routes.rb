@@ -1,4 +1,16 @@
 Rails.application.routes.draw do
+  get 'meters/index'
+  post '/meters/index' => 'meters#index'
+
+  get 'meters/new'
+
+  get 'meters/create'
+  post '/meters/create' => 'meters#create'
+  
+  get 'meters/update'
+
+  get 'meters/show'
+
   get 'static_pages/home'
 
   get 'static_pages/help'
@@ -80,6 +92,9 @@ resources :companys
 resources :mpoints  do
   resources :mvalues
 end
+resources :mpoints  do
+  resources :meters
+end
 resources :mpoints  do  
   resources :trparams
 end
@@ -87,7 +102,6 @@ end
 resources :mpoints  do  
   resources :lineprs
 end    
-
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

@@ -1,0 +1,48 @@
+<% provide(:title, 'Cчетчики') %>
+	           
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", company_path(@mp.company.id) %></li>
+    <li><%= link_to "Добавить cчетчик",  :controller => "meters", :action => "new", :cnum => @mp.id %></li>
+  </ul>  
+</nav>
+
+<h4><%= "Поставщик: #{@mp.company.furnizor.name}" %></h4>
+<h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
+<h4><%= "Потребитель: #{@mp.company.name}" %></h4>
+<h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
+	
+<h2 align="center">Счетчики</h2> 
+           
+<table class="table table-striped">
+		<thead>
+			<tr>
+			   <th>№</th>
+			   <th>Тип счетчика</th>
+			   <th>№ счетчика</th>
+			   <th>Коэффициент по току</th>
+			   <th>Коэффициент по напряжению</th>
+			   <th>Коэффициент расчетный</th>
+			   <th>Показания</th>	   
+			</tr>	
+		</thead>
+		<tbody>
+					<% i = 0%>
+					<% @met.each do |item| %>
+					<tr>
+						<% i = i + 1 %>
+						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
+						<td><%= item.metertype %></td>
+						<td><%= item.meternum %></td>
+						<td><%= item.koeftt %></td>
+						<td><%= item.koeftn %></td>
+						<td><%= item.koefcalc %></td>
+  						<td><%= link_to "Открыть" , "#" %>
+  						    <%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, "#" %>
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), "#" %></td>  						
+					</tr>		
+					<% end %>			
+		</tbody>
+</table>
+
+<center><small><%= will_paginate @met, renderer: BootstrapPagination::Rails %></small></center>

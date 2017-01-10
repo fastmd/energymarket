@@ -2,18 +2,19 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", :back %></li>
+    <li><%= link_to "Назад", company_path(@cp) %></li>
   </ul>  
 </nav>
+
+<h4><%= "Поставщик: #{@cp.furnizor.name}" %></h4>
+<h4><%= "Филиал: #{@cp.filial.name}" %></h4>
+<h4><%= "Потребитель: #{@cp.name}" %></h4>
 
 <center>
 	<h2>Ввод новой точки учета</h2>
 	<div class="page">
-	<div class="centercol">
-			
-			<%= form_for :mpoint, url: mpoints_path do |f| %>
-  			<!-- <%= f.label :"Наименование потребителя :"%><br>
-  			<%= text_field_tag 'pname', nil, :maxlength => 40, :size => 40 %> <br> --></br>
+	<div class="centercol">			
+		<%= form_for :mpoint, url: mpoints_path do |f| %>
   			<%= f.label :"Подстанция подключения ME :"%><br>
   			<%= text_field_tag 'messtation'%><br>
   			<%= f.label :"Наименование фидера ME :"%><br>
@@ -24,20 +25,9 @@
   			<%= text_field_tag 'clconname'%><br>
   			<%= f.label :"Класс напряжения"%><br>
   			<%= text_field_tag 'voltcl'%><br>
-  			<%= f.label :"Тип счетчика"%><br>
-  			<%= text_field_tag 'metertype'%><br>
-  			<%= f.label :"Заводской № счетчика"%><br>
-  			<%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %><br>
-  			<%= f.label :"Коэфициент трансформатора тока :"%><br>
-  			<%= number_field_tag 'koeftt', nil , min: 1, max: 999999, step: 1 %><br>
-  			<%= f.label :"Коэфициент трансформатора напряжения :"%><br>
-  			<%= number_field_tag 'koeftn', nil , min: 1, max: 999999, step: 1 %><br>
-  			<%= f.label :"Расчетный коэфициент счетчика :"%><br>
-  			<%= number_field_tag 'koefcalc', nil , min: 1, max: 999999, step: 1 %><br>
-  			<%= hidden_field_tag :co_id, @cp.id %>                      
+  			<%= hidden_field_tag :company_id, @cp.id %>                      
   			<%= f.submit "Сохранить",:num => @cp.id %>
-  			<% end %>
-  		
+  		<% end %> 		
 	</div>
 	</div>
 </center>

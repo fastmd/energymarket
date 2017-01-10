@@ -1,0 +1,32 @@
+<% provide(:title, 'Новый счетчик') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", meters_index_path(:id => @mp.id) %></li>
+  </ul>  
+</nav>
+
+<h4><%= "Поставщик: #{@mp.company.furnizor.name}" %></h4>
+<h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
+<h4><%= "Потребитель: #{@mp.company.name}" %></h4>
+<h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
+
+<div class="center">
+	<h2>Ввод нового счетчика</h2>
+	<div class="page">
+	<div class="centercol">		
+			<%= form_for :meter, url: meters_create_path do |f| %>
+  			<%= f.label :"Тип счетчика" %><br>
+  			<%= text_field_tag 'metertype' %><br>
+  			<%= f.label :"Заводской № счетчика" %><br>
+  			<%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %><br>
+  			<%= f.label :"Коэффициент трансформатора тока :" %><br>
+  			<%= text_field_tag 'koeftt', '1/1'  %><br>
+  			<%= f.label :"Коэффициент трансформатора напряжения :" %><br>
+  			<%= text_field_tag 'koeftn', '1/1' %><br>
+  			<%= hidden_field_tag :mpoint_id, @mp.id %>                      					                     
+  			<%= f.submit "Сохранить", data: { confirm: "Вы уверены?" } %>
+  			<% end %>  		
+	</div>
+ </div>
+</div>
