@@ -12,18 +12,20 @@
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
 <div class="center">
-	<h2>Ввод нового счетчика</h2>
+	<h2>Проверка ввода нового счетчика</h2>
 	<div class="page">
 	<div class="centercol">		
-			<%= form_for :meter, url: meters_newcheck_path do |f| %>
+			<%= form_for :meter, url: meters_create_path do |f| %>
   			<%= f.label :"Тип счетчика" %><br>
-  			<%= text_field_tag 'metertype' %><br>
+  			<%= text_field_tag 'metertype', @metertype, disabled: true %><br>
   			<%= f.label :"Заводской № счетчика" %><br>
-  			<%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %><br>
+  			<%= number_field_tag 'meternum', @meternum , min: 1, max: 9999999999, step: 1 , disabled: true %><br>
   			<%= f.label :"Коэффициент трансформатора тока :" %><br>
-  			<%= text_field_tag 'koeftt', '1 / 1'  %><br>
+  			<%= text_field_tag 'koeftt', @koeftt, disabled: true  %><br>
   			<%= f.label :"Коэффициент трансформатора напряжения :" %><br>
-  			<%= text_field_tag 'koeftn', '1 / 1' %><br><br>
+  			<%= text_field_tag 'koeftn', @koeftn, disabled: true %><br>
+  			<%= f.label :"Коэффициент расчетный :" %><br>
+  			<%= number_field_tag 'koefcalc', @koefcalc, disabled: true %><br><br>
   			<%= hidden_field_tag :mpoint_id, @mp.id %>                      					                     
   			<%= f.submit "Сохранить", data: { confirm: "Вы уверены?" } %>
   			<% end %>  		

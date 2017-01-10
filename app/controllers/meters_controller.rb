@@ -23,6 +23,24 @@ class MetersController < ApplicationController
     @mp =  Mpoint.find(params[:cnum]) 
   end
 
+  def newcheck
+    @mp =  Mpoint.find(params[:mpoint_id])
+    @metertype = params[:metertype]
+    @meternum = params[:meternum]
+    ddd=params[:koeftt].to_s
+    ddd=ddd.scan(/[0-9]{1,}/)
+    if ddd[0].nil? then kt1 = 1 else kt1 = ddd[0].to_i end
+    if (ddd[1].nil? or ddd[1].to_i == 0) then kt2 = 1 else kt2 = ddd[1].to_i end    
+    @koeftt = kt1.to_s + " / " + kt2.to_s
+    ddd=params[:koeftn].to_s
+    ddd=ddd.scan(/[0-9]{1,}/)
+    if ddd[0].nil? then kn1 = 1 else kn1 = ddd[0].to_i end
+    if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
+    @koeftn = kn1.to_s + " / " + kn2.to_s
+    kc = (kt1 * kn1) / (kt2 * kn2)  
+    @koefcalc = kc    
+  end
+
   def create
     @mp =  Mpoint.find(params[:mpoint_id])
     @nmet= @mp.meters.new

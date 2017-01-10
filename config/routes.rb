@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   post '/meters/index' => 'meters#index'
 
   get 'meters/new'
+  get 'meters/newcheck'
+  post '/meters/newcheck' => 'meters#newcheck'
 
   get 'meters/create'
   post '/meters/create' => 'meters#create'
