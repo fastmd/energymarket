@@ -4,13 +4,11 @@ class MvaluesController < ApplicationController
     @mp = Mpoint.find(params[:mpoint_id])
     #@mv = @mp.mvalues.create(params[:mvalue])
     @mv = @mp.mvalues.new
+    @mv.meter_id = params[:meter_id]
     @mv.actp180 = params[:actp180]
     @mv.actp280 = params[:actp280]
     @mv.actp380 = params[:actp380]
     @mv.actp480 = params[:actp480]
-  
-    str = params[:actdate]
-    
     @mv.actdate = params[:actdate]
     @mv.comment = params[:comment]
     @mv.save

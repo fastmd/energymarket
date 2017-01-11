@@ -6,9 +6,9 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= if (@fpr > 5) 
-    	        then link_to "Назад", furnizor_path(@fr) 
-    	        else link_to "Назад", filial_path(@fl) end %></li>
-    <li><%= link_to "Добавить точку учета", :controller => "mpoints", :action => "new", :cnum => @cp.id %></li>
+    	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
+    	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
+    <li><%= link_to "Добавить точку учета", mpoints_new_path(:cnum => @cp.id), :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 
@@ -38,10 +38,10 @@
 						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
 						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
 						<td><%= item.voltcl %></td>
-						<td><%= link_to "Открыть" , meters_index_path(:id => item.id) %></td>
-  						<td><%= link_to "Открыть" , mpoint_path(item) %>
-  						    <%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, mpoint_path(item,format: "xlsx") %>
-  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), mpoint_path(item,format: "pdf") %></td>  						
+						<td><%= link_to "Открыть" , meters_index_path(:id => item.id), :class=> "glyphicon glyphicon-folder-open" %></td>
+  						<td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
+  						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>  						
 					</tr>		
 					<% end %>			
 		</tbody>

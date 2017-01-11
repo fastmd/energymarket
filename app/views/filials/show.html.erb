@@ -2,8 +2,8 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", welcome_setsuindex_path %></li>
-    <li><%= link_to "Добавить потребителя", companys_new_path(:fl => @fl, :fr => nil) %></li>
+    <li><%= link_to "Назад", welcome_setsuindex_path, :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Добавить потребителя", companys_new_path(:fl => @fl, :fr => nil), :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 
@@ -31,7 +31,7 @@
 						<td><%= cl.name %></td>
 						<td><%= cl.region %></td>
 						<td><%= Furnizor.find(cl.furnizor_id).name %></td>
-						<td><%= link_to "Открыть", company_path(cl) %></td>
+						<td><%= link_to "Открыть", company_path(cl), :class=> "glyphicon glyphicon-folder-open" %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => cl.id) %></td>
 					</tr>		
 					<% end %>			

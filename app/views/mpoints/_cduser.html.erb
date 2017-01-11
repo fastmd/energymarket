@@ -1,16 +1,20 @@
 <% provide(:title, 'Показания') %>
-
+<h4><%= "Поставщик: #{@mp.company.furnizor.name}" %></h4>
+<h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
+<h4><%= "Потребитель: #{@mp.company.name}" %></h4>
+<h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 <center>
 <h3>Ввод текущих показаний</h3>
 
 <% @my_arr = [1,2,3,4,5] %>
 <%= form_for([@mp,@mp.mvalues.build]) do |f| %>
 	<td><%= label_tag "Дата актирования "%><%= date_field_tag 'actdate', Date.current %></td><br>
-	<td><%= label_tag "Активный прием (1-8-0) "%><%= number_field_tag 'actp180', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
-	<td><%= label_tag "Активный отдача (2-8-0) "%><%= number_field_tag 'actp280', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
-	<td><%= label_tag "Реактивный прием (3-8-0) "%><%= number_field_tag 'actp380', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
-	<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= number_field_tag 'actp480', nil, min: 0, max: 1000000, step: 0.0001 %></td><br>
-	<td><%= "Комментарий "%><%= text_field_tag 'comment'%></td>
+	<td><%= label_tag "Счетчик "%><%= select_tag 'meter_id', options_for_select( @mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td><br>
+	<td><%= label_tag "Активный прием (1-8-0) "%><%= number_field_tag 'actp180', @mv.first.actp180, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Активный отдача (2-8-0) "%><%= number_field_tag 'actp280', @mv.first.actp280, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Реактивный прием (3-8-0) "%><%= number_field_tag 'actp380', @mv.first.actp380, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= label_tag "Реактивный отдача (4-8-0) "%><%= number_field_tag 'actp480', @mv.first.actp480, min: 0, max: 1000000, step: 0.0001 %></td><br>
+	<td><%= "Комментарий "%><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>
 	<td><%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %></td>
 <% end %>						
 </center>
@@ -21,6 +25,7 @@
 	<thead>
 		<tr>
 		   <th>№</th>
+		   <th>Счетчик</th>
 		   <th>Дата актирования</th>
 		   <th>1.8.0</th>
 		   <th>2.8.0</th>
@@ -32,16 +37,17 @@
 	<tbody>					
 			<% i = 0%>
 			<% if !@mv.nil? %>
-			<% @mv.each do |cl| %>
+			<% @mv.each do |item| %>
 				<tr>
-					<% i = i + 1 %>						
-					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>				
-					<td><%= cl.actdate.to_formatted_s(:day_month_year) %></td>
-					<td><%= cl.actp180 %></td>
-					<td><%= cl.actp280 %></td>
-					<td><%= cl.actp380 %></td>
-					<td><%= cl.actp480 %></td>
-					<td><%= cl.comment %></td>
+					<% i = i + 1 %>
+					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
+				    <td><%= item.meter.meternum %>(<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>					
+					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
+					<td><%= item.actp180 %></td>
+					<td><%= item.actp280 %></td>
+					<td><%= item.actp380 %></td>
+					<td><%= item.actp480 %></td>
+					<td><%= item.comment %></td>
 				</tr>
 			<% end %>	  
 			<% end %>	

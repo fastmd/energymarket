@@ -38,26 +38,21 @@ class MetersController < ApplicationController
     if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
     @koeftn = kn1.to_s + " / " + kn2.to_s
     kc = (kt1 * kn1) / (kt2 * kn2)  
-    @koefcalc = kc    
+    @koefcalc = kc
+    @relevance_date = params[:relevance_date]
+    @comment = params[:comment]    
   end
 
   def create
     @mp =  Mpoint.find(params[:mpoint_id])
     @nmet= @mp.meters.new
-    @nmet.metertype = params[:metertype]
-    @nmet.meternum = params[:meternum]
-    ddd=params[:koeftt].to_s
-    ddd=ddd.scan(/[0-9]{1,}/)
-    if ddd[0].nil? then kt1 = 1 else kt1 = ddd[0].to_i end
-    if (ddd[1].nil? or ddd[1].to_i == 0) then kt2 = 1 else kt2 = ddd[1].to_i end    
-    @nmet.koeftt = kt1.to_s + " / " + kt2.to_s
-    ddd=params[:koeftn].to_s
-    ddd=ddd.scan(/[0-9]{1,}/)
-    if ddd[0].nil? then kn1 = 1 else kn1 = ddd[0].to_i end
-    if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
-    @nmet.koeftn = kn1.to_s + " / " + kn2.to_s
-    kc = (kt1 * kn1) / (kt2 * kn2)  
-    @nmet.koefcalc = kc
+    @nmet.metertype = params[:metertype]  
+    @nmet.meternum = params[:meternum]  
+    @nmet.koeftt = params[:koeftt]
+    @nmet.koeftn = params[:koeftn]
+    @nmet.koefcalc = params[:koefcalc]
+    @nmet.relevance_date = params[:relevance_date]
+    @nmet.comment = params[:comment]
     @nmet.save 
     redirect_to meters_index_path(:id => @mp.id)
   end

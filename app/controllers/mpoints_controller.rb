@@ -25,14 +25,20 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id])
-    @trp =  @mp.trparams.all
-    @lnp =  @mp.lineprs.all    
-    @met = @mp.meters.first
-    if !@met.nil? then
-       @mv =  @mp.mvalues.all 
-       @mv =  @mv.reverse.paginate(:page => params[:page], :per_page => @perpage = 10)
+    @trp = @mp.trparams.all
+    @lnp = @mp.lineprs.all    
+    @met = @mp.meters.all.order(relevance_date: :desc, created_at: :desc )
+    @mets=Array[]
+    i=0          
+    @met.each do |item|
+      @mets[i] = ["№ "+(item.meternum).to_s+" Тип: "+(item.metertype).to_s+" ( "+(item.relevance_date).to_s+" ) ", item.id]
+      i+=1    
+    end           
+    if !@met.empty? then
+       @mv = @mp.mvalues.all.order(actdate: :desc) 
+       @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = 10)
     else
-       @mv =  nil 
+       @mv = nil 
     end      
     respond_to do |format|
       format.html

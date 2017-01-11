@@ -2,8 +2,8 @@
 	           
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", company_path(@mp.company.id) %></li>
-    <li><%= link_to "Добавить cчетчик",  :controller => "meters", :action => "new", :cnum => @mp.id %></li>
+    <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Добавить cчетчик",  meters_new_path(:cnum => @mp.id), :class => "glyphicon glyphicon-wrench"  %></li>
   </ul>  
 </nav>
 
@@ -23,7 +23,9 @@
 			   <th>Коэффициент по току</th>
 			   <th>Коэффициент по напряжению</th>
 			   <th>Коэффициент расчетный</th>
-			   <th>Показания</th>	   
+			   <th>Дата актуальности</th>
+			   <th>Показания</th>
+			   <th>Комментарий</th>	   
 			</tr>	
 		</thead>
 		<tbody>
@@ -37,9 +39,11 @@
 						<td><%= item.koeftt %></td>
 						<td><%= item.koeftn %></td>
 						<td><%= item.koefcalc %></td>
-  						<td><%= link_to "Открыть" , "#" %>
-  						    <%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, "#" %>
-  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), "#" %></td>  						
+						<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
+  						<td><%= link_to " " , "#", :class=> "glyphicon glyphicon-folder-open" %>
+  						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
+  						<td><%= item.comment %></td>      						
 					</tr>		
 					<% end %>			
 		</tbody>

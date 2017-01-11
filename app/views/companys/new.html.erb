@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", if params[:fl].nil? then furnizor_path(params[:fr]) else filial_path(params[:fl]) end %></li>
+    <li><%= link_to "Назад", if params[:fl].nil? then furnizor_path(params[:fr]) else filial_path(params[:fl]) end, :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 

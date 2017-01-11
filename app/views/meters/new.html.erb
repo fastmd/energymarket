@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", meters_index_path(:id => @mp.id) %></li>
+    <li><%= link_to "Назад", meters_index_path(:id => @mp.id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
@@ -16,16 +16,20 @@
 	<div class="page">
 	<div class="centercol">		
 			<%= form_for :meter, url: meters_newcheck_path do |f| %>
-  			<%= f.label :"Тип счетчика" %><br>
-  			<%= text_field_tag 'metertype' %><br>
-  			<%= f.label :"Заводской № счетчика" %><br>
+  			<%= f.label :"Тип счетчика" %>
+  			<%= text_field_tag 'metertype', nil, placeholder: 'Тип счетчика...' %><br>
+  			<%= f.label :"Заводской № счетчика" %>
   			<%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %><br>
-  			<%= f.label :"Коэффициент трансформатора тока :" %><br>
+  			<%= f.label :"Коэффициент трансформатора тока :" %>
   			<%= text_field_tag 'koeftt', '1 / 1'  %><br>
-  			<%= f.label :"Коэффициент трансформатора напряжения :" %><br>
-  			<%= text_field_tag 'koeftn', '1 / 1' %><br><br>
+  			<%= f.label :"Коэффициент трансформатора напряжения :" %>
+  			<%= text_field_tag 'koeftn', '1 / 1' %><br>
+  			<%= f.label :"Дата актуальности :" %>
+  			<%= date_field_tag 'relevance_date', Date.current %><br>
+  			<%= f.label :"Комментарий :" %>
+  			<%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %><br><br>
   			<%= hidden_field_tag :mpoint_id, @mp.id %>                      					                     
-  			<%= f.submit "Сохранить", data: { confirm: "Вы уверены?" } %>
+  			<%= f.submit "Сохранить" %>
   			<% end %>  		
 	</div>
  </div>

@@ -6,8 +6,8 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= if (@fpr > 5) 
-    	        then link_to "Назад", furnizor_path(@fr) 
-    	        else link_to "Назад", filial_path(@fl) end %></li>
+    	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
+    	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
     <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companys_report_path(:id => @id,:date_for_report => @ddate,format: "xlsx") %></li>
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companys_report_path(:id => @id,:date_for_report => @ddate,format: "pdf") %></li>
     <li><%= form_tag companys_report_path(:id => @id) do %>

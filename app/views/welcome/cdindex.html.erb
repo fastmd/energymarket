@@ -19,7 +19,7 @@
 		   <% i = i + 1 %>	
 		   <td align="center"><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 		   <td align="center"><%= fr.name %></td>
-		   <td align="center"><%= link_to "Открыть", furnizor_path(fr) %></td>
+		   <td align="center"><%= link_to "Открыть", furnizor_path(fr), :class=> "glyphicon glyphicon-folder-open" %></td>
 		   <td align="center"><%= fr.comment %></td>
 		</tr>
 	  <% end %>	
@@ -28,7 +28,7 @@
 			<% i = i + 1 %>	 
 			<td align="center"><%=  i %></td>
 			<td align="center"><%= @furn.name %></td>
-			<td align="center"><%= link_to "Открыть", furnizor_path(@furn) %></td>
+			<td align="center"><%= link_to "Открыть", furnizor_path(@furn), :class=> "glyphicon glyphicon-folder-open" %></td>
 			<td align="center"><%= @furn.comment %></td>
 		</tr>
 	<% end %>			

@@ -2,8 +2,8 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])) end %></li>
-    <li><%= link_to "Добавить трансформатор", :controller => "trparams", :action => "new" %></li>
+    <li><%= link_to "Назад", mpoint_path(Mpoint.find(params[:id])), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Добавить трансформатор", trparams_new_path, :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 

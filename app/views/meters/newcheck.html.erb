@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", meters_index_path(:id => @mp.id) %></li>
+    <li><%= link_to "Назад", meters_index_path(:id => @mp.id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
@@ -16,18 +16,29 @@
 	<div class="page">
 	<div class="centercol">		
 			<%= form_for :meter, url: meters_create_path do |f| %>
-  			<%= f.label :"Тип счетчика" %><br>
+  			<%= f.label :"Тип счетчика" %>
   			<%= text_field_tag 'metertype', @metertype, disabled: true %><br>
-  			<%= f.label :"Заводской № счетчика" %><br>
+  			<%= f.label :"Заводской № счетчика" %>
   			<%= number_field_tag 'meternum', @meternum , min: 1, max: 9999999999, step: 1 , disabled: true %><br>
-  			<%= f.label :"Коэффициент трансформатора тока :" %><br>
+  			<%= f.label :"Коэффициент трансформатора тока :" %>
   			<%= text_field_tag 'koeftt', @koeftt, disabled: true  %><br>
-  			<%= f.label :"Коэффициент трансформатора напряжения :" %><br>
+  			<%= f.label :"Коэффициент трансформатора напряжения :" %>
   			<%= text_field_tag 'koeftn', @koeftn, disabled: true %><br>
-  			<%= f.label :"Коэффициент расчетный :" %><br>
-  			<%= number_field_tag 'koefcalc', @koefcalc, disabled: true %><br><br>
+  			<%= f.label :"Коэффициент расчетный :" %>
+  			<%= number_field_tag 'koefcalc', @koefcalc, disabled: true %><br>
+  			<%= f.label :"Дата актуальности :" %>
+  			<%= date_field_tag 'relevance_date', @relevance_date, disabled: true %><br>
+  			<%= f.label :"Комментарий :" %>
+  			<%= text_field_tag 'comment', @comment, disabled: true %><br><br>
+  			<%= hidden_field_tag :metertype, @metertype %>
+  			<%= hidden_field_tag :meternum, @meternum %>
+  			<%= hidden_field_tag :koeftt, @koeftt %>
+  			<%= hidden_field_tag :koeftn, @koeftn %>
+  			<%= hidden_field_tag :koefcalc, @koefcalc %>
+  			<%= hidden_field_tag :relevance_date, @relevance_date %>
+  			<%= hidden_field_tag :comment, @comment %>
   			<%= hidden_field_tag :mpoint_id, @mp.id %>                      					                     
-  			<%= f.submit "Сохранить", data: { confirm: "Вы уверены?" } %>
+  			<%= f.submit "Сохранить" %>
   			<% end %>  		
 	</div>
  </div>
