@@ -31,7 +31,8 @@ class MpointsController < ApplicationController
     @mets=Array[]
     i=0          
     @met.each do |item|
-      @mets[i] = ["№ "+(item.meternum).to_s+" Тип: "+(item.metertype).to_s+" ( "+(item.relevance_date).to_s+" ) ", item.id]
+      @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]
+     # @mets[i] = ["№ "+(item.meternum).to_s+" Тип: "+(item.metertype).to_s+" ( "+(item.relevance_date).to_s+" ) ", item.id]
       i+=1    
     end           
     if !@met.empty? then

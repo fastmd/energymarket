@@ -1,5 +1,11 @@
 <% provide(:title, 'Трансформаторы') %>
 
+<nav class="navbar">
+  <ul class="nav nav-pills nav-pillspull-right">
+    <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
+  </ul>  
+</nav>
+
  <%= render "messages" %>    	
 <center><h1><%= @mp.pname %></h1></center>
 
