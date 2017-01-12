@@ -13,8 +13,14 @@
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
 <center>
+	
 <% if @mets.empty? %>
-<p>У данной точки нет счетчиков</p>
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  У данной точки нет счетчиков
+</div>
+
 <% else %> 	
 <h3>Ввод текущих показаний</h3>
 
