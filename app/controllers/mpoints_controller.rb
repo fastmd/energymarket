@@ -35,12 +35,12 @@ class MpointsController < ApplicationController
      # @mets[i] = ["№ "+(item.meternum).to_s+" Тип: "+(item.metertype).to_s+" ( "+(item.relevance_date).to_s+" ) ", item.id]
       i+=1    
     end           
-    if !@met.empty? then
+  #  if !@met.empty? then
        @mv = @mp.mvalues.all.order(actdate: :desc) 
        @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = 10)
-    else
-       @mv = nil 
-    end      
+  #  else
+  #     @mv = nil 
+  #  end      
     respond_to do |format|
       format.html
 #      format.csv { send_data @mv.to_csv }

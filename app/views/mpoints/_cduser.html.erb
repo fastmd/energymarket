@@ -13,6 +13,9 @@
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
 <center>
+<% if @mets.empty? %>
+<p>У данной точки нет счетчиков</p>
+<% else %> 	
 <h3>Ввод текущих показаний</h3>
 
 <%= form_for([@mp,@mp.mvalues.build]) do |f| %>
@@ -34,18 +37,18 @@
 	   <tr>		
 		    <td>1</td>
 			<td><%= date_field_tag 'actdate', Date.current %></td>
-			<td><%= select_tag 'meter_id', options_for_select( @mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td>
-			<td><%= number_field_tag 'actp180', @mv.first.actp180, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp280', @mv.first.actp280, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp380', @mv.first.actp380, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp480', @mv.first.actp480, min: 0, max: 1000000, step: 0.0001 %></td>
+			<td><%= select_tag 'meter_id', options_for_select(@mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td>
+			<td><%= number_field_tag 'actp180', if !@mv.first.nil? then  @mv.first.actp180 end, min: 0, max: 1000000, step: 0.0001 %></td>
+			<td><%= number_field_tag 'actp280', if !@mv.first.nil? then  @mv.first.actp280 end, min: 0, max: 1000000, step: 0.0001 %></td>
+			<td><%= number_field_tag 'actp380', if !@mv.first.nil? then  @mv.first.actp380 end, min: 0, max: 1000000, step: 0.0001 %></td>
+			<td><%= number_field_tag 'actp480', if !@mv.first.nil? then  @mv.first.actp480 end, min: 0, max: 1000000, step: 0.0001 %></td>
 			<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
 	   </tr>
 	</tbody>
 </table>
 <%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %>
 <% end %>
-						
+<% end %>					
 </center>
 			
 <h3 align="center">История показаний</h3>
