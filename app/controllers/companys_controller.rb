@@ -102,12 +102,16 @@ class CompanysController < ApplicationController
         wrliv = report_rind[9] 
         @report[i] =  [nil,nil,report_rind[2]+' r/liv',nil,nil,report_rind[5],report_rind[6],report_rind[7],report_rind[8],report_rind[9]]      
         i+=1 
-        cosfi = ((wapr ** 2 / (wapr ** 2 + wrpr ** 2))  ** 0.5).round 4 
-        @report[i] =  [nil,'cos fi /pr',nil,nil,nil,nil,nil,nil,nil,cosfi]       
-        i+=1  
-        cosfi = ((waliv ** 2 / (waliv ** 2 + wrliv ** 2))  ** 0.5).round 4          
-        @report[i] =  [nil,'cos fi /liv',nil,nil,nil,nil,nil,nil,nil,cosfi]       
-        i+=1           
+        if (wapr ** 2 + wrpr ** 2)!=0 then 
+           cosfi = ((wapr ** 2 / (wapr ** 2 + wrpr ** 2))  ** 0.5).round 4 
+           @report[i] =  [nil,'cos fi /pr',nil,nil,nil,nil,nil,nil,nil,cosfi]         
+           i+=1
+        end
+        if (waliv ** 2 + wrliv ** 2)!=0 then       
+           cosfi = ((waliv ** 2 / (waliv ** 2 + wrliv ** 2))  ** 0.5).round 4          
+           @report[i] =  [nil,'cos fi /liv',nil,nil,nil,nil,nil,nil,nil,cosfi]       
+           i+=1 
+        end   
       end  
     end
         @report[i] =  [nil,'Потери в линии',nil,nil,nil,nil,nil,nil,nil,losses]      

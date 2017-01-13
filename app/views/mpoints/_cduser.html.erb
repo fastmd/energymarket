@@ -3,7 +3,7 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Добавить показания", "#", :class => "glyphicon glyphicon-wrench" %></li>
+    <li><%= link_to "Добавить показания", mpoint_path(@mp,:flag => 1,:met => @met), :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 
@@ -12,50 +12,49 @@
 <h4><%= "Потребитель: #{@mp.company.name}" %></h4>
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
-<center>
-	
-<% if @mets.empty? %>
-<div class="alert alert-danger" role="alert">
-  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  <span class="sr-only">Error:</span>
-  У данной точки нет счетчиков
-</div>
+<%= @mp.inspect%><br />
+<%= @met.inspect%>
 
-<% else %> 	
-<h3>Ввод текущих показаний</h3>
-
-<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
-
-<table class="table table-striped">
-	<thead>
-		<tr>
-		   <th>№</th>
-		   <th>Дата актирования</th>
-		   <th>Счетчик</th>
-		   <th>1.8.0</th>
-		   <th>2.8.0</th>
-		   <th>3.8.0</th>
-		   <th>4.8.0</th>
-		   <th>Комментарий</th>
-		</tr>	
-	</thead>
-	<tbody>
-	   <tr>		
-		    <td>1</td>
-			<td><%= date_field_tag 'actdate', Date.current %></td>
-			<td><%= select_tag 'meter_id', options_for_select(@mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td>
-			<td><%= number_field_tag 'actp180', if !@mv.first.nil? then  @mv.first.actp180 end, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp280', if !@mv.first.nil? then  @mv.first.actp280 end, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp380', if !@mv.first.nil? then  @mv.first.actp380 end, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= number_field_tag 'actp480', if !@mv.first.nil? then  @mv.first.actp480 end, min: 0, max: 1000000, step: 0.0001 %></td>
-			<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
-	   </tr>
-	</tbody>
-</table>
-<%= submit_tag "Сохранить", data: { confirm: "Are you sure?" }  %>
+<% if (!@flag.nil? and @flag=='1') %>
+	<center>	
+	<% if @mets.empty? %>
+		<div class="alert alert-danger" role="alert">
+  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  			<span class="sr-only">Error:</span>
+  			У данной точки учета нет счетчиков
+		</div>
+	<% else %> 	
+		<h3>Ввод текущих показаний</h3>
+		<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+		   				<th>Дата актирования</th>
+		   				<th>Счетчик</th>
+		   				<th>1.8.0</th>
+		   				<th>2.8.0</th>
+		   				<th>3.8.0</th>
+		   				<th>4.8.0</th>
+		   				<th>Комментарий</th>
+					</tr>	
+				</thead>
+				<tbody>
+	   				<tr>		
+						<td><%= date_field_tag 'actdate', Date.current %></td>
+						<td><%= select_tag 'meter_id', options_for_select(@mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td>
+						<td><%= number_field_tag 'actp180', if !@mv.first.nil? then  @mv.first.actp180 end, min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp280', if !@mv.first.nil? then  @mv.first.actp280 end, min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp380', if !@mv.first.nil? then  @mv.first.actp380 end, min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp480', if !@mv.first.nil? then  @mv.first.actp480 end, min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+	   				</tr>
+				</tbody>
+			</table>
+			<%= submit_tag "Сохранить", data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" }  %>
+		<% end %>
+	<% end %>					
+	</center>
 <% end %>
-<% end %>					
-</center>
 			
 <h3 align="center">История показаний</h3>
 
@@ -77,7 +76,11 @@
 			<% i = 0%>
 			<% if !@mv.nil? %>
 			<% @mv.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			    <tr class="success">
+			   <% else %> 	
 				<tr>
+			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>

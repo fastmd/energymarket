@@ -26,28 +26,28 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id])
     @trp = @mp.trparams.all
-    @lnp = @mp.lineprs.all    
-    @met = @mp.meters.all.order(relevance_date: :desc, created_at: :desc )
+    @lnp = @mp.lineprs.all
     @mets=Array[]
-    i=0          
-    @met.each do |item|
-      @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]
-     # @mets[i] = ["№ "+(item.meternum).to_s+" Тип: "+(item.metertype).to_s+" ( "+(item.relevance_date).to_s+" ) ", item.id]
-      i+=1    
-    end           
-  #  if !@met.empty? then
-       @mv = @mp.mvalues.all.order(actdate: :desc) 
-       @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = 10)
-  #  else
-  #     @mv = nil 
-  #  end      
+    i=0     
+    if !(params[:met]).nil? then  @met = Meter.find(params[:met])
+                                  @mv = @met.mvalues.all.order(actdate: :desc)
+                                  @mets[i] = [(@met.meternum).to_s+" "+(@met.metertype).to_s[0,3]+" ( "+(@met.relevance_date).to_s+" ) ", @met.id]
+                            else  met = @mp.meters.all.order(relevance_date: :desc, created_at: :desc)
+                                  @mv = @mp.mvalues.all.order(actdate: :desc)
+                                  met.each do |item|
+                                      @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]
+                                      i+=1    
+                                  end                                 
+    end      
+    @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = 10)      
     respond_to do |format|
       format.html
 #      format.csv { send_data @mv.to_csv }
 #      format.xls { send_data @trp.to_csv(col_sep: "\t") }
       format.pdf { send_data MpointsReport.new.to_pdf(@mv,@mp), :type => 'application/pdf', :filename => "history.pdf" }
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
-    end   
+    end
+    @flag = params[:flag]   
   end
 
   def index

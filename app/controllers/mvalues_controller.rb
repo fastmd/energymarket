@@ -2,7 +2,6 @@ class MvaluesController < ApplicationController
   
   def create
     @mp = Mpoint.find(params[:mpoint_id])
-    #@mv = @mp.mvalues.create(params[:mvalue])
     @mv = @mp.mvalues.new
     @mv.meter_id = params[:meter_id]
     @mv.actp180 = params[:actp180]
@@ -12,14 +11,11 @@ class MvaluesController < ApplicationController
     @mv.actdate = params[:actdate]
     @mv.comment = params[:comment]
     @mv.save
-    params[:num] = @mp.id
-    redirect_to mpoint_path(@mp)
+    @met = params[:met]
+    redirect_to mpoint_path(@mp,:flag => 1,:met => @met)
   end
   
   def new
-    @mp = Mpoint.find(params[:mpoint_id])
-    @mv = @mp.mvalues.create(mvalue_params)
-  #  redirect_to contract_path(@contract.id)
   end
 
   def edit
