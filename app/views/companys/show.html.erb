@@ -69,8 +69,12 @@
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
 			   <th>Класс напряжения, кВ</th>
-			   <th>Счетчики</th>
-			   <th>Показания</th>
+               <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+			      <th>Счетчики</th>
+			      <th>Показания</th>
+			   <% else %>
+			      <th>Параметры</th>		   
+			   <% end %>   
 			   <th>Комментарий</th>	   
 			</tr>	
 		</thead>
@@ -87,15 +91,21 @@
 						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
 						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
 						<td><%= item.voltcl %></td>
-						<td><%= link_to "Открыть" , meters_index_path(:id => item.id), :class=> "glyphicon glyphicon-folder-open" %></td>
-  						<td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
-  						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
-  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
+						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+						   <td><%= link_to "Открыть" , meters_index_path(:id => item.id), :class=> "glyphicon glyphicon-folder-open" %></td>
+  						   <td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
+  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
+  						<% else %>
+  						   <td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
+  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>  						
+  						<% end %>    
   						<td><%= item.comment %></td>      						
 					</tr>		
 				<% end %>			
 		</tbody>
 </table>
 
-<center><small><%= will_paginate @mp, renderer: BootstrapPagination::Rails %></small></center>
+<center><small><%= if !@mp.nil? then will_paginate @mp, renderer: BootstrapPagination::Rails end %></small></center>
 

@@ -7,10 +7,13 @@ class CompanysController < ApplicationController
     @cp =  Company.new
     @cp.name = params[:name]
     @cp.region = params[:region]
-    @cp.furnizor_id = params[:furnizor_id];
-    @cp.filial_id = params[:filial_id];    
+    @cp.furnizor_id = params[:furnizor_id]
+    @cp.filial_id = params[:filial_id]
+    @cp.comment = params[:comment]    
     @cp.save
-    redirect_to company_path(@cp)
+    #redirect_to company_path(@cp)
+    if !params[:fr_id].nil? then redirect_to furnizors_show_path(:id => @cp.furnizor_id) end
+    if !params[:fl_id].nil? then redirect_to filials_show_path(:id => @cp.filial_id) end
   end
 
   def show

@@ -11,6 +11,7 @@ class FurnizorsController < ApplicationController
   def show
     @perpage = 10  
     @fr =  Furnizor.find(params[:id])
-    @companies = @fr.companys.all.paginate(:page => params[:page], :per_page => @perpage )
+    @companies = @fr.companys.all.order(name: :asc)
+    @companies = @companies.paginate(:page => params[:page], :per_page => @perpage )
   end
 end

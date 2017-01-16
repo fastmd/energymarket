@@ -3,11 +3,68 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= link_to "Назад", welcome_setsuindex_path, :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Добавить потребителя", companys_new_path(:fl => @fl, :fr => nil), :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 
 <h4><%= "Филиал: #{@fl.name}" %></h4>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          Добавить потребителя
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h3 align="center">Ввод нового потребителя</h3>
+		<%= form_for :company, url: companys_path do |f| %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+		   				<th>Наименование потребителя</th>
+		   				<th>Код потребителя</th>
+		   				<th>Поставщик</th>
+		   				<th>Филиал</th>
+		   				<th>Комментарий</th>
+					</tr>	
+				</thead>
+				<tbody>
+	   				<tr>		
+						<td><%= text_field_tag 'name', nil, placeholder: "Наименование...", maxlength:"40" %></td>
+						<td><%= text_field_tag 'region', nil,  placeholder: "Код...", maxlength:"20" %></td>
+						<%  furn=Furnizor.all %>
+  			            <%  furns=Array[] %>
+  			            <%  i=0 %>     			
+  			            <%  furn.each do |item| %>
+  			            <%    furns[i] = [item.name, item.id] %>
+  			            <%    i+=1 %>    
+  			            <% end %>  			
+						<td><%= select_tag "furnizor_id", options_for_select( furns, if params[:fr].nil? then furns[0][1] else params[:fr] end ) %></td>
+						<%  fil=Filial.all %>
+  			            <%  fils=Array[] %>
+  			            <%  i=0 %>     			
+  			            <%  fil.each do |item| %>
+  			            <%    fils[i] = [item.name, item.id] %>
+  			            <%    i+=1 %>    
+  			            <% end %>
+  			            <td><%= select_tag "filial_id", options_for_select( fils, if params[:fl].nil? then fils[0][1] else params[:fl] end ) %></td> 
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+	   				</tr>
+				</tbody>
+			</table>
+			<% if !@fr.nil? %><%= hidden_field_tag :fr_id, @fr.id %><% end %>
+  			<% if !@fl.nil? %><%= hidden_field_tag :fl_id, @fl.id %><% end %>   
+  			<div  align="center">
+			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные ?" } %></div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>
 
 <h2 align="center">Список потребителей</h2>	 	
 
@@ -19,23 +76,29 @@
 			   <th>Код</th>
 			   <th>Поставщик</th>			   
 			   <th>Точки учета</th>
-			   <th>Действие</th>			   
+			   <th>Действие</th>
+			   <th>Комментарий</th>				   
 			</tr>	
 		</thead>
 		<tbody>
-					<% i = 0%>
-					<% @companies.each do |cl| %>
+			   <% i = 0%>
+			   <% @companies.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			    	<tr class="success">
+			   <% else %> 	
 					<tr>
+			   <% end %>
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
-						<td><%= cl.name %></td>
-						<td><%= cl.region %></td>
-						<td><%= Furnizor.find(cl.furnizor_id).name %></td>
-						<td><%= link_to "Открыть", company_path(cl), :class=> "glyphicon glyphicon-folder-open" %></td>
-                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => cl.id) %></td>
-					</tr>		
-					<% end %>			
+						<td><%= item.name %></td>
+						<td><%= item.region %></td>
+						<td><%= Furnizor.find(item.furnizor_id).name %></td>
+						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-folder-open" %></td>
+                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => item.id) %></td>
+                        <td><%= item.comment %></td>
+				</tr>		
+				<% end %>			
 		</tbody>
 </table>
 
-<center><small><%= will_paginate @companies, renderer: BootstrapPagination::Rails %></small></center>
+<center><small><%= if !@companies.nil? then will_paginate @companies, renderer: BootstrapPagination::Rails end %></small></center>

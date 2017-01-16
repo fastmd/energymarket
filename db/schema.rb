@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116095133) do
+ActiveRecord::Schema.define(version: 20170116134953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20170116095133) do
     t.integer  "furnizor_id"
     t.string   "region"
     t.integer  "filial_id"
+    t.text     "comment"
     t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
   end
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(version: 20170116095133) do
     t.integer  "mpoint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text     "comment"
     t.index ["mpoint_id"], name: "index_lineprs_on_mpoint_id", using: :btree
   end
 
@@ -126,6 +128,7 @@ ActiveRecord::Schema.define(version: 20170116095133) do
     t.integer  "mpoint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text     "comment"
     t.index ["mpoint_id"], name: "index_trparams_on_mpoint_id", using: :btree
   end
 
