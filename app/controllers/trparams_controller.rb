@@ -1,7 +1,6 @@
 class TrparamsController < ApplicationController
   def create
     @mp = Mpoint.find(params[:mpoint_id])
-    #@mv = @mp.mvalues.create(params[:mvalue])
     @tr = @mp.trparams.new
     @tr.pxx = params[:pxx].to_f
     @tr.pkz = params[:pkz].to_f
@@ -12,16 +11,19 @@ class TrparamsController < ApplicationController
     snom2 = params[:snom].to_f * params[:snom].to_f
     pkz2 = params[:pkz].to_f * params[:pkz].to_f
     tmp = (ukz2 * snom2) / 10000 - pkz2
-   # if (tmp > 0)
+    if (tmp > 0)
       @tr.qkz = Math.sqrt(tmp).round(10) #Math.sqrt
-      @tr.save
-      params[:num] = @mp.id
-      redirect_to :back, flash: {success: "Транформатор успешно создан."}
-      return
     else
-      redirect_to :back, flash: {error: "Введенные вами данные не верны."}
-      return
+      @tr.qkz = nil
     end  
+      @tr.save
+   #   params[:num] = @mp.id
+   #   redirect_to :back, flash: {success: "Транформатор успешно создан."}
+   #   return
+   # else
+   #   redirect_to :back, flash: {error: "Введенные вами данные не верны."}
+   #   return
+   # end  
     redirect_to mpoint_path(@mp)
   end
   
