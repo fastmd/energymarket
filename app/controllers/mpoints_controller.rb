@@ -1,6 +1,5 @@
 class MpointsController < ApplicationController
-  def new
-    @cp =  Company.find(params[:cnum])    
+  def new  
   end
   
   def create    
@@ -11,6 +10,7 @@ class MpointsController < ApplicationController
     @nmv.clsstation = params[:clsstation]
     @nmv.clconname = params[:clconname]
     @nmv.voltcl = params[:voltcl]
+    @nmv.comment = params[:comment]
     @nmv.save 
     redirect_to company_path(@cp)  
   end
@@ -32,7 +32,7 @@ class MpointsController < ApplicationController
     if !(params[:met]).nil? then  @met = Meter.find(params[:met])
                                   @mv = @met.mvalues.all.order(actdate: :desc)
                                   @mets[i] = [(@met.meternum).to_s+" "+(@met.metertype).to_s[0,3]+" ( "+(@met.relevance_date).to_s+" ) ", @met.id]
-                            else  met = @mp.meters.all.order(relevance_date: :desc, created_at: :desc)
+                            else  met = @mp.meters.all.order('relevance_date desc nulls last', created_at: :desc)
                                   @mv = @mp.mvalues.all.order(actdate: :desc)
                                   met.each do |item|
                                       @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]

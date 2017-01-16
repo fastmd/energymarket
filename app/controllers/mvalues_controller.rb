@@ -11,8 +11,7 @@ class MvaluesController < ApplicationController
     @mv.actdate = params[:actdate]
     @mv.comment = params[:comment]
     @mv.save
-    @met = params[:met]
-    redirect_to mpoint_path(@mp,:flag => 1,:met => @met)
+    redirect_to mpoint_path(@mp,:flag => 1,:met => params[:met])
   end
   
   def new

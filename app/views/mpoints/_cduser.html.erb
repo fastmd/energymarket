@@ -2,8 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
-    <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Добавить показания", mpoint_path(@mp,:flag => 1,:met => @met), :class => "glyphicon glyphicon-wrench" %></li>
+    <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
@@ -12,18 +11,25 @@
 <h4><%= "Потребитель: #{@mp.company.name}" %></h4>
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
-<%= @mp.inspect%><br />
-<%= @met.inspect%>
-
-<% if (!@flag.nil? and @flag=='1') %>
-	<center>	
-	<% if @mets.empty? %>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          Добавить показания
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+	  <center>
+	  <% if @mets.empty? %>
 		<div class="alert alert-danger" role="alert">
   			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   			<span class="sr-only">Error:</span>
   			У данной точки учета нет счетчиков
 		</div>
-	<% else %> 	
+	  <% else %> 	
 		<h3>Ввод текущих показаний</h3>
 		<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
 			<table class="table table-striped">
@@ -50,11 +56,16 @@
 	   				</tr>
 				</tbody>
 			</table>
-			<%= submit_tag "Сохранить", data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" }  %>
+			<%= hidden_field_tag(:met, (params[:met])) %>
+			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>
 		<% end %>
-	<% end %>					
-	</center>
-<% end %>
+	  <% end %>
+	  </center>
+      </div>
+    </div>
+  </div>  
+</div>
 			
 <h3 align="center">История показаний</h3>
 

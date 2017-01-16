@@ -3,7 +3,6 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Добавить cчетчик",  meters_new_path(:cnum => @mp.id), :class => "glyphicon glyphicon-wrench"  %></li>
   </ul>  
 </nav>
 
@@ -11,7 +10,52 @@
 <h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
 <h4><%= "Потребитель: #{@mp.company.name}" %></h4>
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
-	
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          Добавить cчетчик
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h3 align="center">Ввод нового счетчика</h3>
+		<%= form_for([@mp,@mp.meters.build]) do |f| %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+		   				<th>Тип счетчика</th>
+		   				<th>Заводской № счетчика</th>
+		   				<th>Коэффициент трансформатора тока </th>
+		   				<th>Коэффициент трансформатора напряжения</th>
+		   				<th>Дата актуальности</th>
+		   				<th>Комментарий</th>
+					</tr>	
+				</thead>
+				<tbody>
+	   				<tr>		
+						<td><%= text_field_tag 'metertype', nil, placeholder: 'Тип счетчика...' %></td>
+						<td><%= number_field_tag 'meternum', nil , min: 1, max: 9999999999, step: 1 %></td>
+						<td><%= text_field_tag 'koeftt', '1 / 1' %></td>
+						<td><%= text_field_tag 'koeftn', '1 / 1' %></td>
+						<td><%= date_field_tag 'relevance_date', Date.current %></td>
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+	   				</tr>
+				</tbody>
+			</table>
+  			<%= hidden_field_tag :mpoint_id, @mp.id %>
+  			<div  align="center">
+			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>
+
 <h2 align="center">Счетчики</h2> 
            
 <table class="table table-striped">
@@ -29,9 +73,13 @@
 			</tr>	
 		</thead>
 		<tbody>
-					<% i = 0%>
-					<% @met.each do |item| %>
+			   	<% i = 0%>
+			   <% @met.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			    	<tr class="success">
+			   <% else %> 	
 					<tr>
+			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
 						<td><%= item.metertype %></td>
@@ -45,8 +93,8 @@
   						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
   						<td><%= item.comment %></td>      						
 					</tr>		
-					<% end %>			
+				<% end %>			
 		</tbody>
 </table>
 
-<center><small><%= will_paginate @met, renderer: BootstrapPagination::Rails %></small></center>
+<center><small><%= if !@met.nil? then will_paginate @met, renderer: BootstrapPagination::Rails end %></small></center>

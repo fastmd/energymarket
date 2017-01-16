@@ -8,13 +8,57 @@
     <li><%= if (@fpr > 5) 
     	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
     	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
-    <li><%= link_to "Добавить точку учета", mpoints_new_path(:cnum => @cp.id), :class => "glyphicon glyphicon-wrench" %></li>
   </ul>  
 </nav>
 
 <h4><%= "Поставщик: #{@cp.furnizor.name}" %></h4>
 <h4><%= "Филиал: #{@cp.filial.name}" %></h4>
 <h4><%= "Потребитель: #{@cp.name}" %></h4>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          Добавить точку учета
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h3 align="center">Ввод новой точки учета</h3>
+		<%= form_for :mpoint, url: mpoints_path do |f| %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+		   				<th>Подстанция подключения ME</th>
+		   				<th>Наименование фидера ME</th>
+		   				<th>Наименование подстанции потребителя</th>
+		   				<th>Наименование присоединения потребителя</th>
+		   				<th>Класс напряжения, кВ</th>
+		   				<th>Комментарий</th>
+					</tr>	
+				</thead>
+				<tbody>
+	   				<tr>		
+						<td><%= text_field_tag 'messtation', nil, placeholder: "Подстанция..." %></td>
+						<td><%= text_field_tag 'meconname', nil,  placeholder: "Фидер..." %></td>
+						<td><%= text_field_tag 'clsstation', nil, placeholder: "Подстанция..." %></td>
+						<td><%= text_field_tag 'clconname', nil,  placeholder: "Фидер..." %></td>
+						<td><%= text_field_tag 'voltcl', nil, size: "10", placeholder: "Класс напряжения", maxlength:"10" %></td>
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+	   				</tr>
+				</tbody>
+			</table>
+  			<%= hidden_field_tag :company_id, @cp.id %> 
+  			<div  align="center">
+			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@cp.furnizor.name}, #{@cp.filial.name} / #{@cp.name}?" } %></div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>
 	
 <h2 align="center">Точки учета</h2> 
            
@@ -26,13 +70,18 @@
 			   <th>Присоединение</th>
 			   <th>Класс напряжения, кВ</th>
 			   <th>Счетчики</th>
-			   <th>Показания</th>	   
+			   <th>Показания</th>
+			   <th>Комментарий</th>	   
 			</tr>	
 		</thead>
 		<tbody>
-					<% i = 0%>
-					<% @mp.each do |item| %>
+			   <% i = 0%>
+			   <% @mp.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			    	<tr class="success">
+			   <% else %> 	
 					<tr>
+			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
 						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
@@ -41,9 +90,10 @@
 						<td><%= link_to "Открыть" , meters_index_path(:id => item.id), :class=> "glyphicon glyphicon-folder-open" %></td>
   						<td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
   						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
-  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>  						
+  						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
+  						<td><%= item.comment %></td>      						
 					</tr>		
-					<% end %>			
+				<% end %>			
 		</tbody>
 </table>
 
