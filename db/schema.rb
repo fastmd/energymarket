@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116134953) do
+ActiveRecord::Schema.define(version: 20170117115500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,9 +45,7 @@ ActiveRecord::Schema.define(version: 20170116134953) do
 
   create_table "lineprs", force: :cascade do |t|
     t.float    "l1"
-    t.float    "l2"
     t.float    "p1"
-    t.float    "p2"
     t.integer  "mpoint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

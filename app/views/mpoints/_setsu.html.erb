@@ -5,6 +5,8 @@
     <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
+
+<%= render 'mpoints/messages' %>
    	
 <h4><%= "Поставщик: #{@mp.company.furnizor.name}" %></h4>
 <h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
@@ -70,8 +72,6 @@
 				<thead>
 					<tr>
 		   				<th>Длина линии,км</th>
-		   				<th>Длина линии,км</th>
-		   				<th>Сопротивление линии</th>
 		   				<th>Сопротивление линии</th>
 		   				<th>Комментарий</th>
 					</tr>	
@@ -79,9 +79,7 @@
 				<tbody>
 	   				<tr>		
 						<td><%= number_field_tag 'l1', nil, placeholder: "Длина...", min: 0, max: 1000000, step: 0.0001  %></td>
-						<td><%= number_field_tag 'l2', nil, placeholder: "Длина...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'p1', nil, placeholder: "Сопротивление...", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'p2', nil, placeholder: "Сопротивление...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
 	   				</tr>
 				</tbody>
@@ -143,8 +141,6 @@
 		<tr>
 		   <th>№</th>
 		   <th>Длина линии,км</th>
-		   <th>Длина линии,км</th>
-		   <th>Сопротивление линии</th>
 		   <th>Сопротивление линии</th>
 		   <th>Комментарий</th>
 		   <th></th>
@@ -160,10 +156,8 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
-					<td><%= item.l1 %></td>
-				    <td><%= item.l2 %></td>										
+					<td><%= item.l1 %></td>									
 					<td><%= item.p1 %></td>
-					<td><%= item.p2 %></td>
 					<td><%= item.comment %></td>
   					<td><%= link_to " ","#", :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>  						
