@@ -9,13 +9,13 @@ class ApplicationController < ActionController::Base
    if !current_user.nil? then 
     if (current_user.has_role? :cduser) or (current_user.has_role? :"cduser-fee") or (current_user.has_role? :"cduser-fenosa") then 
       @navheader = 'Поставщики'
-      @pages = Furnizor.all
-      @subpages = Company.all
+      @pages = Furnizor.all.order(name: :asc)
+      @subpages = Company.all.order(name: :asc)
     end 
     if (current_user.has_role? :setsu) or (current_user.has_role? :"setsu-nord") or (current_user.has_role? :"setsu-nord-vest") or (current_user.has_role? :"setsu-centru")  or (current_user.has_role? :"setsu-sud")  then 
       @navheader = 'Филиалы'
-      @pages = Filial.all
-      @subpages = Company.all
+      @pages = Filial.all.order(name: :asc)
+      @subpages = Company.all.order(name: :asc)
     end
    end 
   end
