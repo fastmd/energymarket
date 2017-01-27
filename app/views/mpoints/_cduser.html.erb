@@ -11,6 +11,19 @@
 <h4><%= "Потребитель: #{@mp.company.name}" %></h4>
 <h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
 
+<ul class="breadcrumb">
+  <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", furnizor_path(@mp.company.furnizor.id), :class => "glyphicon glyphicon-home" %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
+  <% if !@met.nil? %>
+    <li><%= link_to "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}", meters_index_path(:id => @mp.id), :class => "glyphicon glyphicon-object-align-horizontal" %></li>
+    <li class="active"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+  	    <strong><%= "Счетчик: #{@met.meternum}" %></strong></li>
+  <% else %>
+    <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span>
+  	    <strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <% end %>
+</ul>
+
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -87,7 +100,7 @@
 			<% i = 0%>
 			<% if !@mv.nil? %>
 			<% @mv.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
 			   <% else %> 	
 				<tr>

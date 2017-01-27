@@ -8,7 +8,9 @@
   </ul>  
 </nav>
 
-<h4><%= "Поставщик: #{@fr.name}" %></h4>
+<ul class="breadcrumb">
+  <li class="active"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><strong><%= "Поставщик: #{@fr.name}" %></strong></li>
+</ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">

@@ -6,7 +6,9 @@
   </ul>  
 </nav>
 
-<h4><%= "Филиал: #{@fl.name}" %></h4>
+<ul class="breadcrumb">
+  <li class="active"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><strong><%= "Филиал: #{@fl.name}" %></strong></li>
+</ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
@@ -83,7 +85,7 @@
 		<tbody>
 			   <% i = 0%>
 			   <% @companies.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    	<tr class="success">
 			   <% else %> 	
 					<tr>

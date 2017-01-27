@@ -10,8 +10,39 @@
   <body>
   	<%= render 'layouts/header' %>
     <div class="container">
-    	<%= yield %> 
-    	<%= render 'layouts/footer' %>
-    </div>         
+      <div class="row">
+      	<div class="col-lg-<%= @pages.nil? ? "12" : "10" %>">	   	
+    	  <%= yield %> 
+    	  <%= render 'layouts/footer' %>
+    	</div>   <!-- /col-lg -->
+    	<% if !@pages.nil? %>
+    	<div class="col-lg-2">
+    	  <div class="well sidebar-nav">
+    	  	<!-- <h3><%= @navheader %></h3> -->
+    	  	<ul class="nav nav-list">
+    	  		<!-- <li class="nav-header"><%= @navheader %></li> -->   	  		
+    	  		<% @pages.each do |item| %>
+    	  		  <li class="divider"></li>
+    	  		  <li role="separator" class="divider"></li>
+    	  		  <li><strong><%= link_to "#{item.name}", if @navheader=='Филиалы' then filial_path(item) else furnizor_path(item) end, :class => "glyphicon glyphicon-home" %></strong>
+    	  		  <ul class="nav nav-list">
+    	  		  <% if !@subpages.nil? %>
+    	  		    <% @subpages.each do |subitem| %>
+    	  		      <% if (@navheader=='Филиалы') and (item.id==subitem.filial_id) %>
+    	  		        <li><%= link_to "#{subitem.name}", company_path(subitem), :class => "glyphicon glyphicon-lamp" %></li>
+    	  		      <% end %>
+    	  		      <% if (@navheader!='Филиалы') and (item.id==subitem.furnizor_id) %>
+    	  		        <li><%= link_to "#{subitem.name}", company_path(subitem), :class => "glyphicon glyphicon-lamp" %></li>
+    	  		      <% end %>   
+    	  		    <% end %>
+    	  		  <% end %>
+    	  		  </ul></li>  
+    	  		<% end %>    	  		
+    	  	</ul>
+    	  </div>   <!-- /well -->		
+    	</div>   <!-- /col-lg -->
+    	<% end %>	
+      </div>   <!-- /row --> 	
+    </div>   <!-- /container -->      
    </body>
 </html>

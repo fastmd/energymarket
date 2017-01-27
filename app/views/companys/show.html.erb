@@ -11,9 +11,12 @@
   </ul>  
 </nav>
 
-<h4><%= "Поставщик: #{@cp.furnizor.name}" %></h4>
-<h4><%= "Филиал: #{@cp.filial.name}" %></h4>
-<h4><%= "Потребитель: #{@cp.name}" %></h4>
+<ul class="breadcrumb">
+  <li><%= if (@fpr > 5) 
+  	         then link_to "Поставщик: #{@cp.furnizor.name}", furnizor_path(@cp.furnizor.id), :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиал: #{@cp.filial.name}", filial_path(@cp.filial.id), :class => "glyphicon glyphicon-home"end %></li>
+  <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
+</ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">

@@ -18,13 +18,21 @@
                     
   </ul>  
 </nav>
+
+<ul class="breadcrumb">
+  <li><%= if (@fpr > 5) 
+  	         then link_to "Поставщик: #{@cp.furnizor.name}", furnizor_path(@cp.furnizor.id), :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиал: #{@cp.filial.name}", filial_path(@cp.filial.id), :class => "glyphicon glyphicon-home"end %></li>
+  <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
+</ul>
 				
 <h3 align="center">LISTA</h3> 
 <h4 align="center"><%= "de calcul a intrarii energiei electrice la #{@cp.name}" %></h4>
 <h4 align="center"><%= "pentru luna #{@luna} anul #{@ddate.year}" %></h4>
 
 <%= "Denumirea furnizorului:  #{@cp.furnizor.name}" %></br>
-<%= "Denumirea filialei:  #{@cp.filial.name}" %></br></br>
+<%= "Denumirea filialei:  #{@cp.filial.name}" %></br>
+<%= "Denumirea consumatorului:  #{@cp.name}" %></br></br>
 	
 <table class="table table-striped table-condensed">	
   <thead>

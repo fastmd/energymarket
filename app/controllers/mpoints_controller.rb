@@ -39,7 +39,7 @@ class MpointsController < ApplicationController
                                       i+=1    
                                   end                                 
     end      
-    @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = 10)      
+    @mv = @mv.paginate(:page => params[:page], :per_page => @perpage = $PerPage)      
     respond_to do |format|
       format.html
 #      format.csv { send_data @mv.to_csv }
@@ -47,7 +47,16 @@ class MpointsController < ApplicationController
       format.pdf { send_data MpointsReport.new.to_pdf(@mv,@mp), :type => 'application/pdf', :filename => "history.pdf" }
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
     end
-    @flag = params[:flag]   
+    @flag = params[:flag]
+    if !@flag.nil? then
+      @pxx  = params[:pxx]
+      @pkz  = params[:pkz]
+      @snom = params[:snom]
+      @ukz  = params[:ukz]
+      @io   = params[:io]
+      @comment = params[:comment] 
+      @tr_id = params[:tr_id]       
+    end     
   end
 
   def index

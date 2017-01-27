@@ -6,35 +6,43 @@
   </ul>  
 </nav>
  	
-<h4><%= "Поставщик: #{@mp.company.furnizor.name}" %></h4>
-<h4><%= "Филиал: #{@mp.company.filial.name}" %></h4>
-<h4><%= "Потребитель: #{@mp.company.name}" %></h4>
-<h4><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></h4>
+<ul class="breadcrumb">
+  <li><%= link_to "Филиал: #{@mp.company.filial.name}", filial_path(@mp.company.filial.id), :class => "glyphicon glyphicon-home" %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+</ul>
 
-<% flash.each do |name, msg| %>
-<% if msg.is_a?(String) %>
+<% if @flag=='tadd' %>
 		<div class="alert alert-danger" role="alert">
 			<a class="close" data-dismiss="alert">&#215;</a>
   			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   			<span class="sr-only">Error:</span>
-  		    <%= msg %>
+  		    <%= "Параметры не сохранены. Проверьте введенные данные." %>
 		</div>
 <% end %>		
-<% end %>
 
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+<div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
-          Добавить транформатор
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"  aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          <% if @flag!='tedit' %>  
+              Добавить транcформатор 
+          <% else  %>
+              Редактировать параметры трансформатора
+          <% end %>
         </a>
       </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+    <div id="collapseOne" class="panel-collapse <%= if @flag.nil? then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<h3 align="center">Ввод нового транформатора</h3>
-		<%= form_for([@mp,@mp.trparams.build]) do |f| %>
+		<h3 align="center">
+          <% if @flag!='tedit' %>  			
+			Ввод нового транcформатора
+          <% else  %>
+            Редактирование параметров трансформатора
+          <% end %>			
+		</h3>
+		<%= form_for ([@mp,@mp.trparams.build]) do |f| %>	
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -48,24 +56,73 @@
 				</thead>
 				<tbody>
 	   				<tr>		
-						<td><%= number_field_tag 'pxx', placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001  %></td>
-						<td><%= number_field_tag 'pkz', nil,  placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'snom', nil, placeholder: "мощность...", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'ukz', nil,  placeholder: "Uкз...", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'io', nil, size: "10", placeholder: "Io...", maxlength:"10", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= number_field_tag 'pxx', @pxx, placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001  %></td>
+						<td><%= number_field_tag 'pkz', @pkz,  placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'snom', @snom, placeholder: "мощность...", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'ukz', @ukz,  placeholder: "Uкз...", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'io', @io, size: "10", placeholder: "Io...", maxlength:"10", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
-  			<%= hidden_field_tag :mpoint_id, @mp.id %> 
-  			<div  align="center">
-			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></div> 
+  			<%= hidden_field_tag :mpoint_id, @mp.id %>
+  			<%= hidden_field_tag :tr_id, @tr_id %>
+          <div  align="center"> 
+			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            
+			  <% if @flag=='tedit' %>	                
+			     <%= button_to mpoint_path(@mp), :class => "btn btn-default" do %>
+			         <span class="glyphicon glyphicon-remove">Отмена</span>
+			     <% end %> 
+              <% end %>
+           </div> 	                
 		<% end %>
       </div>
     </div>
-  </div>
-    <div class="panel panel-default">
+</div>
+
+<h3 align="center">Транcформаторы</h3>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+		   <th>№</th>
+		   <th>Потери холостого хода, кВт</th>
+		   <th>Потери короткого замыкания, кВт</th>
+		   <th>Номинальная мощность</th>
+		   <th>Uкз, кВ</th>
+		   <th>Io</th>
+		   <th>Расчет</th>
+		   <th>Комментарий</th>
+		   <th></th>
+		</tr>	
+	</thead>
+	<tbody>					
+			<% i = 0%>
+			<% @trp.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
+			    <tr class="success">
+			   <% else %> 	
+				<tr>
+			   <% end %>		
+					<% i = i + 1 %>
+					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
+					<td><%= item.pxx %></td>
+				    <td><%= item.pkz %></td>										
+					<td><%= item.snom %></td>
+					<td><%= item.ukz %></td>
+					<td><%= item.io %></td>
+				    <td><%= item.qkz %></td>
+					<td><%= item.comment %></td>
+  					<td><%= link_to " ", trparams_edit_path(:tr_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
+  						<%= link_to " ", trparams_destroy_path(:tr_id => item.id), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить трансформатор для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  						
+				</tr>
+			<% end %>	  
+	</tbody>
+</table>
+
+<div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingTwo">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" class = "glyphicon glyphicon-wrench">
@@ -100,48 +157,7 @@
 		<% end %>
       </div>
     </div>
-  </div>  
-</div>
-
-<h3 align="center">Транформаторы</h3>
-
-<table class="table table-striped">
-	<thead>
-		<tr>
-		   <th>№</th>
-		   <th>Потери холостого хода, кВт</th>
-		   <th>Потери короткого замыкания, кВт</th>
-		   <th>Номинальная мощность</th>
-		   <th>Uкз, кВ</th>
-		   <th>Io</th>
-		   <th>Расчет</th>
-		   <th>Комментарий</th>
-		   <th></th>
-		</tr>	
-	</thead>
-	<tbody>					
-			<% i = 0%>
-			<% @trp.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago(60*60)) %>
-			    <tr class="success">
-			   <% else %> 	
-				<tr>
-			   <% end %>		
-					<% i = i + 1 %>
-					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
-					<td><%= item.pxx %></td>
-				    <td><%= item.pkz %></td>										
-					<td><%= item.snom %></td>
-					<td><%= item.ukz %></td>
-					<td><%= item.io %></td>
-				    <td><%= item.qkz %></td>
-					<td><%= item.comment %></td>
-  					<td><%= link_to " ","#", :class=> "glyphicon glyphicon-pencil" %>
-  						<%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>  						
-				</tr>
-			<% end %>	  
-	</tbody>
-</table>
+</div>  
 
 <h3 align="center">Линии</h3>
 
@@ -158,7 +174,7 @@
 	<tbody>					
 			<% i = 0%>
 			<% @lnp.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
 			   <% else %> 	
 				<tr>
@@ -169,7 +185,8 @@
 					<td><%= item.p1 %></td>
 					<td><%= item.comment %></td>
   					<td><%= link_to " ","#", :class=> "glyphicon glyphicon-pencil" %>
-  						<%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>  						
+  						<%= link_to " ", lineprs_destroy_path(:line_id => item.id), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить линию для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  												
 				</tr>
 			<% end %>	  
 	</tbody>

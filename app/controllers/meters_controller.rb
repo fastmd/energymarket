@@ -10,7 +10,7 @@ class MetersController < ApplicationController
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id]) 
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
-    @met = @met.paginate(:page => params[:page], :per_page => @perpage = 10)    
+    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)    
 #    respond_to do |format|
 #      format.html
 #      format.csv { send_data @mv.to_csv }

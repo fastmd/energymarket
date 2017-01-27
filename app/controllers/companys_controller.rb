@@ -26,7 +26,7 @@ class CompanysController < ApplicationController
     if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end    
     @cp =  Company.find(params[:id])
-    @mp =  @cp.mpoints.all.paginate(:page => params[:page], :per_page => @perpage = 10 )   
+    @mp =  @cp.mpoints.all.paginate(:page => params[:page], :per_page => @perpage = $PerPage )   
   end
   
   def report
