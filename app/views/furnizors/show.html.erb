@@ -9,7 +9,8 @@
 </nav>
 
 <ul class="breadcrumb">
-  <li class="active"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><strong><%= "Поставщик: #{@fr.name}" %></strong></li>
+  <li><%=  link_to "Поставщики", welcome_cdindex_path, :class => "glyphicon glyphicon-home" %></li>	
+  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@fr.name}" %></strong></li>
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">

@@ -20,11 +20,19 @@
     	  <div class="well sidebar-nav">
     	  	<!-- <h3><%= @navheader %></h3> -->
     	  	<ul class="nav nav-list">
+    	  	  <li class="divider"></li>
+    	  	  <li role="separator" class="divider"></li>    	  		
+    	  	  <li><strong><%= link_to @navheader, if (@navheader=='Филиалы') then welcome_setsuindex_path else welcome_cdindex_path end, :class => "glyphicon glyphicon-home" %></strong>
+    	  	   <ul class="nav nav-list">		
     	  		<!-- <li class="nav-header"><%= @navheader %></li> -->   	  		
     	  		<% @pages.each do |item| %>
     	  		  <li class="divider"></li>
     	  		  <li role="separator" class="divider"></li>
-    	  		  <li><strong><%= link_to "#{item.name}", if @navheader=='Филиалы' then filial_path(item) else furnizor_path(item) end, :class => "glyphicon glyphicon-home" %></strong>
+    	  		  <% if (@navheader=='Филиалы') %>
+    	  		    <li><strong><%= link_to "#{item.name}", filial_path(item), :class => "glyphicon glyphicon-tower" %></strong>
+                  <% else %>
+                    <li><strong><%= link_to "#{item.name}", furnizor_path(item), :class => "glyphicon glyphicon-piggy-bank" %></strong>
+                  <% end %>
     	  		  <ul class="nav nav-list">
     	  		  <% if !@subpages.nil? %>
     	  		    <% @subpages.each do |subitem| %>
@@ -37,8 +45,9 @@
     	  		    <% end %>
     	  		  <% end %>
     	  		  </ul></li>  
-    	  		<% end %>    	  		
-    	  	</ul>
+    	  		<% end %>
+    	  	  </ul>	    	  		
+    	  	</li></ul>
     	  </div>   <!-- /well -->		
     	</div>   <!-- /col-lg -->
     	<% end %>	

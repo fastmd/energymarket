@@ -7,7 +7,8 @@
 </nav>
  	
 <ul class="breadcrumb">
-  <li><%= link_to "Филиал: #{@mp.company.filial.name}", filial_path(@mp.company.filial.id), :class => "glyphicon glyphicon-home" %></li>
+  <li><%= link_to "Филиалы", welcome_setsuindex_path, :class => "glyphicon glyphicon-home" %></li>		
+  <li><%= link_to "Филиал: #{@mp.company.filial.name}", filial_path(@mp.company.filial.id), :class => "glyphicon glyphicon-tower" %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
