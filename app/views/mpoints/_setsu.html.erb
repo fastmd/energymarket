@@ -26,21 +26,21 @@
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"  aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
-          <% if @flag!='tedit' %>  
-              Добавить транcформатор 
-          <% else  %>
+          <% if @flag=='tedit' %>  
               Редактировать параметры трансформатора
+          <% else %>
+              Добавить транcформатор 
           <% end %>
         </a>
       </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse <%= if @flag.nil? then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='tedit' && @flag!='tadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center">
-          <% if @flag!='tedit' %>  			
-			Ввод нового транcформатора
+          <% if @flag=='tedit' %>  			
+			Редактирование параметров трансформатора
           <% else  %>
-            Редактирование параметров трансформатора
+            Ввод нового транcформатора
           <% end %>			
 		</h3>
 		<%= form_for ([@mp,@mp.trparams.build]) do |f| %>	
@@ -87,7 +87,7 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
-		   <th>№</th>
+		   <th colspan="1" width="1%">№</th>
 		   <th>Потери холостого хода, кВт</th>
 		   <th>Потери короткого замыкания, кВт</th>
 		   <th>Номинальная мощность</th>
@@ -95,7 +95,7 @@
 		   <th>Io</th>
 		   <th>Расчет</th>
 		   <th>Комментарий</th>
-		   <th></th>
+		   <th colspan="3">.........</th>
 		</tr>	
 	</thead>
 	<tbody>					
@@ -127,13 +127,23 @@
     <div class="panel-heading" role="tab" id="headingTwo">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" class = "glyphicon glyphicon-wrench">
-          Добавить линию
+          <% if @flag=='ledit' %>  			
+			Редактировать параметры линии
+          <% else  %>
+            Добавить линию
+          <% end %>	
         </a>
       </h4>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+    <div id="collapseTwo" class="panel-collapse <%= if (@flag!='ledit' && @flag!='ladd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingTwo">
       <div class="panel-body">
-		<h3 align="center">Ввод новой линии</h3>
+		<h3 align="center">
+          <% if @flag=='ledit' %>  			
+			Редактирование параметров линии
+          <% else  %>
+            Ввод новой линии
+          <% end %>					
+		</h3>
 		<%= form_for([@mp,@mp.lineprs.build]) do |f| %>
 			<table class="table table-striped">
 				<thead>
@@ -145,17 +155,24 @@
 				</thead>
 				<tbody>
 	   				<tr>		
-						<td><%= number_field_tag 'l1', nil, placeholder: "Длина...", min: 0, max: 1000000, step: 0.0001  %></td>
-						<td><%= number_field_tag 'p1', nil, placeholder: "Сопротивление...", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= number_field_tag 'l1', @l1, placeholder: "Длина...", min: 0, max: 1000000, step: 0.0001  %></td>
+						<td><%= number_field_tag 'p1', @p1, placeholder: "Сопротивление...", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
-  			<%= hidden_field_tag :mpoint_id, @mp.id %> 
-  			<div  align="center">
-			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></div> 
-		<% end %>
+  			<%= hidden_field_tag :mpoint_id, @mp.id %>
+  			<%= hidden_field_tag :line_id, @line_id %> 
+          <div  align="center"> 
+			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            
+			  <% if @flag=='ledit' %>	                
+			     <%= button_to mpoint_path(@mp), :class => "btn btn-default" do %>
+			         <span class="glyphicon glyphicon-remove">Отмена</span>
+			     <% end %> 
+              <% end %>
+           </div> 	
+	    <% end %>
       </div>
     </div>
 </div>  
@@ -165,11 +182,11 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
-		   <th>№</th>
+		   <th colspan="1" width="1%">№</th>
 		   <th>Длина линии,км</th>
 		   <th>Сопротивление линии</th>
 		   <th>Комментарий</th>
-		   <th></th>
+		   <th>.........</th>
 		</tr>	
 	</thead>
 	<tbody>					
@@ -185,10 +202,12 @@
 					<td><%= item.l1 %></td>									
 					<td><%= item.p1 %></td>
 					<td><%= item.comment %></td>
-  					<td><%= link_to " ","#", :class=> "glyphicon glyphicon-pencil" %>
+  					<td><%= link_to " ", lineprs_edit_path(:line_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", lineprs_destroy_path(:line_id => item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  												
 				</tr>
 			<% end %>	  
 	</tbody>
 </table>
+
+

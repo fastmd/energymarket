@@ -48,7 +48,7 @@ class MpointsController < ApplicationController
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
     end
     @flag = params[:flag]
-    if !@flag.nil? then
+    if !@flag.nil? && (@flag=='tedit' || @flag=='tadd') then
       @pxx  = params[:pxx]
       @pkz  = params[:pkz]
       @snom = params[:snom]
@@ -56,7 +56,13 @@ class MpointsController < ApplicationController
       @io   = params[:io]
       @comment = params[:comment] 
       @tr_id = params[:tr_id]       
-    end     
+    end   
+    if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
+      @p1  = params[:p1]
+      @l1  = params[:l1]
+      @comment = params[:comment] 
+      @line_id = params[:line_id]       
+    end   
   end
 
   def index
