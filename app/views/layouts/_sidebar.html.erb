@@ -9,19 +9,38 @@
     	  		<% @pages.each do |item| %>
     	  		  <li class="divider"></li>
     	  		  <li role="separator" class="divider"></li>
-    	  		  <% if (@navheader=='Филиалы') %>
-    	  		    <li><strong><%= link_to "#{item.name}", filial_path(item), :class => "glyphicon glyphicon-tower" %></strong>
+    	  		  <li><strong><a role="button" data-toggle="collapse" data-parent="#accordion" href="#page<%= item.id %>" aria-expanded="false" aria-controls="page<%= item.id %>" class = "glyphicon glyphicon-list"></a>
+    	  		  <% if (@navheader=='Филиалы') %>  	  		    
+    	  		    	<%= link_to "#{item.name}", filial_path(item), :class => "glyphicon glyphicon-tower" %></strong>
                   <% else %>
-                    <li><strong><%= link_to "#{item.name}", furnizor_path(item), :class => "glyphicon glyphicon-piggy-bank" %></strong>
+                    	<%= link_to "#{item.name}", furnizor_path(item), :class => "glyphicon glyphicon-piggy-bank" %></strong>
                   <% end %>
-    	  		  <ul class="nav nav-list">
+    	  		  <ul id="page<%= item.id %>" class="nav nav-list collapse">
     	  		  <% if !@subpages.nil? %>
     	  		    <% @subpages.each do |subitem| %>
-    	  		      <% if (@navheader=='Филиалы') and (item.id==subitem.filial_id) %>
-    	  		        <li><%= link_to "#{subitem.name}", company_path(subitem), :class => "glyphicon glyphicon-lamp" %></li>
-    	  		      <% end %>
-    	  		      <% if (@navheader!='Филиалы') and (item.id==subitem.furnizor_id) %>
-    	  		        <li><%= link_to "#{subitem.name}", company_path(subitem), :class => "glyphicon glyphicon-lamp" %></li>
+    	  		      <% if ((@navheader=='Филиалы') and (item.id==subitem.filial_id)) or ((@navheader!='Филиалы') and (item.id==subitem.furnizor_id)) %>
+    	  		        <li>
+    	  		      	   <p>
+    	  		           <a role="button" data-toggle="collapse" data-parent="#accordion" href="#leaf<%= subitem.id %>" aria-expanded="false" aria-controls="leaf<%= subitem.id %>" class = "glyphicon glyphicon-th-list"></a>
+    	  		           <%= link_to "#{subitem.name}", company_path(subitem), :class => "glyphicon glyphicon-lamp" %>
+    	  		           <% if (!@leaves.nil?) and (!@count_mpoints[subitem.id].nil?) then %><span class="badge"><%=@count_mpoints[subitem.id] %></span><% end %>
+    	  		           </p>
+    	  		           <ul id="leaf<%= subitem.id %>" class="nav nav-list collapse noPadding">
+    	  		           <% if (!@leaves.nil?) and (!@count_mpoints[subitem.id].nil?)  %>
+    	  		           <% @leaves.each do |leaf| %>
+    	  		              <% if (subitem.id==leaf.company_id) %>
+    	  		           	  <li class="noPadding">
+    	  		           	  	    	  		      	
+    	  		         <!--  	  <small>  -->
+    	  		           	  	<%= link_to " #{leaf.messtation}/#{leaf.meconname}", mpoint_path(leaf), :class => "glyphicon glyphicon-object-align-horizontal" %>
+    	  		         <!--   	  </small> -->
+    	  		             	  		          
+    	  		          	  </li> 
+    	  		           	  <% end %>
+    	  		           <% end %>
+    	  		           <% end %>	  
+    	  		           </ul>	
+    	  		        </li>
     	  		      <% end %>   
     	  		    <% end %>
     	  		  <% end %>

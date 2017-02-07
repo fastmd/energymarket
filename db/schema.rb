@@ -10,19 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170117115500) do
+ActiveRecord::Schema.define(version: 20170207125419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "companies", force: :cascade do |t|
     t.text     "name"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.integer  "furnizor_id"
     t.string   "region"
     t.integer  "filial_id"
     t.text     "comment"
+    t.string   "shname"
+    t.integer  "mpoints_count"
     t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
   end
@@ -88,6 +90,7 @@ ActiveRecord::Schema.define(version: 20170117115500) do
     t.string   "voltcl"
     t.integer  "mess_id"
     t.text     "comment"
+    t.string   "name"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
