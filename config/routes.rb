@@ -25,10 +25,10 @@ Rails.application.routes.draw do
   get 'trparams/edit'
   post '/trparams/:id/edit' => 'trparams#edit'
 
-  get 'lineprs/create'
-  get 'lineprs/new'
-  get 'lineprs/edit'
-  get 'lineprs/destroy'
+  get 'lnparams/create'
+  get 'lnparams/new'
+  get 'lnparams/edit'
+  get 'lnparams/destroy'
 
   get 'welcome/cdindex'
   get 'welcome/setsuindex'
@@ -72,7 +72,7 @@ resources :mpoints  do
 end
 
 resources :mpoints  do  
-  resources :lineprs
+  resources :lnparams
 end    
 
   devise_for :users

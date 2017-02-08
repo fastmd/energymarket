@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170207125419) do
+ActiveRecord::Schema.define(version: 20170208114107) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,14 +45,20 @@ ActiveRecord::Schema.define(version: 20170207125419) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "lineprs", force: :cascade do |t|
-    t.float    "l1"
-    t.float    "p1"
+  create_table "lnparams", force: :cascade do |t|
+    t.float    "l"
+    t.float    "r"
     t.integer  "mpoint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text     "comment"
-    t.index ["mpoint_id"], name: "index_lineprs_on_mpoint_id", using: :btree
+    t.float    "ro"
+    t.float    "k_scr"
+    t.float    "k_tr"
+    t.float    "k_peb"
+    t.float    "q"
+    t.float    "k_f"
+    t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
 
   create_table "mesubstations", force: :cascade do |t|
@@ -156,7 +162,9 @@ ActiveRecord::Schema.define(version: 20170207125419) do
 
   add_foreign_key "companies", "filials"
   add_foreign_key "companies", "furnizors"
+  add_foreign_key "lnparams", "mpoints"
   add_foreign_key "meters", "mpoints"
   add_foreign_key "mpoints", "companies"
   add_foreign_key "mvalues", "meters"
+  add_foreign_key "trparams", "mpoints"
 end

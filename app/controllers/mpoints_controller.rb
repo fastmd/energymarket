@@ -26,7 +26,7 @@ class MpointsController < ApplicationController
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id])
     @trp = @mp.trparams.all
-    @lnp = @mp.lineprs.all
+    @lnp = @mp.lnparams.all
     @mets=Array[]
     i=0     
     if !(params[:met]).nil? then  @met = Meter.find(params[:met])
@@ -58,8 +58,13 @@ class MpointsController < ApplicationController
       @tr_id = params[:tr_id]       
     end   
     if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
-      @p1  = params[:p1]
-      @l1  = params[:l1]
+      @l  = params[:l]
+      @ro  = params[:ro]      
+      @k_scr = params[:k_scr]
+      @k_tr = params[:k_tr]
+      @k_peb = params[:k_peb] 
+      @k_f = params[:k_f] 
+      @q = params[:q]
       @comment = params[:comment] 
       @line_id = params[:line_id]       
     end   
