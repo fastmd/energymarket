@@ -47,12 +47,13 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-		   				<th>Потери холостого хода, кВт</th>
-		   				<th>Потери короткого замыкания, кВт</th>
-		   				<th>Номинальная мощность</th>
-		   				<th>Uкз, кВ</th>
-		   				<th>Io</th>
+		   				<th>Потери холостого хода Рхх, кВт</th>
+		   				<th>Потери короткого замыкания Ркз, кВт</th>
+		   				<th>Номинальная мощность Sном, кВА</th>
+		   				<th>Uкз, %</th>
+		   				<th>Io, %</th>
 		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
 				</thead>
 				<tbody>
@@ -62,7 +63,8 @@
 						<td><%= number_field_tag 'snom', @snom, placeholder: "мощность...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'ukz', @ukz,  placeholder: "Uкз...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'io', @io, size: "10", placeholder: "Io...", maxlength:"10", min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>			        
+						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', @f %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
@@ -88,13 +90,14 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
-		   <th>Потери холостого хода, кВт</th>
-		   <th>Потери короткого замыкания, кВт</th>
-		   <th>Номинальная мощность</th>
-		   <th>Uкз, кВ</th>
-		   <th>Io</th>
-		   <th>Расчет</th>
+		   <th>Потери холостого хода Рхх, кВт</th>
+		   <th>Потери короткого замыкания Ркз, кВт</th>
+		   <th>Номинальная мощность Sном, кВА</th>
+		   <th>Uкз, %</th>
+		   <th>Io, %</th>
+		   <th>Qкз, квар</th>
 		   <th>Комментарий</th>
+		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th colspan="3">.........</th>
 		</tr>	
 	</thead>
@@ -115,6 +118,7 @@
 					<td><%= item.io %></td>
 				    <td><%= item.qkz %></td>
 					<td><%= item.comment %></td>
+					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", trparams_edit_path(:tr_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", trparams_destroy_path(:tr_id => item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить трансформатор для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  						
@@ -148,14 +152,15 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-		   				<th>Длина линии,км</th>
-		                <th>Сопротивление материала, Ом</th>
-		                <th>Коэффициент скрутки</th>
-		                <th>Коэффициент трассы</th>
-		                <th>Коэффициент пов. эффекта и близости</th>
-		                <th>Коэффициент формы</th>
-		                <th>Сечение провода, мм2</th>
+		   				<th>Длина линии L,км</th>
+		                <th>Сопротивление материала r20, Ом</th>
+		                <th>Коэффициент скрутки Kr</th>
+		                <th>Коэффициент трассы Ktr</th>
+		                <th>Коэффициент пов. эффекта и близости Kc</th>
+		                <th>Коэффициент формы Кф</th>
+		                <th>Сечение провода q, мм2</th>
 		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
 				</thead>
 				<tbody>
@@ -167,7 +172,8 @@
 						<td><%= number_field_tag 'k_peb', @k_peb, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'k_f', @k_f, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'q', @q, placeholder: "Сечение...", min: 0.01, max: 1000000, step: 0.01 %></td>
-						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>			        
+						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', @f %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
@@ -193,15 +199,16 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
-		   <th>Длина линии, км</th>
-		   <th>Сопротивление линии, Ом</th>
-		   <th>Сопротивление материала, Ом</th>
-		   <th>Коэффициент скрутки</th>
-		   <th>Коэффициент трассы</th>
-		   <th>Коэффициент пов. эффекта и близости</th>
-		   <th>Коэффициент формы</th>
-		   <th>Сечение провода, мм2</th>
+		   <th>Длина линии L, км</th>
+		   <th>Сопротивление линии r, Ом</th>
+		   <th>Сопротивление материала r20, Ом</th>
+		   <th>Коэффициент скрутки Kr</th>
+		   <th>Коэффициент трассы Ktr</th>
+		   <th>Коэффициент пов. эффекта и близости Kc</th>
+		   <th>Коэффициент формы Кф</th>
+		   <th>Сечение провода q, мм2</th>
 		   <th>Комментарий</th>
+		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th>.........</th>
 		</tr>	
 	</thead>
@@ -224,6 +231,7 @@
 					<td><%= item.k_f %></td>
 					<td><%= item.q %></td>
 					<td><%= item.comment %></td>
+					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", lnparams_edit_path(:line_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", lnparams_destroy_path(:line_id => item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  												

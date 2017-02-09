@@ -55,7 +55,8 @@ class MpointsController < ApplicationController
       @ukz  = params[:ukz]
       @io   = params[:io]
       @comment = params[:comment] 
-      @tr_id = params[:tr_id]       
+      @tr_id = params[:tr_id]
+      @f  = params[:f]      
     end   
     if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
       @l  = params[:l]
@@ -66,7 +67,8 @@ class MpointsController < ApplicationController
       @k_f = params[:k_f] 
       @q = params[:q]
       @comment = params[:comment] 
-      @line_id = params[:line_id]       
+      @line_id = params[:line_id]
+      @f = params[:f]        
     end   
   end
 

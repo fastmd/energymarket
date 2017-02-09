@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170208114107) do
+ActiveRecord::Schema.define(version: 20170209120527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20170208114107) do
     t.float    "k_peb"
     t.float    "q"
     t.float    "k_f"
+    t.boolean  "f"
     t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
 
@@ -136,6 +137,7 @@ ActiveRecord::Schema.define(version: 20170208114107) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text     "comment"
+    t.boolean  "f"
     t.index ["mpoint_id"], name: "index_trparams_on_mpoint_id", using: :btree
   end
 

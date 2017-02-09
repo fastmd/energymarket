@@ -16,16 +16,17 @@ class LnparamsController < ApplicationController
     line.k_peb = params[:k_peb] 
     line.k_f = params[:k_f] 
     line.q = params[:q]
+    line.f = params[:f]
     line.r = tmp  
     line.comment = params[:comment]
     if line.save then redirect_to mpoint_path(@mp)
     else  
        if params[:line_id].nil? or params[:line_id]=='' then
           redirect_to mpoint_path(@mp,:r =>params[:r],:l=>params[:l],:ro =>params[:ro],:k_scr =>params[:k_scr],
-                                  :k_tr =>params[:k_tr],:k_peb =>params[:k_peb],:k_f =>params[:k_f],:q =>params[:q],:comment=>params[:comment],:flag=>'ladd')
+                                  :k_tr =>params[:k_tr],:k_peb =>params[:k_peb],:k_f =>params[:k_f],:q =>params[:q],:f =>params[:f],:comment=>params[:comment],:flag=>'ladd')
        else
-          redirect_to mpoint_path(@mp,:line_id=>@line.id,:l=>@line.l,:ro=>@line.ro,:k_scr=>@line.k_scr,:k_tr=>@line.k_tr,
-                                  :k_peb=>@line.k_peb,:k_f=>@line.k_f,:q=>@line.q,:comment=>@line.comment,:flag=>'ledit')
+          redirect_to mpoint_path(@mp,:line_id=>line.id,:l=>line.l,:ro=>line.ro,:k_scr=>line.k_scr,:k_tr=>line.k_tr,
+                                  :k_peb=>line.k_peb,:k_f=>line.k_f,:q=>line.q,:f=>line.f,:comment=>line.comment,:flag=>'ledit')
        end    
     end     
   end
@@ -34,7 +35,7 @@ class LnparamsController < ApplicationController
     @line = Lnparam.find(params[:line_id])
     @mp = Mpoint.find(@line.mpoint_id)
     redirect_to mpoint_path(@mp,:line_id=>@line.id,:l=>@line.l,:ro=>@line.ro,:k_scr=>@line.k_scr,:k_tr=>@line.k_tr,
-                                  :k_peb=>@line.k_peb,:k_f=>@line.k_f,:q=>@line.q,:comment=>@line.comment,:flag=>'ledit')
+                                  :k_peb=>@line.k_peb,:k_f=>@line.k_f,:q=>@line.q,:f=>@line.f,:comment=>@line.comment,:flag=>'ledit')
   end
  
   def destroy

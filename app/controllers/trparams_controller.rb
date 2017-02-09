@@ -23,13 +23,14 @@ class TrparamsController < ApplicationController
      tr.ukz = params[:ukz].to_f
      tr.io = params[:io].to_f
      tr.qkz =  tmp
+     tr.f = params[:f]
      tr.comment = params[:comment]
      if tr.save then redirect_to mpoint_path(@mp)
      else  
         if params[:tr_id].nil? or params[:tr_id]=='' then
-          redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:comment=>params[:comment],:flag=>'tadd')
+          redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:flag=>'tadd')
         else
-          redirect_to mpoint_path(@mp,:tr_id=>@tr.id,:pxx =>@tr.pxx,:pkz=>@tr.pkz,:snom=>@tr.snom,:ukz=>@tr.ukz,:io=>@tr.io,:comment=>@tr.comment,:flag=>'tedit')
+          redirect_to mpoint_path(@mp,:tr_id=>tr.id,:pxx =>tr.pxx,:pkz=>tr.pkz,:snom=>tr.snom,:ukz=>tr.ukz,:io=>tr.io,:f=>tr.f,:comment=>tr.comment,:flag=>'tedit')
         end    
      end 
   end
@@ -37,7 +38,7 @@ class TrparamsController < ApplicationController
   def edit
     @tr = Trparam.find(params[:tr_id])
     @mp = Mpoint.find(@tr.mpoint_id)
-    redirect_to mpoint_path(@mp,:tr_id=>@tr.id,:pxx =>@tr.pxx,:pkz=>@tr.pkz,:snom=>@tr.snom,:ukz=>@tr.ukz,:io=>@tr.io,:comment=>@tr.comment,:flag=>'tedit')
+    redirect_to mpoint_path(@mp,:tr_id=>@tr.id,:pxx =>@tr.pxx,:pkz=>@tr.pkz,:snom=>@tr.snom,:ukz=>@tr.ukz,:io=>@tr.io,:f=>@tr.f,:comment=>@tr.comment,:flag=>'tedit')
   end
   
   def destroy
