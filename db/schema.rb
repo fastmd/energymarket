@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209120527) do
+ActiveRecord::Schema.define(version: 20170210143428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,16 +88,16 @@ ActiveRecord::Schema.define(version: 20170209120527) do
     t.integer  "pnum"
     t.string   "pname"
     t.integer  "company_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.string   "messtation"
     t.string   "meconname"
     t.string   "clsstation"
     t.string   "clconname"
-    t.string   "voltcl"
     t.integer  "mess_id"
     t.text     "comment"
     t.string   "name"
+    t.float    "voltcl",     default: 10.0, null: false
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 

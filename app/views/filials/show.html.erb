@@ -80,7 +80,8 @@
 			   <th>Поставщик</th>			   
 			   <th>Точки учета</th>
 			   <th>Действие</th>
-			   <th>Комментарий</th>				   
+			   <th>Комментарий</th>
+			   <th>.........</th>				   
 			</tr>	
 		</thead>
 		<tbody>
@@ -99,6 +100,8 @@
 						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-folder-open" %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => item.id) %></td>
                         <td><%= item.comment %></td>
+                        <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>                        
 				</tr>		
 				<% end %>			
 		</tbody>

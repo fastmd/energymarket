@@ -61,7 +61,7 @@ wb.styles do |style|
 	    sheet.add_row [nil, "Denumirea filialei:  #{@cp.filial.name}"]
 	    sheet.add_row [""] 	    
 	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "№ contor.", 
-	                   "Indicatii \n #{@ddatee2.to_formatted_s(:day_month_year)}", "Indicatii \n #{@ddateb2.to_formatted_s(:day_month_year)}",
+	                   "Indicatii \n #{@luna0}", "Indicatii \n #{@luna1}",
 	                   "Diferenta indicat.", "Coeficient contor.", "Energie kWh"], 
     		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
     		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]

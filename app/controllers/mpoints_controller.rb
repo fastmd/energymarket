@@ -27,7 +27,7 @@ class MpointsController < ApplicationController
     @mp =  Mpoint.find(params[:id])
     @trp = @mp.trparams.all
     @lnp = @mp.lnparams.all
-    @mets=Array[]
+    @mets = Array[]
     i=0     
     if !(params[:met]).nil? then  @met = Meter.find(params[:met])
                                   @mv = @met.mvalues.all.order(actdate: :desc)

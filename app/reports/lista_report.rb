@@ -14,7 +14,7 @@ class ListaReport < Prawn::Document
     end
   end
     
-  def to_pdf(cp,report,luna,ddate,ddatee2,ddateb2)
+  def to_pdf(cp,report,luna,ddate,luna1,luna0)
     # привязываем шрифты
     if RUBY_PLATFORM == "i386-mingw32" then
       font_families.update(
@@ -31,6 +31,10 @@ class ListaReport < Prawn::Document
                         :normal  => "./app/assets/fonts/OpenSans-Light.ttf" })
       font "OpenSans", :size => 10  
     end
+     # добавим время создания вверху страницы
+    creation_date = Time.now.strftime("Отчет сгенерирован %e %b %Y в %H:%M")
+    move_down(0)
+    text creation_date, :align => :right, :style => :italic, :size => 9  
     move_down(1)
     text "LISTA", :size => 15, :style => :bold, :align => :center
     text "de calcul a intrarii energiei electrice la #{cp.name}", :size => 14, :style => :bold, :align => :center
@@ -46,8 +50,8 @@ class ListaReport < Prawn::Document
         data << row(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9])
       end 
     end
-    Headers[5] = "Indicatii \n #{ddatee2.to_formatted_s(:day_month_year)}"
-    Headers[6] = "Indicatii \n #{ddateb2.to_formatted_s(:day_month_year)}"
+    Headers[5] = "Indicatii \n #{luna1}"
+    Headers[6] = "Indicatii \n #{luna0}"
     head = make_table([Headers], :column_widths => Widths)
     table([[head], *(data.map{|d| [d]})], :header => true, :row_colors => %w[cccccc ffffff]) do
       row(0).style(:background_color => 'ffffff', :text_color => '000000', :font_style => :bold, :align => :center)
@@ -55,12 +59,7 @@ class ListaReport < Prawn::Document
       row(0).borders = [:top, :bottom, :left, :right]
      # row(1..50).borders = [:left, :right]
       row(-1).borders = [:bottom, :left, :right]
-    end
-     # добавим время создания вверху страницы
-    creation_date = Time.now.strftime("Отчет сгенерирован %e %b %Y в %H:%M")
-    go_to_page(page_count)
-    move_down(0)
-    text creation_date, :align => :right, :style => :italic, :size => 9   
+    end 
     render
   end
   
