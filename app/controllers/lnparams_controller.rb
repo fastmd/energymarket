@@ -1,4 +1,6 @@
 class LnparamsController < ApplicationController
+before_filter :redirect_cancel, only: [:create, :update]  
+  
   def create
     if params[:line_id].nil? or params[:line_id]=='' then
       @mp = Mpoint.find(params[:mpoint_id])
@@ -44,5 +46,12 @@ class LnparamsController < ApplicationController
     @line.destroy
     redirect_to mpoint_path(@mp)
   end
+
+private
+
+  def redirect_cancel
+    @mp = Mpoint.find(params[:mpoint_id])
+    redirect_to mpoint_path(@mp, :flag => nil) if params[:cancel]
+  end  
     
 end

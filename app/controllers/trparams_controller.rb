@@ -1,4 +1,5 @@
 class TrparamsController < ApplicationController
+before_filter :redirect_cancel, only: [:create, :update]
   
   def create  
     ukz2 = params[:ukz].to_f * params[:ukz].to_f
@@ -48,4 +49,10 @@ class TrparamsController < ApplicationController
     redirect_to mpoint_path(@mp)
   end
   
+private
+
+  def redirect_cancel
+    @mp = Mpoint.find(params[:mpoint_id])
+    redirect_to mpoint_path(@mp, :flag => nil) if params[:cancel]
+  end    
 end

@@ -1,8 +1,13 @@
 class MvaluesController < ApplicationController
-  
+before_filter :redirect_cancel, only: [:create, :update]
+ 
   def create
     @mp = Mpoint.find(params[:mpoint_id])
-    @mv = @mp.mvalues.new
+    if params[:mv_id].nil? or params[:mv_id]=='' then
+      @mv = Mvalue.new
+    else
+      @mv = Mvalue.find(params[:mv_id])
+    end 
     @mv.meter_id = params[:meter_id]
     @mv.actp180 = params[:actp180]
     @mv.actp280 = params[:actp280]
@@ -10,14 +15,24 @@ class MvaluesController < ApplicationController
     @mv.actp480 = params[:actp480]
     @mv.actdate = params[:actdate]
     @mv.comment = params[:comment]
-    @mv.save
-    redirect_to mpoint_path(@mp,:flag => 1,:met => params[:met])
+    if @mv.save then redirect_to mpoint_path(@mp, :met => params[:met])
+    else        
+        if params[:mv_id].nil? or params[:mv_id]=='' then
+          redirect_to mpoint_path(@mp, @mv, :flag=>'mvadd', :met => params[:met])
+        else
+          redirect_to mpoint_path(@mp, @mv, :flag=>'mvedit', :met => params[:met])
+        end    
+     end 
   end
   
   def new
   end
 
   def edit
+    @mv = Mvalue.find(params[:mv_id])
+    met = @mv.meter
+    @mp  = met.mpoint
+    redirect_to mpoint_path(@mp, :flag=>'mvedit', :met => params[:met], :mv_id => @mv.id)
   end
 
   def show
@@ -25,4 +40,19 @@ class MvaluesController < ApplicationController
 
   def index
   end
+  
+  def destroy
+    @mv = Mvalue.find(params[:mv_id])
+    @met = Meter.find(@mv.meter_id)
+    @mp = Mpoint.find(@met.mpoint_id)    
+    @mv.destroy
+    redirect_to mpoint_path(@mp)
+  end
+  
+private
+
+  def redirect_cancel
+    @mp = Mpoint.find(params[:mpoint_id])
+    redirect_to mpoint_path(@mp, :flag => nil, :met => params[:met]) if params[:cancel]
+  end   
 end

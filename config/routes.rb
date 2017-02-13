@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get 'mvalues/edit'
   get 'mvalues/show'
   get 'mvalues/index'
+  get 'mvalues/destroy'
 
   get 'mpoints/new'
   get 'mpoints/show'
