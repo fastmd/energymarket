@@ -1,0 +1,44 @@
+wb = xlsx_package.workbook
+
+wb.styles do |style|
+    lsimple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true })
+    simple_cell = style.add_style( border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+	highlight_cell = style.add_style(bg_color: "EFC376",
+                                   border: Axlsx::STYLE_THIN_BORDER,
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true  })
+    date_cell = style.add_style(format_code: "dd-mm-yyyy", :b => true, :sz => 14, alignment: { horizontal: :center, vertical: :center })
+    simple_date_cell = style.add_style(format_code: "dd-mm-yyyy", border: Axlsx::STYLE_THIN_BORDER, :b => true, alignment: { horizontal: :center, vertical: :center, wrap_text: :true  })
+    header_cell = style.add_style(:fg_color=> "FFFFFF",
+                                  :b => true,
+                                  :bg_color => "004586",
+                                  :sz => 14, 
+                                  alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+    theader_cell = style.add_style(:b => true,
+                                   :sz => 12,
+                                   border: Axlsx::STYLE_THIN_BORDER, 
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+                                   
+	wb.add_worksheet(name: "Zile") do |sheet|
+	    sheet.add_row [nil, Time.now.strftime("Отчет сгенерирован %e %b %Y в %H:%M")] 
+	    sheet.add_row [""]
+	    sheet.add_row ["","История показаний"], style: [nil, header_cell]
+	    sheet.add_row ["","Наименование поставщика: #{@mp.company.furnizor.name}"]
+	    sheet.add_row ["","Наименование потребителя: #{@mp.company.name}"]
+	    sheet.add_row ["","Подстанция МЭ: #{@mp.messtation}"]
+	    sheet.add_row ["","Присоединение МЭ: #{@mp.meconname}"]
+	    sheet.add_row ["","Подстанция потребителя: #{@mp.clsstation}"]
+	    sheet.add_row ["","Присоединение потребителя: #{@mp.clconname}"]	    
+	    sheet.add_row [""]	    
+	    sheet.add_row ["№", "Дата актирования", "№ счетчика", "1.8.0", "2.8.0", "3.8.0", "4.8.0", "Комментарий"], 
+    		              style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
+    	i=0
+    	if !@mvs_all_pages.nil? then	              
+  		@mvs_all_pages.each do |item|
+    		sheet.add_row [i+=1, item.actdate, item.meter.meternum, item.actp180, item.actp280, item.actp380, item.actp480, item.comment], 
+    		              style: [simple_cell, simple_date_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, lsimple_cell]
+    	end	              
+  		end 
+    end  
+end 

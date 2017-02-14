@@ -27,7 +27,8 @@ before_filter :redirect_cancel, only: [:create, :update]
      tr.f = params[:f]
      tr.comment = params[:comment]
      if tr.save then redirect_to mpoint_path(@mp)
-     else  
+     else
+        flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."         
         if params[:tr_id].nil? or params[:tr_id]=='' then
           redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:flag=>'tadd')
         else

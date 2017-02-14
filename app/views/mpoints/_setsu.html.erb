@@ -12,16 +12,7 @@
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
-
-<% if @flag=='tadd' %>
-		<div class="alert alert-danger" role="alert">
-			<a class="close" data-dismiss="alert">&#215;</a>
-  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  			<span class="sr-only">Error:</span>
-  		    <%= "Параметры не сохранены. Проверьте введенные данные." %>
-		</div>
-<% end %>		
-
+	
 <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">

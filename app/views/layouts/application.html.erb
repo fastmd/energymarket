@@ -11,7 +11,8 @@
   	<%= render 'layouts/header' %>
     <div class="container-fluid">
       <div class="row">
-      	<div class="col-lg-<%= @pages.nil? ? "12" : "10" %>">	   	
+      	<div class="col-lg-<%= @pages.nil? ? "12" : "10" %>">
+      	  <%= render 'layouts/messages' %>	 	
     	  <%= yield %> 
     	  <%= render 'layouts/footer' %>
     	</div>   <!-- /col-lg -->

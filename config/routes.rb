@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   post '/meters/index' => 'meters#index'
   get 'meters/update'
   get 'meters/show'
+  post '/meters/show' => 'meters#show'
+  get 'meters/destroy' 
 
   get 'static_pages/home'
   get 'static_pages/help'
@@ -59,15 +61,21 @@ Rails.application.routes.draw do
   get 'clients/show'
 
 resources :filials
-resources :trparams
 resources :furnizors
 resources :companys 
-resources :mpoints  do
-  resources :mvalues
-end
+
 resources :mpoints  do
   resources :meters
 end
+
+resources :meters do
+    resources :mvalues
+end
+
+resources :mpoints  do
+    resources :mvalues
+end
+
 resources :mpoints  do  
   resources :trparams
 end

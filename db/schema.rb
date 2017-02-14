@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170214074638) do
+ActiveRecord::Schema.define(version: 20170214090406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20170214074638) do
     t.text     "comment"
     t.string   "shname"
     t.integer  "mpoints_count"
+    t.boolean  "f"
     t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
   end
@@ -81,6 +82,7 @@ ActiveRecord::Schema.define(version: 20170214074638) do
     t.datetime "updated_at",     null: false
     t.date     "relevance_date"
     t.string   "comment"
+    t.boolean  "f"
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
   end
 
@@ -98,6 +100,7 @@ ActiveRecord::Schema.define(version: 20170214074638) do
     t.text     "comment"
     t.string   "name"
     t.float    "voltcl",     default: 10.0, null: false
+    t.boolean  "f"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 

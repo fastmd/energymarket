@@ -10,14 +10,7 @@ class MetersController < ApplicationController
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @mp =  Mpoint.find(params[:id]) 
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
-    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)    
-#    respond_to do |format|
-#      format.html
-#      format.csv { send_data @mv.to_csv }
-#      format.xls { send_data @trp.to_csv(col_sep: "\t") }
-#      format.pdf { send_data MpointsReport.new.to_pdf(@mv,@mp), :type => 'application/pdf', :filename => "history.pdf" }
-#      format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
-#    end   
+    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
   end
 
   def new
@@ -52,5 +45,25 @@ class MetersController < ApplicationController
   end
 
   def show
+    @met =  Meter.find(params[:id])
+    @mp = @met.mpoint
+    @mvs_all_pages = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)        
+    respond_to do |format|
+      format.html
+      format.pdf { send_data MpointsReport.new.to_pdf(@mvs_all_pages,@mp), :type => 'application/pdf', :filename => "history.pdf" }
+      format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
+    end       
   end
+  
+  def destroy
+    met = Meter.find(params[:met_id])
+    mp = Mpoint.find(met.mpoint_id)
+    mv_count = met.mvalues.count
+    if  mv_count!=0 then 
+      flash[:warning] = "Нельзя удалить счетчик, которому принадлежат показания (#{mv_count} шт.)" 
+    else met.destroy 
+    end
+    redirect_to meters_path(:id=>mp.id)
+  end
+  
 end
