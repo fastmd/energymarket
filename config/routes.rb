@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   get 'meters/update'
   get 'meters/show'
   post '/meters/show' => 'meters#show'
-  get 'meters/destroy' 
+  get 'meters/destroy'
+  get 'meters/edit' 
 
   get 'static_pages/home'
   get 'static_pages/help'

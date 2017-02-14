@@ -1,7 +1,7 @@
 <% provide(:title, 'Показания') %>
 
 <nav class="navbar">
-  <ul class="nav nav-pills nav-pillspull-right">
+  <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>

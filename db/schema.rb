@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170214090406) do
+ActiveRecord::Schema.define(version: 20170214154231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,13 +76,13 @@ ActiveRecord::Schema.define(version: 20170214090406) do
     t.integer  "meternum"
     t.string   "koeftt"
     t.string   "koeftn"
-    t.integer  "koefcalc"
     t.integer  "mpoint_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.date     "relevance_date"
     t.string   "comment"
     t.boolean  "f"
+    t.float    "koefcalc",       default: 1.0, null: false
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
   end
 

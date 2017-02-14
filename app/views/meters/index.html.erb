@@ -1,7 +1,7 @@
 <% provide(:title, 'Cчетчики') %>
 	           
 <nav class="navbar">
-  <ul class="nav nav-pills nav-pillspull-right">
+  <ul class="nav nav-pills nav-pills pull-left">
     <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
@@ -18,13 +18,23 @@
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
-          Добавить cчетчик
+          <% if @flag=='edit' %>  
+              Редактировать cчетчик 
+          <% else %>
+              Добавить cчетчик 
+          <% end %>          
         </a>
       </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<h3 align="center">Ввод нового счетчика</h3>
+		<h3 align="center">
+          <% if @flag=='edit' %>  			
+			Редактирование счетчика
+          <% else  %>
+            Ввод нового счетчика
+          <% end %>			
+		</h3>		
 		<%= form_for([@mp,@mp.meters.build]) do |f| %>
 			<table class="table table-striped">
 				<thead>
@@ -35,6 +45,7 @@
 		   				<th>Коэффициент трансформатора напряжения</th>
 		   				<th>Дата актуальности</th>
 		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
 				</thead>
 				<tbody>
@@ -44,14 +55,20 @@
 						<td><%= text_field_tag 'koeftt', '1 / 1' %></td>
 						<td><%= text_field_tag 'koeftn', '1 / 1' %></td>
 						<td><%= date_field_tag 'relevance_date', Date.current %></td>
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', @mt_params[:f] %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
   			<%= hidden_field_tag :mpoint_id, @mp.id %>
+  			<%= hidden_field_tag :mt_id, @mt_params[:mt_id]%>
   			<div  align="center">
-			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></div> 
+			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>
+			  <% if @flag=='edit' %>	                
+			     <%= button_tag t('buttons.cancel'), type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+              <% end %>
+            </div> 
 		<% end %>
       </div>
     </div>
@@ -72,6 +89,7 @@
 			   <th>Дата актуальности</th>
 			   <th>Показания</th>
 			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -90,13 +108,14 @@
 						<td><%= item.koeftt %></td>
 						<td><%= item.koeftn %></td>
 						<td><%= item.koefcalc %></td>
-						<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
+						<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>						
   						<td><%= link_to " " , mpoint_path(@mp,:met=>item.id), :class=> "glyphicon glyphicon-folder-open" %>
   						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), meter_path(item,format: "xlsx") %>
   						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), meter_path(item,format: "pdf") %></td>
   						<td><%= item.comment %></td>
-  						<td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
-  						    <%= link_to " " , meters_destroy_path(:met_id=>item.id), :class=> "glyphicon glyphicon-remove",
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  						<td><%= link_to " " , meters_edit_path(:mt_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , meters_destroy_path(:mt_id=>item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить счетчик #{item.metertype} № #{item.meternum}?" } %></td>       						
 					</tr>		
 				<% end %>			
