@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170210143428) do
+ActiveRecord::Schema.define(version: 20170214074638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(version: 20170210143428) do
     t.string   "actp480"
     t.date     "actdate"
     t.integer  "meter_id"
+    t.boolean  "f"
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 

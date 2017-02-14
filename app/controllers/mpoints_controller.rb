@@ -33,11 +33,13 @@ class MpointsController < ApplicationController
       i=0     
       unless (params[:met]).nil? || (params[:met]) == ''  then  
                                     @met = Meter.find(params[:met])
-                                    @mvs = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs_all_pages = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs = @mvs_all_pages
                                     @mets[i] = [(@met.meternum).to_s+" "+(@met.metertype).to_s[0,3]+" ( "+(@met.relevance_date).to_s+" ) ", @met.id]
       else                          @met = nil
                                     met = @mp.meters.all.order('relevance_date desc nulls last', created_at: :desc)
-                                    @mvs = @mp.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs_all_pages = @mp.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs = @mvs_all_pages
                                     met.each do |item|
                                         @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]
                                         i+=1    
@@ -45,32 +47,25 @@ class MpointsController < ApplicationController
       end
       if @flag.nil? then
         if @mvs.count==0 then
-          @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,:actdate=>Date.current,:comment=>nil} 
+          @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,
+                        :actdate=>Date.current,:comment=>nil,:f=>true} 
         else 
           @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.meter_id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
                         :actp380=>@mvs.first.actp380,:actp480=>@mvs.first.actp480,
-                        :actdate=>Date.current,:comment=>nil} 
+                        :actdate=>Date.current,:comment=>nil,:f=>true} 
         end                
       elsif (@flag=='mvedit' || @flag=='mvadd') then
          @mv_params = {:mv_id=>params[:mv_id],:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
-                       :actdate=>params[:actdate],:comment=>params[:comment]}
-         @meter_id = params[:meter_id]
-         @actp180 = params[:actp180]
-         @actp280 = params[:actp280]
-         @actp380 = params[:actp380]
-         @actp480 = params[:actp480]
-         @actdate = params[:actdate]
-         @comment = params[:comment]
-         @mv_id =  params[:mv_id]    
+                       :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f]}   
       end       
       @mvs = @mvs.paginate(:page => params[:page], :per_page => @perpage = $PerPage)      
-      #respond_to do |format|
-      #  format.html
+      respond_to do |format|
+        format.html
         #format.csv { send_data @mv.to_csv }
         #format.xls { send_data @trp.to_csv(col_sep: "\t") }
-      #  format.pdf { send_data MpointsReport.new.to_pdf(@mv,@mp), :type => 'application/pdf', :filename => "history.pdf" }
-     #   format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
-     # end
+        format.pdf { send_data MpointsReport.new.to_pdf(@mvs_all_pages,@mp), :type => 'application/pdf', :filename => "history.pdf" }
+        format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
+      end
     else 
       @trp = @mp.trparams.all
       @lnp = @mp.lnparams.all 

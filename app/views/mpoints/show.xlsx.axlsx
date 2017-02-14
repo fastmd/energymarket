@@ -31,13 +31,13 @@ wb.styles do |style|
 	    sheet.add_row ["","Подстанция потребителя: #{@mp.clsstation}"]
 	    sheet.add_row ["","Присоединение потребителя: #{@mp.clconname}"]	    
 	    sheet.add_row [""]	    
-	    sheet.add_row ["№", "Дата актирования", "1.8.0", "2.8.0", "3.8.0", "4.8.0", "Комментарий"], 
-    		              style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
+	    sheet.add_row ["№", "Дата актирования", "№ счетчика", "1.8.0", "2.8.0", "3.8.0", "4.8.0", "Комментарий"], 
+    		              style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
     	i=0
-    	if !@mv.nil? then	              
-  		@mv.each do |item|
-    		sheet.add_row [i+=1, item.actdate, item.actp180, item.actp280, item.actp380, item.actp480, item.comment], 
-    		              style: [simple_cell, simple_date_cell, simple_cell, simple_cell, simple_cell, simple_cell, lsimple_cell]
+    	if !@mvs_all_pages.nil? then	              
+  		@mvs_all_pages.each do |item|
+    		sheet.add_row [i+=1, item.actdate, item.meter.meternum, item.actp180, item.actp280, item.actp380, item.actp480, item.comment], 
+    		              style: [simple_cell, simple_date_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, lsimple_cell]
     	end	              
   		end 
     end  
