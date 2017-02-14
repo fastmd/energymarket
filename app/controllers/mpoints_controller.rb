@@ -27,16 +27,8 @@ class MpointsController < ApplicationController
 
     @mp =  Mpoint.find(params[:id])
     @flag = params[:flag]
+    
     if (current_user.has_role? :cduser) || (@fpr > 5) then
-      if !@flag.nil? && (@flag=='mvedit' || @flag=='mvadd') then
-         @mv.meter_id = params[:meter_id]
-         @mv.actp180 = params[:actp180]
-         @mv.actp280 = params[:actp280]
-         @mv.actp380 = params[:actp380]
-         @mv.actp480 = params[:actp480]
-         @mv.actdate = params[:actdate]
-         @mv.comment = params[:comment]     
-      end 
       @mets = Array[]
       i=0     
       unless (params[:met]).nil? || (params[:met]) == ''  then  
@@ -50,7 +42,27 @@ class MpointsController < ApplicationController
                                         @mets[i] = [(item.meternum).to_s+" "+(item.metertype).to_s[0,3]+" ( "+(item.relevance_date).to_s+" ) ", item.id]
                                         i+=1    
                                     end                                 
-      end      
+      end
+      if @flag.nil? then
+        if @mvs.count==0 then
+          @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,:actdate=>Date.current,:comment=>nil} 
+        else 
+          @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.meter_id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
+                        :actp380=>@mvs.first.actp380,:actp480=>@mvs.first.actp480,
+                        :actdate=>Date.current,:comment=>nil} 
+        end                
+      elsif (@flag=='mvedit' || @flag=='mvadd') then
+         @mv_params = {:mv_id=>params[:mv_id],:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
+                       :actdate=>params[:actdate],:comment=>params[:comment]}
+         @meter_id = params[:meter_id]
+         @actp180 = params[:actp180]
+         @actp280 = params[:actp280]
+         @actp380 = params[:actp380]
+         @actp480 = params[:actp480]
+         @actdate = params[:actdate]
+         @comment = params[:comment]
+         @mv_id =  params[:mv_id]    
+      end       
       @mvs = @mvs.paginate(:page => params[:page], :per_page => @perpage = $PerPage)      
       #respond_to do |format|
       #  format.html

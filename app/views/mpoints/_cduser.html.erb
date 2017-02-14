@@ -6,8 +6,6 @@
   </ul>  
 </nav>
 
-<%= params.inspect %>
-
 <ul class="breadcrumb">
   <li><%= link_to "Поставщики", welcome_cdindex_path, :class => "glyphicon glyphicon-home" %></li>	
   <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", furnizor_path(@mp.company.furnizor.id), :class => "glyphicon glyphicon-piggy-bank" %></li>
@@ -67,18 +65,19 @@
 				</thead>
 				<tbody>
 	   				<tr>		
-						<td><%= date_field_tag 'actdate', Date.current %></td>
-						<td><%= select_tag 'meter_id', options_for_select(@mets, if params[:met].nil? then @mets[0][1] else params[:met] end ) %></td>
-						<td><%= number_field_tag 'actp180', unless @mv.nil? then  @mv.first.actp180 end, min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp280', unless @mv.nil? then  @mv.first.actp280 end, min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp380', unless @mv.nil? then  @mv.first.actp380 end, min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp480', unless @mv.nil? then  @mv.first.actp480 end, min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= date_field_tag 'actdate', @mv_params[:actdate] %></td>
+						<td><%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]) %></td>
+						<td><%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...' %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
 			<%= hidden_field_tag :mpoint_id, @mp.id %>
 			<%= hidden_field_tag :met, unless @met.nil? then @met.id else nil end %>
+			<%= hidden_field_tag :mv_id, @mv_params[:mv_id]%>
             <div  align="center"> 
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
 			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            
