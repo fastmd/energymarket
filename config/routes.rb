@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get 'meters/show'
   post '/meters/show' => 'meters#show'
   get 'meters/destroy'
-  get 'meters/edit' 
+  get 'meters/edit'
 
   get 'static_pages/home'
   get 'static_pages/help'
@@ -63,7 +63,7 @@ Rails.application.routes.draw do
 
 resources :filials
 resources :furnizors
-resources :companys 
+resources :companys
 
 resources :mpoints  do
   resources :meters

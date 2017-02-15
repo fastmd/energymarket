@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170214154231) do
+ActiveRecord::Schema.define(version: 20170215112504) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,17 +72,17 @@ ActiveRecord::Schema.define(version: 20170214154231) do
   end
 
   create_table "meters", force: :cascade do |t|
-    t.string   "metertype"
-    t.integer  "meternum"
-    t.string   "koeftt"
-    t.string   "koeftn"
-    t.integer  "mpoint_id"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.date     "relevance_date"
+    t.string   "metertype",      default: "ZMD",   null: false
+    t.integer  "meternum",                         null: false
+    t.string   "koeftt",         default: "1 / 1", null: false
+    t.string   "koeftn",         default: "1 / 1", null: false
+    t.integer  "mpoint_id",                        null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.date     "relevance_date",                   null: false
     t.string   "comment"
-    t.boolean  "f"
-    t.float    "koefcalc",       default: 1.0, null: false
+    t.boolean  "f",              default: true,    null: false
+    t.float    "koefcalc",       default: 1.0,     null: false
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
   end
 

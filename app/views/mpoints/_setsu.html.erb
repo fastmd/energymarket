@@ -65,7 +65,7 @@
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
 			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            
 			  <% if @flag=='tedit' %>	                
-			     <%= button_tag t('buttons.cancel'), type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+			     <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
               <% end %>
            </div> 	                
 		<% end %>
@@ -172,7 +172,7 @@
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
 			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            
 			  <% if @flag=='ledit' %>	                
-			     <%= button_tag t('buttons.cancel'), type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+			     <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
               <% end %>
            </div> 	
 	    <% end %>

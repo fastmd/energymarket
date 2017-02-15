@@ -12,53 +12,37 @@ before_filter :redirect_cancel, only: [:create, :update]
     if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @flag = params[:flag]  
     @mp =  Mpoint.find(params[:id]) 
+    @meter = @mp.meters.build
+    @meter.relevance_date = Date.current
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
     @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
-    @mt_params = {:mt_id=>nil,:mpoint_id=>nil,:comment=>nil,:f=>true} 
   end
 
   def new
   end
 
-  def create 
-    ddd=params[:koeftt].to_s
-    ddd=ddd.scan(/[0-9]{1,}/)
-    if ddd[0].nil? then kt1 = 1 else kt1 = ddd[0].to_i end
-    if (ddd[1].nil? or ddd[1].to_i == 0) then kt2 = 1 else kt2 = ddd[1].to_i end    
-    koeftt = kt1.to_s + " / " + kt2.to_s
-    ddd=params[:koeftn].to_s
-    ddd=ddd.scan(/[0-9]{1,}/)
-    if ddd[0].nil? then kn1 = 1 else kn1 = ddd[0].to_i end
-    if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
-    koeftn = kn1.to_s + " / " + kn2.to_s
-    koefcalc = (kt1.to_f * kn1.to_f) / (kt2.to_f * kn2.to_f)   
+  def create
     @mp =  Mpoint.find(params[:mpoint_id])
-    @nmet= @mp.meters.new
- #   @nmet= @mp.meters.new(meter_params)
- #   render plain: @nmet.inspect
- #   return()
-    @nmet.metertype = params[:metertype]  
-    @nmet.meternum = params[:meternum]  
-    @nmet.koeftt = koeftt
-    @nmet.koeftn = koeftn
-    @nmet.koefcalc = koefcalc.round(4)
-    @nmet.relevance_date = params[:relevance_date]
-    @nmet.comment = params[:comment]
-    @nmet.f = params[:f]
-    @nmet.save 
-    redirect_to meters_index_path(:id => @mp.id)
+    meter = @mp.meters.build
+    meter = meter_init(meter)
+    meter.save 
+    redirect_to meters_index_path(:id => meter.mpoint_id)
   end
 
   def update
+    meter = Meter.find(params[:id])
+    meter = meter_init(meter)
+    meter.save 
+    redirect_to meters_index_path(:id => meter.mpoint_id)   
   end
   
   def edit
-    mt = Meter.find(params[:mt_id])
-    mp  = mt.mpoint
-    redirect_to meters_path(:id=>mp.id, :flag=>'edit', 
-                                :mt_id=>mt.id, 
-                                :mpoint_id=>mt.mpoint_id,:metertype=>mt.metertype,:meternum=>mt.meternum,:koeftt=>mt.koeftt,:koeftn=>mt.koeftn,
-                                :koefcalc=>mt.koefcalc,:relevance_date=>mt.relevance_date,:comment=>mt.comment,:f=>mt.f)
+    @flag = 'edit'
+    @meter = Meter.find(params[:mt_id])
+    @mp  = @meter.mpoint
+    @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
+    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+    render :index
   end
 
   def show
@@ -73,12 +57,12 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
   
   def destroy
-    met = Meter.find(params[:mt_id])
-    mp = Mpoint.find(met.mpoint_id)
-    mv_count = met.mvalues.count
+    meter = Meter.find(params[:mt_id])
+    mp = Mpoint.find(meter.mpoint_id)
+    mv_count = meter.mvalues.count
     if  mv_count!=0 then 
-      flash[:warning] = "Нельзя удалить счетчик, которому принадлежат показания (#{mv_count} шт.)" 
-    else met.destroy 
+      flash[:warning] = "Нельзя удалить счетчик #{meter.metertype} № #{meter.meternum}, которому принадлежат показания (#{mv_count} шт.)" 
+    else meter.destroy 
     end
     redirect_to meters_path(:id=>mp.id)
   end
@@ -90,8 +74,27 @@ private
     redirect_to meters_path(:id=>mp.id, :flag => nil) if params[:cancel]
   end
   
-  def meter_params
-    params.require(:meter).permit(:metertype, :meternum, :koeftt, :koeft, :relevance_date, :comment, :f)
-  end     
+  def meter_init(meter)
+    ddd=params[:koeftt].to_s
+    ddd=ddd.scan(/[0-9]{1,}/)
+    if ddd[0].nil? then kt1 = 1 else kt1 = ddd[0].to_i end
+    if (ddd[1].nil? or ddd[1].to_i == 0) then kt2 = 1 else kt2 = ddd[1].to_i end    
+    koeftt = kt1.to_s + " / " + kt2.to_s
+    ddd=params[:koeftn].to_s
+    ddd=ddd.scan(/[0-9]{1,}/)
+    if ddd[0].nil? then kn1 = 1 else kn1 = ddd[0].to_i end
+    if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
+    koeftn = kn1.to_s + " / " + kn2.to_s
+    koefcalc = (kt1.to_f * kn1.to_f) / (kt2.to_f * kn2.to_f)   
+    meter.metertype = params[:metertype]
+    meter.meternum = params[:meternum]
+    meter.relevance_date = params[:relevance_date]
+    meter.comment = params[:comment]
+    meter.f = params[:f]
+    meter.koeftt = koeftt
+    meter.koeftn = koeftn
+    meter.koefcalc = koefcalc.round(4)
+    meter    
+  end
   
 end
