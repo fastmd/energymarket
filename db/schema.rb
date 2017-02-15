@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170215112504) do
+ActiveRecord::Schema.define(version: 20170215153531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,36 +87,32 @@ ActiveRecord::Schema.define(version: 20170215112504) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "pnum"
-    t.string   "pname"
-    t.integer  "company_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "messtation"
-    t.string   "meconname"
-    t.string   "clsstation"
-    t.string   "clconname"
+    t.integer  "company_id",                                null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "messtation", default: "подстанция МЭ",      null: false
+    t.string   "meconname",  default: "фидер МЭ",           null: false
+    t.string   "clsstation", default: "подстанция клиента", null: false
+    t.string   "clconname",  default: "фидер клиента",      null: false
     t.integer  "mess_id"
     t.text     "comment"
-    t.string   "name"
-    t.float    "voltcl",     default: 10.0, null: false
-    t.boolean  "f"
+    t.string   "name",       default: "точка учета",        null: false
+    t.float    "voltcl",     default: 10.0,                 null: false
+    t.boolean  "f",          default: true,                 null: false
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
   create_table "mvalues", force: :cascade do |t|
-    t.integer  "vnum"
-    t.float    "val"
     t.text     "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "actp180"
-    t.string   "actp280"
-    t.string   "actp380"
-    t.string   "actp480"
-    t.date     "actdate"
-    t.integer  "meter_id"
-    t.boolean  "f"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.string   "actp180",                   null: false
+    t.string   "actp280",                   null: false
+    t.string   "actp380",                   null: false
+    t.string   "actp480",                   null: false
+    t.date     "actdate",                   null: false
+    t.integer  "meter_id",                  null: false
+    t.boolean  "f",          default: true, null: false
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 

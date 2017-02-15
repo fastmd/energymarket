@@ -18,7 +18,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     line.k_peb = params[:k_peb] 
     line.k_f = params[:k_f] 
     line.q = params[:q]
-    line.f = params[:f]
+    line.f = if params[:f].nil? then false else true end
     line.r = tmp  
     line.comment = params[:comment]
     if line.save then redirect_to mpoint_path(@mp)

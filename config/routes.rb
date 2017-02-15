@@ -49,13 +49,13 @@ Rails.application.routes.draw do
   get 'mpoints/index'
   get 'mpoints/edit'
 
-  get 'companys/new'
-  post 'companys/new'
-  get 'companys/index'
-  get '/companys/report' => 'companys#report'
-  post '/companys/report' => 'companys#report'
-  get '/companys/show' => 'companys#show'
-  post '/companys/show' => 'companys#show'  
+  get 'companies/new'
+  post 'companies/new'
+  get 'companies/index'
+  get '/companies/report' => 'companies#report'
+  post '/companies/report' => 'companies#report'
+  get '/companies/show' => 'companies#show'
+  post '/companies/show' => 'companies#show'  
 
   get 'clients/new'
   get 'clients/index'
@@ -63,7 +63,10 @@ Rails.application.routes.draw do
 
 resources :filials
 resources :furnizors
-resources :companys
+
+resources :companies  do
+  resources :mpoints
+end
 
 resources :mpoints  do
   resources :meters

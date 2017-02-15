@@ -25,7 +25,7 @@
     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center">Ввод нового потребителя</h3>
-		<%= form_for :company, url: companys_path do |f| %>
+		<%= form_for :company, url: companies_path do |f| %>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -103,7 +103,7 @@
 						<td><%= item.region %></td>
 						<td><%= Filial.find(item.filial_id).name %></td>
 						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-folder-open" %></td>
-                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companys_report_path(:id => item.id) %></td>
+                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companies_report_path(:id => item.id) %></td>
                         <td><%= item.comment %></td>
                         <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
                         <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>

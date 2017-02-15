@@ -1,4 +1,4 @@
-class CompanysController < ApplicationController
+class CompaniesController < ApplicationController
   
   def new
   end

@@ -115,7 +115,7 @@ private
     meter.meternum = params[:meternum]
     meter.relevance_date = params[:relevance_date]
     meter.comment = params[:comment]
-    meter.f = params[:f]
+    meter.f = if params[:f].nil? then false else true end
     meter.koeftt = koeftt
     meter.koeftn = koeftn
     meter.koefcalc = koefcalc.round(4)

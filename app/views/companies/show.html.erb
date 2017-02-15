@@ -4,7 +4,7 @@
 	           else @fl = @cp.filial end %>
 	           
 <nav class="navbar">
-  <ul class="nav nav-pills nav-pillspull-right">
+  <ul class="nav nav-pills pull-left">
     <li><%= if (@fpr > 5) 
     	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
     	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
@@ -43,6 +43,7 @@
 		   				<th>Наименование присоединения потребителя</th>
 		   				<th>Класс напряжения, кВ</th>
 		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
 				</thead>
 				<tbody>
@@ -52,11 +53,13 @@
 						<td><%= text_field_tag 'clsstation', nil, placeholder: "Подстанция..." %></td>
 						<td><%= text_field_tag 'clconname', nil,  placeholder: "Фидер..." %></td>
 						<td><%= number_field_tag 'voltcl', nil,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1 %></td>
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', nil %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
-  			<%= hidden_field_tag :company_id, @cp.id %> 
+  			<%= hidden_field_tag :company_id, @cp.id %>
+  			<%= hidden_field_tag :id, nil %> 
   			<div  align="center">
 			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
 			                data: { confirm: "Сохранить данные для #{@cp.furnizor.name}, #{@cp.filial.name} / #{@cp.name}?" } %></div> 
@@ -82,13 +85,14 @@
 			      <th>Параметры</th>		   
 			   <% end %>   
 			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
 		<tbody>
 			   <% i = 0%>
 			   <% @mp.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago(60*60)) %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    	<tr class="success">
 			   <% else %> 	
 					<tr>
@@ -108,7 +112,8 @@
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>  						
   						<% end %>    
-  						<td><%= item.comment %></td>      						
+  						<td><%= item.comment %></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
                         <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>
 					</tr>		

@@ -24,7 +24,7 @@ before_filter :redirect_cancel, only: [:create, :update]
      tr.ukz = params[:ukz].to_f
      tr.io = params[:io].to_f
      tr.qkz =  tmp
-     tr.f = params[:f]
+     tr.f = if params[:f].nil? then false else true end
      tr.comment = params[:comment]
      if tr.save then redirect_to mpoint_path(@mp)
      else
