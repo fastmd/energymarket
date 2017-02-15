@@ -23,17 +23,38 @@ before_filter :redirect_cancel, only: [:create, :update]
 
   def create
     @mp =  Mpoint.find(params[:mpoint_id])
-    meter = @mp.meters.build
-    meter = meter_init(meter)
-    meter.save 
-    redirect_to meters_index_path(:id => meter.mpoint_id)
+    @meter = @mp.meters.build
+    @meter = meter_init(@meter)
+    begin
+      if @meter.save! then 
+        flash.discard
+        redirect_to meters_index_path(:id => @meter.mpoint_id) 
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'add'
+      @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
+      @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+      render 'index'
+    end   
   end
 
   def update
-    meter = Meter.find(params[:id])
-    meter = meter_init(meter)
-    meter.save 
-    redirect_to meters_index_path(:id => meter.mpoint_id)   
+    @meter = Meter.find(params[:id])
+    @meter = meter_init(@meter)
+    @mp  = @meter.mpoint
+    begin
+      if @meter.save! then
+        flash.discard 
+        redirect_to meters_index_path(:id => @meter.mpoint_id) 
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'edit'
+      @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
+      @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+      render 'index'
+    end      
   end
   
   def edit
@@ -42,6 +63,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @mp  = @meter.mpoint
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
     @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+    flash.discard 
     render :index
   end
 
@@ -64,14 +86,17 @@ before_filter :redirect_cancel, only: [:create, :update]
       flash[:warning] = "Нельзя удалить счетчик #{meter.metertype} № #{meter.meternum}, которому принадлежат показания (#{mv_count} шт.)" 
     else meter.destroy 
     end
-    redirect_to meters_path(:id=>mp.id)
+    redirect_to meters_path(:id => mp.id)
   end
   
 private
 
   def redirect_cancel
     mp = Mpoint.find(params[:mpoint_id])
-    redirect_to meters_path(:id=>mp.id, :flag => nil) if params[:cancel]
+    if params[:cancel] then
+      flash.discard 
+      redirect_to meters_path(:id => mp.id, :flag => nil)
+    end   
   end
   
   def meter_init(meter)
