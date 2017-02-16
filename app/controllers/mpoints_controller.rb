@@ -1,32 +1,57 @@
 class MpointsController < ApplicationController
-before_filter :redirect_cancel, only: [:create, :update]  
+before_filter :redirect_cancel, only: [:create, :update] 
+before_filter :check_user, only: [:create, :edit, :show, :update]  
   
   def new  
   end
   
   def create    
     @cp =  Company.find(params[:company_id])
-    @nmv = @cp.mpoints.new
-    @nmv.messtation = params[:messtation]
-    @nmv.meconname = params[:meconname]
-    @nmv.clsstation = params[:clsstation]
-    @nmv.clconname = params[:clconname]
-    @nmv.voltcl = params[:voltcl]
-    @nmv.comment = params[:comment]
-    @nmv.save 
-    redirect_to company_path(@cp)  
+    @mpoint = @cp.mpoints.build
+    @mpoint = mpoint_init(@mpoint)  
+    begin
+      if @mpoint.save! then 
+        flash.discard
+        redirect_to company_path(:id => @cp.id) 
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'add'
+      @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+      render "companies/show" 
+    end   
+  end
+  
+  def update
+    @mpoint = Mpoint.find(params[:id])
+    @mpoint = mpoint_init(@mpoint)
+    @cp  = @mpoint.company
+    begin
+      if @mpoint.save! then 
+        flash.discard
+        redirect_to company_path(:id => @cp.id) 
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'edit'
+      @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+      render "companies/show" 
+    end      
+  end
+  
+  def edit
+    @flag = 'edit'
+    @mpoint = Mpoint.find(params[:mp_id])
+    @cp  = @mpoint.company
+    @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+    flash.discard 
+    render "companies/show"    
   end
 
   def show
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
-
     @mp =  Mpoint.find(params[:id])
     @flag = params[:flag]
     
@@ -98,18 +123,70 @@ before_filter :redirect_cancel, only: [:create, :update]
 
   def index
   end
-
-  def edit
-  end
+  
+  def destroy
+    mp = Mpoint.find(params[:mp_id])
+    mt_count = mp.meters.count
+    tr_count = mp.trparams.count
+    ln_count = mp.lnparams.count
+    if  mt_count!=0 || tr_count!=0 || ln_count!=0 then 
+      flash[:warning] = "Нельзя удалить точку учета #{mp.name}: #{mp.messtation} / #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}, которой принадлежат счетчики (#{mt_count} шт.), трансформаторы (#{tr_count} шт.) или линии (#{ln_count} шт.)!" 
+    else 
+      begin
+        mp.destroy!
+        flash[:notice] = "Точка учета удалена!"
+      rescue
+        flash[:warning] = "Не удалось удалить точку учета #{mp.name}: #{mp.messtation} / #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}!" 
+      end      
+    end
+    redirect_to company_path(:id => mp.company.id)
+  end  
      
 private
 
   def redirect_cancel
     if params[:cancel] then
-      cp =  Company.find(params[:company_id])
       flash.discard 
-      redirect_to company_path(:id => cp.id, :flag => nil)
+      redirect_to company_path(:id => params[:company_id], :flag => nil)
     end   
   end 
+
+  def check_user
+    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
+    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
+    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
+    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
+    if current_user.has_role? :"setsu"           then  @fpr = 5 end
+    if current_user.has_role? :"cduser"          then  @fpr = 6 end
+    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
+    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
+  end 
+  
+  def mpoint_init(mpoint)
+    t = params[:name]
+    t = t.lstrip
+    t = t.rstrip
+    mpoint.name = t
+    t = params[:messtation]
+    t = t.lstrip
+    t = t.rstrip        
+    mpoint.messtation = t
+    t = params[:meconname]
+    t = t.lstrip
+    t = t.rstrip    
+    mpoint.meconname = t
+    t = params[:clsstation]
+    t = t.lstrip
+    t = t.rstrip    
+    mpoint.clsstation = t
+    t = params[:clconname]
+    t = t.lstrip
+    t = t.rstrip    
+    mpoint.clconname = t
+    mpoint.voltcl = params[:voltcl]  
+    mpoint.comment = params[:comment]
+    mpoint.f = if params[:f].nil? then false else true end  
+    mpoint    
+  end      
   
 end

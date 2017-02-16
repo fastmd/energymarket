@@ -1,44 +1,51 @@
 class CompaniesController < ApplicationController
 before_filter :redirect_cancel, only: [:create, :update]    
+before_filter :check_user, only: [:create, :edit, :show, :update, :report] 
   
   def new
   end
   
-  def create    
-    @cp =  Company.new
-    @cp.name = params[:name]
-    @cp.region = params[:region]
-    @cp.furnizor_id = params[:furnizor_id]
-    @cp.filial_id = params[:filial_id]
-    @cp.comment = params[:comment]    
-    @cp.save
-    #redirect_to company_path(@cp)
-    if !params[:fr_id].nil? then redirect_to furnizors_show_path(:id => @cp.furnizor_id) end
-    if !params[:fl_id].nil? then redirect_to filials_show_path(:id => @cp.filial_id) end
+  def create
+    @company = Company.new
+    @company = company_init(@company)  
+    begin
+      if @company.save! then 
+        flash.discard
+        if !params[:fr_id].nil? then redirect_to furnizor_path(:id => @cp.furnizor_id) end
+        if !params[:fl_id].nil? then redirect_to filial_path(:id => @cp.filial_id) end
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'add'
+      unless params[:fr_id].nil? then
+        @fr =  Furnizor.find(params[:fr_id])
+        @companies = @fr.companys.all.order(name: :asc)
+        @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage )
+        render "furnizors/show" 
+      end
+      unless params[:fl_id].nil? then
+        @fl =  Filial.find(params[:fl_id])
+        @companies = @fl.companys.all.order(name: :asc)
+        @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage )
+        render "filials/show" 
+      end      
+    end      
+  end
+  
+  def update
+  end  
+
+  def edit
   end
 
-  def show
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end    
+  def show     
     @cp =  Company.find(params[:id])
-    @mp =  @cp.mpoints.all.paginate(:page => params[:page], :per_page => @perpage = $PerPage )   
+    @mpoint = @cp.mpoints.build
+    @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )  
   end
   
   def report
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @cp = Company.find(params[:id])
     @id = params[:id]
     @mp = @cp.mpoints.all.order(:messtation, :meconname, :clsstation, :clconname)
@@ -234,6 +241,41 @@ private
       unless params[:fr_id].nil? then redirect_to furnizors_show_path(:id => params[:fr_id], :flag => nil) end
       unless params[:fl_id].nil? then redirect_to filials_show_path(:id => params[:fl_id], :flag => nil) end       
     end   
-  end   
+  end
   
+  def check_user
+    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
+    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
+    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
+    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
+    if current_user.has_role? :"setsu"           then  @fpr = 5 end
+    if current_user.has_role? :"cduser"          then  @fpr = 6 end
+    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
+    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
+  end  
+  
+  def company_init(company)
+    t = params[:name]
+    t = t.lstrip
+    t = t.rstrip
+    company.name = t
+    t1 = params[:shname]
+    t1 = t1.lstrip
+    t1 = t1.rstrip 
+    if t1.size == 0 then t1 = t[0,14] end      
+    company.shname = t1
+    t = params[:region]
+    t = t.lstrip
+    t = t.rstrip     
+    company.region = t 
+    company.furnizor_id = (params[:furnizor_id]).to_i  
+    company.filial_id = (params[:filial_id]).to_i
+    t = params[:comment]
+    t = t.lstrip
+    t = t.rstrip   
+    company.comment = t
+    company.f = if params[:f].nil? then false else true end  
+    company    
+  end        
+     
 end

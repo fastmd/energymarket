@@ -1,15 +1,8 @@
 class MetersController < ApplicationController
-before_filter :redirect_cancel, only: [:create, :update]  
+before_filter :redirect_cancel, only: [:create, :update]
+before_filter :check_user, only: [:index]   
   
   def index
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end
     @flag = params[:flag]  
     @mp =  Mpoint.find(params[:id]) 
     @meter = @mp.meters.build
@@ -92,8 +85,8 @@ before_filter :redirect_cancel, only: [:create, :update]
 private
 
   def redirect_cancel
-    mp = Mpoint.find(params[:mpoint_id])
     if params[:cancel] then
+      mp = Mpoint.find(params[:mpoint_id])
       flash.discard 
       redirect_to meters_path(:id => mp.id, :flag => nil)
     end   
@@ -121,5 +114,16 @@ private
     meter.koefcalc = koefcalc.round(4)
     meter    
   end
+  
+  def check_user
+    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
+    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
+    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
+    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
+    if current_user.has_role? :"setsu"           then  @fpr = 5 end
+    if current_user.has_role? :"cduser"          then  @fpr = 6 end
+    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
+    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
+  end     
   
 end
