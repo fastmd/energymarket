@@ -11,6 +11,8 @@
   <li class="active"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span><strong><%= "Филиал: #{@fl.name}" %></strong></li>
 </ul>
 
+<%= params.inspect %>
+
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -37,9 +39,9 @@
 					</tr>	
 				</thead>
 				<tbody>
-	   				<tr>
-	   					<td><%= text_field_tag 'shname', nil, placeholder: "Краткое наименование...", maxlength:"15" %></td>		
+	   				<tr>	   							
 						<td><%= text_field_tag 'name', nil, placeholder: "Наименование...", maxlength:"40" %></td>
+						<td><%= text_field_tag 'shname', nil, placeholder: "Краткое наименование...", maxlength:"15" %></td>
 						<td><%= text_field_tag 'region', nil,  placeholder: "Код...", maxlength:"20" %></td>
 						<%  furn=Furnizor.all %>
   			            <%  furns=Array[] %>
@@ -65,8 +67,10 @@
 			<% if !@fr.nil? %><%= hidden_field_tag :fr_id, @fr.id %><% end %>
   			<% if !@fl.nil? %><%= hidden_field_tag :fl_id, @fl.id %><% end %>   
   			<div  align="center">
-			<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные ?" } %></div> 
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				                data: { confirm: "Сохранить данные ?" } %>
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+			</div> 
 		<% end %>
       </div>
     </div>

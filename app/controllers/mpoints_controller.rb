@@ -1,4 +1,6 @@
 class MpointsController < ApplicationController
+before_filter :redirect_cancel, only: [:create, :update]  
+  
   def new  
   end
   
@@ -99,4 +101,15 @@ class MpointsController < ApplicationController
 
   def edit
   end
+     
+private
+
+  def redirect_cancel
+    if params[:cancel] then
+      cp =  Company.find(params[:company_id])
+      flash.discard 
+      redirect_to company_path(:id => cp.id, :flag => nil)
+    end   
+  end 
+  
 end

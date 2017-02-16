@@ -1,4 +1,5 @@
 class CompaniesController < ApplicationController
+before_filter :redirect_cancel, only: [:create, :update]    
   
   def new
   end
@@ -197,7 +198,8 @@ class CompaniesController < ApplicationController
   def index
   end
   
-private  
+private 
+ 
   def indicii(cname='actp180',koef=1)
     mv1 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddateb1, @ddateb2).order(:actdate, :created_at, :updated_at).last
     mv0 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddatee1, @ddatee2).order(:actdate, :created_at, :updated_at).last
@@ -225,5 +227,13 @@ private
     energy = (dind * koef).round 4
     return({:ind0 => ind0, :ind1 => ind1, :dind => dind, :energy => energy, :color => color})    
   end
+  
+  def redirect_cancel
+    if params[:cancel] then
+      flash.discard
+      unless params[:fr_id].nil? then redirect_to furnizors_show_path(:id => params[:fr_id], :flag => nil) end
+      unless params[:fl_id].nil? then redirect_to filials_show_path(:id => params[:fl_id], :flag => nil) end       
+    end   
+  end   
   
 end
