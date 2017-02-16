@@ -8,14 +8,13 @@
     <li><%= if (@fpr > 5) 
     	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
     	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
-    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companys_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
-    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companys_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
-    <li><%= form_tag companys_report_path(:id => @id) do %>
+    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
+    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
+    <li><%= form_tag companies_report_path(:id => @id) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
 	       <!--     <%= date_field_tag :date_for_report, @ddate %> -->
                 <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 100, :height => 80) %>
-                <% end %></li>
-                    
+                <% end %></li>                   
   </ul>  
 </nav>
 

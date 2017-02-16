@@ -1,7 +1,7 @@
 <% provide(:title, 'Потребители') %>
 
 <nav class="navbar">
-  <ul class="nav nav-pills nav-pillspull-right">
+  <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", welcome_setsuindex_path, :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
@@ -27,15 +27,18 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-		   				<th>Наименование потребителя</th>
-		   				<th>Код потребителя</th>
+		   				<th>Наименование</th>
+		   				<th>Краткое наименование</th>
+		   				<th>Код</th>
 		   				<th>Поставщик</th>
 		   				<th>Филиал</th>
 		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
 				</thead>
 				<tbody>
-	   				<tr>		
+	   				<tr>
+	   					<td><%= text_field_tag 'shname', nil, placeholder: "Краткое наименование...", maxlength:"15" %></td>		
 						<td><%= text_field_tag 'name', nil, placeholder: "Наименование...", maxlength:"40" %></td>
 						<td><%= text_field_tag 'region', nil,  placeholder: "Код...", maxlength:"20" %></td>
 						<%  furn=Furnizor.all %>
@@ -54,7 +57,8 @@
   			            <%    i+=1 %>    
   			            <% end %>
   			            <td><%= select_tag "filial_id", options_for_select( fils, if params[:fl].nil? then fils[0][1] else params[:fl] end ) %></td> 
-						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>			        
+						<td><%= text_field_tag 'comment', nil, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', nil %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
@@ -76,11 +80,13 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th>Наименование</th>
+			   <th>Краткое наименование</th>
 			   <th>Код</th>
 			   <th>Поставщик</th>			   
 			   <th>Точки учета</th>
 			   <th>Действие</th>
 			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>				   
 			</tr>	
 		</thead>
@@ -95,11 +101,13 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.name %></td>
+						<td><%= item.shname %></td>
 						<td><%= item.region %></td>
 						<td><%= Furnizor.find(item.furnizor_id).name %></td>
 						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-folder-open" %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companies_report_path(:id => item.id) %></td>
                         <td><%= item.comment %></td>
+                        <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td> 
                         <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , "#", :class=> "glyphicon glyphicon-remove" %></td>                        
 				</tr>		

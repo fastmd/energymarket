@@ -1,7 +1,7 @@
 <% provide(:title, 'Потребители') %>
 
 <nav class="navbar">
-  <ul class="nav nav-pills nav-pillspull-right">
+  <ul class="nav nav-pills pull-left">
     <li><%= if (current_user.has_role? :"cduser-fee") || (current_user.has_role? :cduser) || (current_user.has_role? :"cduser-fenosa") 
     	        then link_to "Назад", welcome_cdindex_path, :class => "glyphicon glyphicon-level-up" 
     	        else link_to "Назад", root_path, :class => "glyphicon glyphicon-level-up" end %></li>

@@ -79,6 +79,7 @@
 		<thead>
 			<tr class="info">
 			   <th>№</th>
+			   <th>Наименование</th>
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
 			   <th>Класс напряжения, кВ</th>
@@ -102,7 +103,8 @@
 					<tr>
 			   <% end %>	
 						<% i = i + 1 %>
-						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
+						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+						<td><%= item.name %></td>						
 						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
 						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
 						<td><%= item.voltcl %></td>
