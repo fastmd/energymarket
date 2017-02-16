@@ -108,7 +108,7 @@
 					<tr>
 			   <% end %>
 						<% i = i + 1 %>
-						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+						<td><%= if (params[:page]).nil? then i else ((params[:page]).to_i - 1) * $PerPage + i end %></td>
 						<td><%= item.name %></td>
 						<td><%= item.shname %></td>
 						<td><%= item.region %></td>

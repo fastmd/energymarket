@@ -9,11 +9,10 @@ before_filter :check_user, only: [:create, :edit, :show, :update, :report]
     @company = Company.new
     @company = company_init(@company)  
     begin
-      if @company.save! then 
+        @company.save! 
         flash.discard
-        if !params[:fr_id].nil? then redirect_to furnizor_path(:id => @cp.furnizor_id) end
-        if !params[:fl_id].nil? then redirect_to filial_path(:id => @cp.filial_id) end
-      end
+        if !params[:fr_id].nil? then redirect_to furnizor_path(:id => @company.furnizor_id) end
+        if !params[:fl_id].nil? then redirect_to filial_path(:id => @company.filial_id) end
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add'
