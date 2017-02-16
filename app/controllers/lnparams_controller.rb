@@ -21,16 +21,17 @@ before_filter :redirect_cancel, only: [:create, :update]
     line.f = if params[:f].nil? then false else true end
     line.r = tmp  
     line.comment = params[:comment]
-    if line.save then redirect_to mpoint_path(@mp)
-    else  
-       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."
-       if params[:line_id].nil? or params[:line_id]=='' then
-          redirect_to mpoint_path(@mp,:r =>params[:r],:l=>params[:l],:ro =>params[:ro],:k_scr =>params[:k_scr],
-                                  :k_tr =>params[:k_tr],:k_peb =>params[:k_peb],:k_f =>params[:k_f],:q =>params[:q],:f =>params[:f],:comment=>params[:comment],:flag=>'ladd')
-       else
-          redirect_to mpoint_path(@mp,:line_id=>line.id,:l=>line.l,:ro=>line.ro,:k_scr=>line.k_scr,:k_tr=>line.k_tr,
-                                  :k_peb=>line.k_peb,:k_f=>line.k_f,:q=>line.q,:f=>line.f,:comment=>line.comment,:flag=>'ledit')
-       end    
+    begin
+      if line.save! then redirect_to mpoint_path(@mp) end
+    rescue
+         flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."
+         if params[:line_id].nil? or params[:line_id]=='' then
+            redirect_to mpoint_path(@mp,:r =>params[:r],:l=>params[:l],:ro =>params[:ro],:k_scr =>params[:k_scr],
+                                    :k_tr =>params[:k_tr],:k_peb =>params[:k_peb],:k_f =>params[:k_f],:q =>params[:q],:f =>params[:f],:comment=>params[:comment],:flag=>'ladd')
+         else
+            redirect_to mpoint_path(@mp,:line_id=>line.id,:l=>line.l,:ro=>line.ro,:k_scr=>line.k_scr,:k_tr=>line.k_tr,
+                                    :k_peb=>line.k_peb,:k_f=>line.k_f,:q=>line.q,:f=>line.f,:comment=>line.comment,:flag=>'ledit')
+         end    
     end     
   end
   

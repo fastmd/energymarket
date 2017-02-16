@@ -55,7 +55,7 @@
 						<td><%= number_field_tag 'ukz', @ukz,  placeholder: "Uкз...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'io', @io, size: "10", placeholder: "Io...", maxlength:"10", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', @f %></td>			        
+						<td><%= check_box_tag 'f', 'yes', if @f=='true' then 'yes' else nil end %></td>			        
 	   				</tr>
 				</tbody>
 			</table>
@@ -162,7 +162,7 @@
 						<td><%= number_field_tag 'k_f', @k_f, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'q', @q, placeholder: "Сечение...", min: 0.01, max: 1000000, step: 0.01 %></td>
 						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', @f %></td>			        
+						<td><%= check_box_tag 'f', 'yes', if @f=='true' then 'yes' else nil end  %></td>			        
 	   				</tr>
 				</tbody>
 			</table>

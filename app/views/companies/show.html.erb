@@ -21,6 +21,8 @@
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 
+<%= params.inspect %>
+
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -37,6 +39,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
+						<th>Наименование</th>
 		   				<th>Подстанция подключения ME</th>
 		   				<th>Наименование фидера ME</th>
 		   				<th>Наименование подстанции потребителя</th>
@@ -47,7 +50,8 @@
 					</tr>	
 				</thead>
 				<tbody>
-	   				<tr>		
+	   				<tr>
+	   					<td><%= text_field_tag 'name', nil, placeholder: "Точка учета..." %></td>		
 						<td><%= text_field_tag 'messtation', nil, placeholder: "Подстанция..." %></td>
 						<td><%= text_field_tag 'meconname', nil,  placeholder: "Фидер..." %></td>
 						<td><%= text_field_tag 'clsstation', nil, placeholder: "Подстанция..." %></td>

@@ -26,14 +26,15 @@ before_filter :redirect_cancel, only: [:create, :update]
      tr.qkz =  tmp
      tr.f = if params[:f].nil? then false else true end
      tr.comment = params[:comment]
-     if tr.save then redirect_to mpoint_path(@mp)
-     else
-        flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."         
-        if params[:tr_id].nil? or params[:tr_id]=='' then
-          redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:flag=>'tadd')
-        else
-          redirect_to mpoint_path(@mp,:tr_id=>tr.id,:pxx =>tr.pxx,:pkz=>tr.pkz,:snom=>tr.snom,:ukz=>tr.ukz,:io=>tr.io,:f=>tr.f,:comment=>tr.comment,:flag=>'tedit')
-        end    
+     begin
+       if tr.save! then redirect_to mpoint_path(@mp) end
+     rescue
+          flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."         
+          if params[:tr_id].nil? or params[:tr_id]=='' then
+            redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:flag=>'tadd')
+          else
+            redirect_to mpoint_path(@mp,:tr_id=>tr.id,:pxx =>tr.pxx,:pkz=>tr.pkz,:snom=>tr.snom,:ukz=>tr.ukz,:io=>tr.io,:f=>tr.f,:comment=>tr.comment,:flag=>'tedit')
+          end    
      end 
   end
   

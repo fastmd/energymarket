@@ -10,65 +10,65 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170215153531) do
+ActiveRecord::Schema.define(version: 20170216104016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "companies", force: :cascade do |t|
-    t.text     "name"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "furnizor_id"
+    t.text     "name",          default: "потребитель", null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.integer  "furnizor_id",                           null: false
     t.string   "region"
-    t.integer  "filial_id"
+    t.integer  "filial_id",                             null: false
     t.text     "comment"
-    t.string   "shname"
+    t.string   "shname",        default: "потребитель", null: false
     t.integer  "mpoints_count"
-    t.boolean  "f"
+    t.boolean  "f",             default: true,          null: false
     t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
   end
 
   create_table "filials", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",       default: "филиал", null: false
     t.integer  "cod_id"
     t.text     "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   create_table "furnizors", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",       default: "поставщик", null: false
     t.string   "cod_id"
     t.text     "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   create_table "lnparams", force: :cascade do |t|
-    t.float    "l"
-    t.float    "r"
-    t.integer  "mpoint_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.decimal  "l",          precision: 10, scale: 4,                  null: false
+    t.decimal  "r",          precision: 14, scale: 8,                  null: false
+    t.integer  "mpoint_id",                                            null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
     t.text     "comment"
-    t.float    "ro"
-    t.float    "k_scr"
-    t.float    "k_tr"
-    t.float    "k_peb"
-    t.float    "q"
-    t.float    "k_f"
-    t.boolean  "f"
+    t.decimal  "ro",         precision: 10, scale: 4,                  null: false
+    t.decimal  "k_scr",      precision: 10, scale: 4,                  null: false
+    t.decimal  "k_tr",       precision: 10, scale: 4,                  null: false
+    t.decimal  "k_peb",      precision: 10, scale: 4,                  null: false
+    t.decimal  "q",          precision: 10, scale: 4,                  null: false
+    t.decimal  "k_f",        precision: 10, scale: 4, default: "1.15", null: false
+    t.boolean  "f",                                   default: true,   null: false
     t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
 
   create_table "mesubstations", force: :cascade do |t|
-    t.text     "name"
+    t.text     "name",       default: "подстанция", null: false
     t.text     "vlclass"
     t.integer  "cod"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
   create_table "meters", force: :cascade do |t|
@@ -87,32 +87,32 @@ ActiveRecord::Schema.define(version: 20170215153531) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "messtation", default: "подстанция МЭ",      null: false
-    t.string   "meconname",  default: "фидер МЭ",           null: false
-    t.string   "clsstation", default: "подстанция клиента", null: false
-    t.string   "clconname",  default: "фидер клиента",      null: false
+    t.integer  "company_id",                                                         null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.string   "messtation",                          default: "подстанция МЭ",      null: false
+    t.string   "meconname",                           default: "фидер МЭ",           null: false
+    t.string   "clsstation",                          default: "подстанция клиента", null: false
+    t.string   "clconname",                           default: "фидер клиента",      null: false
     t.integer  "mess_id"
     t.text     "comment"
-    t.string   "name",       default: "точка учета",        null: false
-    t.float    "voltcl",     default: 10.0,                 null: false
-    t.boolean  "f",          default: true,                 null: false
+    t.string   "name",                                default: "точка учета",        null: false
+    t.decimal  "voltcl",     precision: 14, scale: 4, default: "10.0",               null: false
+    t.boolean  "f",                                   default: true,                 null: false
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
   create_table "mvalues", force: :cascade do |t|
     t.text     "comment"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "actp180",                   null: false
-    t.string   "actp280",                   null: false
-    t.string   "actp380",                   null: false
-    t.string   "actp480",                   null: false
-    t.date     "actdate",                   null: false
-    t.integer  "meter_id",                  null: false
-    t.boolean  "f",          default: true, null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.date     "actdate",                                            null: false
+    t.integer  "meter_id",                                           null: false
+    t.boolean  "f",                                   default: true, null: false
+    t.decimal  "actp180",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp280",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp380",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp480",    precision: 14, scale: 4,                null: false
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 
@@ -127,17 +127,17 @@ ActiveRecord::Schema.define(version: 20170215153531) do
   end
 
   create_table "trparams", force: :cascade do |t|
-    t.float    "pxx"
-    t.float    "pkz"
-    t.float    "snom"
-    t.float    "ukz"
-    t.float    "io"
-    t.float    "qkz"
-    t.integer  "mpoint_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.decimal  "pxx",        precision: 10, scale: 4,                null: false
+    t.decimal  "pkz",        precision: 10, scale: 4,                null: false
+    t.decimal  "snom",       precision: 10, scale: 4,                null: false
+    t.decimal  "ukz",        precision: 10, scale: 4,                null: false
+    t.decimal  "io",         precision: 10, scale: 4,                null: false
+    t.decimal  "qkz",        precision: 14, scale: 8,                null: false
+    t.integer  "mpoint_id",                                          null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.text     "comment"
-    t.boolean  "f"
+    t.boolean  "f",                                   default: true, null: false
     t.index ["mpoint_id"], name: "index_trparams_on_mpoint_id", using: :btree
   end
 
