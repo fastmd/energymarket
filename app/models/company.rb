@@ -7,6 +7,5 @@ class Company < ApplicationRecord
   validates :name, presence: true
   validates :filial_id, presence: true
   validates :furnizor_id, presence: true
-  validates :shname, presence: true
-  validates :f, presence: true  
+  validates :shname, presence: true 
 end

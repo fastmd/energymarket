@@ -28,10 +28,9 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
     @mpoint = mpoint_init(@mpoint)
     @cp  = @mpoint.company
     begin
-      if @mpoint.save! then 
-        flash.discard
-        redirect_to company_path(:id => @cp.id) 
-      end
+      @mpoint.save! 
+      flash.discard
+      redirect_to company_path(:id => @cp.id) 
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
@@ -149,17 +148,6 @@ private
       flash.discard 
       redirect_to company_path(:id => params[:company_id], :flag => nil)
     end   
-  end 
-
-  def check_user
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
   end 
   
   def mpoint_init(mpoint)

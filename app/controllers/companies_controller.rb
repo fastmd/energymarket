@@ -1,6 +1,6 @@
 class CompaniesController < ApplicationController
+before_filter :check_user
 before_filter :redirect_cancel, only: [:create, :update]    
-before_filter :check_user, only: [:create, :edit, :show, :update, :report] 
   
   def new
   end
@@ -9,32 +9,80 @@ before_filter :check_user, only: [:create, :edit, :show, :update, :report]
     @company = Company.new
     @company = company_init(@company)  
     begin
-        @company.save! 
-        flash.discard
-        if !params[:fr_id].nil? then redirect_to furnizor_path(:id => @company.furnizor_id) end
-        if !params[:fl_id].nil? then redirect_to filial_path(:id => @company.filial_id) end
+      @company.save! 
+      flash.discard
+      flash[:notice] = "Потребитель #{@company.name} сохранен." 
+      if @fpr < 6 then
+        @flr =  Filial.find(@company.filial_id)
+      else  
+        @flr =  Furnizor.find(@company.furnizor_id)
+      end        
+      @companies = @flr.companys.all.order(name: :asc)
+      i = 1
+      n = 0
+      @companies.each do |item|
+        if item.id == @company.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round
+      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
+      render "furnizors/show"         
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add'
-      unless params[:fr_id].nil? then
-        @fr =  Furnizor.find(params[:fr_id])
-        @companies = @fr.companys.all.order(name: :asc)
-        @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage )
-        render "furnizors/show" 
-      end
-      unless params[:fl_id].nil? then
-        @fl =  Filial.find(params[:fl_id])
-        @companies = @fl.companys.all.order(name: :asc)
-        @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage )
-        render "filials/show" 
-      end      
+      if @fpr < 6 then
+        @flr =  Filial.find(params[:flr_id])
+      else  
+        @flr =  Furnizor.find(params[:flr_id])
+      end        
+      @companies = @flr.companys.all.order(name: :asc)
+      @page = params[:page]
+      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
+      render "furnizors/show"       
     end      
   end
   
   def update
+    begin    
+      @page = params[:page]
+      @company = Company.find(params[:cp_id])
+      @company = company_init(@company)
+      @company.save! 
+      flash.discard
+      flash[:notice] = "Потребитель #{@company.name} сохранен."       
+      if @fpr < 6 then    
+        redirect_to filial_path(:id => @company.filial_id, :page => @page)
+      else
+        redirect_to furnizor_path(:id => @company.furnizor_id, :page => @page)   
+      end
+    rescue
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      @flag = 'edit'
+      if @fpr < 6 then
+        @flr =  Filial.find(params[:flr_id])
+      else  
+        @flr =  Furnizor.find(params[:flr_id])
+      end 
+      @companies = @flr.companys.all.order(name: :asc)  
+      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
+      render "furnizors/show"  
+    end  
   end  
 
   def edit
+    @page = params[:page]
+    @flag = 'edit'
+    @company = Company.find(params[:cp_id])
+    flash.discard
+    if @fpr < 6 then
+      @flr =  Filial.find(params[:flr_id])
+    else  
+      @flr =  Furnizor.find(params[:flr_id])
+    end 
+    @companies = @flr.companys.all.order(name: :asc)
+    if @companies.count > @page * $PerPage then @page = 1 end 
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
+    render "furnizors/show" 
   end
 
   def show     
@@ -45,8 +93,9 @@ before_filter :check_user, only: [:create, :edit, :show, :update, :report]
   end
   
   def report
-    @cp = Company.find(params[:id])
-    @id = params[:id]
+    @page = params[:page]
+    @cp = Company.find(params[:cp_id])
+    @id = params[:cp_id]
     @mp = @cp.mpoints.all.order(:messtation, :meconname, :clsstation, :clconname)
     report_rind = Array[]
     @report = Array[]
@@ -202,7 +251,38 @@ before_filter :check_user, only: [:create, :edit, :show, :update, :report]
   end  
   
   def index
+    @page = if params[:page].nil? then 1 else params[:page] end
+    @company = Company.new 
+    if @fpr < 6 then
+      @flr =  Furnizor.find(params[:id])
+    else 
+      @flr =  Filial.find(params[:id])
+    end 
+    @companies = @flr.companies.all.order(name: :asc)
+    if @companies.count > @page * $PerPage then @page = 1 end
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
+    render "furnizors/show"                
   end
+  
+  def destroy
+    begin    
+      cp = Company.find(params[:cp_id])
+      mp_count = cp.mpoints.count
+      if  mp_count!=0 then 
+        flash[:warning] = "Нельзя потребителя #{cp.name}, которому принадлежат точки учета (#{mp_count} шт.)!" 
+      else 
+        cp.destroy!
+        flash[:notice] = "Потребитель  #{cp.name} удален!"
+      end          
+    rescue
+      flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
+    end
+    if @fpr < 6 then 
+      redirect_to filial_path(:id => params[:flr_id],:page=>params[:page]) 
+    else 
+      redirect_to furnizor_path(:id => params[:flr_id], :page=>params[:page]) 
+    end
+  end    
   
 private 
  
@@ -237,22 +317,14 @@ private
   def redirect_cancel
     if params[:cancel] then
       flash.discard
-      unless params[:fr_id].nil? then redirect_to furnizors_show_path(:id => params[:fr_id], :flag => nil) end
-      unless params[:fl_id].nil? then redirect_to filials_show_path(:id => params[:fl_id], :flag => nil) end       
+      if @fpr < 6 then    
+        redirect_to filial_path(:id => params[:flr_id], :page => @page)
+      else
+        redirect_to furnizor_path(:id => params[:flr_id], :page => @page)   
+      end     
     end   
   end
-  
-  def check_user
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
-  end  
-  
+      
   def company_init(company)
     t = params[:name]
     t = t.lstrip

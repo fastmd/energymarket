@@ -1,18 +1,18 @@
 class FilialsController < ApplicationController
+before_filter :check_user  
+  
   def index
   end
 
   def show
+    @page = params[:page].to_i 
+    if params[:page] == 0 then 1 else params[:page] end
     @company = Company.new
-    if current_user.has_role? :"setsu-nord"  
-      @fl =  Filial.find(1)
-      @companies = @fl.companys.order(name: :asc)
-      @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage)
-    else
-      @fl =  Filial.find(params[:id])
-      @companies = @fl.companys.order(name: :asc)
-      @companies = @companies.paginate(:page => params[:page], :per_page => $PerPage)  
-    end
+    @flr =  Filial.find(params[:id])
+    @companies = @flr.companys.order(name: :asc)
+    if @companies.count > @page * $PerPage then @page = 1 end
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage) end 
+    render "furnizors/show" 
   end
 
   def edit
@@ -20,5 +20,5 @@ class FilialsController < ApplicationController
 
   def new
   end
-  
+    
 end

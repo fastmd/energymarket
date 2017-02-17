@@ -6,8 +6,8 @@
 <nav class="navbar">
   <ul class="nav nav-pills nav-pillspull-right">
     <li><%= if (@fpr > 5) 
-    	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
-    	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
+    	        then link_to "Назад", furnizor_path(@fr, :page => @page), :class => "glyphicon glyphicon-level-up" 
+    	        else link_to "Назад", filial_path(@fl, :page => @page), :class => "glyphicon glyphicon-level-up" end %></li>
     <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
     <li><%= form_tag companies_report_path(:id => @id) do %>
@@ -20,8 +20,8 @@
 
 <ul class="breadcrumb">
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@cp.furnizor.name}", furnizor_path(@cp.furnizor.id), :class => "glyphicon glyphicon-home"
-  	         else link_to "Филиал: #{@cp.filial.name}", filial_path(@cp.filial.id), :class => "glyphicon glyphicon-home"end %></li>
+  	         then link_to "Поставщик: #{@cp.furnizor.name}", furnizor_path(@cp.furnizor.id, :page => @page), :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиал: #{@cp.filial.name}", filial_path(@cp.filial.id, :page => @page), :class => "glyphicon glyphicon-home"end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 				
