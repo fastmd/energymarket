@@ -1,23 +1,20 @@
 <% provide(:title, 'Точки учета') %>
 
-<% if @fpr > 5 then @fr = @cp.furnizor
-	           else @fl = @cp.filial end %>
+<% if @fpr > 5 then @flr = @cp.furnizor else @flr = @cp.filial end %>
 	           
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= if (@fpr > 5) 
-    	        then link_to "Назад", furnizor_path(@fr), :class => "glyphicon glyphicon-level-up" 
-    	        else link_to "Назад", filial_path(@fl), :class => "glyphicon glyphicon-level-up" end %></li>
+    <li><%= link_to "Назад", companies_path(@flr), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
 <ul class="breadcrumb">
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщики", welcome_cdindex_path, :class => "glyphicon glyphicon-home"
-  	         else link_to "Филиалы", welcome_setsuindex_path, :class => "glyphicon glyphicon-home" end %></li>	
+  	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@cp.furnizor.name}", furnizor_path(@cp.furnizor.id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@cp.filial.name}", filial_path(@cp.filial.id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
+  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 

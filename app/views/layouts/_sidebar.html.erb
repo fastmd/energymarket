@@ -3,7 +3,7 @@
     	  	<ul class="nav nav-list">
     	  	  <li class="divider"></li>
     	  	  <li role="separator" class="divider"></li>    	  		
-    	  	  <li><strong><%= link_to @navheader, if (@navheader=='Филиалы') then welcome_setsuindex_path else welcome_cdindex_path end, :class => "glyphicon glyphicon-home" %></strong>
+    	  	  <li><strong><%= link_to @navheader, welcome_index_path, :class => "glyphicon glyphicon-home" %></strong>
     	  	   <ul class="nav nav-list">		
     	  		<!-- <li class="nav-header"><%= @navheader %></li> -->   	  		
     	  		<% @pages.each do |item| %>
@@ -11,9 +11,9 @@
     	  		  <li role="separator" class="divider"></li>
     	  		  <li><strong><a role="button" data-toggle="collapse" data-parent="#accordion" href="#page<%= item.id %>" aria-expanded="false" aria-controls="page<%= item.id %>" class = "glyphicon glyphicon-list"></a>
     	  		  <% if (@navheader=='Филиалы') %>  	  		    
-    	  		    	<%= link_to "#{item.name}", filial_path(item), :class => "glyphicon glyphicon-tower" %></strong>
+    	  		    	<%= link_to "#{item.name}", companies_path(:id => item.id), :class => "glyphicon glyphicon-tower" %></strong>
                   <% else %>
-                    	<%= link_to "#{item.name}", furnizor_path(item), :class => "glyphicon glyphicon-piggy-bank" %></strong>
+                    	<%= link_to "#{item.name}", companies_path(:id => item.id), :class => "glyphicon glyphicon-piggy-bank" %></strong>
                   <% end %>
     	  		  <ul id="page<%= item.id %>" class="nav nav-list collapse">
     	  		  <% if !@subpages.nil? %>

@@ -12,79 +12,54 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company.save! 
       flash.discard
       flash[:notice] = "Потребитель #{@company.name} сохранен." 
-      if @fpr < 6 then
-        @flr =  Filial.find(@company.filial_id)
-      else  
-        @flr =  Furnizor.find(@company.furnizor_id)
-      end        
-      @companies = @flr.companys.all.order(name: :asc)
-      i = 1
-      n = 0
-      @companies.each do |item|
-        if item.id == @company.id then n = i end
-        i += 1   
-      end
-      @page = (n / $PerPage + 0.5).round
-      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
-      render "furnizors/show"         
+      if @fpr < 6 then @flr = @company.filial else @flr = @company.furnizor end
+      redirect_to companies_path(:id => @flr.id,:page=>params[:page], :cp_id => @company.id)           
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
-      @flag = 'add'
-      if @fpr < 6 then
-        @flr =  Filial.find(params[:flr_id])
-      else  
-        @flr =  Furnizor.find(params[:flr_id])
-      end        
-      @companies = @flr.companys.all.order(name: :asc)
-      @page = params[:page]
-      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
-      render "furnizors/show"       
-    end      
+      @flag = 'add' 
+      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end      
+    end 
+    indexview
+    render "index"       
   end
   
   def update
     begin    
-      @page = params[:page]
       @company = Company.find(params[:cp_id])
       @company = company_init(@company)
       @company.save! 
       flash.discard
-      flash[:notice] = "Потребитель #{@company.name} сохранен."       
-      if @fpr < 6 then    
-        redirect_to filial_path(:id => @company.filial_id, :page => @page)
-      else
-        redirect_to furnizor_path(:id => @company.furnizor_id, :page => @page)   
-      end
+      flash[:notice] = "Потребитель #{@company.name} сохранен." 
+      if @fpr < 6 then @flr = @company.filial else @flr = @company.furnizor end 
+      redirect_to companies_path(:id => @flr.id,:page=>params[:page], :cp_id => @company.id)               
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
-      if @fpr < 6 then
-        @flr =  Filial.find(params[:flr_id])
-      else  
-        @flr =  Furnizor.find(params[:flr_id])
-      end 
-      @companies = @flr.companys.all.order(name: :asc)  
-      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
-      render "furnizors/show"  
+      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
+      indexview
+      render "index"       
     end  
   end  
 
   def edit
-    @page = params[:page]
     @flag = 'edit'
     @company = Company.find(params[:cp_id])
     flash.discard
-    if @fpr < 6 then
-      @flr =  Filial.find(params[:flr_id])
-    else  
-      @flr =  Furnizor.find(params[:flr_id])
-    end 
-    @companies = @flr.companys.all.order(name: :asc)
-    if @companies.count > @page * $PerPage then @page = 1 end 
-    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
-    render "furnizors/show" 
+    if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
+    indexview
+    render "index"  
   end
 
+  def index
+    if params[:cp_id].nil? then
+      @company = Company.new
+    else
+      @company = Company.find(params[:cp_id])
+    end    
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end 
+    indexview            
+  end
+  
   def show     
     @cp =  Company.find(params[:id])
     @mpoint = @cp.mpoints.build
@@ -250,20 +225,6 @@ before_filter :redirect_cancel, only: [:create, :update]
     end                         
   end  
   
-  def index
-    @page = if params[:page].nil? then 1 else params[:page] end
-    @company = Company.new 
-    if @fpr < 6 then
-      @flr =  Furnizor.find(params[:id])
-    else 
-      @flr =  Filial.find(params[:id])
-    end 
-    @companies = @flr.companies.all.order(name: :asc)
-    if @companies.count > @page * $PerPage then @page = 1 end
-    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end
-    render "furnizors/show"                
-  end
-  
   def destroy
     begin    
       cp = Company.find(params[:cp_id])
@@ -277,14 +238,30 @@ before_filter :redirect_cancel, only: [:create, :update]
     rescue
       flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
     end
-    if @fpr < 6 then 
-      redirect_to filial_path(:id => params[:flr_id],:page=>params[:page]) 
-    else 
-      redirect_to furnizor_path(:id => params[:flr_id], :page=>params[:page]) 
-    end
+    redirect_to companies_path(:id => params[:flr_id],:page=>params[:page]) 
   end    
   
 private 
+ 
+  def indexview
+    @companies = @flr.companys.all.order(name: :asc)
+    @page = params[:page] 
+    if !@company.nil? && !@company.id.nil? then 
+      i = 0
+      n = 0
+      @companies.each do |item|
+        if item.id == @company.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round       
+    end  
+    if @page.nil? then 
+      @page = 1
+    elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
+      @page = ((@companies.count-1) / $PerPage + 0.5).round    
+    end  
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
+  end  
  
   def indicii(cname='actp180',koef=1)
     mv1 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddateb1, @ddateb2).order(:actdate, :created_at, :updated_at).last
@@ -317,11 +294,7 @@ private
   def redirect_cancel
     if params[:cancel] then
       flash.discard
-      if @fpr < 6 then    
-        redirect_to filial_path(:id => params[:flr_id], :page => @page)
-      else
-        redirect_to furnizor_path(:id => params[:flr_id], :page => @page)   
-      end     
+      redirect_to companies_path(:id => params[:flr_id], :page => @page)     
     end   
   end
       

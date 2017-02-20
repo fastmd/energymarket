@@ -11,16 +11,6 @@ Rails.application.routes.draw do
   get 'static_pages/help'
 
   root 'welcome#index'
-    
-  get 'filials/index'
-  get 'filials/show' 
-  get 'filials/edit'
-  get 'filials/new'
-
-  get 'furnizors/show'
-  get 'furnizors/new'
-  get 'furnizors/index'
-  get 'furnizors/edit'
 
   get 'trparams/create'
   get 'trparams/update'
@@ -33,8 +23,7 @@ Rails.application.routes.draw do
   get 'lnparams/edit'
   get 'lnparams/destroy'
 
-  get 'welcome/cdindex'
-  get 'welcome/setsuindex'
+  get 'welcome/index'
   
   get 'mvalues/new'
   get 'mvalues/edit'
