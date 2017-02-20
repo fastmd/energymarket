@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   root 'welcome#index'
     
   get 'filials/index'
-  get 'filials/show' => 'furnizors#show'
+  get 'filials/show' 
   get 'filials/edit'
   get 'filials/new'
 
@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   get 'mpoints/destroy'
   get 'mpoints/update'
 
-  get 'companies/index'
+  get 'companies/index' 
   get 'companies/update'
   get 'companies/destroy'
   get 'companies/edit'
@@ -60,13 +60,13 @@ Rails.application.routes.draw do
   get '/companies/show' => 'companies#show'
   post '/companies/show' => 'companies#show'  
 
-  get 'clients/new'
-  get 'clients/index'
-  get 'clients/show'
+resources :filials  do
+  resources :companies
+end
 
-resources :filials
-
-resources :furnizors
+resources :furnizors  do
+  resources :companies
+end
 
 resources :companies  do
   resources :mpoints
