@@ -7,7 +7,6 @@
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
     <li><%= form_tag companies_report_path(:cp_id => @id) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
-	       <!--     <%= date_field_tag :date_for_report, @ddate %> -->
                 <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 100, :height => 80) %>
                 <% end %></li>                   
   </ul>  

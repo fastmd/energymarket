@@ -68,18 +68,32 @@ before_filter :redirect_cancel, only: [:create, :update]
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )  
   end
+
+  def destroy
+    begin    
+      cp = Company.find(params[:cp_id])
+      mp_count = cp.mpoints.count
+      if  mp_count!=0 then 
+        flash[:warning] = "Нельзя потребителя #{cp.name}, которому принадлежат точки учета (#{mp_count} шт.)!" 
+      else 
+        cp.destroy!
+        flash[:notice] = "Потребитель  #{cp.name} удален!"
+      end          
+    rescue
+      flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
+    end
+    redirect_to companies_path(:id => params[:flr_id],:page=>params[:page]) 
+  end    
   
   def report
     @page = params[:page]
     @cp = Company.find(params[:cp_id])
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
     @id = params[:cp_id]
-    @mp = @cp.mpoints.all.order(:messtation, :meconname, :clsstation, :clconname)
-    report_rind = Array[]
-    @report = Array[]
+#    @mp = @cp.mpoints.all.order(:messtation, :meconname, :clsstation, :clconname)
+    @mp = @cp.mpoints.where(f: 'true').order(:name,:id)
     @month_for_report = (params[:month_for_report])
     if (params[:month_for_report]).nil? then @ddate = Date.current else @ddate = Date.strptime(params[:month_for_report], '%Y-%m') end
- #   if (params[:date_for_report]).nil? then @ddate = Date.current else @ddate = params[:date_for_report].to_date end
     luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie']  
     @luna = luni[@ddate.month.to_i-1]                               
     @ddateb1 = Date.new(2000, 1, 1)
@@ -90,13 +104,15 @@ before_filter :redirect_cancel, only: [:create, :update]
     @ddatee2 = @ddate.change(day: 1)+1.month-1.day
     @luna0 = luni[@ddateb2.month.to_i-1] + ' ' + @ddateb2.year.to_s
     @luna1 = luni[@ddatee2.month.to_i-1] + ' ' + @ddatee2.year.to_s
-    i=0
     j=0
     sumaapr = 0.0
     sumaaliv = 0.0
     trlosses = 0.0 
     lnlosses = 0.0
-    consumteh = 0.0     
+    consumteh = 0.0 
+    #report_rind = Array[]
+    report_rind = [nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+    @report = Array[]
     @mp.each do |item|
       j = j+1
       report_rind[0] = j    
@@ -107,50 +123,45 @@ before_filter :redirect_cancel, only: [:create, :update]
       @tr  = item.trparams.where("f = 'true'")
       @ln  = item.lnparams.where("f = 'true'")
       if @met.nil? then
-        @report[i] =  [report_rind[0],report_rind[1],nil,nil,nil,nil,nil,nil,nil,nil,1]      
-        i+=1        
-      else
+        @report <<  [report_rind[0],report_rind[1],nil,nil,nil,nil,nil,nil,nil,nil,1]           
+      else  
         @ddatemv0 = nil 
         @ddatemv1 = nil
         report_rind[4] = @met.meternum        
-        if @met.koefcalc.nil? then report_rind[8] = 1.to_i else report_rind[8] = @met.koefcalc.to_i end 
+        if @met.koefcalc.nil? then report_rind[8] = 1.to_i else report_rind[8] = @met.koefcalc.to_i end    
         # 1.8.0
         s = indicii('actp180', report_rind[8])          
+        # title date
+        # дата съема
+        if (!@ddatemv0.nil? and !@ddatemv1.nil?) then dt = (@ddatemv0 - @ddatemv1).to_i else dt=0 end 
+        @report << [report_rind[0],report_rind[1],report_rind[2]+' дата съема',report_rind[3],report_rind[4],
+                       unless @ddatemv0.nil? then @ddatemv0.to_formatted_s(:day_month_year) end,
+                       unless @ddatemv1.nil? then @ddatemv1.to_formatted_s(:day_month_year) end,dt,nil,nil,s[:color]]      
+        # 1.8.0
         wapr = s[:energy]
-        sumaapr += s[:energy] 
-        @report[i] =  [report_rind[0],report_rind[1],report_rind[2]+' a/pr',report_rind[3],report_rind[4],s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
-        i+=1
+        sumaapr += s[:energy]           
+        @report << [nil,nil,report_rind[2]+' a/pr',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
         # 2.8.0
         s = indicii('actp280', report_rind[8]) 
         waliv = s[:energy]
         sumaaliv +=  s[:energy]    
-        @report[i] =  [nil,nil,report_rind[2]+' a/liv',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
-        i+=1
+        @report << [nil,nil,report_rind[2]+' a/liv',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
         # 3.8.0 
         s = indicii('actp380', report_rind[8]) 
         wrpr = s[:energy]  
-        @report[i] =  [nil,nil,report_rind[2]+' r/pr',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
-        i+=1
+        @report << [nil,nil,report_rind[2]+' r/pr',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
         # 4.8.0
         s = indicii('actp480', report_rind[8]) 
         wrliv = s[:energy] 
-        @report[i] =  [nil,nil,report_rind[2]+' r/liv',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
-        i+=1
-        # дата съема
-        if (!@ddatemv0.nil? and !@ddatemv1.nil?) then dt = (@ddatemv0 - @ddatemv1).to_i else dt=0 end 
-        @report[i] =  [nil,'дата съема',nil,nil,nil,if !@ddatemv0.nil? then @ddatemv0.to_formatted_s(:day_month_year) end,
-                                                    if !@ddatemv1.nil? then @ddatemv1.to_formatted_s(:day_month_year) end,dt,nil,nil,nil] 
-        i+=1
+        @report << [nil,nil,report_rind[2]+' r/liv',nil,nil,s[:ind0],s[:ind1],s[:dind],report_rind[8],s[:energy],s[:color]]      
         # косинус фи 
         if (wapr ** 2 + wrpr ** 2)!=0 then 
            cosfi = ((wapr ** 2 / (wapr ** 2 + wrpr ** 2))  ** 0.5).round 4 
-           @report[i] =  [nil,'cos fi /pr',nil,nil,nil,nil,nil,nil,nil,cosfi,nil]         
-           i+=1
+           @report << [nil,'cos fi /pr',nil,nil,nil,nil,nil,nil,nil,cosfi,nil]         
         end
         if (waliv ** 2 + wrliv ** 2)!=0 then       
            cosfi2 = ((waliv ** 2 / (waliv ** 2 + wrliv ** 2))  ** 0.5).round 4          
-           @report[i] =  [nil,'cos fi /liv',nil,nil,nil,nil,nil,nil,nil,cosfi2,nil]       
-           i+=1 
+           @report << [nil,'cos fi /liv',nil,nil,nil,nil,nil,nil,nil,cosfi2,nil]       
         end 
         # трансформаторы
         tr_losses_xx = 0.0
@@ -197,30 +208,19 @@ before_filter :redirect_cancel, only: [:create, :update]
         trlosses += tr_losses_kz
         lnlosses += ln_losses_ng
         lnlosses += ln_losses_kr
-        @report[i] =  [nil,'Потери тр-ра хол ход',nil,nil,nil,nil,nil,nil,nil,tr_losses_xx,nil] 
-        i+=1                 
-        @report[i] =  [nil,'Потери тр-ра КЗ',nil,nil,nil,nil,nil,nil,nil,tr_losses_kz,nil] 
-        i+=1 
-        @report[i] =  [nil,'Потери тр-ра суммарные',nil,nil,nil,nil,nil,nil,nil,((tr_losses_kz+tr_losses_xx).round 2),2] 
-        i+=1 
-        @report[i] =  [nil,'Потери ВЛ нагрузочные',nil,nil,nil,nil,nil,nil,nil,ln_losses_ng,nil] 
-        i+=1                 
-        @report[i] =  [nil,'Потери ВЛ на корону',nil,nil,nil,nil,nil,nil,nil,ln_losses_kr,nil] 
-        i+=1 
-        @report[i] =  [nil,'Потери ВЛ суммарные',nil,nil,nil,nil,nil,nil,nil,((ln_losses_ng+ln_losses_kr).round 2),2] 
-        i+=1 
+        @report << [nil,'Потери тр-ра хол ход',nil,nil,nil,nil,nil,nil,nil,tr_losses_xx,nil]                
+        @report << [nil,'Потери тр-ра КЗ',nil,nil,nil,nil,nil,nil,nil,tr_losses_kz,nil] 
+        @report << [nil,'Потери тр-ра суммарные',nil,nil,nil,nil,nil,nil,nil,((tr_losses_kz+tr_losses_xx).round 2),2] 
+        @report << [nil,'Потери ВЛ нагрузочные',nil,nil,nil,nil,nil,nil,nil,ln_losses_ng,nil]               
+        @report << [nil,'Потери ВЛ на корону',nil,nil,nil,nil,nil,nil,nil,ln_losses_kr,nil] 
+        @report << [nil,'Потери ВЛ суммарные',nil,nil,nil,nil,nil,nil,nil,((ln_losses_ng+ln_losses_kr).round 2),2] 
       end  
     end
-    @report[i] =  [nil,'Потери в линии',nil,nil,nil,nil,nil,nil,nil,(lnlosses.round 2),3]      
-    i+=1 
-    @report[i] =  [nil,'Потери в трансформаторах',nil,nil,nil,nil,nil,nil,nil,(trlosses.round 2),3]      
-    i+=1 
-    @report[i] =  [nil,'Consum tehnologic',nil,nil,nil,nil,nil,nil,nil,(consumteh.round 2),nil]      
-    i+=1 
-    @report[i] =  [nil,'Сумма a/pr',nil,nil,nil,nil,nil,nil,nil,(sumaapr.round 2),4]       
-    i+=1
-    @report[i] =  [nil,'Сумма a/liv',nil,nil,nil,nil,nil,nil,nil,(sumaaliv.round 2),4]       
-    i+=1 
+    @report << [nil,'Потери в линии',nil,nil,nil,nil,nil,nil,nil,(lnlosses.round 2),3]      
+    @report << [nil,'Потери в трансформаторах',nil,nil,nil,nil,nil,nil,nil,(trlosses.round 2),3]      
+    @report << [nil,'Consum tehnologic',nil,nil,nil,nil,nil,nil,nil,(consumteh.round 2),nil]      
+    @report << [nil,'Сумма a/pr',nil,nil,nil,nil,nil,nil,nil,(sumaapr.round 2),4]       
+    @report << [nil,'Сумма a/liv',nil,nil,nil,nil,nil,nil,nil,(sumaaliv.round 2),4]       
     respond_to do |format|
       format.html
       format.pdf { send_data ListaReport.new.to_pdf(@cp,@report,@luna,@ddate,@luna1,@luna0), :type => 'application/pdf', :filename => "lista.pdf" }
@@ -228,48 +228,15 @@ before_filter :redirect_cancel, only: [:create, :update]
     end                         
   end  
   
-  def destroy
-    begin    
-      cp = Company.find(params[:cp_id])
-      mp_count = cp.mpoints.count
-      if  mp_count!=0 then 
-        flash[:warning] = "Нельзя потребителя #{cp.name}, которому принадлежат точки учета (#{mp_count} шт.)!" 
-      else 
-        cp.destroy!
-        flash[:notice] = "Потребитель  #{cp.name} удален!"
-      end          
-    rescue
-      flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
-    end
-    redirect_to companies_path(:id => params[:flr_id],:page=>params[:page]) 
-  end    
-  
 private 
  
-  def indexview
-    @companies = @flr.companys.all.order(name: :asc)
-    @page = params[:page] 
-    if !@company.nil? && !@company.id.nil? then 
-      i = 0
-      n = 0
-      @companies.each do |item|
-        if item.id == @company.id then n = i end
-        i += 1   
-      end
-      @page = (n / $PerPage + 0.5).round       
-    end  
-    if @page.nil? then 
-      @page = 1
-    elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
-      @page = ((@companies.count-1) / $PerPage + 0.5).round    
-    end  
-    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
-  end  
- 
   def indicii(cname='actp180',koef=1)
-    mv1 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddateb1, @ddateb2).order(:actdate, :created_at, :updated_at).last
-    mv0 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddatee1, @ddatee2).order(:actdate, :created_at, :updated_at).last
-    ind0, ind1 = nil
+    mv1 = Vmetersvalue.where("id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddateb1, @ddateb2).order(:actdate, :mvalue_updated_at).last
+    mv0 = Vmetersvalue.where("id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddatee1, @ddatee2).order(:actdate, :mvalue_updated_at).last    
+ #   mv1 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddateb1, @ddateb2).order(:actdate, :created_at, :updated_at).last
+ #   mv0 = Mvalue.where("meter_id = ? AND (#{cname} IS NOT NULL) AND (actdate between ? AND  ?)", @met.id, @ddatee1, @ddatee2).order(:actdate, :created_at, :updated_at).last
+    ind0 = 0 
+    ind1 = 0
     color = nil
     if !mv0.nil? then 
         case when cname=='actp180' then ind0 = mv0.actp180
@@ -289,11 +256,31 @@ private
         if (@ddatemv1.nil?) || (@ddatemv1 < mv1.actdate) then !@ddatemv1 = mv1.actdate end 
         if  mv1.actdate < @ddateb2.change(day: 1) then color=1 end         
     end
-    dind = (ind0.to_f - ind1.to_f).round 4            
+    dind = (ind0 - ind1).round 4            
     energy = (dind * koef).round 4
     return({:ind0 => ind0, :ind1 => ind1, :dind => dind, :energy => energy, :color => color})    
   end
   
+   def indexview
+    @companies = @flr.companys.all.order(name: :asc)
+    @page = params[:page] 
+    if !@company.nil? && !@company.id.nil? then 
+      i = 0
+      n = 0
+      @companies.each do |item|
+        if item.id == @company.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round       
+    end  
+    if @page.nil? then 
+      @page = 1
+    elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
+      @page = ((@companies.count-1) / $PerPage + 0.5).round    
+    end  
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
+  end  
+ 
   def redirect_cancel
     if params[:cancel] then
       flash.discard
