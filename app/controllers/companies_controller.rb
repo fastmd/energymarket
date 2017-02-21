@@ -72,6 +72,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   def report
     @page = params[:page]
     @cp = Company.find(params[:cp_id])
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
     @id = params[:cp_id]
     @mp = @cp.mpoints.all.order(:messtation, :meconname, :clsstation, :clconname)
     report_rind = Array[]
