@@ -5,6 +5,7 @@ before_filter :check_user, only: [:index]
   def index
     @flag = params[:flag]  
     @mp =  Mpoint.find(params[:id]) 
+    @cp  = @mp.company
     @meter = @mp.meters.build
     @meter.relevance_date = Date.current
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 

@@ -7,8 +7,8 @@
 </nav>
 
 <ul class="breadcrumb">
-  <li><%= link_to "Поставщики", welcome_cdindex_path, :class => "glyphicon glyphicon-home" %></li>	
-  <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", furnizor_path(@mp.company.furnizor.id), :class => "glyphicon glyphicon-piggy-bank" %></li>
+  <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
+  <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", companies_index_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank" %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>

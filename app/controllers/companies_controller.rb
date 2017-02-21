@@ -17,10 +17,10 @@ before_filter :redirect_cancel, only: [:create, :update]
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add' 
-      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end      
-    end 
-    indexview
-    render "index"       
+      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
+      indexview
+      render "index"          
+    end      
   end
   
   def update
@@ -55,13 +55,15 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company = Company.new
     else
       @company = Company.find(params[:cp_id])
-    end    
+      params[:cp_id] = nil
+    end  
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end 
     indexview            
   end
   
   def show     
     @cp =  Company.find(params[:id])
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
     @mpoint = @cp.mpoints.build
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )  

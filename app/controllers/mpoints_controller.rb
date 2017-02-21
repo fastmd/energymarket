@@ -52,6 +52,7 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
 
   def show
     @mp =  Mpoint.find(params[:id])
+    @cp  = @mp.company
     @flag = params[:flag]
     
     if (current_user.has_role? :cduser) || (@fpr > 5) then

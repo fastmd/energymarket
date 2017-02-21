@@ -1,10 +1,8 @@
 <% provide(:title, 'Точки учета') %>
-
-<% if @fpr > 5 then @flr = @cp.furnizor else @flr = @cp.filial end %>
 	           
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", companies_path(@flr), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
