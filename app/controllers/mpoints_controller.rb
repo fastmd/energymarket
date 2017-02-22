@@ -19,6 +19,7 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
       @flag = 'add'
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+      if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
       render "companies/show" 
     end   
   end
@@ -35,7 +36,8 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
-      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+      if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
       render "companies/show" 
     end      
   end
@@ -45,7 +47,8 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
     @mpoint = Mpoint.find(params[:mp_id])
     @cp  = @mpoint.company
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
     flash.discard 
     render "companies/show"    
   end
@@ -75,11 +78,11 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
       if @flag.nil? then
         if @mvs.count==0 then
           @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,
-                        :actdate=>Date.current,:comment=>nil,:f=>true} 
+                        :actdate=>Date.current,:comment=>nil,:f=>'true'} 
         else 
           @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.meter_id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
                         :actp380=>@mvs.first.actp380,:actp480=>@mvs.first.actp480,
-                        :actdate=>Date.current,:comment=>nil,:f=>true} 
+                        :actdate=>Date.current,:comment=>nil,:f=>'true'} 
         end                
       elsif (@flag=='mvedit' || @flag=='mvadd') then
          @mv_params = {:mv_id=>params[:mv_id],:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],

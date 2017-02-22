@@ -65,7 +65,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @cp =  Company.find(params[:id])
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
     @mpoint = @cp.mpoints.build
-    @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+    @mp =  @cp.mpoints.order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )  
   end
 
@@ -84,8 +84,58 @@ before_filter :redirect_cancel, only: [:create, :update]
     end
     redirect_to companies_path(:id => params[:flr_id],:page=>params[:page]) 
   end    
-  
+
+  def mvreport
+    @page = params[:page]
+    @page1 = params[:page1]
+    @id = params[:cp_id]
+    @cp = Company.find(@id)
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+    @ddate_b = Date.new(2000, 1, 1)  
+    @ddate_e = Date.new(3000, 1, 1)   
+    @mvalues = Vmpointsmetersvalue.where("company_id = ? AND (actdate between ? AND  ?)", @id, @ddate_b, @ddate_e).order(:id, :meter_id, :actdate, :mvalue_updated_at)
+    if @mvalues.count != 0
+      @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
+    end    
+  end  
+ 
   def report
+    @page = params[:page]
+    @id = params[:cp_id]
+    @month_for_report = params[:month_for_report]
+    @cp = Company.find(@id)
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+    # month   
+    if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    @luna = $Luni[@ddate.month.to_i-1]
+    @ddate_b = @ddate.change(day: 1)-1.month  
+    @ddate_e = @ddate.change(day: 1)+1.month-1.day    
+    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
+    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    # report init
+    @report = Array[]
+    nr = 1
+    # mpoints
+    @mpoints = @cp.mpoints.where(f: 'true').order(:name,:id)
+    if @mpoints.count == 0 then
+      flash[:warning] = "Нет данных для отчета. Потребитель не имеет точек учета." 
+    else
+      @mpoints.each do |item| 
+        report_trind = [nr,"#{item.name} #{item.messtation}","#{item.meconname}","#{item.clconname}",nil,nil,nil,nil,nil,nil,nil,nil]
+        nr += 1               
+      # mvalues = Vmetersvalue.where("mpoint_id = ? AND (actdate between ? AND  ?)", item.id, @ddate_b, @ddate_e).order(:actdate, :mvalue_updated_at)
+        @mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?)", item.id, @ddate_b, @ddate_e).order(:meter_id,:actdate, :mvalue_updated_at)
+        if @mvalues.count == 0 then
+          report_trind[10] = 1
+          @report << report_trind[0..10]
+        else
+          @report << report_trind[0..10] 
+        end
+      end
+    end
+  end
+  
+  def report1
     @page = params[:page]
     @cp = Company.find(params[:cp_id])
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 

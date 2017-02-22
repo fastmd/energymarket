@@ -15,7 +15,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     mv.actp480 = params[:actp480]
     mv.actdate = params[:actdate]
     mv.comment = params[:comment]
-    mv.f = if params[:f].nil? then false else true end
+    mv.f = if params[:f].nil? then false else true end    
     begin  
       if mv.save! then redirect_to mpoint_path(mp, :met => params[:met]) end
     rescue

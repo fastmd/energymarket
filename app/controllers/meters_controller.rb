@@ -55,6 +55,7 @@ before_filter :check_user, only: [:index]
     @flag = 'edit'
     @meter = Meter.find(params[:mt_id])
     @mp  = @meter.mpoint
+    @cp  = @mp.company
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
     @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
     flash.discard 

@@ -21,6 +21,10 @@
   	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
+
+<%= @report.inspect %>
+</br>
+<%= @mvalues.inspect%>
 				
 <h3 align="center">LISTA</h3> 
 <h4 align="center"><%= "de calcul a intrarii energiei electrice la #{@cp.name}" %></h4>
@@ -38,8 +42,8 @@
       <th>Punctul de evidenta</th>
       <th></th>
       <th>N contor.</th>
-      <th><%= "Indicatii \n #{@luna1}" %></th>
-      <th><%= "Indicatii \n #{@luna0}" %></th> 
+      <th><%= "Indicatii \n #{@luna_e}" %></th>
+      <th><%= "Indicatii \n #{@luna_b}" %></th> 
       <th>Diferenta indicat.</th>
       <th>Coeficient contor.</th>
       <th>Energie, kWh</th> 
