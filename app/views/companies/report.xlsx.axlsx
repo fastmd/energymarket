@@ -61,7 +61,7 @@ wb.styles do |style|
 	    sheet.add_row [nil, "Denumirea filialei:  #{@cp.filial.name}"]
 	    sheet.add_row [""] 	    
 	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "№ contor.", 
-	                   "Indicatii \n #{@luna0}", "Indicatii \n #{@luna1}",
+	                   "Indicatii \n #{@luna_e}", "Indicatii \n #{@luna_b}",
 	                   "Diferenta indicat.", "Coeficient contor.", "Energie kWh"], 
     		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
     		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]
@@ -72,7 +72,7 @@ wb.styles do |style|
         sheet.merge_cells('C10:D10') 
     	if !@report.nil? then	              
   		@report.each do |item|
-  		    if (item[1]!='Сумма a/pr' && item[1]!='Сумма a/liv') then
+  		    if (item[0]!='∑') then
     		sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]], 
     		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell ,simple_cell],
     		              :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15]

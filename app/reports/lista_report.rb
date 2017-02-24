@@ -14,7 +14,7 @@ class ListaReport < Prawn::Document
     end
   end
     
-  def to_pdf(cp,report,luna,ddate,luna1,luna0)
+  def to_pdf(cp,report,luna,ddate,luna_e,luna_b)
     # привязываем шрифты
     if RUBY_PLATFORM == "i386-mingw32" then
       font_families.update(
@@ -50,8 +50,8 @@ class ListaReport < Prawn::Document
         data << row(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9])
       end 
     end
-    Headers[5] = "Indicatii \n #{luna1}"
-    Headers[6] = "Indicatii \n #{luna0}"
+    Headers[5] = "Indicatii \n #{luna_e}"
+    Headers[6] = "Indicatii \n #{luna_b}"
     head = make_table([Headers], :column_widths => Widths)
     table([[head], *(data.map{|d| [d]})], :header => true, :row_colors => %w[cccccc ffffff]) do
       row(0).style(:background_color => 'ffffff', :text_color => '000000', :font_style => :bold, :align => :center)

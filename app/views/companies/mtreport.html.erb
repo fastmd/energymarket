@@ -1,4 +1,4 @@
-<% provide(:title, 'Показания') %>
+<% provide(:title, 'Счетчики') %>
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
@@ -16,43 +16,41 @@
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 				
-<h3 align="center"><%= "Показания счетчиков (валидные) #{@cp.name}" %></h3>
+<h3 align="center"><%= "Счетчики (валидные) #{@cp.name}" %></h3>
 
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="info">
       <th>Nr</th>
-      <th>Точка учета</th>      
-      <th>Счетчик</th>
-      <th>Дата</th>      
-      <th>1.8.0</th>
-      <th>2.8.0</th>
-      <th>3.8.0</th>
-      <th>4.8.0</th>
-      <th>Дата изменений</th>  
+      <th>Точка учета</th>
+      <th>Тип счетчика</th>      
+      <th>№ счетчика</th>
+      <th>Коэффициент</th>      
+      <th>Актуальность начало</th>
+      <th>Актуальность конец</th>
+      <th>Комментарий</th>
+      <th>Дата изменений</th> 
     </tr>  
   </thead>
   <tbody>
   	<% i = 0 %>
-    <% @mvalues.each do |item| %>
+    <% @meters.each do |item| %>
        <% i = i + 1 %>	
-	   <% if item.mvalue_updated_at > (Time.now.ago($GreenDelay)) %>
+	   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 		 <tr class="success">
 	   <% else %> 	
 		 <tr>
 	   <% end %>
       	 <td><%= i %></td>
-      	 <td><%= Mpoint.find(item.id).name %></td>
+      	 <td><%= item.name %></td>
+      	 <td><%= item.metertype %></td>
       	 <td><%= item.meternum %></td>
-      	 <td><%= item.actdate %></td>
-      	 <td><%= item.actp180 %></td>
-      	 <td><%= item.actp280 %></td>
-      	 <td><%= item.actp380 %></td>
-      	 <td><%= item.actp480 %></td>
-      	 <td><%= item.mvalue_updated_at %></td>
+      	 <td><%= item.koefcalc %></td>
+      	 <td><%= item.relevance_date %></td>
+      	 <td><%= item.relevance_end %></td>
+      	 <td><%= item.comment %></td>
+      	 <td><%= item.updated_at %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<center><small><%= if @mvalues.count!=0 then will_paginate @mvalues, renderer: BootstrapPagination::Rails end %></small></center>

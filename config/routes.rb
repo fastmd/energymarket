@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   get '/companies/report' => 'companies#report'
   post '/companies/report' => 'companies#report'
   get 'companies/mvreport'
+  get 'companies/mtreport'
   get '/companies/show' => 'companies#show'
   post '/companies/show' => 'companies#show'  
 
