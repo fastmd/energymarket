@@ -223,4 +223,28 @@
 	</tbody>
 </table>
 
+<h3 align="center">ζ</h3>
+
+<table class="table table-striped table-hover table-condensed table-sm">
+	<thead>
+		<tr class="info">
+		   <th colspan="1" width="5%">№</th>
+		   <th colspan="1" width="5%">Tm, ч.</th>
+		   <th colspan="1" width="5%">ζm, ч.</th>
+		   <th colspan="1" width="85%"></th>
+		</tr>	
+	</thead>
+	<tbody>					
+			<% i = 0%>
+			<% @tau.each do |item| %>
+				<tr>		
+					<% i = i + 1 %>		        
+					<td><%= i  %></td>
+					<td><%= item.tm %></td>									
+					<td><%= item.taum %></td>
+					<td></td>									
+				</tr>
+			<% end %>	  
+	</tbody>
+</table>
 

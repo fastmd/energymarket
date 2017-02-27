@@ -98,7 +98,8 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
       end
     else 
       @trp = @mp.trparams.all
-      @lnp = @mp.lnparams.all 
+      @lnp = @mp.lnparams.all
+      @tau = Tau.all 
       if !@flag.nil? && (@flag=='tedit' || @flag=='tadd') then
         @pxx  = params[:pxx]
         @pkz  = params[:pkz]
