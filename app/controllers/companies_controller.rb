@@ -347,8 +347,7 @@ private
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end
       end  # if ln.count
-      # cos fi with losses
-      ct = 0.0             
+      # cos fi with losses           
       if wa >= 10000 then
            wal = wa + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
            wrl = wri + tr_losses_rkz + tr_losses_rxx
