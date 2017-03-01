@@ -115,8 +115,10 @@ before_filter :redirect_cancel, only: [:create, :update]
     # month   
     if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)-1.month  
-    @ddate_e = @ddate.change(day: 1)+1.month-1.day    
+    @ddate_b = @ddate.change(day: 1) - 1.month
+    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
+    ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
     # report init
@@ -133,9 +135,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     else
       @mpoints.each do |item| 
         nr += 1  
-        report_rind = [nr,"#{item.name} #{item.messtation}","#{item.meconname}","#{item.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{item.name} #{item.messtation}", "#{item.meconname}", "#{item.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
-        energies = one_mp_indicii(item.id, @ddate_b, @ddate_e)
+        energies = one_mp_indicii(item.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
         indicii = energies[:indicii]
         if indicii.nil? or indicii.count==0 then
           report_rind[10] = 1
@@ -221,7 +223,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   
 private 
 
-  def one_mp_indicii(mp_id, ddate_b, ddate_e)
+  def one_mp_indicii(mp_id, ddate_b, ddate_e, ddate_mb, ddate_me)
     result={}
     mpoint = Mpoint.find(mp_id)
     wa = waliv = wri = wrc = 0.0
@@ -231,11 +233,19 @@ private
     if meters.count == 0 then
        flash[:warning] = "У точки учета #{mpoint.name} нет счетчиков!"          
     else 
+       # billing days
+       dddate_b = ddate_b
+       dddate_e = ddate_e
+       mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate, :mvalue_updated_at).first
+       unless mvalues.nil? then dddate_b = mvalues.actdate end
+       mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate, :mvalue_updated_at).last
+       unless mvalues.nil? then dddate_e = mvalues.actdate end       
+       # indicii      
        dtsum = 0  
        meters.each do |mitem|         
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
-         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id,ddate_b, ddate_e).order(:actdate, :mvalue_updated_at)
+         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate, :mvalue_updated_at)
          if mvalues.count != 0 then
               if mvalues.count != 1 then  mvnum = 2 end
               mvalue0 = mvalues.first
