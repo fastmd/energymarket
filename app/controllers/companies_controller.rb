@@ -106,6 +106,95 @@ before_filter :redirect_cancel, only: [:create, :update]
     @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)   
   end  
  
+  def reports
+    @page = params[:page]
+    @id = params[:id]
+    @month_for_report = params[:month_for_report]
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
+    # month   
+    if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    @luna = $Luni[@ddate.month.to_i-1]
+    @ddate_b = @ddate.change(day: 1) - 1.month
+    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
+    ddate_me = @ddate_e.change(day: 1)   
+    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
+    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    # title
+    @lista_title = []
+    @lista_title << "LISTA de calcul a intrarii energiei electrice pentru"
+    @lista_title << ("consumatori  alimentați direct de la stații  electrice Î.S. ”Moldelectrica”" + (if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name}") 
+    @lista_title << "pentru luna #{@luna} anul #{@ddate.year}"
+    @title1 = ['№','№ locului de consum','Nume client','RRE,SE si liniilor','Conexiunea','№ contor.',
+              'Data citirii','Indicatii cur. activ','Indicatii cur. reactiv L','Indicatii cur. reactiv C',
+              'Data citirii','Indicatii pr. activ','Indicatii pr. reactiv L','Indicatii pr. reactiv C',
+              'Coeficient contor','ENERGIA, kWh activ','ENERGIA, kWh reactiv L','ENERGIA, kWh reactiv C',
+              'Pierderi LEA, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv','Consum Tehnologic, kWh capacitiv']
+    i = 1
+    @title2 = []
+    @title1.each do |t|
+      @title2 << i
+      i += 1
+    end
+    # report init
+    @report = Array[]
+    # companies
+    companies = @flr.companys.where(f: 'true').order(name: :asc) 
+    if companies.count != 0 then 
+      nr = 0
+      companies.each do |cp|
+        # mpoints 
+        mpoints = cp.mpoints.where(f: 'true').order(:name, :id)
+        if mpoints.count == 0 then
+          flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
+        else
+          mpoints.each do |mp|
+            # report rind
+            nr += 1
+            report_rind = [nr,"#{cp.region}","#{cp.name}","#{mp.messtation}","#{mp.meconname}",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            # indicii si energie        
+            energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+            indicii = energies[:indicii]
+            if indicii.nil? then
+              report_rind[@title1.count] = 1
+            else   
+              indicii0 = indicii.first
+              indicii1 = indicii.last
+              # pierderi   
+              losses = one_mp_losses(mp.id, energies)
+              # report
+              report_rind[5]  = indicii0[:meternum]
+              unless indicii0[:date0].nil? then report_rind[6]  = (indicii0[:date0]).to_formatted_s(:day_month_year) end
+              unless indicii0[:ind0_180].nil? then report_rind[7]  = indicii0[:ind0_180].round end
+              unless indicii0[:ind0_380].nil? then report_rind[8]  = indicii0[:ind0_380].round end
+              unless indicii0[:ind0_480].nil? then report_rind[9]  = indicii0[:ind0_480].round end
+              unless indicii1[:date1].nil? then report_rind[10]  = (indicii1[:date1]).to_formatted_s(:day_month_year) end
+              unless indicii1[:ind1_180].nil? then report_rind[11]  = indicii1[:ind1_180].round end
+              unless indicii1[:ind1_380].nil? then report_rind[12]  = indicii1[:ind1_380].round end
+              unless indicii1[:ind1_480].nil? then report_rind[13]  = indicii1[:ind1_480].round end
+              unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
+              unless energies[:wa].nil? then report_rind[15]  = energies[:wa].round end
+              unless energies[:wri].nil? then report_rind[16]  = energies[:wri].round end
+              unless energies[:wrc].nil? then report_rind[17]  = energies[:wrc].round end
+              unless losses.nil? then
+                unless losses[:ln_losses].nil? then report_rind[18]  = losses[:ln_losses].round end
+                unless losses[:tr_losses_p].nil? then report_rind[19]  = losses[:tr_losses_p].round end                
+                unless losses[:consumtehi].nil? then report_rind[20]  = losses[:consumtehi].round end
+                unless losses[:consumtehc].nil? then report_rind[21]  = losses[:consumtehc].round end
+              end              
+            end # indicii null
+            @report << report_rind[0..@title1.count]  
+          end  # mpoints each        
+        end  # mpoints.count 
+      end  #compaies each    
+    end  #companies.count
+    respond_to do |format|
+      format.html
+      format.pdf { send_data ListaReports.new.to_pdf(@flr,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
+      format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="lista.xlsx"' }
+    end  
+  end
+ 
   def report
     @page = params[:page]
     @id = params[:cp_id]
@@ -131,13 +220,13 @@ before_filter :redirect_cancel, only: [:create, :update]
     # mpoints 
     @mpoints = @cp.mpoints.where(f: 'true').order(:name,:id)
     if @mpoints.count == 0 then
-      flash[:warning] = "Нет данных для отчета. Потребитель не имеет точек учета." 
+      flash[:warning] = "Нет данных для отчета. Потребитель #{@cp.name} не имеет точек учета." 
     else
-      @mpoints.each do |item| 
+      @mpoints.each do |mp| 
         nr += 1  
-        report_rind = [nr, "#{item.name} #{item.messtation}", "#{item.meconname}", "#{item.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.name} #{mp.messtation}", "#{mp.meconname}", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
-        energies = one_mp_indicii(item.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+        energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
         indicii = energies[:indicii]
         if indicii.nil? or indicii.count==0 then
           report_rind[10] = 1
@@ -181,7 +270,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         # Trab
         unless energies[:workt].nil? then @report << [nil,'Tраб, часы',nil,nil,nil,nil,nil,nil,nil,energies[:workt],2] end
         # pierderi   
-        losses = one_mp_losses(item.id, energies)
+        losses = one_mp_losses(mp.id, energies)
         unless losses[:cosfi].nil? then @report << [nil,'cos φ',nil,nil,nil,nil,nil,nil,nil,losses[:cosfi],nil] end
         unless losses[:tau].nil? then @report << [nil,'ζ',nil,nil,nil,nil,nil,nil,nil,losses[:tau],nil] end  
         unless losses[:tr_losses_pxx].nil? then @report << [nil,'Потери тр-ра Pxx',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_pxx],nil] end
@@ -297,7 +386,7 @@ private
     result={}
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 then
+    if mvnum == 2 && (indicii[:wa]!=0 || indicii[:wri]!=0) then
       wa    = indicii[:wa] 
       waliv = indicii[:waliv]
       wri   = indicii[:wri]
@@ -372,6 +461,8 @@ private
              wrif = 0.0
            end
            ct = result[:consumteh] = ((wrc + wrif ) * 0.1).round(4)
+           result[:consumtehi] = ((wrif ) * 0.1).round(4)
+           result[:consumtehc] = ((wrc) * 0.1).round(4)
        end #if wa               
      end # if mvnum
    result

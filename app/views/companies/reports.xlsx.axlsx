@@ -1,0 +1,88 @@
+wb = xlsx_package.workbook
+xlsx_package.use_autowidth = true
+
+wb.styles do |style|
+    defaults =  { :style => :thin, :color => "000000" }
+    borders = Hash.new do |hash, key|
+       hash[key] = wb.styles.add_style :border => defaults.merge( { :edges => key.to_s.split('_').map(&:to_sym) } )
+    end
+    top_row =  [borders[:top_left], borders[:top], borders[:top], borders[:top_right]]
+    middle_row = [borders[:left], nil, nil, borders[:right]]
+    bottom_row = [borders[:bottom_left], borders[:bottom], borders[:bottom], borders[:bottom_right]]     
+
+    lsimple_cell = style.add_style(:border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true})
+    simple_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })                                  
+    lsimplec_cell = style.add_style(:border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
+                                   alignment: { horizontal: :left, vertical: :center, wrap_text: :true},
+                                   :bg_color => "F0E68C")
+    simplec_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :right] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :bg_color => "F0E68C") 
+    simplesel_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6") 
+    simplese_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6")
+    last_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:top] })                                     
+    header_cell = style.add_style(:fg_color=> "000000",
+                                  :b => true,
+                                  :bg_color => "FFFFFF",
+                                  :sz => 14, 
+                                  alignment: { horizontal: :center, vertical: :center, wrap_text: :false })
+    theader_cell = style.add_style(:b => true,
+                                   :sz => 12,
+                                   :bg_color => "E0E0E0",
+                                   :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] }, 
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })
+    theaderb_cell = style.add_style(:b => true,
+                                   :sz => 12,
+                                   :bg_color => "e6f2ff",
+                                   :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] }, 
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true })                                   
+    
+    margins = {:left => 0.7, :right => 0.5, :top => 1.2, :bottom => 1.2, :header => 0.7, :footer => 0.7}
+    setup = {:fit_to_width => 1, :orientation => :portrait, :paper_width => "210mm", :paper_height => "297mm"}
+    options = {:grid_lines => false, :headings => false, :horizontal_centered => true}
+    header_footer = {:different_first => false, :odd_header => '&L&F : &A&R&D &T', :odd_footer => 'pagina &C&P din &N'} 
+    
+    tstyle1 = tstyle2 = []
+    emptyrow = ["","","","","","","","","","","","","","","","","","","","","",""]
+    @title1.each do 
+      tstyle1 << theader_cell
+      tstyle2 << theaderb_cell
+    end 
+
+	wb.add_worksheet(name: "Lista", :page_margins => margins, :page_setup => setup, :print_options => options, :header_footer => header_footer ) do |sheet|
+	    sheet.add_row [nil, Time.now.strftime("Lista a fost generata %d.%m.%Y la %H:%M")] 
+	    sheet.add_row [""]
+	    @lista_title.each do |t|
+	      sheet.add_row [t], style: [header_cell]
+	    end
+	    sheet.merge_cells('A3:J3')
+        sheet.merge_cells('A4:J4')
+        sheet.merge_cells('A5:J5')
+	    sheet.add_row [""] 	    
+	    sheet.add_row @title1, style: tstyle1, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20]   		           
+	    sheet.add_row @title2, style: tstyle2, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20] 		           
+    	if !@report.nil? then	              
+  		  @report.each do |item|
+  		    color = item.pop
+  		    if (color.nil?) then
+    		sheet.add_row item, style: [simple_cell,lsimple_cell,lsimple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,
+    		                            simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell], 
+    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]
+    		else
+    		sheet.add_row item, style: [simplec_cell,lsimplec_cell,lsimplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,
+    		                            simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell], 
+    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]  		
+    		end              
+    	  end
+        sheet.add_row emptyrow, style: [last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,
+                                    last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell], 
+    		                :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]     	     
+       end 	  		
+  end  
+end 

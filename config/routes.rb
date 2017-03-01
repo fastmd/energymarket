@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   get 'meters/index'
-  post '/meters/index' => 'meters#index'
+  post 'meters/index'
   get 'meters/update'
   get 'meters/show'
-  post '/meters/show' => 'meters#show'
+  post 'meters/show'
   get 'meters/destroy'
   get 'meters/edit'
 
@@ -33,7 +33,7 @@ Rails.application.routes.draw do
 
   get 'mpoints/new'
   get 'mpoints/show'
-  post '/mpoints/show' => 'mpoints#show'
+  post 'mpoints/show'
   post '/mpoints/:id' => 'mpoints#show'
   get 'mpoints/index'
   get 'mpoints/edit'
@@ -44,12 +44,14 @@ Rails.application.routes.draw do
   get 'companies/update'
   get 'companies/destroy'
   get 'companies/edit'
-  get '/companies/report' => 'companies#report'
-  post '/companies/report' => 'companies#report'
+  get 'companies/reports'
+  post 'companies/reports'
+  get 'companies/report'
+  post 'companies/report'
   get 'companies/mvreport'
   get 'companies/mtreport'
-  get '/companies/show' => 'companies#show'
-  post '/companies/show' => 'companies#show'  
+  get 'companies/show'
+  post 'companies/show'
 
 resources :filials  do
   resources :companies

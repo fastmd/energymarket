@@ -1,0 +1,64 @@
+<% provide(:title, 'Отчет') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= link_to "Назад", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_reports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
+<!--    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_reports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> -->
+    <li><%= form_tag companies_reports_path(:id => @id) do %>
+    	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
+                <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 80, :height => 60) %>
+                <% end %></li>                   
+  </ul>  
+</nav>
+
+<ul class="breadcrumb">
+  <% if @fpr < 6 then %>
+	  <li><%=  link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
+	  <li class="active"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span><strong><%= "Филиал: #{@flr.name}" %></strong></li>  
+  <% elsif @fpr < 9 then %> 	
+	  <li><%=  link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
+	  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@flr.name}" %></strong></li> 	  
+  <% end %>
+</ul>
+
+<% @lista_title.each do |t| %>
+	<h4 align="center"><%= t %></h4>  
+<% end %>
+
+<small>
+<div class="table-responsive">	
+<table class="table table-striped table-condensed  table-hover">	
+  <thead>
+    <tr class="success">
+      <% @title1.each do |t| %>	
+        <th><%= t %></th>
+      <% end %>
+    </tr>  
+    <tr class="info">
+      <% @title2.each do |t| %>	
+        <th><%= t %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @report.each do |item| %>
+      <% color = item.last %>
+      <% item.pop %>
+      <% if color.nil? %>
+      <tr>
+      <% else %> 	
+      <tr class=<%= case color when 1 then "danger"
+      	                       when 2 then "warning" 
+      	                       when 3 then "info" 
+      	                       else "success" end %>>     
+      <% end %>	
+      	<% item.each do |x| %>
+      	   <td><%= x %></td>
+      	<% end %> 
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+</small>
