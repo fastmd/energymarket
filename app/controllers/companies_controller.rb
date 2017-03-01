@@ -176,6 +176,8 @@ before_filter :redirect_cancel, only: [:create, :update]
           @report << [nil,'Energie r/liv',nil,nil,nil,nil,nil,nil,nil,energies[:wrc],nil]
           cp_enrgsums[3] += energies[:wrc]  
         end
+        # Trab
+        unless energies[:workt].nil? then @report << [nil,'Tраб, часы',nil,nil,nil,nil,nil,nil,nil,energies[:workt],2] end
         # pierderi   
         losses = one_mp_losses(item.id, energies)
         unless losses[:cosfi].nil? then @report << [nil,'cos φ',nil,nil,nil,nil,nil,nil,nil,losses[:cosfi],nil] end
@@ -224,12 +226,12 @@ private
     mpoint = Mpoint.find(mp_id)
     wa = waliv = wri = wrc = 0.0
     indicii = []       
-    mvnum = 0
-    dtsum = 0  
+    mvnum = 0 
     meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end))", mp_id, ddate_b, ddate_e).order(:meter_id)
     if meters.count == 0 then
        flash[:warning] = "У точки учета #{mpoint.name} нет счетчиков!"          
-    else  
+    else 
+       dtsum = 0  
        meters.each do |mitem|         
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
@@ -266,10 +268,11 @@ private
          end # if mvalues.count
          indicii  << indicii0     
        end  # meters.each
-       result[:dt] = dtsum
        result[:indicii] = indicii
        result[:mvnum] = mvnum
        if mvnum == 2 then
+         # work hours 
+         result[:workt] = dtsum * 24        
          # energies
          result[:wa] = wa
          result[:waliv] = waliv
@@ -289,7 +292,7 @@ private
       waliv = indicii[:waliv]
       wri   = indicii[:wri]
       wrc   = indicii[:wrc] 
-      dtsum = indicii[:dt]       
+      workt = indicii[:workt]       
       # косинус фи 
       if wa != 0 || wri != 0 then 
         cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
@@ -300,7 +303,7 @@ private
       tr_losses_pxx = tr_losses_pkz = tr_losses_rxx = tr_losses_rkz = 0.0
       if tr.count != 0 then
         tr.each do |tritem|
-          tr_losses_pxx += dtsum * 24 * tritem.pxx
+          tr_losses_pxx += workt * tritem.pxx
           #tau
           taus  = Tau.all
           tau = taus.last.taum
@@ -320,7 +323,7 @@ private
             tr_losses_pkz += tritem.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.snom) ** 2))
             tr_losses_rkz += tritem.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.snom) ** 2))
           end
-          tr_losses_rxx += (((tritem.io ** 2) * (tritem.snom ** 2) / 10000 - tritem.pxx ** 2) ** 0.5) * dtsum * 24
+          tr_losses_rxx += (((tritem.io ** 2) * (tritem.snom ** 2) / 10000 - tritem.pxx ** 2) ** 0.5) * workt
         end  # tr.each
         tr_losses_pxx = result[:tr_losses_pxx] = tr_losses_pxx.round(4)
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
@@ -334,7 +337,7 @@ private
       ln_losses_ng = ln_losses_kr = 0.0        
       if ln.count == 0 then
         flash[:warning] = "У точки учета #{mpoint.name} нет линий!"  
-      elsif dtsum != 0 then
+      elsif workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
@@ -342,7 +345,7 @@ private
           ln.each do |lnitem|
             rk += lnitem.r * (lnitem.k_f ** 2)
           end
-          ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wri ** 2) / (1000 * ((mpoint.voltcl) ** 2) * dtsum * 24) ).round(4)
+          ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wri ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end
