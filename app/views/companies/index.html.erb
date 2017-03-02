@@ -94,6 +94,7 @@
 			   <th><%= if @fpr < 6 then 'Поставщик' elsif @fpr < 9 then 'Филиал' end %></th>
 			   <th>Точки учета</th>
 			   <th>Отчеты</th>
+			   <th>Инфо</th>
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
@@ -114,8 +115,8 @@
 						<td><% if item.f == false then %><em><% end %><%= item.region %><% if item.f == false then %></em><% end %></td>						
 						<td><%= if @fpr < 6 then item.furnizor.name elsif @fpr < 9 then item.filial.name end %></td>
 						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-folder-open" %></td>
-                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companies_report_path(:cp_id => item.id, :page => @page) %>
-                        	<%= link_to image_tag('holub-cauta.png', :alt => "Показания", :width => 40, :height => 30), companies_mvreport_path(:cp_id => item.id, :page => @page) %>
+                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 40, :height => 30), companies_report_path(:cp_id => item.id, :page => @page) %></td>
+                        <td><%= link_to image_tag('holub-cauta.png', :alt => "Показания", :width => 40, :height => 30), companies_mvreport_path(:cp_id => item.id, :page => @page) %>
                         	<%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 30), companies_mtreport_path(:cp_id => item.id, :page => @page) %>
                         	<%= link_to image_tag('tr-r.png', :alt => "Параметры", :width => 40, :height => 30), companies_paramreport_path(:cp_id => item.id, :page => @page) %></td>
                         <td><%= item.comment %></td>
