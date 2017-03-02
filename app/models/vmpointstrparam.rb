@@ -1,0 +1,2 @@
+class Vmpointstrparam < ApplicationRecord
+end

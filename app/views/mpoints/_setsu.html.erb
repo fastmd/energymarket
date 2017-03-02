@@ -38,6 +38,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
+						<th>Тип</th>
 		   				<th>Потери холостого хода Рхх, кВт</th>
 		   				<th>Потери короткого замыкания Ркз, кВт</th>
 		   				<th>Номинальная мощность Sном, кВА</th>
@@ -48,7 +49,8 @@
 					</tr>	
 				</thead>
 				<tbody>
-	   				<tr>		
+	   				<tr>
+	   					<td><%= text_field_tag 'mark', @mark, placeholder: 'Тип тр-ра...' %></td>		
 						<td><%= number_field_tag 'pxx', @pxx, placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001  %></td>
 						<td><%= number_field_tag 'pkz', @pkz,  placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'snom', @snom, placeholder: "мощность...", min: 0, max: 1000000, step: 0.0001 %></td>
@@ -77,6 +79,7 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
+		   <th>Тип</th>
 		   <th>Потери холостого хода Рхх, кВт</th>
 		   <th>Потери короткого замыкания Ркз, кВт</th>
 		   <th>Номинальная мощность Sном, кВА</th>
@@ -89,7 +92,7 @@
 		</tr>	
 	</thead>
 	<tbody>					
-			<% i = 0%>
+			<% i = 0 %>
 			<% @trp.each do |item| %>
 			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
@@ -97,7 +100,8 @@
 				<tr>
 			   <% end %>		
 					<% i = i + 1 %>
-					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
+					<td><%= i  %></td>
+					<td><%= item.mark %></td>
 					<td><%= item.pxx %></td>
 				    <td><%= item.pkz %></td>										
 					<td><%= item.snom %></td>
@@ -145,6 +149,7 @@
 		                <th>Коэффициент трассы Ktr</th>
 		                <th>Коэффициент пов. эффекта и близости Kc</th>
 		                <th>Коэффициент формы Кф</th>
+		                <th>Mapка</th>
 		                <th>Сечение провода q, мм2</th>
 		   				<th>Комментарий</th>
 		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -158,6 +163,7 @@
 						<td><%= number_field_tag 'k_tr', @k_tr, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'k_peb', @k_peb, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'k_f', @k_f, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= text_field_tag 'mark', @mark, placeholder: 'Марка...' %></td>
 						<td><%= number_field_tag 'q', @q, placeholder: "Сечение...", min: 0.01, max: 1000000, step: 0.01 %></td>
 						<td><%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...' %></td>
 						<td><%= check_box_tag 'f', 'yes', if @f=='true' then 'yes' else nil end  %></td>			        
@@ -189,6 +195,7 @@
 		   <th>Коэффициент трассы Ktr</th>
 		   <th>Коэффициент пов. эффекта и близости Kc</th>
 		   <th>Коэффициент формы Кф</th>
+		   <th>Марка</th>
 		   <th>Сечение провода q, мм2</th>
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -196,7 +203,7 @@
 		</tr>	
 	</thead>
 	<tbody>					
-			<% i = 0%>
+			<% i = 0 %>
 			<% @lnp.each do |item| %>
 			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
@@ -204,7 +211,7 @@
 				<tr>
 			   <% end %>		
 					<% i = i + 1 %>
-					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
+					<td><%= i  %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>
 					<td><%= item.ro %></td>
@@ -212,6 +219,7 @@
 					<td><%= item.k_tr %></td>
 					<td><%= item.k_peb %></td>
 					<td><%= item.k_f %></td>
+					<td><%= item.mark %></td>
 					<td><%= item.q %></td>
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>

@@ -32,6 +32,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
+						<th>Код</th>
 						<th>Наименование</th>
 		   				<th>Подстанция подключения ME</th>
 		   				<th>Наименование фидера ME</th>
@@ -44,6 +45,7 @@
 				</thead>
 				<tbody>
 	   				<tr>
+	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
 	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td>		
 						<td><%= text_field_tag 'messtation', @mpoint.messtation, placeholder: "Подстанция..." %></td>
 						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Фидер..." %></td>
@@ -74,6 +76,7 @@
 		<thead>
 			<tr class="info">
 			   <th>№</th>
+			   <th>Код</th>
 			   <th>Наименование</th>
 			   <th>Подстанция</th>
 			   <th>Присоединение</th>
@@ -99,6 +102,7 @@
 			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+						<td><%= item.cod %></td>
 						<td><%= item.name %></td>						
 						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
 						<td><%= "#{item.meconname} / #{item.clconname}" %></td>

@@ -1,0 +1,2 @@
+class Vlnparam < ApplicationRecord
+end

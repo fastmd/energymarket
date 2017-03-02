@@ -1,0 +1,2 @@
+class Vtrparam < ApplicationRecord
+end

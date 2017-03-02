@@ -106,6 +106,16 @@ before_filter :redirect_cancel, only: [:create, :update]
     @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)   
   end  
  
+  def paramreport
+    @page = params[:page]
+    @id = params[:cp_id]
+    @cp = Company.find(@id)
+    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
+    @trp = Vmpointstrparam.where("company_id = ?", @id).order(:name, :id, :tr_id, :updated_at)
+    @lnp = Vmpointslnparam.where("company_id = ?", @id).order(:name, :id, :ln_id, :updated_at)
+    @tau = Tau.all    
+  end  
+   
   def reports
     @page = params[:page]
     @id = params[:id]

@@ -26,14 +26,15 @@ before_filter :redirect_cancel, only: [:create, :update]
      tr.qkz =  tmp
      tr.f = if params[:f].nil? then false else true end
      tr.comment = params[:comment]
+     tr.mark = params[:mark]
      begin
        if tr.save! then redirect_to mpoint_path(@mp) end
      rescue
           flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."         
           if params[:tr_id].nil? or params[:tr_id]=='' then
-            redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:flag=>'tadd')
+            redirect_to mpoint_path(@mp,:pxx =>params[:pxx],:pkz=>params[:pkz],:snom=>params[:snom],:ukz=>params[:ukz],:io=>params[:io],:f=>params[:f],:comment=>params[:comment],:mark=>params[:mark],:flag=>'tadd')
           else
-            redirect_to mpoint_path(@mp,:tr_id=>tr.id,:pxx =>tr.pxx,:pkz=>tr.pkz,:snom=>tr.snom,:ukz=>tr.ukz,:io=>tr.io,:f=>tr.f,:comment=>tr.comment,:flag=>'tedit')
+            redirect_to mpoint_path(@mp,:tr_id=>tr.id,:pxx =>tr.pxx,:pkz=>tr.pkz,:snom=>tr.snom,:ukz=>tr.ukz,:io=>tr.io,:f=>tr.f,:comment=>tr.comment,:mark=>tr.mark,:flag=>'tedit')
           end    
      end 
   end
@@ -41,7 +42,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   def edit
     @tr = Trparam.find(params[:tr_id])
     @mp = Mpoint.find(@tr.mpoint_id)
-    redirect_to mpoint_path(@mp,:tr_id=>@tr.id,:pxx =>@tr.pxx,:pkz=>@tr.pkz,:snom=>@tr.snom,:ukz=>@tr.ukz,:io=>@tr.io,:f=>@tr.f,:comment=>@tr.comment,:flag=>'tedit')
+    redirect_to mpoint_path(@mp,:tr_id=>@tr.id,:pxx =>@tr.pxx,:pkz=>@tr.pkz,:snom=>@tr.snom,:ukz=>@tr.ukz,:io=>@tr.io,:f=>@tr.f,:comment=>@tr.comment,:mark=>@tr.mark,:flag=>'tedit')
   end
   
   def destroy

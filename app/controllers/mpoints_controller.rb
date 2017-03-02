@@ -1,6 +1,6 @@
 class MpointsController < ApplicationController
+before_filter :check_user   
 before_filter :redirect_cancel, only: [:create, :update] 
-before_filter :check_user, only: [:create, :edit, :show, :update]  
   
   def new  
   end
@@ -108,7 +108,8 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
         @io   = params[:io]
         @comment = params[:comment] 
         @tr_id = params[:tr_id]
-        @f  = params[:f]      
+        @f  = params[:f]
+        @mark = params[:mark]      
       end   
       if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
         @l  = params[:l]
@@ -120,7 +121,8 @@ before_filter :check_user, only: [:create, :edit, :show, :update]
         @q = params[:q]
         @comment = params[:comment] 
         @line_id = params[:line_id]
-        @f = params[:f]        
+        @f = params[:f]
+        @mark = params[:mark]         
       end 
     end    
   end
@@ -156,6 +158,7 @@ private
   end 
   
   def mpoint_init(mpoint)
+    mpoint.cod = params[:cod]
     t = params[:name]
     t = t.lstrip
     t = t.rstrip

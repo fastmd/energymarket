@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170228153840) do
+ActiveRecord::Schema.define(version: 20170302135739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20170228153840) do
     t.decimal  "q",          precision: 10, scale: 4,                  null: false
     t.decimal  "k_f",        precision: 10, scale: 4, default: "1.15", null: false
     t.boolean  "f",                                   default: true,   null: false
+    t.string   "mark"
     t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
 
@@ -99,6 +100,7 @@ ActiveRecord::Schema.define(version: 20170228153840) do
     t.string   "name",                                default: "точка учета",        null: false
     t.decimal  "voltcl",     precision: 14, scale: 4, default: "10.0",               null: false
     t.boolean  "f",                                   default: true,                 null: false
+    t.integer  "cod"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
@@ -146,6 +148,7 @@ ActiveRecord::Schema.define(version: 20170228153840) do
     t.datetime "updated_at",                                         null: false
     t.text     "comment"
     t.boolean  "f",                                   default: true, null: false
+    t.string   "mark"
     t.index ["mpoint_id"], name: "index_trparams_on_mpoint_id", using: :btree
   end
 

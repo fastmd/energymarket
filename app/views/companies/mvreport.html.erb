@@ -22,7 +22,8 @@
   <thead>
     <tr class="info">
       <th>Nr</th>
-      <th>Точка учета</th>      
+      <th>Точка учета</th>
+      <th>Код точки учета</th>      
       <th>Счетчик</th>
       <th>Дата</th>      
       <th>1.8.0</th>
@@ -44,6 +45,7 @@
 	   <% end %>
       	 <td><%= i %></td>
       	 <td><%= Mpoint.find(item.id).name %></td>
+      	 <td><%= item.cod %></td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.actdate %></td>
       	 <td><%= item.actp180 %></td>
