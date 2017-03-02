@@ -444,9 +444,7 @@ private
       # линии              
       ln  = mpoint.lnparams.where("f = 'true'") 
       ln_losses_ng = ln_losses_kr = 0.0        
-      if ln.count == 0 then
-        flash[:warning] = "У точки учета #{mpoint.name} нет линий!"  
-      elsif workt != 0 then
+      if ln.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
