@@ -70,7 +70,7 @@
   </div>  
 </div>
 	
-<h2 align="center">Точки учета</h2> 
+<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3> 
            
 <table class="table table-striped  table-hover">
 		<thead>
@@ -108,12 +108,12 @@
 						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
-						   <td><%= link_to "Открыть" , meters_index_path(:id => item.id), :class=> "glyphicon glyphicon-folder-open" %></td>
-  						   <td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
+						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
+  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
   						<% else %>
-  						   <td><%= link_to " " , mpoint_path(item), :class=> "glyphicon glyphicon-folder-open" %>
+  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>  						
   						<% end %>    

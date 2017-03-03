@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'application/home'
   get 'meters/index'
   post 'meters/index'
   get 'meters/update'

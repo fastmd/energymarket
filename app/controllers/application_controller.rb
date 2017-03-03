@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
+  before_filter :check_user
   before_filter :nav_menu 
   $GreenDelay = 60*60
   $PerPage = 10
@@ -35,17 +36,19 @@ class ApplicationController < ActionController::Base
    end 
   end
   
-private   
+private       
       
   def check_user
-    if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
-    if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
-    if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
-    if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
-    if current_user.has_role? :"setsu"           then  @fpr = 5 end
-    if current_user.has_role? :"cduser"          then  @fpr = 6 end
-    if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
-    if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end      
+    if !current_user.nil? then 
+      if current_user.has_role? :"setsu-nord"      then  @fpr = 1 end 
+      if current_user.has_role? :"setsu-nord-vest" then  @fpr = 2 end
+      if current_user.has_role? :"setsu-centru"    then  @fpr = 3 end
+      if current_user.has_role? :"setsu-sud"       then  @fpr = 4 end
+      if current_user.has_role? :"setsu"           then  @fpr = 5 end
+      if current_user.has_role? :"cduser"          then  @fpr = 6 end
+      if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
+      if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end     
+    end      
   end  
    
   end

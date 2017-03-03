@@ -4,9 +4,13 @@
       <%= link_to "energy market", '#', id: "logo" %>           
         <nav>
           <ul class="nav nav-pills nav-pillspull-right">
-            <li><%= link_to "Home",    '#' %></li>
-            <li><%= link_to "Help",    '#' %></li>
-            <li><%= link_to "Sign in", '#' %></li>
+          	<% if current_user.nil? then %>
+	            <li><%= link_to "Help", '#' %></li>
+          	<% else %>
+	            <li><%= link_to "Home", welcome_index_path %></li>
+	            <li><%= link_to "Help", '#' %></li>
+            	<li><%= link_to "Sign out", destroy_user_session_path, method: :delete %></li>
+            <% end %>
           </ul>
         </nav>
       </div>
