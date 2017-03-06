@@ -18,33 +18,40 @@
 				
 <h3 align="center"><%= "Счетчики (валидные) #{@cp.name} " %><%= image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 30) %></h3>
 
-<table class="table table-striped table-condensed  table-hover">	
-  <thead>
-    <tr class="info">
-      <th>Nr</th>
-      <th>Точка учета</th>
-      <th>Код точки учета</th>
-      <th>Тип счетчика</th>      
-      <th>№ счетчика</th>
-      <th>Коэффициент</th>      
-      <th>Актуальность начало</th>
-      <th>Актуальность конец</th>
-      <th>Комментарий</th>
-      <th>Дата изменений</th> 
-    </tr>  
-  </thead>
-  <tbody>
-  	<% i = 0 %>
+<% if @meters.count != 0 then %>
+	<% x = nil %>
+    <% i = j = 1 %>
     <% @meters.each do |item| %>
-       <% i = i + 1 %>	
+      <% if x != item.id then %>
+        <% unless x.nil? then %>
+          </tbody>
+          </table>
+        <% end %>
+        <% x = item.id %>
+        <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.messtation.nil? ? '' : " #{item.messtation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
+        <% i += 1 %>
+        <% j = 1 %>
+        <table class="table table-striped table-condensed  table-hover">	
+        <thead>
+        <tr class="info">
+      		<th>Nr</th>
+      		<th>Тип счетчика</th>      
+      		<th>№ счетчика</th>
+      		<th>Коэффициент</th>      
+      		<th>Актуальность начало</th>
+      		<th>Актуальность конец</th>
+      		<th>Комментарий</th>
+      		<th>Дата изменений</th> 
+    	</tr>  
+  		</thead>
+  		<tbody>
+      <% end %>
 	   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 		 <tr class="success">
 	   <% else %> 	
 		 <tr>
 	   <% end %>
-      	 <td><%= i %></td>
-      	 <td><%= item.name %></td>
-      	 <td><%= item.cod %></td>
+      	 <td><%= j %></td>
       	 <td><%= item.metertype %></td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.koefcalc %></td>
@@ -53,6 +60,9 @@
       	 <td><%= item.comment %></td>
       	 <td><%= item.updated_at %></td>
       </tr>
+      <% j += 1 %>
     <% end %>
-  </tbody>
-</table>
+    </tbody>
+    </table>     	
+<% end %>
+

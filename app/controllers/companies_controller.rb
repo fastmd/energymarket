@@ -103,7 +103,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
-    @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)   
+    @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)
   end  
  
   def paramreport
