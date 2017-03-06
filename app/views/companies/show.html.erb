@@ -85,7 +85,8 @@
 			      <th>Счетчики</th>
 			      <th>Показания</th>
 			   <% else %>
-			      <th>Параметры</th>		   
+			      <th>Параметры</th>
+			      <th>Расчет</th>		   
 			   <% end %>   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -115,7 +116,8 @@
   						<% else %>
   						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
-  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>  						
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
+  						   <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
   						<% end %>    
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						

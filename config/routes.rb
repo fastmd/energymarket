@@ -52,6 +52,7 @@ Rails.application.routes.draw do
   get 'companies/mvreport'
   get 'companies/mtreport'
   get 'companies/paramreport'
+  get 'companies/onempreport'
   get 'companies/show'
   post 'companies/show'
 

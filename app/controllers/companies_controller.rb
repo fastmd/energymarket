@@ -115,6 +115,43 @@ before_filter :redirect_cancel, only: [:create, :update]
     @lnp = Vmpointslnparam.where("company_id = ?", @id).order(:name, :id, :ln_id, :updated_at)
     @tau = Tau.all    
   end  
+  
+  def onempreport
+    @page = params[:page]
+    @id = params[:id]
+    @month_for_report = params[:month_for_report]
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
+    # month   
+    if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    @luna = $Luni[@ddate.month.to_i-1]
+    @ddate_b = @ddate.change(day: 1) - 1.month
+    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
+    ddate_me = @ddate_e.change(day: 1)   
+    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
+    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    mp = Mpoint.find(params[:mp_id])
+    @cp = mp.company  
+    # title
+    @lista_title = []
+    @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
+    @lista_title << "точка учета #{mp.cod} #{mp.messtation} #{mp.voltcl} Î #{mp.meconname} F" 
+    @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
+    # report init
+    @report = Array[] 
+    # indicii si energie        
+    energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+    indicii = energies[:indicii]
+    if indicii.nil? then
+
+    else   
+      indicii0 = indicii.first
+      indicii1 = indicii.last
+      # pierderi   
+      losses = one_mp_losses(mp.id, energies)
+      # report
+   end # indicii null      
+  end
    
   def reports
     @page = params[:page]
@@ -161,7 +198,7 @@ before_filter :redirect_cancel, only: [:create, :update]
           mpoints.each do |mp|
             # report rind
             nr += 1
-            report_rind = [nr,"#{cp.region}","#{cp.name}","#{mp.messtation}","#{mp.meconname}",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.messtation}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
             indicii = energies[:indicii]
@@ -234,7 +271,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     else
       @mpoints.each do |mp| 
         nr += 1  
-        report_rind = [nr, "#{mp.name} #{mp.messtation}", "#{mp.meconname}", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.messtation}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
         indicii = energies[:indicii]
