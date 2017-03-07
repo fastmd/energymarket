@@ -19,7 +19,8 @@
   <li><%= if (@fpr > 5) 
   	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
   	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
-  <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
 	
 <% @lista_title.each do |t| %>
@@ -29,6 +30,100 @@
 <%= "Denumirea furnizorului:  #{@cp.furnizor.name}" %></br>
 <%= "Denumirea filialei:  #{@cp.filial.name}" %></br>
 <%= "Denumirea consumatorului:  #{@cp.name}" %></br></br>
+
+<%= @energies.inspect %>
+
+<h4 align="center">Показания</h4> 
+
+<small>
+<table class="table table-striped table-condensed  table-hover">	
+  <thead>
+    <tr class="success">
+      <th>Nr счетчика</th>
+      <th>Тип данных</th>    
+      <th>Данные текущие</th>
+      <th>Данные предыдущие</th>
+      <th>Разница</th>
+      <th>Коэффициент</th>  
+      <th>Энергия, kWh</th> 
+    </tr>  
+  </thead>
+  <tbody>
+    <% @indicii.each do |item| %>
+      <tr>
+      	 <td><%= item[:meternum] %></td>
+      	 <td>Дата съема</td>
+      	 <td><%= item[:date1] %></td>
+      	 <td><%= item[:date0] %></td>
+      	 <td><%= item[:dt] %>, дни</td>
+      	 <td></td>
+      	 <td></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>1.8.0</td>
+      	 <td><%= item[:ind1_180] %></td>
+      	 <td><%= item[:ind0_180] %></td>
+      	 <td><%= item[:dind_180] %></td>
+      	 <td><%= item[:koef] %></td>
+      	 <td><%= item[:enrg_180] %></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>2.8.0</td>
+      	 <td><%= item[:ind1_280] %></td>
+      	 <td><%= item[:ind0_280] %></td>
+      	 <td><%= item[:dind_280] %></td>
+      	 <td><%= item[:koef] %></td>
+      	 <td><%= item[:enrg_280] %></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>3.8.0</td>
+      	 <td><%= item[:ind1_380] %></td>
+      	 <td><%= item[:ind0_380] %></td>
+      	 <td><%= item[:dind_380] %></td>
+      	 <td><%= item[:koef] %></td>
+      	 <td><%= item[:enrg_380] %></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>4.8.0</td>
+      	 <td><%= item[:ind1_480] %></td>
+      	 <td><%= item[:ind0_480] %></td>
+      	 <td><%= item[:dind_480] %></td>
+      	 <td><%= item[:koef] %></td>
+      	 <td><%= item[:enrg_480] %></td>
+      </tr>      
+    <% end %>
+  </tbody>
+</table>
+</small>
+
+<h4 align="center">Энергии</h4>
+
+<small>
+<table class="table table-striped table-condensed  table-hover">	
+  <thead>
+    <tr class="success">
+      <th>Tраб, часы</th>
+      <th>Энергия 1.8.0, kWh</th>      
+      <th>Энергия 2.8.0, kWh</th>
+      <th>Энергия 3.8.0, kWh</th>
+      <th>Энергия 4.8.0, kWh</th> 
+    </tr>  
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @energies[:workt] %></td>
+      <td><%= @energies[:wa] %></td>
+      <td><%= @energies[:waliv] %></td>
+      <td><%= @energies[:wri] %></td>
+      <td><%= @energies[:wrc] %></td>
+    </tr>
+  </tbody>
+</table>
+</small>
 
 <small>
 <table class="table table-striped table-condensed  table-hover">	

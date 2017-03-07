@@ -130,27 +130,20 @@ before_filter :redirect_cancel, only: [:create, :update]
     ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
-    mp = Mpoint.find(params[:mp_id])
-    @cp = mp.company  
+    @mp = Mpoint.find(params[:mp_id])
+    @cp = @mp.company  
     # title
     @lista_title = []
     @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
-    @lista_title << "точка учета #{mp.cod} #{mp.messtation} #{mp.voltcl} Î #{mp.meconname} F" 
+    @lista_title << "точка учета #{@mp.cod} #{@mp.messtation} #{@mp.voltcl} Î #{@mp.meconname} F" 
     @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
     # report init
     @report = Array[] 
     # indicii si energie        
-    energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
-    indicii = energies[:indicii]
-    if indicii.nil? then
-
-    else   
-      indicii0 = indicii.first
-      indicii1 = indicii.last
-      # pierderi   
-      losses = one_mp_losses(mp.id, energies)
-      # report
-   end # indicii null      
+    @energies = one_mp_indicii(@mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+    @indicii = @energies[:indicii]
+    # pierderi   
+    @losses = one_mp_losses(@mp.id, @energies)  
   end
    
   def reports
