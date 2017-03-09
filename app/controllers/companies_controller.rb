@@ -143,7 +143,12 @@ before_filter :redirect_cancel, only: [:create, :update]
     @energies = one_mp_indicii(@mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
     @indicii = @energies[:indicii]
     # pierderi   
-    @losses = one_mp_losses(@mp.id, @energies)  
+    @losses = one_mp_losses(@mp.id, @energies)
+    @ttaus = @losses[:ttaus]
+    # params
+    @trp = Vmpointstrparam.where("id = ?", @mp.id).order(:name, :id, :tr_id, :updated_at)
+    @lnp = Vmpointslnparam.where("id = ?", @mp.id).order(:name, :id, :ln_id, :updated_at)
+    @tau = Tau.all   
   end
    
   def reports
@@ -437,16 +442,21 @@ private
         cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
         result[:cosfi] = cosfi       
       end 
+      #tau
+      taus  = Tau.all
+      ttaus = []  
       # трансформаторы
       tr  = mpoint.trparams.where("f = 'true'")
       tr_losses_pxx = tr_losses_pkz = tr_losses_rxx = tr_losses_rkz = 0.0
+      result[:tr_losses_pxx_formula] = ""
       if tr.count != 0 then
         tr.each do |tritem|
           tr_losses_pxx += workt * tritem.pxx
+          if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
+          result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.pxx).to_s
           #tau
-          taus  = Tau.all
           tau = taus.last.taum
-          tm = taus.last.tm 
+          tm = taus.last.tm
           taus.each do |itau|
             if wa <= 0.9 * itau.tm * cosfi * (tritem.snom) then 
               tau = itau.taum
@@ -455,7 +465,8 @@ private
             end
           end
           result[:tau] = tau
-          result[:tm] = tm
+          result[:tm] = tm 
+          ttaus << {:tm => tm, :tau => tau, :cosfi => cosfi, :snom => tritem.snom, :wi => tau * cosfi * (tritem.snom), :wi09 => 0.9 * tau * cosfi * (tritem.snom), :wa => wa}
           if tritem.snom == 0 then
             flash[:warning] = "Невозможно рассчитать потери КЗ тр-ра для #{mpoint.name}, т.к. Snom = 0 !"                   
           else  
@@ -469,7 +480,8 @@ private
         tr_losses_rxx = result[:tr_losses_rxx] = tr_losses_rxx.round(4)
         tr_losses_rkz = result[:tr_losses_rkz] = tr_losses_rkz.round(4)
         result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz 
-        result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz              
+        result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz
+        result[:ttaus] = ttaus            
       end  # if tr.count
       # линии              
       ln  = mpoint.lnparams.where("f = 'true'") 
@@ -483,24 +495,33 @@ private
             rk += lnitem.r * (lnitem.k_f ** 2)
           end
           ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wri ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
+          result[:ln_losses_ng_formula] = rk.to_s + " * ( " + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"  
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end
       end  # if ln.count
       # cos fi with losses           
       if wa >= 10000 then
-           wal = wa + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
-           wrl = wri + tr_losses_rkz + tr_losses_rxx
+           wal = result[:wal] = wa + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
+           result[:wal_formula] = wa.to_s + " + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
+           wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx
+           result[:wrl_formula] = wri.to_s + " + " + tr_losses_rkz.to_s + " + " + tr_losses_rxx.to_s
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
-           wrio = wal * 0.567
+           result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
+           wrio = result[:wrio] = (wal * 0.567).round(4)
+           result[:wrio_formula] = wal.to_s + " * 0.567"
            if wrio < wri then
-             wrif = wri - wrio
+             wrif = result[:wrif] = wri - wrio
+             result[:wrif_formula] = wri.to_s + " - " + wrio.to_s
            else
-             wrif = 0.0
+             wrif = result[:wrif] = 0.0
+             result[:wrif_formula] = "0.0"
            end
            ct = result[:consumteh] = ((wrc + wrif ) * 0.1).round(4)
            result[:consumtehi] = ((wrif ) * 0.1).round(4)
+           result[:consumtehi_formula] = wrif.to_s + " * 0.1"
            result[:consumtehc] = ((wrc) * 0.1).round(4)
+           result[:consumtehc_formula] = wrc.to_s + " * 0.1"
        end #if wa               
      end # if mvnum
    result

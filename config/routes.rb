@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get 'lnparams/destroy'
 
   get 'welcome/index'
+  get 'welcome/help'
   
   get 'mvalues/new'
   get 'mvalues/edit'
@@ -53,6 +54,7 @@ Rails.application.routes.draw do
   get 'companies/mtreport'
   get 'companies/paramreport'
   get 'companies/onempreport'
+  post 'companies/onempreport'
   get 'companies/show'
   post 'companies/show'
 

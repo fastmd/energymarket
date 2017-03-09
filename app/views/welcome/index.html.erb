@@ -25,7 +25,7 @@
 		   <td align="center"><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 		   <td align="center"><%= item.name %></td>
 		   <td align="center"><%= link_to "Открыть", companies_path(:id => item.id), :class=> "glyphicon glyphicon-lamp" %></td>
-		   <td align="center"><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20), companies_reports_path(:id => item.id) %></td>
+		   <td align="center"><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 30, :height => 20), companies_reports_path(:id => item.id) %></td>
 		   <td align="center"><%= item.comment %></td>
 		</tr>
 	  <% end %>

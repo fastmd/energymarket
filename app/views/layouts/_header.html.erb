@@ -8,8 +8,8 @@
 	            <li><%= link_to "Help", '#' %></li>
           	<% else %>
 	            <li><%= link_to "Home", welcome_index_path %></li>
-	            <li><%= link_to "Help", '#' %></li>
-            	<li><%= link_to "Sign out", destroy_user_session_path, method: :delete %></li>
+	            <li><%= link_to "Help", welcome_help_path %></li>
+            	<li><%= link_to " Sign out", destroy_user_session_path, method: :delete, :class => "glyphicon glyphicon-log-out" %></li>
             <% end %>
           </ul>
         </nav>

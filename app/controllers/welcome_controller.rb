@@ -14,4 +14,8 @@ before_filter :check_user
     end
   end
   
+  def help
+    @pagename = 'Помощь'
+  end
+   
 end  
