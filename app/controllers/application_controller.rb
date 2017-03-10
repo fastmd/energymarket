@@ -9,11 +9,21 @@ class ApplicationController < ActionController::Base
   
   def nav_menu
    if !current_user.nil? then 
-    if (current_user.has_role? :cduser) or (current_user.has_role? :"cduser-fee") or (current_user.has_role? :"cduser-fenosa") then 
+    if (current_user.has_role? :cduser) then 
       @navheader = 'Поставщики'
       @pages = Furnizor.all.order(name: :asc)
       @subpages = Company.all.order(name: :asc)
       @leaves  = Mpoint.all
+    elsif (current_user.has_role? :"cduser-fee") then 
+      @navheader = 'FEE'
+      @pages = Furnizor.where('upper(name) like upper(?)',"%fee%").order(name: :asc)
+      @subpages = Company.all.order(name: :asc)
+      @leaves  = Mpoint.all    
+    elsif (current_user.has_role? :"cduser-fenosa") then
+      @navheader = 'FENOSA'
+      @pages = Furnizor.where('upper(name) like upper(?)',"%fenosa%").order(name: :asc)
+      @subpages = Company.all.order(name: :asc)
+      @leaves  = Mpoint.all   
     end 
     if (current_user.has_role? :setsu) or (current_user.has_role? :"setsu-nord") or (current_user.has_role? :"setsu-nord-vest") or (current_user.has_role? :"setsu-centru")  or (current_user.has_role? :"setsu-sud")  then 
       @navheader = 'Филиалы'

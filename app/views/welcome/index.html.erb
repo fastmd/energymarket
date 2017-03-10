@@ -3,6 +3,8 @@
 <ul class="breadcrumb">
   <li class="active"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><strong><%= @pagename %></strong></li>
 </ul>
+
+<% unless @fpr.nil? then %>
 		    
 <h3 align="center"><%= @pagename %> <span class="glyphicon glyphicon-<%= if @fpr < 6 then 'tower' else 'piggy-bank' end %>" aria-hidden="true"></span></h3>
 
@@ -34,3 +36,5 @@
 </table>
 
 <center><small><%= will_paginate @flr, renderer: BootstrapPagination::Rails %></small></center>  
+
+<% end %>
