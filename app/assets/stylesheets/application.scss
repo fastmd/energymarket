@@ -23,3 +23,61 @@ background-color: #C0F2F7;
   margin:0;
 }
 
+
+.yin-yang {
+  position: fixed; 
+  top: 30%; 
+  left: 20%;
+  margin: -5rem 0 0 -5rem;
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  background: -webkit-linear-gradient(top, #fff 0%, #fff 50%, #000 50%, #000 100%);
+  background: linear-gradient(to bottom, #fff 0%, #fff 50%, #000 50%, #000 100%);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
+  -webkit-animation: rotate 10s linear infinite;
+          animation: rotate 10s linear infinite;
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+.yin-yang:before,
+.yin-yang:after {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  height: 50%;
+  width: 50%;
+  border-radius: 50%;
+}
+.yin-yang:before {
+  left: 0;
+  background: #FFF;
+  border: 2rem solid #000;
+}
+.yin-yang:after {
+  right: 0;
+  background: #000;
+  border: 2rem solid #fff;
+}
+
