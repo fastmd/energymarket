@@ -8,8 +8,9 @@ before_filter :check_user, only: [:index]
     @cp  = @mp.company
     @meter = @mp.meters.build
     @meter.relevance_date = Date.current
-    @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
-    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+    @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc)
+    @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)    
+    @metertypes=Vmetertype.all.pluck(:cvalue, :id)
   end
 
   def new
@@ -58,6 +59,8 @@ before_filter :check_user, only: [:index]
     @cp  = @mp.company
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
     @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+    thesauruses=Vmetertype.all
+    @metertypes=thesauruses.collect{|x| [x.cvalue,x.id]} 
     flash.discard 
     render :index
   end
@@ -107,6 +110,7 @@ private
     koeftn = kn1.to_s + " / " + kn2.to_s
     koefcalc = (kt1.to_f * kn1.to_f) / (kt2.to_f * kn2.to_f)   
     meter.metertype = params[:metertype]
+    meter.thesauru_id = params[:thesauru_id]
     meter.meternum = params[:meternum]
     meter.relevance_date = params[:relevance_date]
     meter.comment = params[:comment]

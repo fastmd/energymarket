@@ -13,6 +13,11 @@
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
 
+<!--
+<%= @metertypes.inspect%>
+</br>
+-->
+
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -32,6 +37,7 @@
 				<thead>
 					<tr>
 		   				<th>Тип счетчика</th>
+		   				<th>Тип счетчика</th>
 		   				<th>Заводской № счетчика</th>
 		   				<th>Коэффициент трансформатора тока </th>
 		   				<th>Коэффициент трансформатора напряжения</th>
@@ -43,6 +49,7 @@
 				<tbody>
 	   				<tr>		
 						<td><%= text_field_tag 'metertype', @meter.metertype, placeholder: 'Тип счетчика...' %></td>
+						<td><%= select_tag 'thesauru_id', options_for_select( @metertypes, if !@meter.thesauru_id.nil? then @meter.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td>
 						<td><%= number_field_tag 'meternum', @meter.meternum, min: 1, max: 9999999999, step: 1 %></td>
 						<td><%= text_field_tag 'koeftt', @meter.koeftt %></td>
 						<td><%= text_field_tag 'koeftn', @meter.koeftn %></td>
@@ -72,6 +79,7 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th>Тип счетчика</th>
+			   <th>Тип счетчика</th>
 			   <th>№ счетчика</th>
 			   <th>Коэффициент по току</th>
 			   <th>Коэффициент по напряжению</th>
@@ -94,6 +102,7 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
 						<td><%= item.metertype %></td>
+						<td><%= if item.thesauru then item.thesauru.cvalue end %></td>
 						<td><%= item.meternum %></td>
 						<td><%= item.koeftt %></td>
 						<td><%= item.koeftn %></td>

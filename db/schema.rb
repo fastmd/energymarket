@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170306105313) do
+ActiveRecord::Schema.define(version: 20170330084727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,7 @@ ActiveRecord::Schema.define(version: 20170306105313) do
     t.string   "comment"
     t.boolean  "f",              default: true,    null: false
     t.float    "koefcalc",       default: 1.0,     null: false
+    t.integer  "thesauru_id"
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
   end
 
@@ -136,6 +137,17 @@ ActiveRecord::Schema.define(version: 20170306105313) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "thesaurus", force: :cascade do |t|
+    t.integer  "category"
+    t.string   "name"
+    t.boolean  "f"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "cvalue"
+    t.integer  "meter_id"
+    t.index ["meter_id"], name: "index_thesaurus_on_meter_id", using: :btree
+  end
+
   create_table "trparams", force: :cascade do |t|
     t.decimal  "pxx",        precision: 10, scale: 4,                null: false
     t.decimal  "pkz",        precision: 10, scale: 4,                null: false
@@ -179,5 +191,6 @@ ActiveRecord::Schema.define(version: 20170306105313) do
   add_foreign_key "meters", "mpoints"
   add_foreign_key "mpoints", "companies"
   add_foreign_key "mvalues", "meters"
+  add_foreign_key "thesaurus", "meters"
   add_foreign_key "trparams", "mpoints"
 end

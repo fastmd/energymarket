@@ -121,7 +121,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         @q = params[:q]
         @comment = params[:comment] 
         @line_id = params[:line_id]
-        @f = params[:f]
+        @f = if (params.has_key?(:f)) then params[:f] else 'true' end
         @mark = params[:mark]         
       end 
     end    

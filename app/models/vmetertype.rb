@@ -1,0 +1,2 @@
+class Vmetertype < ApplicationRecord
+end
