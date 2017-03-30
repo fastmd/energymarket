@@ -34,10 +34,10 @@
 					<tr>
 						<th>Код</th>
 						<th>Наименование</th>
-		   				<th>Подстанция подключения ME</th>
-		   				<th>Наименование фидера ME</th>
-		   				<th>Наименование подстанции потребителя</th>
-		   				<th>Наименование присоединения потребителя</th>
+		   				<th>Подстанция (подкл. потребитель)</th>
+		   				<th>Присоединение (запитан потребитель)</th>
+		   				<th>Объект установки учета</th>
+		   				<th>Присоединение установки учета</th>
 		   				<th>Класс напряжения, кВ</th>
 		   				<th>Комментарий</th>
 		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -47,10 +47,10 @@
 	   				<tr>
 	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
 	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td>		
-						<td><%= text_field_tag 'messtation', @mpoint.messtation, placeholder: "Подстанция..." %></td>
-						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Фидер..." %></td>
-						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Подстанция..." %></td>
-						<td><%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Фидер..." %></td>
+						<td><%= text_field_tag 'messtation', @mpoint.messtation, placeholder: "Подстанция (подкл. потребитель)" %></td>
+						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)" %></td>
+						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета" %></td>
+						<td><%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета" %></td>
 						<td><%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1 %></td>
 						<td><%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...' %></td>
 						<td><%= check_box_tag 'f', 'yes', @mpoint.f %></td>			        
@@ -78,8 +78,10 @@
 			   <th>№</th>
 			   <th>Код</th>
 			   <th>Наименование</th>
-			   <th>Подстанция</th>
-			   <th>Присоединение</th>
+			   <th>Подстанция (подкл. потребитель)</th>
+			   <th>Присоединение (запитан потребитель)</th>
+			   <th>Объект установки учета</th>
+			   <th>Присоединение установки учета</th>			   
 			   <th>Класс напряжения, кВ</th>
                <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 			      <th>Счетчики</th>
@@ -105,8 +107,10 @@
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
 						<td><%= item.name %></td>						
-						<td><%= "#{item.messtation} / #{item.clsstation}" %></td>
-						<td><%= "#{item.meconname} / #{item.clconname}" %></td>
+						<td><%= "#{item.messtation}" %></td>
+						<td><%= "#{item.meconname} " %></td>
+						<td><%= "#{item.clsstation}" %></td>
+						<td><%= "#{item.clconname}" %></td>						
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
