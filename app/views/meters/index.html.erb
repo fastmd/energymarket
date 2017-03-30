@@ -102,7 +102,7 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
 						<td><%= item.metertype %></td>
-						<td><%= if item.thesauru then item.thesauru.cvalue end %></td>
+						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
 						<td><%= item.meternum %></td>
 						<td><%= item.koeftt %></td>
 						<td><%= item.koeftn %></td>

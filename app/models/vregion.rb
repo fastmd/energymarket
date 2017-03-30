@@ -1,0 +1,2 @@
+class Vregion < ApplicationRecord
+end

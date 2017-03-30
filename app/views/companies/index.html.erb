@@ -35,6 +35,7 @@
 					<tr>
 		   				<th>Наименование</th>
 		   				<th>Краткое наименование</th>
+		   				<th>Регион</th>
 		   				<th>Код</th>
 		   				<th>Поставщик</th>
 		   				<th>Филиал</th>
@@ -46,6 +47,7 @@
 	   				<tr>		
 						<td><%= text_field_tag 'name', @company.name, placeholder: "Наименование...", maxlength:"40" %></td>
 						<td><%= text_field_tag 'shname', @company.shname, placeholder: "Краткое наименование...", maxlength:"15" %></td>
+						<td><%= select_tag 'thesauru_id', options_for_select( @regions, if !@company.thesauru_id.nil? then @company.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td>
 						<td><%= text_field_tag 'region', @company.region,  placeholder: "Код...", maxlength:"20" %></td>
 						<%  furn=Furnizor.all %>
   			            <%  furns=Array[] %>
@@ -90,6 +92,7 @@
 			   <th>№</th>
 			   <th>Наименование</th>
 			   <th>Краткое наименование</th>
+			   <th>Регион</th>
 			   <th>Код</th>
 			   <th><%= if @fpr < 6 then 'Поставщик' elsif @fpr < 9 then 'Филиал' end %></th>
 			   <th>Точки учета</th>
@@ -112,6 +115,7 @@
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.shname %><% if item.f == false then %></em><% end %></td>
+						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.region %><% if item.f == false then %></em><% end %></td>						
 						<td><%= if @fpr < 6 then item.furnizor.name elsif @fpr < 9 then item.filial.name end %></td>
 						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>

@@ -44,6 +44,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   def edit
     @flag = 'edit'
     @company = Company.find(params[:cp_id])
+    @regions=Vregion.all.pluck(:cvalue, :id)
     flash.discard
     if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
     indexview
@@ -51,6 +52,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
 
   def index
+    @regions=Vregion.all.pluck(:cvalue, :id)
     if params[:cp_id].nil? then
       @company = Company.new
     else
@@ -570,6 +572,7 @@ private
     company.region = t 
     company.furnizor_id = (params[:furnizor_id]).to_i  
     company.filial_id = (params[:filial_id]).to_i
+    if (params.has_key?(:thesauru_id) and !params[:thesauru_id].nil? and params[:thesauru_id] != "") then company.thesauru_id = (params[:thesauru_id]).to_i else company.thesauru_id = nil end
     t = params[:comment]
     t = t.lstrip
     t = t.rstrip   

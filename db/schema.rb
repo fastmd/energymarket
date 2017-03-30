@@ -10,24 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170330084727) do
+ActiveRecord::Schema.define(version: 20170330124648) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "companies", force: :cascade do |t|
-    t.text     "name",          default: "потребитель", null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.integer  "furnizor_id",                           null: false
+    t.text     "name",                         null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "furnizor_id",                  null: false
     t.string   "region"
-    t.integer  "filial_id",                             null: false
+    t.integer  "filial_id",                    null: false
     t.text     "comment"
-    t.string   "shname",        default: "потребитель", null: false
+    t.string   "shname",                       null: false
     t.integer  "mpoints_count"
-    t.boolean  "f",             default: true,          null: false
+    t.boolean  "f",             default: true, null: false
+    t.integer  "thesauru_id"
     t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
+    t.index ["thesauru_id"], name: "index_companies_on_thesauru_id", using: :btree
   end
 
   create_table "filials", force: :cascade do |t|
@@ -89,18 +91,18 @@ ActiveRecord::Schema.define(version: 20170330084727) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                                         null: false
-    t.datetime "created_at",                                                         null: false
-    t.datetime "updated_at",                                                         null: false
-    t.string   "messtation",                          default: "подстанция МЭ",      null: false
-    t.string   "meconname",                           default: "фидер МЭ",           null: false
-    t.string   "clsstation",                          default: "подстанция клиента", null: false
-    t.string   "clconname",                           default: "фидер клиента",      null: false
+    t.integer  "company_id",                                           null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.string   "messtation",                                           null: false
+    t.string   "meconname",                                            null: false
+    t.string   "clsstation",                                           null: false
+    t.string   "clconname",                                            null: false
     t.integer  "mess_id"
     t.text     "comment"
-    t.string   "name",                                default: "точка учета",        null: false
-    t.decimal  "voltcl",     precision: 14, scale: 4, default: "10.0",               null: false
-    t.boolean  "f",                                   default: true,                 null: false
+    t.string   "name",                                                 null: false
+    t.decimal  "voltcl",     precision: 14, scale: 4, default: "10.0", null: false
+    t.boolean  "f",                                   default: true,   null: false
     t.integer  "cod"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
@@ -138,14 +140,11 @@ ActiveRecord::Schema.define(version: 20170330084727) do
   end
 
   create_table "thesaurus", force: :cascade do |t|
-    t.integer  "category"
     t.string   "name"
     t.boolean  "f"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "cvalue"
-    t.integer  "meter_id"
-    t.index ["meter_id"], name: "index_thesaurus_on_meter_id", using: :btree
   end
 
   create_table "trparams", force: :cascade do |t|
@@ -187,10 +186,11 @@ ActiveRecord::Schema.define(version: 20170330084727) do
 
   add_foreign_key "companies", "filials"
   add_foreign_key "companies", "furnizors"
+  add_foreign_key "companies", "thesaurus"
   add_foreign_key "lnparams", "mpoints"
   add_foreign_key "meters", "mpoints"
+  add_foreign_key "meters", "thesaurus"
   add_foreign_key "mpoints", "companies"
   add_foreign_key "mvalues", "meters"
-  add_foreign_key "thesaurus", "meters"
   add_foreign_key "trparams", "mpoints"
 end
