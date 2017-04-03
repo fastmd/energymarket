@@ -81,7 +81,7 @@ before_filter :check_user, only: [:index]
     mp = Mpoint.find(meter.mpoint_id)
     mv_count = meter.mvalues.count
     if  mv_count!=0 then 
-      flash[:warning] = "Нельзя удалить счетчик #{meter.metertype} № #{meter.meternum}, которому принадлежат показания (#{mv_count} шт.)" 
+      flash[:warning] = "Нельзя удалить счетчик  № #{meter.meternum}, которому принадлежат показания (#{mv_count} шт.)" 
     else meter.destroy 
     end
     redirect_to meters_path(:id => mp.id)
@@ -109,7 +109,6 @@ private
     if (ddd[1].nil? or ddd[1].to_i == 0) then kn2 = 1 else kn2 = ddd[1].to_i end     
     koeftn = kn1.to_s + " / " + kn2.to_s
     koefcalc = (kt1.to_f * kn1.to_f) / (kt2.to_f * kn2.to_f)   
-    meter.metertype = params[:metertype]
     meter.thesauru_id = params[:thesauru_id]
     meter.meternum = params[:meternum]
     meter.relevance_date = params[:relevance_date]

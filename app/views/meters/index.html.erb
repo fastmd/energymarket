@@ -37,7 +37,6 @@
 				<thead>
 					<tr>
 		   				<th>Тип счетчика</th>
-		   				<th>Тип счетчика</th>
 		   				<th>Заводской № счетчика</th>
 		   				<th>Коэффициент трансформатора тока </th>
 		   				<th>Коэффициент трансформатора напряжения</th>
@@ -48,7 +47,6 @@
 				</thead>
 				<tbody>
 	   				<tr>		
-						<td><%= text_field_tag 'metertype', @meter.metertype, placeholder: 'Тип счетчика...' %></td>
 						<td><%= select_tag 'thesauru_id', options_for_select( @metertypes, if !@meter.thesauru_id.nil? then @meter.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td>
 						<td><%= number_field_tag 'meternum', @meter.meternum, min: 1, max: 9999999999, step: 1 %></td>
 						<td><%= text_field_tag 'koeftt', @meter.koeftt %></td>
@@ -79,7 +77,6 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th>Тип счетчика</th>
-			   <th>Тип счетчика</th>
 			   <th>№ счетчика</th>
 			   <th>Коэффициент по току</th>
 			   <th>Коэффициент по напряжению</th>
@@ -101,7 +98,6 @@
 			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
-						<td><%= item.metertype %></td>
 						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
 						<td><%= item.meternum %></td>
 						<td><%= item.koeftt %></td>
@@ -115,7 +111,7 @@
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   						<td><%= link_to " " , meters_edit_path(:mt_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , meters_destroy_path(:mt_id=>item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить счетчик #{item.metertype} № #{item.meternum}?" } %></td>       						
+  						                 data: { confirm: "Удалить счетчик № #{item.meternum}?" } %></td>       						
 					</tr>		
 				<% end %>			
 		</tbody>
