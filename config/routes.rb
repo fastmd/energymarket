@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get 'application/home'
+  
   get 'meters/index'
   post 'meters/index'
   get 'meters/update'
@@ -26,6 +27,16 @@ Rails.application.routes.draw do
 
   get 'welcome/index'
   get 'welcome/help'
+  
+  get 'thesaurus/index'
+  post 'thesaurus/index'
+  get 'thesaurus/edit'
+  post 'thesaurus/edit'
+  get 'thesaurus/update'
+  get 'thesaurus/destroy'
+  
+  resources :thesaurus do
+  end
   
   get 'mvalues/new'
   get 'mvalues/edit'

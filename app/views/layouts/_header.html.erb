@@ -1,15 +1,16 @@
 <header class="navbar navbar-fixed-top">
   <div class="navbar-inverse">
     <div class="container-fluid">
-      <%= link_to "energy market", '#', id: "logo" %>           
+      <%= link_to "ENERGY10", '#', id: "logo" %>           
         <nav>
           <ul class="nav nav-pills nav-pillspull-right">
           	<% if current_user.nil? then %>
-	            <li><%= link_to "Help", '#' %></li>
+	            <li><%= link_to "Справка", '#' %></li>
           	<% else %>
-	            <li><%= link_to "Home", welcome_index_path %></li>
-	            <li><%= link_to "Help", welcome_help_path %></li>
-            	<li><%= link_to " Sign out", destroy_user_session_path, method: :delete, :class => "glyphicon glyphicon-log-out" %></li>
+	            <li><%= link_to "Домой", welcome_index_path %></li>
+	            <li><%= link_to "Справка", welcome_help_path %></li>
+	            <li><%= link_to "Справочник", thesaurus_index_path %></li>
+            	<li><%= link_to " Выход", destroy_user_session_path, method: :delete, :class => "glyphicon glyphicon-log-out" %></li>
             <% end %>
           </ul>
         </nav>
