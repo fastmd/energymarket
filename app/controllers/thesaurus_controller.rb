@@ -30,7 +30,7 @@ class ThesaurusController < ApplicationController
   def edit
     thesauru = Thesauru.find(params[:th_id])
     flash.discard 
-    redirect_to thesaurus_index_path(:flag => 'edit',:th_id => thesauru.id)   
+    redirect_to thesaurus_index_path(:flag => 'edit',:th_id => thesauru.id,:current => thesauru.name)   
   end
   
   def destroy
@@ -44,7 +44,7 @@ class ThesaurusController < ApplicationController
       flash[:warning] = "Нельзя #{thesauru.cvalue}, которому принадлежат объекты (#{th_count} шт.)" 
     else thesauru.destroy 
     end
-    redirect_to thesaurus_index_path
+    redirect_to thesaurus_index_path(:current => @current)
   end
 
 private
@@ -58,11 +58,12 @@ private
     @lines = Thesauru.where("name = ?", 'line').order(:cvalue, :created_at)
     @thesaurus = @metertypes
     @names=[['Тип счетчика','meter'], ['Регион','region'], ['Подстанция','sstation'], ['Тип трансформатора','transformer'], ['Линия','line']] 
+    @current = params[:current]
   end
   
   def thesauru_save
     t = Thesauru.where("name = ? and UPPER(cvalue) = ?", @thesauru.name, (@thesauru.cvalue).upcase).count
-    if t !=0 then
+    if (t != 0) and ((@thesauru.id).nil?)  then
       flash[:warning] = "Такой объект уже существует. Проверьте правильность ввода."       
       indexview
       render 'index'      
@@ -71,7 +72,7 @@ private
         if @thesauru.save! then 
           flash.discard
           flash[:notice] = "#{@thesauru.cvalue} сохранен." 
-          redirect_to thesaurus_index_path
+          redirect_to thesaurus_index_path(:current => @thesauru.name)
         end
       rescue
         flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
@@ -94,7 +95,7 @@ private
     t = t.lstrip
     t = t.rstrip
     thesauru.cvalue = t
-    thesauru.f = if params[:f].nil? then false else true end
+    thesauru.f = (if ((params[:f].present?) && (params[:f] = 'yes')) then true else false end)
     thesauru    
   end
  
