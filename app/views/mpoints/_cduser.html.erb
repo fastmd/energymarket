@@ -60,6 +60,8 @@
 		   				<th>2.8.0</th>
 		   				<th>3.8.0</th>
 		   				<th>4.8.0</th>
+		   				<th>5.8.0</th>
+		   				<th>8.8.0</th>
 		   				<th>Комментарий</th>
 		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   				<th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -73,6 +75,8 @@
 						<td><%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp580', @mv_params[:actp580], min: 0, max: 1000000, step: 0.0001 %></td>
+						<td><%= number_field_tag 'actp880', @mv_params[:actp880], min: 0, max: 1000000, step: 0.0001 %></td>
 						<td><%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...' %></td>
 						<td><%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end  %></td>
 						<td><%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end  %></td>				        
@@ -107,6 +111,8 @@
 		   <th>2.8.0</th>
 		   <th>3.8.0</th>
 		   <th>4.8.0</th>
+		   <th>5.8.0</th>
+		   <th>8.8.0</th>
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -130,6 +136,8 @@
 					<td><%= item.actp280 %></td>
 					<td><%= item.actp380 %></td>
 					<td><%= item.actp480 %></td>
+					<td><%= item.actp580 %></td>
+					<td><%= item.actp880 %></td>
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
