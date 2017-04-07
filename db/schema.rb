@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170406080206) do
+ActiveRecord::Schema.define(version: 20170407103557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,19 +90,19 @@ ActiveRecord::Schema.define(version: 20170406080206) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                           null: false
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
-    t.string   "messtation",                                           null: false
-    t.string   "meconname",                                            null: false
-    t.string   "clsstation",                                           null: false
-    t.string   "clconname",                                            null: false
+    t.integer  "company_id",                                            null: false
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
+    t.string   "meconname",                                             null: false
+    t.string   "clsstation",                                            null: false
+    t.string   "clconname",                                             null: false
     t.integer  "mess_id"
     t.text     "comment"
-    t.string   "name",                                                 null: false
-    t.decimal  "voltcl",     precision: 14, scale: 4, default: "10.0", null: false
-    t.boolean  "f",                                   default: true,   null: false
+    t.string   "name",                                                  null: false
+    t.decimal  "voltcl",      precision: 14, scale: 4, default: "10.0", null: false
+    t.boolean  "f",                                    default: true,   null: false
     t.integer  "cod"
+    t.integer  "thesauru_id"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
   end
 
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(version: 20170406080206) do
   add_foreign_key "meters", "mpoints"
   add_foreign_key "meters", "thesaurus"
   add_foreign_key "mpoints", "companies"
+  add_foreign_key "mpoints", "thesaurus"
   add_foreign_key "mvalues", "meters"
   add_foreign_key "trparams", "mpoints"
 end

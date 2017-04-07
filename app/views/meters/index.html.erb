@@ -10,7 +10,7 @@
   <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
   <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", companies_index_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank" %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -56,7 +56,7 @@
   			<%= hidden_field_tag :id, @meter.id %>
   			<div  align="center">
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.company.name}, #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>	                
+			                data: { confirm: "Сохранить счетчик #{@meter.meternum}?" } %>	                
 			  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
             </div> 
 		<% end %>

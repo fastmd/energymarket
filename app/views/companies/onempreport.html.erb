@@ -21,7 +21,7 @@
   	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
   	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
 	
 <% @lista_title.each do |t| %>

@@ -68,7 +68,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
     @mpoint = @cp.mpoints.build
     @mp =  @cp.mpoints.order(name: :asc, created_at: :asc) 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )  
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    @sstations=Vsstation.all.pluck(:cvalue, :id)  
   end
 
   def destroy
@@ -137,7 +138,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # title
     @lista_title = []
     @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
-    @lista_title << "точка учета #{@mp.cod} #{@mp.messtation} #{@mp.voltcl} Î #{@mp.meconname} F" 
+    @lista_title << "точка учета #{@mp.cod} #{@mp.thesauru.cvalue} #{@mp.voltcl} Î #{@mp.meconname} F" 
     @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
     # report init
     @report = Array[] 
@@ -198,7 +199,7 @@ before_filter :redirect_cancel, only: [:create, :update]
           mpoints.each do |mp|
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.messtation}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.thesauru.cvalue}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
             indicii = energies[:indicii]
@@ -271,7 +272,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     else
       @mpoints.each do |mp| 
         nr += 1  
-        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.messtation}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.thesauru.cvalue}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
         indicii = energies[:indicii]

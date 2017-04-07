@@ -49,6 +49,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+    @sstations=Vsstation.all.pluck(:cvalue, :id)   
     flash.discard 
     render "companies/show"    
   end
@@ -65,13 +66,13 @@ before_filter :redirect_cancel, only: [:create, :update]
                                     @met = Meter.find(params[:met])
                                     @mvs_all_pages = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
                                     @mvs = @mvs_all_pages
-                                    @mets[i] = [(@met.meternum).to_s+" "+ if @met.thesauru_id then (@met.thesauru.cvalue).to_s[0,3] end + " ( "+(@met.relevance_date).to_s+" ) ", @met.id]
+                                    @mets[i] = [(@met.meternum).to_s, @met.id]
       else                          @met = nil
                                     met = @mp.meters.all.order('relevance_date desc nulls last', created_at: :desc)
                                     @mvs_all_pages = @mp.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
                                     @mvs = @mvs_all_pages
                                     met.each do |item|
-                                        @mets[i] = [(item.meternum).to_s+" "+if item.thesauru_id then (item.thesauru.cvalue).to_s[0,3] end+" ( "+(item.relevance_date).to_s+" ) ", item.id]
+                                        @mets[i] = [(item.meternum).to_s, item.id]
                                         i+=1    
                                     end                                 
       end
@@ -164,10 +165,7 @@ private
     t = t.lstrip
     t = t.rstrip
     mpoint.name = t
-    t = params[:messtation]
-    t = t.lstrip
-    t = t.rstrip        
-    mpoint.messtation = t
+    mpoint.thesauru_id = params[:thesauru_id]
     t = params[:meconname]
     t = t.lstrip
     t = t.rstrip    

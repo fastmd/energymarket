@@ -35,7 +35,7 @@ class MpointsReport < Prawn::Document
     move_down(18)
     text "Наименование поставщика:  #{mpoints.company.furnizor.name}", :size => 12, :style => :bold, :align => :left     
     text "Наименование потребителя: #{mpoints.company.name}", :size => 12, :style => :bold, :align => :left
-    text "Подстанция МЭ: #{mpoints.messtation}", :size => 12, :style => :bold, :align => :left 
+    text "Подстанция МЭ: #{mpoints.thesauru.cvalue}", :size => 12, :style => :bold, :align => :left 
     text "Присоединение МЭ: #{mpoints.meconname}", :size => 12, :style => :bold, :align => :left 
     text "Подстанция потребителя: #{mpoints.clsstation}", :size => 12, :style => :bold, :align => :left 
     text "Присоединение потребителя: #{mpoints.clconname}", :size => 12, :style => :bold, :align => :left

@@ -10,7 +10,7 @@
   <li><%= link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
   <li><%= link_to "Филиал: #{@mp.company.filial.name}", companies_index_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
 </ul>
 	
 <div class="panel panel-default">
@@ -65,7 +65,7 @@
   			<%= hidden_field_tag :tr_id, @tr_id %>
           <div  align="center"> 
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            	                
+			                data: { confirm: "Сохранить трансформатор?" } %>                            	                
 			  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
            </div> 	                
 		<% end %>
@@ -112,7 +112,7 @@
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", trparams_edit_path(:tr_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", trparams_destroy_path(:tr_id => item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить трансформатор для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  						
+  						                 data: { confirm: "Удалить трансформатор  #{item.mark} ?" } %></td>  						
 				</tr>
 			<% end %>	  
 	</tbody>
@@ -174,7 +174,7 @@
   			<%= hidden_field_tag :line_id, @line_id %> 
            <div  align="center"> 
 			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить данные для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %>                            	                
+			                data: { confirm: "Сохранить линию?" } %>                            	                
 			  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
            </div> 	
 	    <% end %>
@@ -225,7 +225,7 @@
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", lnparams_edit_path(:line_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", lnparams_destroy_path(:line_id => item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить линию для #{@mp.messtation} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}?" } %></td>  												
+  						                 data: { confirm: "Удалить линию?" } %></td>  												
 				</tr>
 			<% end %>	  
 	</tbody>

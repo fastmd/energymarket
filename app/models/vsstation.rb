@@ -1,0 +1,2 @@
+class Vsstation < ApplicationRecord
+end

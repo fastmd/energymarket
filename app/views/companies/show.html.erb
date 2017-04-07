@@ -46,8 +46,8 @@
 				<tbody>
 	   				<tr>
 	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
-	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td>		
-						<td><%= text_field_tag 'messtation', @mpoint.messtation, placeholder: "Подстанция (подкл. потребитель)" %></td>
+	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td>
+	   		            <td><%= select_tag 'thesauru_id', options_for_select( @sstations, if !@mpoint.thesauru_id.nil? then @mpoint.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td> 	
 						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)" %></td>
 						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета" %></td>
 						<td><%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета" %></td>
@@ -106,8 +106,8 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
-						<td><%= item.name %></td>						
-						<td><%= "#{item.messtation}" %></td>
+						<td><%= item.name %></td>
+						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>						
 						<td><%= "#{item.meconname} " %></td>
 						<td><%= "#{item.clsstation}" %></td>
 						<td><%= "#{item.clconname}" %></td>						
@@ -127,7 +127,7 @@
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
                         <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить точку учета #{item.name} : #{item.messtation} / #{item.clsstation}, #{item.meconname} / #{item.clconname} ?" } %></td>
+  						                 data: { confirm: "Удалить точку учета #{item.name} : #{item.thesauru.cvalue} / #{item.clsstation}, #{item.meconname} / #{item.clconname} ?" } %></td>
 					</tr>		
 				<% end %>			
 		</tbody>

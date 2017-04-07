@@ -26,7 +26,7 @@ wb.styles do |style|
 	    sheet.add_row ["","История показаний"], style: [nil, header_cell]
 	    sheet.add_row ["","Наименование поставщика: #{@mp.company.furnizor.name}"]
 	    sheet.add_row ["","Наименование потребителя: #{@mp.company.name}"]
-	    sheet.add_row ["","Подстанция МЭ: #{@mp.messtation}"]
+	    sheet.add_row ["","Подстанция МЭ: #{@mp.thesauru.cvalue}"]
 	    sheet.add_row ["","Присоединение МЭ: #{@mp.meconname}"]
 	    sheet.add_row ["","Подстанция потребителя: #{@mp.clsstation}"]
 	    sheet.add_row ["","Присоединение потребителя: #{@mp.clconname}"]	    
