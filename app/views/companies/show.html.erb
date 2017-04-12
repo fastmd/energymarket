@@ -11,8 +11,11 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to(if @cp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@cp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @cp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@cp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@cp.furnizor.name}" end, companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank")
+  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %>
+  </li>  
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 
@@ -34,6 +37,8 @@
 					<tr>
 						<th>Код</th>
 						<th>Наименование</th>
+						<th>Поставщик</th>
+			            <th>Филиал</th>
 		   				<th>Подстанция (подкл. потребитель)</th>
 		   				<th>Присоединение (запитан потребитель)</th>
 		   				<th>Объект установки учета</th>
@@ -46,7 +51,9 @@
 				<tbody>
 	   				<tr>
 	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
-	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td>
+	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td> 			
+						<td><%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ) %></td>
+  			            <td><%= select_tag "filial_id", options_for_select( @fils, if !@mpoint.filial_id.nil? then @mpoint.filial_id else nil end ) %></td> 
 	   		            <td><%= select_tag 'thesauru_id', options_for_select( @sstations, if !@mpoint.thesauru_id.nil? then @mpoint.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td> 	
 						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)" %></td>
 						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета" %></td>
@@ -78,6 +85,8 @@
 			   <th>№</th>
 			   <th>Код</th>
 			   <th>Наименование</th>
+			   <th>Поставщик</th>
+			   <th>Филиал</th>
 			   <th>Подстанция (подкл. потребитель)</th>
 			   <th>Присоединение (запитан потребитель)</th>
 			   <th>Объект установки учета</th>
@@ -107,6 +116,8 @@
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
 						<td><%= item.name %></td>
+						<td><%= item.furnizor.name %></td>
+						<td><%= item.filial.name %></td>
 						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>						
 						<td><%= "#{item.meconname} " %></td>
 						<td><%= "#{item.clsstation}" %></td>

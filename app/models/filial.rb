@@ -1,3 +1,4 @@
 class Filial < ApplicationRecord
-  has_many :companys, dependent: :destroy
+  has_many :mpoints
+  has_many :companys, through: :mpoints
 end

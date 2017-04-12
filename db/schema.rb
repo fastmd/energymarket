@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170407103557) do
+ActiveRecord::Schema.define(version: 20170412072742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,19 +33,21 @@ ActiveRecord::Schema.define(version: 20170407103557) do
   end
 
   create_table "filials", force: :cascade do |t|
-    t.string   "name",       default: "филиал", null: false
+    t.string   "name",          default: "филиал", null: false
     t.integer  "cod_id"
-    t.text     "comment"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-  end
-
-  create_table "furnizors", force: :cascade do |t|
-    t.string   "name",       default: "поставщик", null: false
-    t.string   "cod_id"
     t.text     "comment"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.integer  "mpoints_count"
+  end
+
+  create_table "furnizors", force: :cascade do |t|
+    t.string   "name",          default: "поставщик", null: false
+    t.string   "cod_id"
+    t.text     "comment"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "mpoints_count"
   end
 
   create_table "lnparams", force: :cascade do |t|
@@ -103,7 +105,11 @@ ActiveRecord::Schema.define(version: 20170407103557) do
     t.boolean  "f",                                    default: true,   null: false
     t.integer  "cod"
     t.integer  "thesauru_id"
+    t.integer  "furnizor_id",                                           null: false
+    t.integer  "filial_id",                                             null: false
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
+    t.index ["filial_id"], name: "index_mpoints_on_filial_id", using: :btree
+    t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
   end
 
   create_table "mvalues", force: :cascade do |t|
@@ -146,6 +152,8 @@ ActiveRecord::Schema.define(version: 20170407103557) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.string   "cvalue",                    null: false
+    t.string   "shcvalue"
+    t.string   "cod"
   end
 
   create_table "trparams", force: :cascade do |t|
@@ -192,6 +200,8 @@ ActiveRecord::Schema.define(version: 20170407103557) do
   add_foreign_key "meters", "mpoints"
   add_foreign_key "meters", "thesaurus"
   add_foreign_key "mpoints", "companies"
+  add_foreign_key "mpoints", "filials"
+  add_foreign_key "mpoints", "furnizors"
   add_foreign_key "mpoints", "thesaurus"
   add_foreign_key "mvalues", "meters"
   add_foreign_key "trparams", "mpoints"

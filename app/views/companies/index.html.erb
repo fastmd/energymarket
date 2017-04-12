@@ -13,7 +13,10 @@
 	  <li class="active"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span><strong><%= "Филиал: #{@flr.name}" %></strong></li>  
   <% elsif @fpr < 9 then %> 	
 	  <li><%=  link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
-	  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@flr.name}" %></strong></li> 	  
+	  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@flr.name} " %></strong>
+	  	<%= if @flr.name.upcase.include?("FEE") then image_tag('fee.png', :alt => "FEE", :width => 25, :height => 25) 
+		   	                                       elsif @flr.name.upcase.include?("FENOSA") then image_tag('fenosa.png', :alt => "Fenosa", :width => 25, :height => 25) end %>
+	  </li> 	  
   <% end %>
 </ul>
 

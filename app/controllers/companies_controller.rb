@@ -69,7 +69,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     @mpoint = @cp.mpoints.build
     @mp =  @cp.mpoints.order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
-    @sstations=Vsstation.all.pluck(:cvalue, :id)  
+    @sstations = Vsstation.all.pluck(:cvalue, :id)
+    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end  
   end
 
   def destroy
@@ -392,23 +394,31 @@ private
               dt = (date1 - date0).to_i       #dt
               dtsum += dt                     #dtsum
               indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
-              ind1 = indicii0[:ind1_180] = mvalue1.actp180          #180
-              ind0 = indicii0[:ind0_180] = mvalue0.actp180          #180 
+              indicii0[:ind1_180] = mvalue1.actp180          #180
+              ind1 = if mvalue1.actp180.nil? then 0 else mvalue1.actp180 end
+              indicii0[:ind0_180] = mvalue0.actp180          #180 
+              ind0 = if mvalue0.actp180.nil? then 0 else mvalue0.actp180 end
               dind = indicii0[:dind_180] = (ind1 - ind0).round(4)   #dind   180      
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
               wa += energy
-              ind1 = indicii0[:ind1_280] = mvalue1.actp280          #280
-              ind0 = indicii0[:ind0_280] = mvalue0.actp280          #280
+              indicii0[:ind1_280] = mvalue1.actp280          #280
+              ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
+              indicii0[:ind0_280] = mvalue0.actp280          #280
+              ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280         
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
               waliv += energy
-              ind1 = indicii0[:ind1_380] = mvalue1.actp380          #380 
-              ind0 = indicii0[:ind0_380] = mvalue0.actp380          #380
+              indicii0[:ind1_380] = mvalue1.actp380          #380 
+              ind1 = if mvalue1.actp380.nil? then 0 else mvalue1.actp380 end
+              indicii0[:ind0_380] = mvalue0.actp380          #380
+              ind0 = if mvalue0.actp380.nil? then 0 else mvalue0.actp380 end
               dind = indicii0[:dind_380] = (ind1 - ind0).round(4)   #dind 380         
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
               wri += energy
-              ind1 = indicii0[:ind1_480] = mvalue1.actp480          #480
-              ind0 = indicii0[:ind0_480] = mvalue0.actp480          #480
+              indicii0[:ind1_480] = mvalue1.actp480          #480
+              ind1 = if mvalue1.actp480.nil? then 0 else mvalue1.actp480 end
+              indicii0[:ind0_480] = mvalue0.actp480          #480
+              ind0 = if mvalue0.actp480.nil? then 0 else mvalue0.actp480 end
               dind = indicii0[:dind_480] = (ind1 - ind0).round(4)   #dind 480         
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480
               wrc += energy          

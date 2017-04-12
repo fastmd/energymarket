@@ -20,6 +20,9 @@ before_filter :redirect_cancel, only: [:create, :update]
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
       if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+      @sstations = Vsstation.all.pluck(:cvalue, :id)   
+      @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+      @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
       render "companies/show" 
     end   
   end
@@ -38,6 +41,9 @@ before_filter :redirect_cancel, only: [:create, :update]
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
       if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
+      @sstations = Vsstation.all.pluck(:cvalue, :id)  
+      @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+      @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end          
       render "companies/show" 
     end      
   end
@@ -49,7 +55,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
-    @sstations=Vsstation.all.pluck(:cvalue, :id)   
+    @sstations=Vsstation.all.pluck(:cvalue, :id)
+    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end     
     flash.discard 
     render "companies/show"    
   end
@@ -166,6 +174,8 @@ private
     t = t.rstrip
     mpoint.name = t
     mpoint.thesauru_id = params[:thesauru_id]
+    mpoint.filial_id = params[:filial_id]
+    mpoint.furnizor_id = params[:furnizor_id]
     t = params[:meconname]
     t = t.lstrip
     t = t.rstrip    
