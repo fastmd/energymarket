@@ -110,7 +110,9 @@ class RemakeViewsVmpoints < ActiveRecord::Migration[5.0]
                  FROM vmpoints t1
                    JOIN vtrparams t2 ON t1.id = t2.mpoint_id
                 ORDER BY t1.company_id, t1.name, t1.id, t2.id;")  
-  end
+    execute("DROP VIEW public.vsstations;")
+    execute("DELETE FROM public.thesaurus WHERE name = 'sstation';")  
+  end  
   def down
     raise ActiveRecord::IrreversibleMigration
   end

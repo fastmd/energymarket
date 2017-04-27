@@ -12,24 +12,24 @@ class ApplicationController < ActionController::Base
     if (current_user.has_role? :cduser) then 
       @navheader = 'Поставщики'
       @pages = Furnizor.all.order(name: :asc)
-      @subpages = Company.all.order(name: :asc)
-      @leaves  = Mpoint.all
+      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).distinct.order(company: :asc)
+      @leaves  =  Vallmpoint.all
     elsif (current_user.has_role? :"cduser-fee") then 
       @navheader = 'FEE'
       @pages = Furnizor.where('upper(name) like upper(?)',"%fee%").order(name: :asc)
-      @subpages = Company.all.order(name: :asc)
-      @leaves  = Mpoint.all    
+      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fee%").distinct.order(company: :asc)
+      @leaves  = Vallmpoint.all    
     elsif (current_user.has_role? :"cduser-fenosa") then
       @navheader = 'FENOSA'
       @pages = Furnizor.where('upper(name) like upper(?)',"%fenosa%").order(name: :asc)
-      @subpages = Company.all.order(name: :asc)
-      @leaves  = Mpoint.all   
+      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fenosa%").distinct.order(company: :asc)
+      @leaves  = Vallmpoint.all   
     end 
     if (current_user.has_role? :setsu) or (current_user.has_role? :"setsu-nord") or (current_user.has_role? :"setsu-nord-vest") or (current_user.has_role? :"setsu-centru")  or (current_user.has_role? :"setsu-sud")  then 
       @navheader = 'Филиалы'
       @pages = Filial.all.order(name: :asc)
-      @subpages = Company.all.order(name: :asc)
-      @leaves  = Mpoint.all
+      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:filial_id).distinct.order(company: :asc)
+      @leaves  = Vallmpoint.all
     end
       @count_mpoints={}
       if !@subpages.nil?
@@ -37,10 +37,10 @@ class ApplicationController < ActionController::Base
          i=0  
          if !@leaves.nil?
             @leaves.each do |leaf|
-               if subitem.id==leaf.company_id then i+=1 end                           
+               if subitem.company_id==leaf.company_id then i+=1 end                           
             end              
          end 
-         if i==0 then @count_mpoints[subitem.id] = nil else @count_mpoints[subitem.id] = i end                      
+         if i==0 then @count_mpoints[subitem.company_id] = nil else @count_mpoints[subitem.company_id] = i end                      
          end                
       end                   
    end 

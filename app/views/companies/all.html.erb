@@ -1,0 +1,87 @@
+<% provide(:title, 'Справочник-Потребители') %>
+
+<h3 align="center">Справочник-Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h3>	 
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          <% if @flag=='edit' then %>Редактировать потребителя<% else %>Добавить потребителя<% end %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h3>
+		<%= form_for(@company) do |f| %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+		   				<th>Наименование</th>
+		   				<th>Краткое наименование</th>
+		   				<th>Код</th>
+		   				<th>Комментарий</th>
+		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+					</tr>	
+				</thead>
+				<tbody>
+	   				<tr>		
+						<td><%= text_field_tag 'name', @company.name, placeholder: "Наименование...", maxlength:"40" %></td>
+						<td><%= text_field_tag 'shname', @company.shname, placeholder: "Краткое наименование...", maxlength:"15" %></td>
+						<td><%= text_field_tag 'cod', @company.cod,  placeholder: "Код...", maxlength:"20" %></td>
+						<td><%= text_field_tag 'comment', @company.comment, placeholder: 'Комментарий...' %></td>
+						<td><%= check_box_tag 'f', 'yes', @company.f %></td>			        
+	   				</tr>
+				</tbody>
+			</table>
+  			<%= hidden_field_tag :cp_id, @company.id %>
+  			<%= hidden_field_tag :page, @page %>      
+  			<div  align="center">
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+			</div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>		           
+
+<table  class="table table-striped  table-hover">
+		<thead>
+			<tr class="info">
+			   <th>№</th>
+			   <th>Наименование</th>
+			   <th>Краткое наименование</th>
+			   <th>Код</th>
+			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>.........</th>			   
+			</tr>	
+		</thead>
+		<tbody>
+   			<% i = 0%>
+			<% @companies.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
+			    	<tr class="success">
+			   <% else %> 	
+					<tr>
+			   <% end %>
+						<% i = i + 1 %>						
+						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.shname %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
+                        <td><%= item.comment %></td>
+                        <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+                        <td><%= link_to " " , companies_edit_path(:cp_id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , companies_destroy_path(:cp_id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить потребителя #{item.name} ?" } %></td>  
+					</tr>		
+			<% end %>			
+		</tbody>
+</table>
+
+<center><small><%= if !@companies.nil? then will_paginate @companies, renderer: BootstrapPagination::Rails end %></small></center>
+

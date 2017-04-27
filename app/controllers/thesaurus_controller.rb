@@ -37,7 +37,7 @@ class ThesaurusController < ApplicationController
     thesauru = Thesauru.find(params[:th_id])
     @current = thesauru.name
     case thesauru.name when 'meter'  then th_count = thesauru.meters.count
-                       when 'region' then th_count = thesauru.companies.count
+                       when 'region' then th_count = thesauru.mesubstations.count
                        else  th_count = 0   
     end
     if th_count!=0 then 
@@ -53,12 +53,10 @@ private
     @pagename = 'Справочник'
     @metertypes = Thesauru.where("name = ?", 'meter').order(:cvalue, :created_at)
     @regions = Thesauru.where("name = ?", 'region').order(:cvalue, :created_at)
-    @sstations = Thesauru.where("name = ?", 'sstation').order(:cvalue, :created_at)
     @transformers = Thesauru.where("name = ?", 'transformer').order(:cvalue, :created_at)
     @lines = Thesauru.where("name = ?", 'line').order(:cvalue, :created_at)
-    @companies = Thesauru.where("name = ?", 'company').order(:cvalue, :created_at)
-    @thesaurus = @companies
-    @names=[ ['Потребитель','company'], ['Регион','region'], ['Подстанция','sstation'], ['Тип счетчика','meter'], ['Тип трансформатора','transformer'], ['Линия','line'] ] 
+    @thesaurus = @regions
+    @names=[ ['Регион','region'], ['Тип счетчика','meter'], ['Тип трансформатора','transformer'], ['Линия','line'] ] 
     @current = params[:current]
   end
   
@@ -98,14 +96,7 @@ private
     t = t.lstrip
     t = t.rstrip
     thesauru.cvalue = t
-    t1 = params[:shcvalue]
-    t1 = t1.lstrip
-    t1 = t1.rstrip
-    if t1.size == 0 then t1 = t[0,14] end          
-    thesauru.shcvalue = t1
     t = params[:cod]
-    t = t.lstrip
-    t = t.rstrip
     thesauru.cod = t    
     thesauru.f = (if ((params[:f].present?) && (params[:f] = 'yes')) then true else false end)
     thesauru    

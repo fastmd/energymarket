@@ -25,61 +25,65 @@
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
-          <% if @flag=='edit' then %>Редактировать потребителя<% else %>Добавить потребителя<% end %>
+          <% if @flag=='edit' then %>Редактировать потребителя<% else %>Добавить точку учета для нового потребителя<% end %>
         </a>
       </h4>
     </div>
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h3>
-		<%= form_for(@company) do |f| %>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-		   				<th>Наименование</th>
-		   				<th>Краткое наименование</th>
-		   				<th>Регион</th>
-		   				<th>Код</th>
-		   				<th>Поставщик</th>
-		   				<th>Филиал</th>
-		   				<th>Комментарий</th>
-		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-					</tr>	
-				</thead>
-				<tbody>
-	   				<tr>		
-						<td><%= text_field_tag 'name', @company.name, placeholder: "Наименование...", maxlength:"40" %></td>
-						<td><%= text_field_tag 'shname', @company.shname, placeholder: "Краткое наименование...", maxlength:"15" %></td>
-						<td><%= select_tag 'thesauru_id', options_for_select( @regions, if !@company.thesauru_id.nil? then @company.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td>
-						<td><%= text_field_tag 'region', @company.region,  placeholder: "Код...", maxlength:"20" %></td>
-						<%  furn=Furnizor.all %>
-  			            <%  furns=Array[] %>
-  			            <%  i=0 %>     			
-  			            <%  furn.each do |item| %>
-  			            <%    furns[i] = [item.name, item.id] %>
-  			            <%    i+=1 %>    
-  			            <% end %>  			
-						<td><%= select_tag "furnizor_id", options_for_select( furns, if !@company.furnizor_id.nil? then @company.furnizor_id elsif !@flr.nil? then @flr.id else furns[0][1] end ) %></td>
-						<%  fil=Filial.all %>
-  			            <%  fils=Array[] %>
-  			            <%  i=0 %>     			
-  			            <%  fil.each do |item| %>
-  			            <%    fils[i] = [item.name, item.id] %>
-  			            <%    i+=1 %>    
-  			            <% end %>
-  			            <td><%= select_tag "filial_id", options_for_select( fils, if !@company.filial_id.nil? then @company.filial_id elsif !@flr.nil? then @flr.id else fils[0][1] end ) %></td> 
-						<td><%= text_field_tag 'comment', @company.comment, placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', @company.f %></td>			        
-	   				</tr>
-				</tbody>
-			</table>
-  			<%= hidden_field_tag :cp_id, @company.id %>
-  			<%= hidden_field_tag :flr_id, @flr.id %>
-  			<%= hidden_field_tag :page, @page %>      
+		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод точки учета для нового потребителя<% end %></h3>
+		<%= simple_form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
+				<div class="form-group"> 
+						<label for='cod' class="control-label">Код</label>
+						<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 1, max: 1000000000, step: 1 %>
+		        </div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Наименование</label>
+						<%= text_field_tag('name', @mpoint.name, class: "form-control",  :size=>"50", placeholder: "Точка учета...") %>
+				</div>
+				<div class="form-group">		
+						<label for='company_id' class="control-label">Потребитель</label>
+						<%= select_tag "company_id", options_for_select( @comps, if !@mpoint.company_id.nil? then @mpoint.company_id else nil end ), class: "form-control" %>
+				</div>		
+				<div class="form-group">		
+						<label for='furnizor_id' class="control-label">Поставщик</label>
+						<%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ), class: "form-control" %>
+				</div>			       
+			    <div class="form-group">                   
+		   				<label for='thesauru_id' class="control-label">Подстанция (подкл. потребитель)</label>
+		   				<%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" , class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">		
+		   				<label for='meconname' class="control-label">Присоединение (запитан потребитель)</label>
+		   				<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
+		   		</div>
+		   		<div class="form-group">		
+		   				<label for='clsstation' class="control-label">Объект установки учета</label>
+		   				<%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета",  :size=>"50", class: "form-control" %>
+				</div>
+				<div class="form-group">
+		   				<label for='clconname' class="control-label">Присоединение установки учета</label>
+		   				<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
+    		   	</div>
+    		   	<div class="form-group">		   				
+		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>
+		   				<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
+		   		</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Комментарий</label>
+		   				<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">		
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></label>
+		   				<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
+		   		</div>							        
+  			            <%= hidden_field_tag :flr_id, @flr.id %>
+  			            <%= hidden_field_tag :parentform, 'newcompanympoint' %>
+  			            <%= hidden_field_tag :page, @page %> 
   			<div  align="center">
 				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+				                data: { confirm: "Сохранить данные для #{@flr.name} / #{@mpoint.name}?" } %>
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                	
 			</div> 
 		<% end %>
       </div>
@@ -87,7 +91,7 @@
   </div>  
 </div>
 
-<h3 align="center">Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h3>	 		           
+<h3 align="center">Потребители с точками учета <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h3>	 		           
 
 <table  class="table table-striped  table-hover">
 		<thead>
@@ -95,15 +99,12 @@
 			   <th>№</th>
 			   <th>Наименование</th>
 			   <th>Краткое наименование</th>
-			   <th>Регион</th>
 			   <th>Код</th>
-			   <th><%= if @fpr < 6 then 'Поставщик' elsif @fpr < 9 then 'Филиал' end %></th>
 			   <th>Точки учета</th>
 			   <th>Отчеты</th>
 			   <th>Инфо</th>
 			   <th>Комментарий</th>
-			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>.........</th>			   
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>			   
 			</tr>	
 		</thead>
 		<tbody>
@@ -118,19 +119,14 @@
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.shname %><% if item.f == false then %></em><% end %></td>
-						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
-						<td><% if item.f == false then %><em><% end %><%= item.region %><% if item.f == false then %></em><% end %></td>						
-						<td><%= if @fpr < 6 then item.furnizor.name elsif @fpr < 9 then item.filial.name end %></td>
-						<td><%= link_to "Открыть", company_path(item), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>
-                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20), companies_report_path(:cp_id => item.id, :page => @page) %></td>
-                        <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), companies_mvreport_path(:cp_id => item.id, :page => @page) %>
-                        	<%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 30, :height => 20), companies_mtreport_path(:cp_id => item.id, :page => @page) %>
-                        	<%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20), companies_paramreport_path(:cp_id => item.id, :page => @page) %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
+						<td><%= link_to "Открыть", company_path(item,:flr_id => @flr.id), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>
+                        <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20), companies_report_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %></td>
+                        <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), companies_mvreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %>
+                        	<%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 30, :height => 20), companies_mtreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %>
+                        	<%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20), companies_paramreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %></td>
                         <td><%= item.comment %></td>
                         <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-                        <td><%= link_to " " , companies_edit_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
-  						    <%= link_to " " , companies_destroy_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить потребителя #{item.name} ?" } %></td>  
 					</tr>		
 			<% end %>			
 		</tbody>

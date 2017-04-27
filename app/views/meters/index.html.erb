@@ -2,15 +2,17 @@
 	           
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company.id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
 <ul class="breadcrumb">
   <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
-  <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", companies_index_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank" %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <li><%= link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_index_path(:id => @mp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank") %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.clsstation}" %></strong></li>
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -35,7 +37,7 @@
 		   				<th>Заводской № счетчика</th>
 		   				<th>Коэффициент трансформатора тока </th>
 		   				<th>Коэффициент трансформатора напряжения</th>
-		   				<th>Дата актуальности</th>
+		   				<th>Дата монтажа</th>
 		   				<th>Комментарий</th>
 		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 					</tr>	
@@ -76,7 +78,7 @@
 			   <th>Коэффициент по току</th>
 			   <th>Коэффициент по напряжению</th>
 			   <th>Коэффициент расчетный</th>
-			   <th>Дата актуальности</th>
+			   <th>Дата монтажа</th>
 			   <th>Показания</th>
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>

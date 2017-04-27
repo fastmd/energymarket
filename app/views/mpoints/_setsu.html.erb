@@ -2,15 +2,15 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", company_path(@mp.company.id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
  	
 <ul class="breadcrumb">
   <li><%= link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
-  <li><%= link_to "Филиал: #{@mp.company.filial.name}", companies_index_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  <li><%= link_to "Филиал: #{@mp.mesubstation.filial.name}", companies_index_path(:id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-tower" %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
 	
 <div class="panel panel-default">

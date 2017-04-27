@@ -5,6 +5,16 @@ before_filter :redirect_cancel, only: [:create, :update]
   def new
   end
   
+  def all
+    if params[:cp_id].nil? then
+      @company = Company.new
+    else
+      @company = Company.find(params[:cp_id])
+      params[:cp_id] = nil
+    end 
+    indexviewall  
+  end
+  
   def create
     @company = Company.new
     @company = company_init(@company)  
@@ -12,14 +22,12 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company.save! 
       flash.discard
       flash[:notice] = "Потребитель #{@company.name} сохранен." 
-      if @fpr < 6 then @flr = @company.filial else @flr = @company.furnizor end
-      redirect_to companies_path(:id => @flr.id,:page=>params[:page], :cp_id => @company.id)           
+      redirect_to companies_all_path(:page=>params[:page])           
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add' 
-      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
-      indexview
-      render "index"          
+      indexviewall
+      render "all"          
     end      
   end
   
@@ -30,29 +38,24 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company.save! 
       flash.discard
       flash[:notice] = "Потребитель #{@company.name} сохранен." 
-      if @fpr < 6 then @flr = @company.filial else @flr = @company.furnizor end 
-      redirect_to companies_path(:id => @flr.id,:page=>params[:page], :cp_id => @company.id)               
+      redirect_to companies_all_path(:page=>params[:page])               
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
-      if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
-      indexview
-      render "index"       
+      indexviewall
+      render "all"       
     end  
   end  
 
   def edit
     @flag = 'edit'
     @company = Company.find(params[:cp_id])
-    @regions=Vregion.all.pluck(:cvalue, :id)
     flash.discard
-    if @fpr < 6 then @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
-    indexview
-    render "index"  
+    indexviewall
+    render "all"  
   end
 
   def index
-    @regions=Vregion.all.pluck(:cvalue, :id)
     if params[:cp_id].nil? then
       @company = Company.new
     else
@@ -60,16 +63,21 @@ before_filter :redirect_cancel, only: [:create, :update]
       params[:cp_id] = nil
     end  
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end 
+    @mpoint = Mpoint.new 
+    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+    @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end  
     indexview            
   end
   
   def show     
     @cp =  Company.find(params[:id])
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
+    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
     @mpoint = @cp.mpoints.build
-    @mp =  @cp.mpoints.order(name: :asc, created_at: :asc) 
+    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
-    @sstations = Vsstation.all.pluck(:cvalue, :id)
+    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
     @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end  
   end
@@ -87,14 +95,14 @@ before_filter :redirect_cancel, only: [:create, :update]
     rescue
       flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
     end
-    redirect_to companies_path(:id => params[:flr_id],:page=>params[:page]) 
+    redirect_to companies_all_path(:page=>params[:page]) 
   end    
 
   def mvreport
     @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
     @mvalues = Vmpointsmetersvalue.where("company_id = ? AND (actdate between ? AND  ?)", @id, @ddate_b, @ddate_e).order(:id, :meter_id, :actdate, :mvalue_updated_at)
@@ -107,7 +115,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
+    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)
   end  
  
@@ -115,7 +123,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
+    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end 
     @trp = Vmpointstrparam.where("company_id = ?", @id).order(:name, :id, :tr_id, :updated_at)
     @lnp = Vmpointslnparam.where("company_id = ?", @id).order(:name, :id, :ln_id, :updated_at)
     @tau = Tau.all    
@@ -140,7 +148,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # title
     @lista_title = []
     @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
-    @lista_title << "точка учета #{@mp.cod} #{@mp.thesauru.cvalue} #{@mp.voltcl} Î #{@mp.meconname} F" 
+    @lista_title << "точка учета #{@mp.cod} #{@mp.mesubstation.name} #{@mp.voltcl} Î #{@mp.meconname} F" 
     @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
     # report init
     @report = Array[] 
@@ -189,7 +197,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     # companies
-    companies = @flr.companys.where(f: 'true').order(name: :asc) 
+    company_list = @flr.vallmpoints.pluck(:company_id).uniq
+    companies = (Company.where(f: 'true').order(name: :asc).find(company_list))
     if companies.count != 0 then 
       nr = 0
       companies.each do |cp|
@@ -199,9 +208,10 @@ before_filter :redirect_cancel, only: [:create, :update]
           flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
         else
           mpoints.each do |mp|
+           if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.thesauru.cvalue}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.mesubstation.name}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
             indicii = energies[:indicii]
@@ -236,6 +246,7 @@ before_filter :redirect_cancel, only: [:create, :update]
             @report << report_rind[0..@title1.count]  
           end  # mpoints each        
         end  # mpoints.count 
+       end 
       end  #compaies each    
     end  #companies.count
     respond_to do |format|
@@ -250,7 +261,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @id = params[:cp_id]
     @month_for_report = params[:month_for_report]
     @cp = Company.find(@id)
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
+    if @fpr < 6 then  @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
     # month   
     if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
@@ -274,7 +285,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     else
       @mpoints.each do |mp| 
         nr += 1  
-        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.thesauru.cvalue}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
         indicii = energies[:indicii]
@@ -541,7 +552,28 @@ private
    end
   
    def indexview
-    @companies = @flr.companys.all.order(name: :asc)
+    company_list = @flr.vallmpoints.pluck(:company_id).uniq
+    @companies = (Company.order(name: :asc).find(company_list))
+    @page = params[:page] 
+    if !@company.nil? && !@company.id.nil? then 
+      i = 0
+      n = 0
+      @companies.each do |item|
+        if item.id == @company.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round       
+    end  
+    if @page.nil? then 
+      @page = 1
+    elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
+      @page = ((@companies.count-1) / $PerPage + 0.5).round    
+    end  
+    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
+  end  
+  
+  def indexviewall
+    @companies = Company.all.order(name: :asc)
     @page = params[:page] 
     if !@company.nil? && !@company.id.nil? then 
       i = 0
@@ -563,7 +595,11 @@ private
   def redirect_cancel
     if params[:cancel] then
       flash.discard
-      redirect_to companies_path(:id => params[:flr_id], :page => @page)     
+      if params[:flr_id].nil? then
+        redirect_to companies_all_path(:page => @page)         
+      else
+        redirect_to companies_index_path(:id => params[:flr_id], :page => @page) 
+      end    
     end   
   end
       
@@ -577,13 +613,10 @@ private
     t1 = t1.rstrip 
     if t1.size == 0 then t1 = t[0,14] end      
     company.shname = t1
-    t = params[:region]
+    t = params[:cod]
     t = t.lstrip
     t = t.rstrip     
-    company.region = t 
-    company.furnizor_id = (params[:furnizor_id]).to_i  
-    company.filial_id = (params[:filial_id]).to_i
-    if (params.has_key?(:thesauru_id) and !params[:thesauru_id].nil? and params[:thesauru_id] != "") then company.thesauru_id = (params[:thesauru_id]).to_i else company.thesauru_id = nil end
+    company.cod = t 
     t = params[:comment]
     t = t.lstrip
     t = t.rstrip   

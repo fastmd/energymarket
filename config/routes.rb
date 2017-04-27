@@ -38,6 +38,16 @@ Rails.application.routes.draw do
   resources :thesaurus do
   end
   
+  get  'mesubstations/index'
+  post 'mesubstations/index'
+  get  'mesubstations/edit'
+  post 'mesubstations/edit'
+  get  'mesubstations/update'
+  get  'mesubstations/destroy'
+  
+  resources :mesubstations do
+  end
+  
   get 'mvalues/new'
   get 'mvalues/edit'
   get 'mvalues/show'
@@ -52,8 +62,9 @@ Rails.application.routes.draw do
   get 'mpoints/edit'
   get 'mpoints/destroy'
   get 'mpoints/update'
-
-  get 'companies/index' 
+  
+  get 'companies/index'
+  get 'companies/all' 
   get 'companies/update'
   get 'companies/destroy'
   get 'companies/edit'
@@ -61,7 +72,7 @@ Rails.application.routes.draw do
   post 'companies/reports'
   get 'companies/report'
   post 'companies/report'
-  get 'companies/mvreport'
+  get 'companies/mvreport' => 'companies#mvreport'
   get 'companies/mtreport'
   get 'companies/paramreport'
   get 'companies/onempreport'
@@ -70,11 +81,11 @@ Rails.application.routes.draw do
   post 'companies/show'
 
 resources :filials  do
-  resources :companies
+  resources :mesubstations
 end
 
 resources :furnizors  do
-  resources :companies
+  resources :mpoints
 end
 
 resources :companies  do

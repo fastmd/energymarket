@@ -2,8 +2,6 @@
 
 <h3 align="center"><%= @pagename %> <span class="glyphicon glyphicon-link" aria-hidden="true"></span></h3>
 
-<%= @current.inspect %>
-
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -42,9 +40,7 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist" id="myTab">
-    <li role="presentation" class="active"><a href="#company" aria-controls="company" role="tab" data-toggle="tab">Потребители</a></li>
-    <li role="presentation"><a href="#region"      aria-controls="region"      role="tab" data-toggle="tab">Регионы</a></li>
-    <li role="presentation"><a href="#sstation"    aria-controls="sstation"    role="tab" data-toggle="tab">Подстанции</a></li>
+    <li role="presentation" class="active"><a href="#region" aria-controls="region" role="tab" data-toggle="tab">Регионы</a></li>
     <li role="presentation"><a href="#meter"       aria-controls="meter"       role="tab" data-toggle="tab">Типы счетчиков</a></li>
     <li role="presentation"><a href="#transformer" aria-controls="transformer" role="tab" data-toggle="tab">Типы трансформаторов</a></li>
     <li role="presentation"><a href="#line"        aria-controls="line"        role="tab" data-toggle="tab">Линии</a></li>
@@ -52,23 +48,11 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
-  	<!-- companies -->
-    <div role="tabpanel" class="tab-pane fade in active" id="company"> 
-    	<h4 align="center">Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h4>	
-    	<% @thesaurus = @companies %>
-    	<%= render 'thesaurus/onethesaurus' %> 
-    </div>
     <!-- regions -->
-    <div role="tabpanel" class="tab-pane fade" id="region">
+    <div role="tabpanel" class="tab-pane fade in active" id="region">
     	<h4 align="center">Регионы <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 40, :height => 40) %></h4>
     	<% @thesaurus = @regions %>
     	<%= render 'thesaurus/onethesaurus' %> 
-    </div>
-    <!-- substations -->
-    <div role="tabpanel" class="tab-pane fade" id="sstation">
-        <h4 align="center">Подстанции <%= image_tag('consumator.png', :alt => "Подстанции", :width => 60, :height => 40) %></h4>
-        <% @thesaurus = @sstations %>
-    	<%= render 'thesaurus/onethesaurus' %>
     </div>
   	<!-- metertypes -->
     <div role="tabpanel" class="tab-pane fade" id="meter">

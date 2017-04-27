@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412072742) do
+ActiveRecord::Schema.define(version: 20170427104304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,22 +19,15 @@ ActiveRecord::Schema.define(version: 20170412072742) do
     t.text     "name",                         null: false
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
-    t.integer  "furnizor_id",                  null: false
-    t.string   "region"
-    t.integer  "filial_id",                    null: false
+    t.string   "cod"
     t.text     "comment"
     t.string   "shname",                       null: false
     t.integer  "mpoints_count"
     t.boolean  "f",             default: true, null: false
-    t.integer  "thesauru_id"
-    t.index ["filial_id"], name: "index_companies_on_filial_id", using: :btree
-    t.index ["furnizor_id"], name: "index_companies_on_furnizor_id", using: :btree
-    t.index ["thesauru_id"], name: "index_companies_on_thesauru_id", using: :btree
   end
 
   create_table "filials", force: :cascade do |t|
     t.string   "name",          default: "филиал", null: false
-    t.integer  "cod_id"
     t.text     "comment"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
@@ -43,7 +36,6 @@ ActiveRecord::Schema.define(version: 20170412072742) do
 
   create_table "furnizors", force: :cascade do |t|
     t.string   "name",          default: "поставщик", null: false
-    t.string   "cod_id"
     t.text     "comment"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
@@ -69,11 +61,16 @@ ActiveRecord::Schema.define(version: 20170412072742) do
   end
 
   create_table "mesubstations", force: :cascade do |t|
-    t.text     "name",       default: "подстанция", null: false
+    t.text     "name",                      null: false
     t.text     "vlclass"
     t.integer  "cod"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.integer  "region_id"
+    t.integer  "filial_id"
+    t.boolean  "f",          default: true, null: false
+    t.index ["filial_id"], name: "index_mesubstations_on_filial_id", using: :btree
+    t.index ["region_id"], name: "index_mesubstations_on_region_id", using: :btree
   end
 
   create_table "meters", force: :cascade do |t|
@@ -92,24 +89,22 @@ ActiveRecord::Schema.define(version: 20170412072742) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                            null: false
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
-    t.string   "meconname",                                             null: false
-    t.string   "clsstation",                                            null: false
-    t.string   "clconname",                                             null: false
-    t.integer  "mess_id"
+    t.integer  "company_id",                                                null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.string   "meconname",                                                 null: false
+    t.string   "clsstation",                                                null: false
+    t.string   "clconname",                                                 null: false
     t.text     "comment"
-    t.string   "name",                                                  null: false
-    t.decimal  "voltcl",      precision: 14, scale: 4, default: "10.0", null: false
-    t.boolean  "f",                                    default: true,   null: false
+    t.string   "name",                                                      null: false
+    t.decimal  "voltcl",          precision: 14, scale: 4, default: "10.0", null: false
+    t.boolean  "f",                                        default: true,   null: false
     t.integer  "cod"
-    t.integer  "thesauru_id"
-    t.integer  "furnizor_id",                                           null: false
-    t.integer  "filial_id",                                             null: false
+    t.integer  "furnizor_id",                                               null: false
+    t.integer  "mesubstation_id"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
-    t.index ["filial_id"], name: "index_mpoints_on_filial_id", using: :btree
     t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
+    t.index ["mesubstation_id"], name: "index_mpoints_on_mesubstation_id", using: :btree
   end
 
   create_table "mvalues", force: :cascade do |t|
@@ -193,16 +188,14 @@ ActiveRecord::Schema.define(version: 20170412072742) do
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
   end
 
-  add_foreign_key "companies", "filials"
-  add_foreign_key "companies", "furnizors"
-  add_foreign_key "companies", "thesaurus"
   add_foreign_key "lnparams", "mpoints"
+  add_foreign_key "mesubstations", "filials"
+  add_foreign_key "mesubstations", "thesaurus", column: "region_id"
   add_foreign_key "meters", "mpoints"
   add_foreign_key "meters", "thesaurus"
   add_foreign_key "mpoints", "companies"
-  add_foreign_key "mpoints", "filials"
   add_foreign_key "mpoints", "furnizors"
-  add_foreign_key "mpoints", "thesaurus"
+  add_foreign_key "mpoints", "mesubstations"
   add_foreign_key "mvalues", "meters"
   add_foreign_key "trparams", "mpoints"
 end

@@ -5,24 +5,21 @@ before_filter :redirect_cancel, only: [:create, :update]
   def new  
   end
   
-  def create    
-    @cp =  Company.find(params[:company_id])
-    @mpoint = @cp.mpoints.build
-    @mpoint = mpoint_init(@mpoint)  
-    begin
-      if @mpoint.save! then 
-        flash.discard
-        redirect_to company_path(:id => @cp.id) 
-      end
+  def create 
+    begin   
+      @cp =  Company.find(params[:company_id])
+      @mpoint = @cp.mpoints.build
+      @mpoint = mpoint_init(@mpoint)  
+      @mpoint.save! 
+      flash.discard
+      redirect_to company_path(:id => @cp.id, :flr_id => params[:flr_id])       
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add'
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
-      if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
-      @sstations = Vsstation.all.pluck(:cvalue, :id)   
-      @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
-      @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
+      @sstations = Mesubstation.all.pluck(:name, :id)
+      filial_furnizor     
       render "companies/show" 
     end   
   end
@@ -34,16 +31,14 @@ before_filter :redirect_cancel, only: [:create, :update]
     begin
       @mpoint.save! 
       flash.discard
-      redirect_to company_path(:id => @cp.id) 
+      redirect_to company_path(:id => @cp.id, :flr_id => params[:flr_id]) 
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
       @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
-      if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end 
-      @sstations = Vsstation.all.pluck(:cvalue, :id)  
-      @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
-      @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end          
+      @sstations = Mesubstation.all.pluck(:name, :id)  
+      filial_furnizor         
       render "companies/show" 
     end      
   end
@@ -54,10 +49,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     @cp  = @mpoint.company
     @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
-    if @fpr < 6 then  @flr = @cp.filial else @flr =  @cp.furnizor end
-    @sstations=Vsstation.all.pluck(:cvalue, :id)
-    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
-    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end     
+    @sstations = Mesubstation.all.pluck(:name, :id)
+    filial_furnizor    
     flash.discard 
     render "companies/show"    
   end
@@ -146,24 +139,34 @@ before_filter :redirect_cancel, only: [:create, :update]
     tr_count = mp.trparams.count
     ln_count = mp.lnparams.count
     if  mt_count!=0 || tr_count!=0 || ln_count!=0 then 
-      flash[:warning] = "Нельзя удалить точку учета #{mp.name}: #{mp.messtation} / #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}, которой принадлежат счетчики (#{mt_count} шт.), трансформаторы (#{tr_count} шт.) или линии (#{ln_count} шт.)!" 
+      flash[:warning] = "Нельзя удалить точку учета #{mp.name}: #{mp.mesubstation.name} , #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}, которой принадлежат счетчики (#{mt_count} шт.), трансформаторы (#{tr_count} шт.) или линии (#{ln_count} шт.)!" 
     else 
       begin
         mp.destroy!
         flash[:notice] = "Точка учета удалена!"
       rescue
-        flash[:warning] = "Не удалось удалить точку учета #{mp.name}: #{mp.messtation} / #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}!" 
+        flash[:warning] = "Не удалось удалить точку учета #{mp.name}: #{mp.mesubstation.name} / #{mp.clsstation}, #{mp.meconname} / #{mp.clconname}!" 
       end      
     end
-    redirect_to company_path(:id => mp.company.id)
+    redirect_to company_path(:id => mp.company_id, :flr_id => params[:flr_id] )
   end  
      
 private
 
+  def filial_furnizor
+    if @fpr < 6 then  @flr = @mp.first.filial else @flr =  @mp.first.furnizor end
+    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end     
+  end
+
   def redirect_cancel
     if params[:cancel] then
       flash.discard 
-      redirect_to company_path(:id => params[:company_id], :flag => nil)
+      if params[:parentform]=='newcompanympoint' then
+        redirect_to companies_index_path(:id => params[:flr_id], :page => params[:page])
+      else
+        redirect_to company_path(:id => params[:company_id], :flag => nil, :flr_id => params[:flr_id])  
+      end      
     end   
   end 
   
@@ -173,8 +176,7 @@ private
     t = t.lstrip
     t = t.rstrip
     mpoint.name = t
-    mpoint.thesauru_id = params[:thesauru_id]
-    mpoint.filial_id = params[:filial_id]
+    mpoint.mesubstation_id = params[:mesubstation_id]
     mpoint.furnizor_id = params[:furnizor_id]
     t = params[:meconname]
     t = t.lstrip

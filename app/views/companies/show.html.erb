@@ -11,10 +11,10 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to(if @cp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@cp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
-  	                      elsif @cp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@cp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
-  	                      else "Поставщик: #{@cp.furnizor.name}" end, companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank")
-  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %>
+  	         then link_to(if @flr.name.upcase.include?("FEE") then "Поставщик: #{@flr.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @flr.name.upcase.include?("FENOSA") then "Поставщик: #{@flr.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@flr.name}" end, companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank")
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %>
   </li>  
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
@@ -38,7 +38,6 @@
 						<th>Код</th>
 						<th>Наименование</th>
 						<th>Поставщик</th>
-			            <th>Филиал</th>
 		   				<th>Подстанция (подкл. потребитель)</th>
 		   				<th>Присоединение (запитан потребитель)</th>
 		   				<th>Объект установки учета</th>
@@ -53,8 +52,7 @@
 	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
 	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td> 			
 						<td><%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ) %></td>
-  			            <td><%= select_tag "filial_id", options_for_select( @fils, if !@mpoint.filial_id.nil? then @mpoint.filial_id else nil end ) %></td> 
-	   		            <td><%= select_tag 'thesauru_id', options_for_select( @sstations, if !@mpoint.thesauru_id.nil? then @mpoint.thesauru_id else nil end), include_blank: false, prompt: "Select something" %></td> 	
+	   		            <td><%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" %></td> 	
 						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)" %></td>
 						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета" %></td>
 						<td><%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета" %></td>
@@ -65,10 +63,11 @@
 				</tbody>
 			</table>
   			<%= hidden_field_tag :company_id, @mpoint.company.id %>
-  			<%= hidden_field_tag :id, @mpoint.id %> 
+  			<%= hidden_field_tag :id, @mpoint.id %>
+  			<%= hidden_field_tag :flr_id, @flr.id %> 
   			<div  align="center">
 				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные для #{@cp.furnizor.name}, #{@cp.filial.name} / #{@cp.name}?" } %>
+				                data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
 				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
 			</div> 
 		<% end %>
@@ -87,6 +86,7 @@
 			   <th>Наименование</th>
 			   <th>Поставщик</th>
 			   <th>Филиал</th>
+			   <th>Регион</th>
 			   <th>Подстанция (подкл. потребитель)</th>
 			   <th>Присоединение (запитан потребитель)</th>
 			   <th>Объект установки учета</th>
@@ -116,12 +116,13 @@
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
 						<td><%= item.name %></td>
-						<td><%= item.furnizor.name %></td>
-						<td><%= item.filial.name %></td>
-						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>						
-						<td><%= "#{item.meconname} " %></td>
-						<td><%= "#{item.clsstation}" %></td>
-						<td><%= "#{item.clconname}" %></td>						
+						<td><%= if item.furnizor then item.furnizor.name end %></td>
+						<td><%= if item.filial then item.filial.name end %></td>
+						<td><%= if item.region then item.region.cvalue end %></td>
+						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
+						<td><%= item.meconname %></td>
+						<td><%= item.clsstation %></td>
+						<td><%= item.clconname %></td>						
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
@@ -132,13 +133,13 @@
   						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
-  						   <td><%= link_to image_tag('formula.png', :alt => "Formula", :width => "35", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
+  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
   						<% end %>    
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
-                        <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
-  						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить точку учета #{item.name} : #{item.thesauru.cvalue} / #{item.clsstation}, #{item.meconname} / #{item.clconname} ?" } %></td>
+                        <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>
 					</tr>		
 				<% end %>			
 		</tbody>

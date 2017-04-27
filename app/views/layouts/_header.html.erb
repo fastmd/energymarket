@@ -9,7 +9,14 @@
           	<% else %>
 	            <li><%= link_to "Домой", welcome_index_path %></li>
 	            <li><%= link_to "Справка", welcome_help_path %></li>
-	            <li><%= link_to "Справочник", thesaurus_index_path %></li>
+	            <li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Справочник<b class="caret"></b></a>
+				    <ul class="dropdown-menu">
+			            <li><%= link_to "Потребители", companies_all_path %></li>
+			            <li><%= link_to "Подстанции", mesubstations_path %></li>
+			            <li><%= link_to "Регионы, типы счетчиков", thesaurus_index_path %></li>			            
+				    </ul>
+				 </li>
             	<li><%= link_to " Выход", destroy_user_session_path, method: :delete, :class => "glyphicon glyphicon-log-out" %></li>
             <% end %>
           </ul>

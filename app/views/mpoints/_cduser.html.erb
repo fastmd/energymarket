@@ -2,21 +2,23 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id, :flr_id => @mp.furnizor_id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
 <ul class="breadcrumb">
   <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
-  <li><%= link_to "Поставщик: #{@mp.company.furnizor.name}", companies_index_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank" %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company.id), :class => "glyphicon glyphicon-lamp" %></li>
+  <li><%= link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_path(:cp_id => @mp.company_id, :id => @mp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank") %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(:id => @mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
   <% if !@met.nil? %>
-    <li><%= link_to "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}", meters_index_path(:id => @mp.id), :class => "glyphicon glyphicon-object-align-horizontal" %></li>
+    <li><%= link_to "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}", meters_index_path(:id => @mp.id), :class => "glyphicon glyphicon-object-align-horizontal" %></li>
     <li class="active"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
   	    <strong><%= "Счетчик: #{@met.meternum}" %></strong></li>
   <% else %>
     <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span>
-  	    <strong><%= "Точка учета: #{@mp.thesauru.cvalue} / #{@mp.clsstation}, #{@mp.meconname} / #{@mp.clconname}" %></strong></li>
+  	    <strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
   <% end %>
 </ul>
 

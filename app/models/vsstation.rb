@@ -1,2 +1,0 @@
-class Vsstation < ApplicationRecord
-end

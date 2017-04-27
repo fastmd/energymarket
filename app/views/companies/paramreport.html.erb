@@ -11,8 +11,8 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank"
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 
@@ -28,7 +28,7 @@
           </table>
         <% end %>
         <% x = item.id %>
-        <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.messtation.nil? ? '' : " #{item.messtation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
+        <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
         <% i += 1 %>
         <% j = 1 %>
         <table class="table table-striped table-condensed  table-hover">	
@@ -82,7 +82,7 @@
           </table>
         <% end %>
         <% x = item.id %>
-        <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.messtation.nil? ? '' : " #{item.messtation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
+        <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
         <% i += 1 %>
         <% j = 1 %>
         <table class="table table-striped table-condensed  table-hover">	

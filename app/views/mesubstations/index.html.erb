@@ -1,0 +1,73 @@
+<% provide(:title, 'Справочник-Подстанции') %>
+	 
+<h4 align="center">Справочник - Подстанции <%= image_tag('consumator.png', :alt => "Подстанции", :width => 60, :height => 40) %></h4>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          <% if @flag=='edit' then %>Редактировать подстанцию<% else %>Добавить подстанцию<% end %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h4 align="center"><% if @flag=='edit' then %>Редактирование подстанции<% else %>Ввод новой подстанции<% end %></h4>
+		<%= simple_form_for(@mesubstation, html: { class: 'form-inline' }) do |f| %>
+		      <%= f.input :cod, label: 'Код ', placeholder: 'Код ' %>
+			  <%= f.input :name, label: 'Наименование ', placeholder: 'Подстанция', as: :string, :input_html => { :size => 50}  %>
+			  <%= f.association :filial, label: 'Филиал ', include_blank: true %>
+			  <%= f.association :region, label: 'Регион ', label_method: :cvalue, value_method: :id, include_blank: true %>
+			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
+  		<!--	  <%= hidden_field_tag :id, @mesubstation.id %>   -->
+  			  <%= hidden_field_tag :page, @page %>
+  			  </br></br>       
+  			  <div  align="center">
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+			 </div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>		           	           
+
+<table  class="table table-striped  table-hover table-condensed">
+		<thead>
+			<tr class="info">
+			   <th>№</th>
+			   <th>Код</th>			   
+			   <th>Наименование</th>
+			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
+			   <th>Регион</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>.........</th>			   
+			</tr>	
+		</thead>
+		<tbody>
+   			<% i = 0%>
+			<% @mesubstations.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
+			    	<tr class="success">
+			   <% else %> 	
+					<tr>
+			   <% end %>
+						<% i = i + 1 %>						
+						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= if item.filial then item.filial.name end %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= if item.region then item.region.cvalue end %><% if item.f == false then %></em><% end %></td>
+                        <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+                        <td><%= link_to " " , mesubstations_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , mesubstations_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить подстанцию #{item.name} ?" } %></td>  
+					</tr>		
+			<% end %>			
+		</tbody>
+</table>
+
+<center><small><%= if !@mesubstations.nil? then will_paginate @mesubstations, renderer: BootstrapPagination::Rails end %></small></center>
+

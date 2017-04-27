@@ -33,12 +33,14 @@ class MpointsReport < Prawn::Document
     move_down(1)
     text "История показаний", :size => 15, :style => :bold, :align => :center
     move_down(18)
-    text "Наименование поставщика:  #{mpoints.company.furnizor.name}", :size => 12, :style => :bold, :align => :left     
-    text "Наименование потребителя: #{mpoints.company.name}", :size => 12, :style => :bold, :align => :left
-    text "Подстанция МЭ: #{mpoints.thesauru.cvalue}", :size => 12, :style => :bold, :align => :left 
-    text "Присоединение МЭ: #{mpoints.meconname}", :size => 12, :style => :bold, :align => :left 
-    text "Подстанция потребителя: #{mpoints.clsstation}", :size => 12, :style => :bold, :align => :left 
-    text "Присоединение потребителя: #{mpoints.clconname}", :size => 12, :style => :bold, :align => :left
+    text "Поставщик:  #{mpoints.furnizor.name}", :size => 12, :style => :bold, :align => :left     
+    text "Потребитель: #{mpoints.company.name}", :size => 12, :style => :bold, :align => :left
+    text "Филиал: #{mpoints.mesubstation.filial.name}", :size => 12, :style => :bold, :align => :left
+    text "Регион: #{mpoints.mesubstation.region.cvalue}", :size => 12, :style => :bold, :align => :left
+    text "Подстанция (подключен потребитель): #{mpoints.mesubstation.name}", :size => 12, :style => :bold, :align => :left 
+    text "Присоединение (запитан потребитель): #{mpoints.meconname}", :size => 12, :style => :bold, :align => :left 
+    text "Объект установки учета: #{mpoints.clsstation}", :size => 12, :style => :bold, :align => :left 
+    text "Присоединение установки учета: #{mpoints.clconname}", :size => 12, :style => :bold, :align => :left
     move_down(28)  
     # выборка записей
     i=0      

@@ -11,8 +11,8 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@cp.furnizor.name}", companies_path(:id => @cp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@cp.filial.name}", companies_path(:id => @cp.filial_id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank"
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 				
@@ -23,8 +23,8 @@
     <tr class="info">
       <th>Nr</th>
       <th>Точка учета</th>
-      <th>Код точки учета</th>      
-      <th>Счетчик</th>
+      <th>Код точки учета</th>    
+      <th>№ счетчика</th>
       <th>Дата</th>      
       <th>1.8.0</th>
       <th>2.8.0</th>
@@ -46,7 +46,7 @@
 		 <tr>
 	   <% end %>
       	 <td><%= i %></td>
-      	 <td><%= Mpoint.find(item.id).name %> <%= Mpoint.find(item.id).thesauru.cvalue %> <%= Mpoint.find(item.id).voltcl %> Î <%= Mpoint.find(item.id).meconname %> F </td>
+      	 <td><%= Mpoint.find(item.id).name %> <%= Mpoint.find(item.id).mesubstation.name %> <%= Mpoint.find(item.id).voltcl %> Î <%= Mpoint.find(item.id).meconname %> F </td>
       	 <td><%= item.cod %></td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.actdate %></td>
