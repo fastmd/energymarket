@@ -16,7 +16,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'add'
-      @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+      if @fpr < 6 then @flr = @mpoint.filial else @flr = @mpoint.furnizor end
+      @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
       @sstations = Mesubstation.all.pluck(:name, :id)
       filial_furnizor     
@@ -35,7 +36,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     rescue
       flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
       @flag = 'edit'
-      @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+      if @fpr < 6 then @flr = @mpoint.filial else @flr = @mpoint.furnizor end
+      @mp = Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
       @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
       @sstations = Mesubstation.all.pluck(:name, :id)  
       filial_furnizor         
@@ -47,7 +49,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     @flag = 'edit'
     @mpoint = Mpoint.find(params[:mp_id])
     @cp  = @mpoint.company
-    @mp =  @cp.mpoints.order(name: :asc, created_at: :desc) 
+    if @fpr < 6 then @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
+    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     @sstations = Mesubstation.all.pluck(:name, :id)
     filial_furnizor    
