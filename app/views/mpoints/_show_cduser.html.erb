@@ -27,17 +27,12 @@
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
-          <% if @flag=='mvedit' %>  
-              Редактировать показания
-          <% else %>
-              Добавить показания 
-          <% end %>
+          <% if @flag=='mvedit' %>Редактировать показания<% else %>Добавить показания<% end %>
         </a>
       </h4>
     </div>
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='mvedit' && @flag!='mvadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-	  <center>
 	  <% if @mets.empty? %>
 		<div class="alert alert-danger" role="alert">
   			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -45,57 +40,61 @@
   			У данной точки учета нет счетчиков
 		</div>
 	  <% else %> 	
-		<h3 align="center">
-          <% if @flag=='mvedit' %>  			
-			Редактирование показаний
-          <% else  %>
-            Ввод новых показаний
-          <% end %>			
-		</h3>
-		<%= form_for([@mp,@mp.mvalues.build]) do |f| %>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-		   				<th>Дата актирования</th>
-		   				<th>Счетчик</th>
-		   				<th>1.8.0</th>
-		   				<th>2.8.0</th>
-		   				<th>3.8.0</th>
-		   				<th>4.8.0</th>
-		   				<th>5.8.0</th>
-		   				<th>8.8.0</th>		   				
-		   				<th>Комментарий</th>
-		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-		   				<th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
-					</tr>	
-				</thead>
-				<tbody>
-	   				<tr>		
-						<td><%= date_field_tag 'actdate', @mv_params[:actdate] %></td>
-						<td><%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]) %></td>
-						<td><%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp580', @mv_params[:actp580], min: 0, max: 1000000, step: 0.0001 %></td>
-						<td><%= number_field_tag 'actp880', @mv_params[:actp880], min: 0, max: 1000000, step: 0.0001 %></td>						
-						<td><%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end  %></td>
-						<td><%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end  %></td>				        
-	   				</tr>
-				</tbody>
-			</table>
-			<%= hidden_field_tag :mpoint_id, @mp.id %>
-			<%= hidden_field_tag :met, unless @met.nil? then @met.id else nil end %>
-			<%= hidden_field_tag :mv_id, @mv_params[:mv_id]%>
-            <div  align="center"> 
-			  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-			                data: { confirm: "Сохранить показания ?" } %>                            	                
-			  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
-            </div> 			                
+		<h3 align="center"><% if @flag=='mvedit' %>Редактирование показаний<% else  %>Ввод новых показаний<% end %></h3>
+		<%= form_for([@mp,@mp.mvalues.build], html: { class: 'form-inline' }) do |f| %>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Дата актирования</label>
+						<%= date_field_tag 'actdate', @mv_params[:actdate], class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Счетчик</label>
+						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">1.8.0</label>
+						<%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">2.8.0</label>
+						<%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">3.8.0</label>
+						<%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">4.8.0</label>
+						<%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">5.8.0</label>						
+						<%= number_field_tag 'actp580', @mv_params[:actp580], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">8.8.0</label>						
+						<%= number_field_tag 'actp880', @mv_params[:actp880], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Комментарий</label>
+						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>		   			
+						<%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Расчетный день</span></label>
+						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div>		
+				<%= hidden_field_tag :mpoint_id, @mp.id %>
+				<%= hidden_field_tag :met, unless @met.nil? then @met.id else nil end %>
+				<%= hidden_field_tag :mv_id, @mv_params[:mv_id]%>
+	            <div  align="center"> 
+				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить показания ?" } %>                            	                
+				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+	            </div> 			                
 		<% end %>
 	  <% end %>
-	  </center>
       </div>
     </div>
   </div>  

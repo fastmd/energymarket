@@ -1,6 +1,6 @@
 <% provide(:title, 'Справочник-Потребители') %>
 
-<h3 align="center">Справочник-Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h3>	 
+<h4 align="center">Справочник-Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h4>	 
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
@@ -13,35 +13,35 @@
     </div>
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h3>
-		<%= form_for(@company) do |f| %>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-		   				<th>Наименование</th>
-		   				<th>Краткое наименование</th>
-		   				<th>Код</th>
-		   				<th>Комментарий</th>
-		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-					</tr>	
-				</thead>
-				<tbody>
-	   				<tr>		
-						<td><%= text_field_tag 'name', @company.name, placeholder: "Наименование...", maxlength:"40" %></td>
-						<td><%= text_field_tag 'shname', @company.shname, placeholder: "Краткое наименование...", maxlength:"15" %></td>
-						<td><%= text_field_tag 'cod', @company.cod,  placeholder: "Код...", maxlength:"20" %></td>
-						<td><%= text_field_tag 'comment', @company.comment, placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', @company.f %></td>			        
-	   				</tr>
-				</tbody>
-			</table>
-  			<%= hidden_field_tag :cp_id, @company.id %>
-  			<%= hidden_field_tag :page, @page %>      
-  			<div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
-			</div> 
+		<h4 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h4>
+		<%= form_for(@company, html: { class: 'form-inline' }) do |f| %>
+		        <div class="form-group">
+						<label for='name'class="control-label">Наименование</label>		
+						<td><%= text_field_tag 'name', @company.name, class: "form-control",  :size=>"50", placeholder: "Наименование...", maxlength:"40" %></td>
+				</div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Краткое наименование</label>		
+						<td><%= text_field_tag 'shname', @company.shname, class: "form-control",  :size=>"50", placeholder: "Краткое наименование...", maxlength:"15" %></td>
+				</div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Код</label>		
+						<td><%= text_field_tag 'cod', @company.cod, class: "form-control",  :size=>"20",  placeholder: "Код...", maxlength:"20" %></td>
+				</div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Комментарий</label>		
+						<td><%= text_field_tag 'comment', @company.comment, class: "form-control",  :size=>"50", placeholder: 'Комментарий...' %></td>
+				</div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Активный</label>		
+						<td><%= check_box_tag 'f', 'yes', @company.f, class: "form-control" %></td>
+				</div>
+	  			<%= hidden_field_tag :cp_id, @company.id %>
+	  			<%= hidden_field_tag :page, @page %>      
+	  			<div  align="center">
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+					                data: { confirm: "Сохранить данные?" } %>
+					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+			    </div> 
 		<% end %>
       </div>
     </div>

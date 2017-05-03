@@ -74,7 +74,7 @@
 		   				<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">		
-		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></label>
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>
 		   				<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
 		   		</div>							        
   			            <%= hidden_field_tag :flr_id, @flr.id %>

@@ -1,2 +1,93 @@
-<h1>Mpoints#index</h1>
-<p>Find me in app/views/mpoints/index.html.erb</p>
+<% provide(:title, 'Все точки') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= link_to "Назад", welcome_index_path, :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 40, :height => 30), companies_reports_path(:id => @flr.id, :page => @page) %></li>
+  </ul>  
+</nav>
+
+<ul class="breadcrumb">
+  <% if @fpr < 6 then %>
+	  <li><%=  link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
+	  <li class="active"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span><strong><%= "Филиал: #{@flr.name}" %></strong></li>  
+  <% elsif @fpr < 9 then %> 	
+	  <li><%=  link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
+	  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@flr.name} " %></strong>
+	  	<%= if @flr.name.upcase.include?("FEE") then image_tag('fee.png', :alt => "FEE", :width => 25, :height => 25) 
+		   	                                       elsif @flr.name.upcase.include?("FENOSA") then image_tag('fenosa.png', :alt => "Fenosa", :width => 25, :height => 25) end %>
+	  </li> 	  
+  <% end %>
+</ul>
+
+<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3> 
+           
+<table class="table table-striped  table-hover">
+		<thead>
+			<tr class="info">
+			   <th>№</th>
+			   <th>Код</th>
+			   <th>Потребитель<span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>
+			   <th>Поставщик<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
+			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
+			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
+			   <th>Наименование</th>
+			   <th>Подстанция (подкл. потребитель)</th>
+			   <th>Присоединение (запитан потребитель)</th>
+			   <th>Объект установки учета</th>
+			   <th>Присоединение установки учета</th>			   
+			   <th>Класс напряжения, кВ</th>
+               <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+			      <th>Счетчики</th>
+			      <th>Показания</th>
+			   <% else %>
+			      <th>Параметры</th>
+			      <th>Расчет</th>		   
+			   <% end %>   
+			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>.........</th>	   
+			</tr>	
+		</thead>
+		<tbody>
+			   <% i = 0%>
+			   <% @mp.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
+			    	<tr class="success">
+			   <% else %> 	
+					<tr>
+			   <% end %>	
+						<% i = i + 1 %>
+						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
+						<td><%= item.cod %></td>
+						<td><%= item.company_shname %></td>
+						<td><%= if item.furnizor then item.furnizor.name end %></td>
+						<td><%= if item.filial then item.filial.name end %></td>
+						<td><%= if item.region then item.region.cvalue end %></td>
+						<td><%= item.name %></td>
+						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
+						<td><%= item.meconname %></td>
+						<td><%= item.clsstation %></td>
+						<td><%= item.clconname %></td>						
+						<td><%= item.voltcl %></td>
+						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
+  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %>
+  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
+  						<% else %>
+  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
+  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
+  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
+  						<% end %>    
+  						<td><%= item.comment %></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
+                        <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , "#", :class=> "glyphicon glyphicon-remove", data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>
+					</tr>		
+				<% end %>			
+		</tbody>
+</table>
+
+<center><small><%= if !@mp.nil? then will_paginate @mp, renderer: BootstrapPagination::Rails end %></small></center>

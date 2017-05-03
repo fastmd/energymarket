@@ -20,7 +20,6 @@
 			  <%= f.association :filial, label: 'Филиал ', include_blank: true %>
 			  <%= f.association :region, label: 'Регион ', label_method: :cvalue, value_method: :id, include_blank: true %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
-  		<!--	  <%= hidden_field_tag :id, @mesubstation.id %>   -->
   			  <%= hidden_field_tag :page, @page %>
   			  </br></br>       
   			  <div  align="center">
@@ -41,7 +40,7 @@
 			   <th>Код</th>			   
 			   <th>Наименование</th>
 			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
-			   <th>Регион</th>
+			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
 			</tr>	

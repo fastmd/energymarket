@@ -134,6 +134,9 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
 
   def index
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order(company_shname: :asc,name: :asc, created_at: :asc) 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )       
   end
   
   def destroy

@@ -13,23 +13,23 @@
     </div>
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<%= form_for(@thesauru) do %>		
-			<form class="form-inline">
+		<%= form_for(@thesauru, html: { class: 'form-inline' }) do %>		
         		<div class="form-group">
-    				<label for="name">Тип</label>
-    				<%= select_tag 'name',  options_for_select(@names, @thesauru.name), include_blank: false, prompt: "Select something........." %>
-    				<label for="cvalue">   Наименование</label>
-    				<%= text_field_tag 'cvalue', @thesauru.cvalue, placeholder: "Значение...", autofocus: true, :size => 50 %>
-    				<%= if @thesauru.name == 'company' then text_field_tag 'shcvalue', @thesauru.shcvalue, placeholder: "Краткое наименование...", maxlength:"15", autofocus: true, :size => 25 end %>
-    				<%= if @thesauru.name == 'company' then text_field_tag 'cod', @thesauru.cod, placeholder: "Код...", maxlength:"20", autofocus: true, :size => 20 end %>
-    				<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-    				<%= check_box_tag 'f', 'yes', @thesauru.f %>
+    				<label for="name" class="control-label">Тип</label>
+    				<%= select_tag 'name',  options_for_select(@names, @thesauru.name), include_blank: false, prompt: "Select something.........", class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">    				
+    				<label for="cvalue" class="control-label">   Наименование</label>
+    				<%= text_field_tag 'cvalue', @thesauru.cvalue, placeholder: "Значение...", autofocus: true, :size => 50, class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>
+    				<%= check_box_tag 'f', 'yes', @thesauru.f, class: "form-control" %>
+		   		</div>	
     				<%= hidden_field_tag :current, @thesauru.name %>
 				    <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
 				                data: { confirm: "Сохранить данные ?" } %>
-				    <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>         				
-  				</div>				
-			</form>
+				    <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>         								
 		<% end %>
       </div>
     </div>

@@ -31,45 +31,55 @@
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='edit' then %>Редактирование точки учета<% else %>Ввод новой точки учета<% end %></h3>
-		<%= form_for(@mpoint) do |f| %>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Код</th>
-						<th>Наименование</th>
-						<th>Поставщик</th>
-		   				<th>Подстанция (подкл. потребитель)</th>
-		   				<th>Присоединение (запитан потребитель)</th>
-		   				<th>Объект установки учета</th>
-		   				<th>Присоединение установки учета</th>
-		   				<th>Класс напряжения, кВ</th>
-		   				<th>Комментарий</th>
-		   				<th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-					</tr>	
-				</thead>
-				<tbody>
-	   				<tr>
-	   					<td><%= number_field_tag 'cod', @mpoint.cod,  placeholder: "Код", min: 1, max: 1000000000, step: 1 %></td>
-	   					<td><%= text_field_tag 'name', @mpoint.name, placeholder: "Точка учета..." %></td> 			
-						<td><%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ) %></td>
-	   		            <td><%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" %></td> 	
-						<td><%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)" %></td>
-						<td><%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета" %></td>
-						<td><%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета" %></td>
-						<td><%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1 %></td>
-						<td><%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...' %></td>
-						<td><%= check_box_tag 'f', 'yes', @mpoint.f %></td>			        
-	   				</tr>
-				</tbody>
-			</table>
-  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
-  			<%= hidden_field_tag :id, @mpoint.id %>
-  			<%= hidden_field_tag :flr_id, @flr.id %> 
-  			<div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
-			</div> 
+		<%= form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
+				<div class="form-group"> 
+						<label for='cod' class="control-label">Код</label>
+	   					<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 1, max: 1000000000, step: 1 %>
+		        </div>
+		        <div class="form-group">
+						<label for='name'class="control-label">Наименование</label>	   					
+	   					<%= text_field_tag 'name', @mpoint.name, class: "form-control",  :size=>"50", placeholder: "Точка учета..." %>
+				</div>		
+				<div class="form-group">		
+						<label for='furnizor_id' class="control-label">Поставщик</label>					
+						<%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ), class: "form-control" %>
+				</div>		
+			    <div class="form-group">                   
+		   				<label for='thesauru_id' class="control-label">Подстанция (подкл. потребитель)</label>						
+	   		            <%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something", class: "form-control" %>
+	   		   	</div>		
+		   		<div class="form-group">		
+		   				<label for='meconname' class="control-label">Присоединение (запитан потребитель)</label>          	
+						<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='clsstation' class="control-label">Объект установки учета</label>		
+						<%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета",  :size=>"50", class: "form-control" %>
+				</div>
+				<div class="form-group">
+		   				<label for='clconname' class="control-label">Присоединение установки учета</label>						
+						<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
+				</div>
+    		   	<div class="form-group">		   				
+		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>		
+						<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
+		   		</div>
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Комментарий</label>						
+						<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
+		   		</div>		
+		   		<div class="form-group">		
+		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>						
+						<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
+			    </div>	
+	  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
+	  			<%= hidden_field_tag :id, @mpoint.id %>
+	  			<%= hidden_field_tag :flr_id, @flr.id %> 
+	  			<div  align="center">
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+					                data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
+					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+				</div> 
 		<% end %>
       </div>
     </div>
@@ -84,9 +94,9 @@
 			   <th>№</th>
 			   <th>Код</th>
 			   <th>Наименование</th>
-			   <th>Поставщик</th>
-			   <th>Филиал</th>
-			   <th>Регион</th>
+			   <th>Поставщик<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
+			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
+			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
 			   <th>Подстанция (подкл. потребитель)</th>
 			   <th>Присоединение (запитан потребитель)</th>
 			   <th>Объект установки учета</th>
