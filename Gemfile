@@ -52,6 +52,7 @@ gem 'axlsx_rails'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'autoprefixer-rails'
 gem 'will_paginate-bootstrap'
+gem 'bootstrap-table-rails'
 
 gem 'simple_form', '~> 3.4'
 

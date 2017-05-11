@@ -53,6 +53,7 @@ GEM
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bootstrap-table-rails (1.11.1.1)
     builder (3.2.2)
     byebug (9.0.6)
     cancancan (1.15.0)
@@ -212,6 +213,7 @@ DEPENDENCIES
   autoprefixer-rails
   axlsx_rails
   bootstrap-sass (~> 3.3.6)
+  bootstrap-table-rails
   byebug
   cancancan
   coffee-rails (~> 4.2)

@@ -4,6 +4,26 @@
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", welcome_index_path, :class => "glyphicon glyphicon-level-up" %></li>
     <li><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 40, :height => 30), companies_reports_path(:id => @flr.id, :page => @page) %></li>
+    <li><%= form_tag("/mpoints/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:q, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:q, @data_for_search, placeholder: 'Enter your search query here', class: "form-control") %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary") %>
+		</div>
+		<% end %></li>
+	<li><%= form_tag("/mpoints/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qcompany, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qcompany, options_for_select(@comps, @qcompany), class: "form-control", prompt: "Потребитель...", include_blank: false) %>
+		  <%= select_tag(:qfurnizor, options_for_select(@furns, @qfurnizor), class: "form-control", prompt: "Поставщик...", include_blank: false) %>
+		  <%= select_tag(:qfilial, options_for_select(@fils, @qfilial), class: "form-control", prompt: "Филиал...", include_blank: false) %>
+		  <%= select_tag(:qregion, options_for_select(@regions, @qregion), class: "form-control", prompt: "Регион...", include_blank: false) %>
+		  <%= select_tag(:qmesubstation, options_for_select(@sstations, @qmesubstation), class: "form-control", prompt: "Подстанция...", include_blank: false) %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary") %>
+		</div>
+		<% end %></li>	
   </ul>  
 </nav>
 
@@ -22,17 +42,17 @@
 
 <h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3> 
            
-<table class="table table-striped  table-hover">
+<table  class="table table-striped  table-hover">
 		<thead>
 			<tr class="info">
 			   <th>№</th>
-			   <th>Код</th>
-			   <th>Потребитель<span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>
-			   <th>Поставщик<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
-			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
-			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
-			   <th>Наименование</th>
-			   <th>Подстанция (подкл. потребитель)</th>
+			   <th><%= sort_link "cod", "Код", @flr.id %></th>
+			   <th><%= sort_link "company_shname", "Потребитель", @flr.id %><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>
+			   <th><%= sort_link "furnizor_name", "Поставщик", @flr.id %><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
+			   <th><%= sort_link "filial_name", "Филиал", @flr.id %><span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
+			   <th><%= sort_link "region_name", "Регион", @flr.id %><%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
+			   <th><%= sort_link "name", "Наименование", @flr.id %></th>
+			   <th><%= sort_link "mesubstation_name", "Подстанция (подкл. потребитель)", @flr.id %></th>
 			   <th>Присоединение (запитан потребитель)</th>
 			   <th>Объект установки учета</th>
 			   <th>Присоединение установки учета</th>			   
@@ -61,30 +81,25 @@
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
 						<td><%= item.company_shname %></td>
-						<td><%= if item.furnizor then item.furnizor.name end %></td>
-						<td><%= if item.filial then item.filial.name end %></td>
-						<td><%= if item.region then item.region.cvalue end %></td>
+						<td><%= item.furnizor_name  %></td>
+						<td><%= item.filial_name %></td>
+						<td><%= item.region_name %></td>
 						<td><%= item.name %></td>
-						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
+						<td><%= item.mesubstation_name %></td>						
 						<td><%= item.meconname %></td>
 						<td><%= item.clsstation %></td>
 						<td><%= item.clconname %></td>						
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
-  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %>
-  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
-  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
+  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %></td>
   						<% else %>
-  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
-  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
-  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
+  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %></td>
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
   						<% end %>    
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
-                        <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
-  						    <%= link_to " " , "#", :class=> "glyphicon glyphicon-remove", data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>
+                        <td><%= link_to " " , company_path(:id => item.company_id, :flr_id => @flr.id), :class=> "glyphicon glyphicon-search" %></td>
 					</tr>		
 				<% end %>			
 		</tbody>

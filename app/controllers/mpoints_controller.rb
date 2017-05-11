@@ -1,6 +1,7 @@
 class MpointsController < ApplicationController
 before_filter :check_user   
-before_filter :redirect_cancel, only: [:create, :update] 
+before_filter :redirect_cancel, only: [:create, :update]
+helper_method :sort_column, :sort_direction   
   
   def new  
   end
@@ -135,9 +136,41 @@ before_filter :redirect_cancel, only: [:create, :update]
 
   def index
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order(company_shname: :asc,name: :asc, created_at: :asc) 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )       
+    @data_for_search = params[:q].to_s.scan(/[0-9a-zA-z]{1,}/).join(' ')
+    @qmesubstation = params[:qmesubstation].to_s
+    @qcompany = params[:qcompany].to_s
+    @qregion = params[:qregion].to_s
+    @qfilial = params[:qfilial].to_s
+    @qfurnizor = params[:qfurnizor].to_s
+    if @data_for_search.empty? then
+      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")
+      else        
+       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_name=?) and (?='' or filial_name=?)" +
+                               " and (?='' or furnizor_name=?)", 
+                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order("#{sort_column} #{sort_direction}")
+      end  
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "and upper(cod||company_name||company_shname||name||filial_name||region_name||furnizor_name||mesubstation_name) like ? ", 
+                               @flr.id, data_for_search).order("#{sort_column} #{sort_direction}")
+    end 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name)
+    @comps = Company.where("f = ?", true).order(shname: :asc).pluck(:shname)
+    @furns = if (@flr.nil? || (@fpr < 6))  then Furnizor.all.pluck(:name) else [[@flr.name]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name)   else [[@flr.name]] end 
+    @regions = Thesauru.where("f = ? and name = ?", true, 'region').order(cvalue: :asc).pluck(:cvalue)          
   end
+  
+  def search
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}") 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    render "index"       
+  end  
   
   def destroy
     mp = Mpoint.find(params[:mp_id])
@@ -202,4 +235,16 @@ private
     mpoint    
   end      
   
+  def sortable_columns
+    ["name", "company_shname", "furnizor_name", "filial_name", "region_name", "mesubstation_name", "cod"]
+  end
+
+  def sort_column
+    sortable_columns.include?(params[:column]) ? params[:column] : "name"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end  
+     
 end

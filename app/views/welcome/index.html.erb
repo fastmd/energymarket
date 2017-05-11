@@ -8,13 +8,13 @@
 		    
 <h3 align="center"><%= @pagename %> <span class="glyphicon glyphicon-<%= if @fpr < 6 then 'tower' else 'piggy-bank' end %>" aria-hidden="true"></span></h3>
 
-<table class="table table-striped  table-hover">
+<table class="table table-striped  table-hover" >
   <thead>
 	<tr  class="info">
 	  <th><center>№</center></th>
-	  <th><center>Наименование</center></th>
+	  <th><center><%= sort_link "name", "Наименование" %></center></th>
 	  <th><center>Потребители</center></th>
-	  <th><center>Точки учета</center></th>
+	  <th><center>Точки учета (все)</center></th>
 	  <th><center>Отчеты</center></th>
 	  <th><center>Комментарий</center></th>
 	</tr>	

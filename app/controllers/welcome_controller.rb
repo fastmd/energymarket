@@ -1,21 +1,22 @@
 class WelcomeController < ApplicationController
-before_filter :check_user   
+before_filter :check_user
+helper_method :sort_column, :sort_direction   
   
   def index
    if @fpr.nil? then
      flash[:warning] = "Нет прав доступа !"    
    else  
     if @fpr < 6 then
-       @flr = Filial.all.order(name: :asc)
+       @flr = Filial.all.order("#{sort_column} #{sort_direction}")
        @pagename = 'Филиалы'    
     elsif @fpr == 6 then
-       @flr = Furnizor.all.order(name: :asc) 
+       @flr = Furnizor.all.order("#{sort_column} #{sort_direction}") 
        @pagename = 'Поставщики' 
     elsif @fpr == 7 then
-       @flr = Furnizor.where('upper(name) like upper(?)',"%fee%").order(name: :asc) 
+       @flr = Furnizor.where('upper(name) like upper(?)',"%fee%").order("#{sort_column} #{sort_direction}") 
        @pagename = 'FEE'     
     elsif @fpr == 8 then
-       @flr = Furnizor.where('upper(name) like upper(?)',"%fenosa%").order(name: :asc) 
+       @flr = Furnizor.where('upper(name) like upper(?)',"%fenosa%").order("#{sort_column} #{sort_direction}") 
        @pagename = 'Fenosa' 
     end
     unless  @flr.nil? then  
@@ -27,5 +28,18 @@ before_filter :check_user
   def help
     @pagename = 'Помощь'
   end
+
+private
+  def sortable_columns
+    ["name"]
+  end
+
+  def sort_column
+    sortable_columns.include?(params[:column]) ? params[:column] : "name"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end  
    
 end  

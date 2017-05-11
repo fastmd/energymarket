@@ -12,23 +12,23 @@ class ApplicationController < ActionController::Base
     if (current_user.has_role? :cduser) then 
       @navheader = 'Поставщики'
       @pages = Furnizor.all.order(name: :asc)
-      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).distinct.order(company: :asc)
+      @subpages = Vallmpoint.select(:company_name,:company_shname,:company_id,:furnizor_id).distinct.order(company_shname: :asc)
       @leaves  =  Vallmpoint.all
     elsif (current_user.has_role? :"cduser-fee") then 
       @navheader = 'FEE'
       @pages = Furnizor.where('upper(name) like upper(?)',"%fee%").order(name: :asc)
-      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fee%").distinct.order(company: :asc)
+      @subpages = Vallmpoint.select(:company_name,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fee%").distinct.order(company_shname: :asc)
       @leaves  = Vallmpoint.all    
     elsif (current_user.has_role? :"cduser-fenosa") then
       @navheader = 'FENOSA'
       @pages = Furnizor.where('upper(name) like upper(?)',"%fenosa%").order(name: :asc)
-      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fenosa%").distinct.order(company: :asc)
+      @subpages = Vallmpoint.select(:company_name,:company_shname,:company_id,:furnizor_id).where('upper(furnizor) like upper(?)',"%fenosa%").distinct.order(company_shname: :asc)
       @leaves  = Vallmpoint.all   
     end 
     if (current_user.has_role? :setsu) or (current_user.has_role? :"setsu-nord") or (current_user.has_role? :"setsu-nord-vest") or (current_user.has_role? :"setsu-centru")  or (current_user.has_role? :"setsu-sud")  then 
       @navheader = 'Филиалы'
       @pages = Filial.all.order(name: :asc)
-      @subpages = Vallmpoint.select(:company,:company_shname,:company_id,:filial_id).distinct.order(company: :asc)
+      @subpages = Vallmpoint.select(:company_name,:company_shname,:company_id,:filial_id).distinct.order(company_shname: :asc)
       @leaves  = Vallmpoint.all
     end
       @count_mpoints={}
