@@ -520,7 +520,7 @@ private
           ln.each do |lnitem|
             rk += lnitem.r * (lnitem.k_f ** 2)
             if rk_s != '( ' then rk_s += " + " end
-            rk_s += (lnitem.r * (lnitem.k_f ** 2)).to_s
+            rk_s += lnitem.r.to_s + " * " + lnitem.k_f.to_s + " ^2"
           end
           if rk_s == '( ' then  rk_s = rk.to_s else rk_s += " )" end 
           ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wr ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
