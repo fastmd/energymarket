@@ -136,7 +136,7 @@ helper_method :sort_column, :sort_direction
 
   def index
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    @data_for_search = params[:q].to_s.scan(/[0-9a-zA-z]{1,}/).join(' ')
+    @data_for_search = params[:q].to_s
     @qmesubstation = params[:qmesubstation].to_s
     @qcompany = params[:qcompany].to_s
     @qregion = params[:qregion].to_s
