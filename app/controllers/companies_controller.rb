@@ -455,11 +455,12 @@ private
     result={}
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 && (indicii[:wa]!=0 || indicii[:wri]!=0) then
+    if mvnum == 2 && (indicii[:wa]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
       wa    = indicii[:wa] 
       waliv = indicii[:waliv]
       wri   = indicii[:wri]
-      wrc   = indicii[:wrc] 
+      wrc   = indicii[:wrc]
+      wr    = indicii[:wri] + indicii[:wrc]
       workt = indicii[:workt]       
       # косинус фи 
       if wa != 0 || wri != 0 then 
@@ -515,11 +516,15 @@ private
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
           rk = 0.0
+          rk_s = '( '
           ln.each do |lnitem|
             rk += lnitem.r * (lnitem.k_f ** 2)
+            if rk_s != '( ' then rk_s += " + " end
+            rk_s += (lnitem.r * (lnitem.k_f ** 2)).to_s
           end
-          ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wri ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
-          result[:ln_losses_ng_formula] = rk.to_s + " * ( " + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"  
+          if rk_s == '( ' then  rk_s = rk.to_s else rk_s += " )" end 
+          ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wr ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
+          result[:ln_losses_ng_formula] = rk_s + " * ( " + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"  
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end
