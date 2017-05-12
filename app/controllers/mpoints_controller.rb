@@ -161,12 +161,17 @@ helper_method :sort_column, :sort_direction
                                "or upper(mesubstation_name) like ?) ", 
                                @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order("#{sort_column} #{sort_direction}")
     end 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
-    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name)
-    @comps = Company.where("f = ?", true).order(shname: :asc).pluck(:shname)
-    @furns = if (@flr.nil? || (@fpr < 6))  then Furnizor.all.pluck(:name) else [[@flr.name]] end
-    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name)   else [[@flr.name]] end 
-    @regions = Thesauru.where("f = ? and name = ?", true, 'region').order(cvalue: :asc).pluck(:cvalue)          
+#    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name)
+#    @comps = Company.where("f = ?", true).order(shname: :asc).pluck(:shname)
+#    @furns = if (@flr.nil? || (@fpr < 6))  then Furnizor.all.pluck(:name) else [[@flr.name]] end
+#    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name)   else [[@flr.name]] end 
+#    @regions = Thesauru.where("f = ? and name = ?", true, 'region').order(cvalue: :asc).pluck(:cvalue) 
+    @comps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)
+    @sstations = Vallmpoint.select(:mesubstation_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(mesubstation_name: :asc).pluck(:mesubstation_name)
+    @furns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
+    @regions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name) 
+    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )        
   end
   
   def search
