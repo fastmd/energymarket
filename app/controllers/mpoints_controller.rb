@@ -147,15 +147,19 @@ helper_method :sort_column, :sort_direction
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")
       else        
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_name=?) and (?='' or filial_name=?)" +
+                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                " and (?='' or furnizor_name=?)", 
                                @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order("#{sort_column} #{sort_direction}")
       end  
     else
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
-       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "and upper(cod||company_name||company_shname||name||filial_name||region_name||furnizor_name||mesubstation_name) like ? ", 
-                               @flr.id, data_for_search).order("#{sort_column} #{sort_direction}")
+       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (upper(company_name||company_shname) like ? "+ 
+                               "or upper(cod||name) like ? "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like ? "+ 
+                               "or upper(mesubstation_name) like ?) ", 
+                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order("#{sort_column} #{sort_direction}")
     end 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name)
