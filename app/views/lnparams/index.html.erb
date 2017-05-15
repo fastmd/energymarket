@@ -51,6 +51,7 @@
 			   <th>Kf</th>
 			   <th>Провод</th>
 			   <th>mp</th>
+			   <th>mp_company</th>
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
@@ -76,6 +77,7 @@
 						<td><% if item.f == false then %><em><% end %><%= item.k_f %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.mark %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.mpoint_id %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.mpoint.company.shname %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.comment %><% if item.f == false then %></em><% end %></td>
                         <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
                         <td><%= link_to " " , "#", :class=> "glyphicon glyphicon-pencil" %>
