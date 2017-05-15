@@ -41,6 +41,7 @@
 		<thead>
 			<tr class="info">
 			   <th>№</th>
+			   <th>id</th>
 			   <th>L</th>			   
 			   <th>R</th>
 			   <th>ro</th>
@@ -67,6 +68,7 @@
 			   <% end %>
 						<% i = i + 1 %>						
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.id %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.l %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.r %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.ro %><% if item.f == false then %></em><% end %></td>
