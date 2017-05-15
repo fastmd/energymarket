@@ -62,12 +62,23 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company = Company.find(params[:cp_id])
       params[:cp_id] = nil
     end  
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end 
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @data_for_search = params[:q].to_s
+    @qmesubstation = params[:qmesubstation].to_s
+    @qcompany = params[:qcompany].to_s
+    @qregion = params[:qregion].to_s
+    @qfilial = params[:qfilial].to_s
+    @qfurnizor = params[:qfurnizor].to_s   
     @mpoint = Mpoint.new 
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
-    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end  
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
+    @fcomps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)
+    @fsstations = Vallmpoint.select(:mesubstation_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(mesubstation_name: :asc).pluck(:mesubstation_name)
+    @ffurns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
+    @ffils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
+    @fregions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name)     
     indexview            
   end
   
@@ -93,7 +104,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         flash[:notice] = "Потребитель  #{cp.name} удален!"
       end          
     rescue
-      flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"     
+      flash[:warning] = "Не удалось удалить потребителя #{cp.name}!"   
     end
     redirect_to companies_all_path(:page=>params[:page]) 
   end    
@@ -558,7 +569,26 @@ private
   
    def indexview
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    @companies = (Company.order(name: :asc).find(company_list))
+    if @data_for_search.empty? then
+      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
+      else        
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                               " and (?='' or furnizor_name=?)", 
+                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).pluck(:company_id).uniq
+      end  
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (upper(company_name||company_shname) like ? "+ 
+                               "or upper(cod||name) like ? "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like ? "+ 
+                               "or upper(mesubstation_name) like ?) ", 
+                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
+    end
+    @companies = (Company.order(shname: :asc).find(company_list))     
     @page = params[:page] 
     if !@company.nil? && !@company.id.nil? then 
       i = 0
