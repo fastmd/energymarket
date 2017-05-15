@@ -1,5 +1,16 @@
 class TrparamsController < ApplicationController
+before_filter :check_user  
 before_filter :redirect_cancel, only: [:create, :update]
+  
+  def index
+    if params[:id].nil? then
+      @trparam = Trparam.new
+    else
+      @trparam = Trparam.find(params[:id])
+    end 
+    indexviewall 
+    @flag = params[:flag]
+  end
   
   def create  
     ukz2 = params[:ukz].to_f * params[:ukz].to_f
@@ -54,8 +65,29 @@ before_filter :redirect_cancel, only: [:create, :update]
   
 private
 
+  def indexviewall
+    @trparams = Trparam.all.order(snom: :asc)
+    @page = params[:page] 
+    if !@trparam.nil? && !@trparam.id.nil? then 
+      i = 0
+      n = 0
+      @trparams.each do |item|
+        if item.id == @trparam.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round       
+    end  
+    if @page.nil? then 
+      @page = 1
+    elsif !@trparams.nil? &&  @trparams.count < (@page.to_i - 1) * $PerPage then 
+      @page = ((@trparams.count-1) / $PerPage + 0.5).round    
+    end  
+    unless @trparams.nil? then @trparams = @trparams.paginate(:page => @page, :per_page => $PerPage ) end              
+  end
+
   def redirect_cancel
     @mp = Mpoint.find(params[:mpoint_id])
     redirect_to mpoint_path(@mp, :flag => nil) if params[:cancel]
-  end    
+  end   
+   
 end

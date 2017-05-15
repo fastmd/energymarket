@@ -1,5 +1,16 @@
 class LnparamsController < ApplicationController
+before_filter :check_user 
 before_filter :redirect_cancel, only: [:create, :update]  
+
+  def index
+    if params[:id].nil? then
+      @lnparam = Lnparam.new
+    else
+      @lnparam = Lnparam.find(params[:id])
+    end 
+    indexviewall 
+    @flag = params[:flag]
+  end
   
   def create
     if params[:line_id].nil? or params[:line_id]=='' then
@@ -51,6 +62,26 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
 
 private
+
+  def indexviewall
+    @lnparams = Lnparam.all.order(l: :asc)
+    @page = params[:page] 
+    if !@lnparam.nil? && !@lnparam.id.nil? then 
+      i = 0
+      n = 0
+      @lnparams.each do |item|
+        if item.id == @lnparam.id then n = i end
+        i += 1   
+      end
+      @page = (n / $PerPage + 0.5).round       
+    end  
+    if @page.nil? then 
+      @page = 1
+    elsif !@lnparams.nil? &&  @lnparams.count < (@page.to_i - 1) * $PerPage then 
+      @page = ((@lnparams.count-1) / $PerPage + 0.5).round    
+    end  
+    unless @lnparams.nil? then @lnparams = @lnparams.paginate(:page => @page, :per_page => $PerPage ) end              
+  end
 
   def redirect_cancel
     @mp = Mpoint.find(params[:mpoint_id])
