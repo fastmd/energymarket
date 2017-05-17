@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170510120758) do
+ActiveRecord::Schema.define(version: 20170517081546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,20 +151,29 @@ ActiveRecord::Schema.define(version: 20170510120758) do
     t.string   "cod"
   end
 
-  create_table "trparams", force: :cascade do |t|
+  create_table "transformators", force: :cascade do |t|
+    t.string   "name",                                               null: false
     t.decimal  "pxx",        precision: 10, scale: 4,                null: false
     t.decimal  "pkz",        precision: 10, scale: 4,                null: false
     t.decimal  "snom",       precision: 10, scale: 4,                null: false
     t.decimal  "ukz",        precision: 10, scale: 4,                null: false
-    t.decimal  "io",         precision: 10, scale: 4,                null: false
+    t.decimal  "i0",         precision: 10, scale: 4,                null: false
     t.decimal  "qkz",        precision: 14, scale: 8,                null: false
-    t.integer  "mpoint_id",                                          null: false
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
     t.text     "comment"
     t.boolean  "f",                                   default: true, null: false
-    t.string   "mark"
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+  end
+
+  create_table "trparams", force: :cascade do |t|
+    t.integer  "mpoint_id",                       null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.text     "comment"
+    t.boolean  "f",                default: true, null: false
+    t.integer  "transformator_id",                null: false
     t.index ["mpoint_id"], name: "index_trparams_on_mpoint_id", using: :btree
+    t.index ["transformator_id"], name: "index_trparams_on_transformator_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
@@ -198,4 +207,5 @@ ActiveRecord::Schema.define(version: 20170510120758) do
   add_foreign_key "mpoints", "mesubstations"
   add_foreign_key "mvalues", "meters"
   add_foreign_key "trparams", "mpoints"
+  add_foreign_key "trparams", "transformators"
 end

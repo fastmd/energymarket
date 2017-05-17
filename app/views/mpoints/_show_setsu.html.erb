@@ -12,6 +12,11 @@
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
+
+<%= @transformators.inspect %><br>
+<%= @mp.inspect %><br>
+<%= @tr.inspect %><br>
+<%= params.inspect %><br>
 	
 <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -24,40 +29,12 @@
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='tedit' && @flag!='tadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='tedit' %>Редактирование параметров трансформатора<% else  %>Ввод нового транcформатора<% end %></h3>
-		<%= form_for([@mp,@mp.trparams.build], html: { class: 'form-inline' }) do |f| %>	
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Тип</label>
-	   					<%= text_field_tag 'mark', @mark, placeholder: 'Тип тр-ра...',  :size=>"20", class: "form-control" %>	
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Потери холостого хода Рхх, кВт</label>
-						<%= number_field_tag 'pxx', @pxx, placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Потери короткого замыкания Ркз, кВт</label>
-						<%= number_field_tag 'pkz', @pkz,  placeholder: "Потери...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Номинальная мощность Sном, кВА</label>
-						<%= number_field_tag 'snom', @snom, placeholder: "мощность...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Uкз, %</label>
-						<%= number_field_tag 'ukz', @ukz,  placeholder: "Uкз...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Io, %</label>
-						<%= number_field_tag 'io', @io, size: "10", placeholder: "Io...", maxlength:"10", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Комментарий</label>
-						<%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
-		   		</div>		
-		   		<div class="form-group">
-		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>							
-						<%= check_box_tag 'f', 'yes', if !defined?(@f) then 'yes' elsif @f=='true' then 'yes' end, class: "form-control" %>
-		   		</div>					        			        
-	  			<%= hidden_field_tag :mpoint_id, @mp.id %>
+		<%= simple_form_for(@tr, html: { class: 'form-inline' }) do |f| %>
+				<%= f.association :transformator, label: 'Тип трансформатора ', label_method: :name, value_method: :id, include_blank: false, prompt: "Тип трансформатора..." %>
+				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
+				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
+				<%= f.input :mpoint_id, as: :integer, as: :hidden, :input_html => { :value => @tr.mpoint_id} %>
+				<%= hidden_field_tag :mpoint_id, @mp.id %>					        			        
 	  			<%= hidden_field_tag :tr_id, @tr_id %>
 	            <div  align="center"> 
 				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить трансформатор?" } %>                            	                
@@ -74,6 +51,8 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
+		   <th>zzzz</th>
+		   <th>zzzz</th>
 		   <th>Тип</th>
 		   <th>Потери холостого хода Рхх, кВт</th>
 		   <th>Потери короткого замыкания Ркз, кВт</th>
@@ -83,6 +62,8 @@
 		   <th>Qкз, квар</th>
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+		   <th>Комментарий</th>
+		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>		   
 		   <th colspan="3">.........</th>
 		</tr>	
 	</thead>
@@ -96,18 +77,22 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= i  %></td>
-					<td><%= item.mark %></td>
-					<td><%= item.pxx %></td>
-				    <td><%= item.pkz %></td>										
-					<td><%= item.snom %></td>
-					<td><%= item.ukz %></td>
-					<td><%= item.io %></td>
-				    <td><%= item.qkz %></td>
+					<td><%= item.id %></td>
+					<td><%= item.transformator.id %></td>
+					<td><%= item.transformator.name %></td>
+					<td><%= item.transformator.pxx %></td>
+				    <td><%= item.transformator.pkz %></td>										
+					<td><%= item.transformator.snom %></td>
+					<td><%= item.transformator.ukz %></td>
+					<td><%= item.transformator.i0 %></td>
+				    <td><%= item.transformator.qkz %></td>
+					<td><%= item.transformator.comment %></td>
+					<td><span class="glyphicon glyphicon-<%= if item.transformator.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><%= item.comment %></td>
-					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>					
   					<td><%= link_to " ", trparams_edit_path(:tr_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", trparams_destroy_path(:tr_id => item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить трансформатор  #{item.mark} ?" } %></td>  						
+  						                 data: { confirm: "Удалить трансформатор  #{item.transformator.name} ?" } %></td>  						
 				</tr>
 			<% end %>	  
 	</tbody>

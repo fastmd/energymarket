@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  pxx: 9.99
+  pkz: 9.99
+  snom: 9.99
+  ukz: 9.99
+  i0: 9.99
+  qkz: 9.99
+  comment: MyText
+  f: false
+
+two:
+  name: MyString
+  pxx: 9.99
+  pkz: 9.99
+  snom: 9.99
+  ukz: 9.99
+  i0: 9.99
+  qkz: 9.99
+  comment: MyText
+  f: false

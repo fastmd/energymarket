@@ -104,19 +104,15 @@ helper_method :sort_column, :sort_direction
         format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="history.xlsx"' }
       end
     else 
+      @transformators = Transformator.where("f = ?", true).order(name: :asc).pluck(:name, :id)
       @trp = @mp.trparams.all
       @lnp = @mp.lnparams.all
       @tau = Tau.all 
       if !@flag.nil? && (@flag=='tedit' || @flag=='tadd') then
-        @pxx  = params[:pxx]
-        @pkz  = params[:pkz]
-        @snom = params[:snom]
-        @ukz  = params[:ukz]
-        @io   = params[:io]
         @comment = params[:comment] 
         @tr_id = params[:tr_id]
         @f  = params[:f]
-        @mark = params[:mark]      
+        @mark = params[:mark]     
       end   
       if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
         @l  = params[:l]
@@ -131,6 +127,7 @@ helper_method :sort_column, :sort_direction
         @f = if (params.has_key?(:f)) then params[:f] else 'true' end
         @mark = params[:mark]         
       end 
+      if @tr_id then @tr = Trparam.find(@tr_id) else @tr = @mp.trparams.build end
     end    
   end
 

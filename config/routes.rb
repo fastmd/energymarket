@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   post '/trparams/:id/edit' => 'trparams#edit'
   resources :trparams do
   end
+  resources :transformators do
+  end
 
   get 'lnparams/create'
   get 'lnparams/new'
@@ -112,6 +114,10 @@ end
 
 resources :mpoints  do  
   resources :trparams
+end
+
+resources :trparams  do  
+  resources :transformators
 end
 
 resources :mpoints  do  
