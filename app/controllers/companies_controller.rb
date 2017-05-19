@@ -573,7 +573,7 @@ private
         end
       end  # if ln.count
       # cos fi with losses           
-      if wa >= 10000 then
+      if wa >= 10000 and mpoint.fct then
            wal = result[:wal] = wa + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
            result[:wal_formula] = wa.to_s + " + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
            wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx
