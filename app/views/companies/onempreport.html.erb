@@ -103,7 +103,6 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Tраб, часы</th>
       <th>Энергия 1.8.0, kWh</th>      
       <th>Энергия 2.8.0, kWh</th>
       <th>Энергия 3.8.0, kVAh</th>
@@ -112,11 +111,27 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @energies[:workt] %></td>
-      <td><%= @energies[:wa] %></td>
-      <td><%= @energies[:waliv] %></td>
-      <td><%= @energies[:wri] %></td>
-      <td><%= @energies[:wrc] %></td>
+      <td><%= @energies[:wa_formula] %><strong><%= @energies[:wa] %></strong></td>
+      <td><%= @energies[:waliv_formula] %><strong><%= @energies[:waliv] %></strong></td>
+      <td><%= @energies[:wri_formula] %><strong><%= @energies[:wri] %></strong></td>
+      <td><%= @energies[:wrc_formula] %><strong><%= @energies[:wrc] %></strong></td>
+    </tr>
+  </tbody>
+</table>
+</small>
+
+<small>
+<table class="table table-striped table-condensed  table-hover">	
+  <thead>
+    <tr class="success">
+      <th>Tраб, часы</th>	
+      <th>cos φ</th>      
+    </tr>  
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @energies[:workt_formula] %><strong><%= @energies[:workt] %></strong></td>	
+      <td><%= @losses[:cosfi_formula] %><strong><%= @losses[:cosfi] %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -129,11 +144,12 @@
         <tr class="info">
       	   <th>Nr</th>
 		   <th>Тип</th>
-		   <th>Потери холостого хода Рхх, кВт</th>
-		   <th>Потери короткого замыкания Ркз, кВт</th>
-		   <th>Номинальная мощность Sном, кВА</th>
+		   <th>Uном, кВ</th>
+		   <th>Sном, кВА</th>
 		   <th>Uкз, %</th>
-		   <th>Io, %</th>
+		   <th>Ркз, кВт</th>
+		   <th>Рхх, кВт</th>
+		   <th>I0, %</th>
 		   <th>Qкз, квар</th>
     	</tr>  
    </thead>
@@ -144,10 +160,11 @@
 	  <tr>
       	 <td><%= j+= 1 %></td>
 		 <td><%= item.mark %></td>
-		 <td><%= item.pxx %></td>
-		 <td><%= item.pkz %></td>										
+		 <td><%= item.unom %></td>
 		 <td><%= item.snom %></td>
 		 <td><%= item.ukz %></td>
+		 <td><%= item.pkz %></td>
+		 <td><%= item.pxx %></td>
 		 <td><%= item.io %></td>
 		 <td><%= item.qkz %></td>
       </tr>
@@ -204,8 +221,8 @@
       <td><%= item[:tm] %></td>
       <td><%= item[:cosfi] %></td>
       <td><%= item[:snom] %></td>
-      <td><%= item[:wi] %></td>      
-      <td><%= item[:wi09] %></td>
+      <td><%= item[:wi_formula] %><strong><%= item[:wi] %></strong></td>      
+      <td><%= item[:wi09_formula] %><strong><%= item[:wi09] %></strong></td>
       <td><%= item[:wa] %></td>
     </tr>
     <% end %>
@@ -229,10 +246,10 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:tr_losses_pxx_formula] %> = <%= @losses[:tr_losses_pxx] %></td>
-      <td><%= @losses[:tr_losses_pkz] %></td>
-      <td><%= @losses[:tr_losses_rxx] %></td>
-      <td><%= @losses[:tr_losses_rkz] %></td>
+      <td><%= @losses[:tr_losses_pxx_formula] %> = <strong><%= @losses[:tr_losses_pxx] %></strong></td>
+      <td><%= @losses[:tr_losses_pkz_formula] %> = <strong><%= @losses[:tr_losses_pkz] %></strong></td>
+      <td><%= @losses[:tr_losses_rxx_formula] %> = <strong><%= @losses[:tr_losses_rxx] %></strong></td>
+      <td><%= @losses[:tr_losses_rkz_formula] %> = <strong><%= @losses[:tr_losses_rkz] %></strong></td>
       <td><%= @losses[:tr_losses_p] %></td>
       <td><%= @losses[:tr_losses_r] %></td>
     </tr>
@@ -316,11 +333,11 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:wal_formula] %> = <%= @losses[:wal] %></td>
-      <td><%= @losses[:wrl_formula] %> = <%= @losses[:wrl] %></td>
-      <td><%= @losses[:cosf_formula] %> = <%= @losses[:cosf] %></td>
-      <td><%= @losses[:wrio_formula] %> = <%= @losses[:wrio] %></td>
-      <td><%= @losses[:wrif_formula] %> = <%= @losses[:wrif] %></td>
+      <td><%= @losses[:wal_formula] %> = <strong><%= @losses[:wal] %></strong></td>
+      <td><%= @losses[:wrl_formula] %> = <strong><%= @losses[:wrl] %></strong></td>
+      <td><%= @losses[:cosf_formula] %> = <strong><%= @losses[:cosf] %></strong></td>
+      <td><%= @losses[:wrio_formula] %> = <strong><%= @losses[:wrio] %></strong></td>
+      <td><%= @losses[:wrif_formula] %> = <strong><%= @losses[:wrif] %></strong></td>
       <td><%= @losses[:consumtehi_formula] %> = <strong><%= @losses[:consumtehi] %></strong></td>
       <td><%= @losses[:consumtehc_formula] %> = <strong><%= @losses[:consumtehc] %></strong></td>
       <td><strong><%= @losses[:consumteh] %></strong></td>

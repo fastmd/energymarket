@@ -2,6 +2,7 @@ class Transformator < ApplicationRecord
   has_many  :trparams, inverse_of: :transformator
   has_many  :mpoints, through: :trparams, inverse_of: :transformator
   validates :name, presence: true
+  validates :unom, presence: true
   validates :pxx, presence: true, numericality: true
   validates :pkz, presence: true, numericality: true
   validates :snom, presence: true, numericality: true

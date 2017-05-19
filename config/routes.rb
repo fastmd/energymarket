@@ -18,10 +18,12 @@ Rails.application.routes.draw do
   get 'trparams/update'
   get 'trparams/destroy'
   get 'trparams/edit'
-  get 'trparams/index'
-  post '/trparams/:id/edit' => 'trparams#edit'
   resources :trparams do
   end
+  
+  get 'transformators/index'
+  get 'transformators/edit'
+  get 'transformators/destroy'
   resources :transformators do
   end
 

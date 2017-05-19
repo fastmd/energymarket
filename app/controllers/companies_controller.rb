@@ -402,7 +402,11 @@ private
        mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate, :mvalue_updated_at).last
        unless mvalues.nil? then dddate_e = mvalues.actdate end       
        # indicii      
-       dtsum = 0  
+       dtsum = 0
+       result[:wa_formula] = ""
+       result[:waliv_formula] = ""
+       result[:wri_formula] = ""
+       result[:wrc_formula] = ""
        meters.each do |mitem|         
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
@@ -422,6 +426,8 @@ private
               ind0 = if mvalue0.actp180.nil? then 0 else mvalue0.actp180 end
               dind = indicii0[:dind_180] = (ind1 - ind0).round(4)   #dind   180      
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
+              if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
+              result[:wa_formula] += dind.to_s + " * " + koef.to_s
               wa += energy
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
@@ -429,6 +435,8 @@ private
               ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280         
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
+              if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+              result[:waliv_formula] += dind.to_s + " * " + koef.to_s
               waliv += energy
               indicii0[:ind1_380] = mvalue1.actp380          #380 
               ind1 = if mvalue1.actp380.nil? then 0 else mvalue1.actp380 end
@@ -436,6 +444,8 @@ private
               ind0 = if mvalue0.actp380.nil? then 0 else mvalue0.actp380 end
               dind = indicii0[:dind_380] = (ind1 - ind0).round(4)   #dind 380         
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
+              if result[:wri_formula] != "" then result[:wri_formula] += " + "  end
+              result[:wri_formula] += dind.to_s + " * " + koef.to_s
               wri += energy
               indicii0[:ind1_480] = mvalue1.actp480          #480
               ind1 = if mvalue1.actp480.nil? then 0 else mvalue1.actp480 end
@@ -443,6 +453,8 @@ private
               ind0 = if mvalue0.actp480.nil? then 0 else mvalue0.actp480 end
               dind = indicii0[:dind_480] = (ind1 - ind0).round(4)   #dind 480         
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480
+              if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end
+              result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
               wrc += energy          
          end # if mvalues.count
          indicii  << indicii0     
@@ -451,12 +463,17 @@ private
        result[:mvnum] = mvnum
        if mvnum == 2 then
          # work hours 
-         result[:workt] = dtsum * 24        
+         result[:workt] = dtsum * 24
+         result[:workt_formula] = dtsum.to_s + " * 24 = "        
          # energies
          result[:wa] = wa
+         result[:wa_formula] += " = "
          result[:waliv] = waliv
+         result[:waliv_formula] += " = "
          result[:wri] = wri
-         result[:wrc] = wrc         
+         result[:wri_formula] += " = "
+         result[:wrc] = wrc
+         result[:wrc_formula] += " = "         
        end # if mvnum
      end # if meters.count 
      result
@@ -476,7 +493,8 @@ private
       # косинус фи 
       if wa != 0 || wri != 0 then 
         cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
-        result[:cosfi] = cosfi       
+        result[:cosfi] = cosfi
+        result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
       end 
       #tau
       taus  = Tau.all
@@ -485,16 +503,19 @@ private
       tr  = mpoint.trparams.where("f = 'true'")
       tr_losses_pxx = tr_losses_pkz = tr_losses_rxx = tr_losses_rkz = 0.0
       result[:tr_losses_pxx_formula] = ""
+      result[:tr_losses_rxx_formula] = ""
+      result[:tr_losses_pkz_formula] = ""
+      result[:tr_losses_rkz_formula] = ""
       if tr.count != 0 then
         tr.each do |tritem|
-          tr_losses_pxx += workt * tritem.pxx
+          tr_losses_pxx += workt * tritem.transformator.pxx
           if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
-          result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.pxx).to_s
+          result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.transformator.pxx).to_s
           #tau
           tau = taus.last.taum
           tm = taus.last.tm
           taus.each do |itau|
-            if wa <= 0.9 * itau.tm * cosfi * (tritem.snom) then 
+            if wa <= 0.9 * itau.tm * cosfi * (tritem.transformator.snom) then 
               tau = itau.taum
               tm = itau.tm
               break                       
@@ -502,14 +523,23 @@ private
           end
           result[:tau] = tau
           result[:tm] = tm 
-          ttaus << {:tm => tm, :tau => tau, :cosfi => cosfi, :snom => tritem.snom, :wi => tau * cosfi * (tritem.snom), :wi09 => 0.9 * tau * cosfi * (tritem.snom), :wa => wa}
-          if tritem.snom == 0 then
+          ttaus << {:tm => tm, :tau => tau, :cosfi => cosfi, :snom => tritem.transformator.snom, 
+                    :wi => tau * cosfi * (tritem.transformator.snom), :wi_formula => tau.to_s + " * " + cosfi.to_s + " * " + (tritem.transformator.snom).to_s + " = ",
+                    :wi09 => 0.9 * tau * cosfi * (tritem.transformator.snom), :wi09_formula => " 0.9 * " + tau.to_s + " * " + cosfi.to_s + " * " + (tritem.transformator.snom).to_s + " = ",
+                    :wa => wa}
+          if tritem.transformator.snom == 0 then
             flash[:warning] = "Невозможно рассчитать потери КЗ тр-ра для #{mpoint.name}, т.к. Snom = 0 !"                   
           else  
-            tr_losses_pkz += tritem.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.snom) ** 2))
-            tr_losses_rkz += tritem.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.snom) ** 2))
+            tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+            if result[:tr_losses_pkz_formula] != "" then result[:tr_losses_pkz_formula] += " + "  end
+            result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+            tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+            if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end
+            result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
           end
-          tr_losses_rxx += (((tritem.io ** 2) * (tritem.snom ** 2) / 10000 - tritem.pxx ** 2) ** 0.5) * workt
+          tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
+          if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
+          result[:tr_losses_rxx_formula] += " (" + tritem.transformator.i0.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2  / 10000 - " + tritem.transformator.pxx.to_s + " ^2 ) ^0.5 * " + workt.to_s
         end  # tr.each
         tr_losses_pxx = result[:tr_losses_pxx] = tr_losses_pxx.round(4)
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)

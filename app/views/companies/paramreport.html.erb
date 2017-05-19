@@ -36,11 +36,12 @@
         <tr class="info">
       	   <th>Nr</th>
 		   <th>Тип</th>
-		   <th>Потери холостого хода Рхх, кВт</th>
-		   <th>Потери короткого замыкания Ркз, кВт</th>
+		   <th>Uном, кВ</th>
 		   <th>Номинальная мощность Sном, кВА</th>
 		   <th>Uкз, %</th>
-		   <th>Io, %</th>
+		   <th>Потери короткого замыкания Ркз, кВт</th>
+		   <th>Потери холостого хода Рхх, кВт</th>
+		   <th>I0, %</th>
 		   <th>Qкз, квар</th>
 		   <th>Комментарий</th>
       	   <th>Дата изменений</th> 
@@ -55,10 +56,11 @@
 	   <% end %>
       	 <td><%= j %></td>
 		 <td><%= item.mark %></td>
-		 <td><%= item.pxx %></td>
-		 <td><%= item.pkz %></td>										
+		 <td><%= item.unom %></td>
 		 <td><%= item.snom %></td>
 		 <td><%= item.ukz %></td>
+		 <td><%= item.pkz %></td>
+		 <td><%= item.pxx %></td>
 		 <td><%= item.io %></td>
 		 <td><%= item.qkz %></td>
 		 <td><%= item.comment %></td>	

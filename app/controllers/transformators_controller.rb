@@ -1,6 +1,6 @@
 class TransformatorsController < ApplicationController
-  before_filter :check_user
-  before_filter :redirect_cancel, only: [:create, :update]
+  before_action :check_user
+  before_action :redirect_cancel, only: [:create, :update]
 
   def index
     if params[:id].nil? then
@@ -18,6 +18,7 @@ class TransformatorsController < ApplicationController
   def create
     @flag = 'add'
     @transformator = Transformator.new(transformator_params)
+    @transformator = transformator_init(@transformator)
     transformator_save
   end
 
@@ -31,7 +32,7 @@ class TransformatorsController < ApplicationController
     @flag = 'edit' 
     @transformator = Transformator.find(params[:id])
     @transformator = transformator_init(@transformator)
-    mesubstation_save
+    transformator_save
   end 
   
   def destroy
@@ -47,7 +48,7 @@ class TransformatorsController < ApplicationController
 private  
 
   def indexviewall
-    @transformators = Transformator.all.order(name: :asc)
+    @transformators = Transformator.all.order(unom: :asc, snom: :asc, name: :asc)
     @page = params[:page] 
     if !@transformator.nil? && !@transformator.id.nil? then 
       i = 0
@@ -98,15 +99,29 @@ private
   end
   
   def transformator_params
-    params.require(:transformator).permit(:name, :cod, :filial_id, :region_id, :f)
+    params.require(:transformator).permit(:pxx,:pkz,:snom,:ukz,:i0,:name,:comment,:f,:unom)
   end
   
-  def transformator_init(transformator)  
+  def transformator_init(transformator)
+    ukz2 = (transformator_params[:ukz].to_f) * (transformator_params[:ukz].to_f)
+    snom2 = (transformator_params[:snom].to_f) * (transformator_params[:snom].to_f)
+    pkz2 = (transformator_params[:pkz].to_f) * (transformator_params[:pkz].to_f)
+    tmp = (ukz2 * snom2) / 10000 - pkz2
+    if (tmp >= 0) then
+      tmp = Math.sqrt(tmp).round(10)
+    else
+      tmp = nil  
+    end
+    transformator.unom = transformator_params[:unom]
+    transformator.pxx = transformator_params[:pxx]
+    transformator.pkz = transformator_params[:pkz]
+    transformator.snom = transformator_params[:snom]
+    transformator.ukz = transformator_params[:ukz]
+    transformator.i0 = transformator_params[:i0]
+    transformator.qkz = tmp   
     transformator.name = transformator_params[:name]
-    transformator.cod = transformator_params[:cod] 
-    transformator.f = transformator_params[:f]   
-    transformator.filial_id = transformator_params[:filial_id]
-    transformator.region_id = transformator_params[:region_id]
+    transformator.comment = transformator_params[:comment] 
+    transformator.f = transformator_params[:f] 
     transformator    
   end
    
