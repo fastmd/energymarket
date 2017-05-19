@@ -18,7 +18,7 @@
 		  <%= select_tag(:qcompany, options_for_select(@comps, @qcompany), class: "form-control", prompt: "Потребитель...", include_blank: false) %>
 		  <%= select_tag(:qfurnizor, options_for_select(@furns, @qfurnizor), class: "form-control", prompt: "Поставщик...", include_blank: false) %>
 		  <%= select_tag(:qfilial, options_for_select(@fils, @qfilial), class: "form-control", prompt: "Филиал...", include_blank: false) %>
-		  <%= select_tag(:qregion, options_for_select(@regions, @qregion), class: "form-control", prompt: "Регион...", include_blank: false) %>
+		  <%= select_tag(:qregion, options_for_select(@regions, @qregion), class: "form-control", prompt: "Район...", include_blank: false) %>
 		  <%= select_tag(:qmesubstation, options_for_select(@sstations, @qmesubstation), class: "form-control", prompt: "Подстанция...", include_blank: false) %>
 		  <%= hidden_field_tag :id, @flr.id %>
 		  <%= submit_tag("Фильтр", class: "btn btn-primary") %>
@@ -47,15 +47,13 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th><%= sort_link "cod", "Код", @flr.id %></th>
-			   <th><%= sort_link "company_shname", "Потребитель", @flr.id %><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>
 			   <th><%= sort_link "furnizor_name", "Поставщик", @flr.id %><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
 			   <th><%= sort_link "filial_name", "Филиал", @flr.id %><span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
-			   <th><%= sort_link "region_name", "Регион", @flr.id %><%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
-			   <th><%= sort_link "name", "Наименование", @flr.id %></th>
-			   <th><%= sort_link "mesubstation_name", "Подстанция (подкл. потребитель)", @flr.id %></th>
-			   <th>Присоединение (запитан потребитель)</th>
-			   <th>Объект установки учета</th>
-			   <th>Присоединение установки учета</th>			   
+			   <th><%= sort_link "region_name", "Район", @flr.id %><%= image_tag('moldova-map.png', :alt => "Районы", :width => 25, :height => 25) %></th>
+			   <th><%= sort_link "mesubstation_name", "Подстанция", @flr.id %></th>
+			   <th>Точка учета (МЕ)</th>
+			   <th>Точка учета (потребитель)</th>
+			   <th><%= sort_link "company_shname", "Потребитель", @flr.id %><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>			   
 			   <th>Класс напряжения, кВ</th>
                <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 			      <th>Счетчики</th>
@@ -79,16 +77,14 @@
 			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
-						<td><%= item.cod %></td>
-						<td><%= item.company_shname %></td>
+						<td><%= item.cod %></td>						
 						<td><%= item.furnizor_name  %></td>
 						<td><%= item.filial_name %></td>
 						<td><%= item.region_name %></td>
-						<td><%= item.name %></td>
 						<td><%= item.mesubstation_name %></td>						
 						<td><%= item.meconname %></td>
-						<td><%= item.clsstation %></td>
-						<td><%= item.clconname %></td>						
+						<td><%= item.clconname %></td>
+						<td><%= item.company_shname %></td>						
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>

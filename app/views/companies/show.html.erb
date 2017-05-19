@@ -45,19 +45,19 @@
 						<%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ), class: "form-control" %>
 				</div>		
 			    <div class="form-group">                   
-		   				<label for='thesauru_id' class="control-label">Подстанция (подкл. потребитель)</label>						
+		   				<label for='thesauru_id' class="control-label">Подстанция (МЕ)</label>						
 	   		            <%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something", class: "form-control" %>
 	   		   	</div>		
 		   		<div class="form-group">		
-		   				<label for='meconname' class="control-label">Присоединение (запитан потребитель)</label>          	
+		   				<label for='meconname' class="control-label">Точка учета (МЕ)</label>          	
 						<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='clsstation' class="control-label">Объект установки учета</label>		
+		   				<label for='clsstation' class="control-label">Объект (потребитель)</label>		
 						<%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета",  :size=>"50", class: "form-control" %>
 				</div>
 				<div class="form-group">
-		   				<label for='clconname' class="control-label">Присоединение установки учета</label>						
+		   				<label for='clconname' class="control-label">Точка учета (потребитель)</label>						
 						<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
 				</div>
     		   	<div class="form-group">		   				
@@ -93,14 +93,12 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th>Код</th>
-			   <th>Наименование</th>
 			   <th>Поставщик<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
 			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
-			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
-			   <th>Подстанция (подкл. потребитель)</th>
-			   <th>Присоединение (запитан потребитель)</th>
-			   <th>Объект установки учета</th>
-			   <th>Присоединение установки учета</th>			   
+			   <th>Район <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
+			   <th>Подстанция (МЕ)</th>
+			   <th>Точка учета (МЕ)</th>
+			   <th>Точка учета (потребитель)</th>			   
 			   <th>Класс напряжения, кВ</th>
                <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 			      <th>Счетчики</th>
@@ -125,13 +123,11 @@
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
 						<td><%= item.cod %></td>
-						<td><%= item.name %></td>
 						<td><%= if item.furnizor then item.furnizor.name end %></td>
 						<td><%= if item.filial then item.filial.name end %></td>
 						<td><%= if item.region then item.region.cvalue end %></td>
 						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
 						<td><%= item.meconname %></td>
-						<td><%= item.clsstation %></td>
 						<td><%= item.clconname %></td>						
 						<td><%= item.voltcl %></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 

@@ -40,7 +40,7 @@ class ListaReport < Prawn::Document
     text "de calcul a intrarii energiei electrice la #{cp.name}", :size => 14, :style => :bold, :align => :center
     text "pentru luna #{luna} anul #{ddate.year}", :size => 15, :style => :bold, :align => :center
     move_down(18) 
-    text "#{flr.name}", :size => 12, :style => :bold, :align => :left 
+  #  text "#{flr.name}", :size => 12, :style => :bold, :align => :left 
     move_down(10)  
     # выборка записей 
     data = []

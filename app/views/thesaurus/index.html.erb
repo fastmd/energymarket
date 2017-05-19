@@ -40,7 +40,7 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist" id="myTab">
-    <li role="presentation" class="active"><a href="#region" aria-controls="region" role="tab" data-toggle="tab">Регионы</a></li>
+    <li role="presentation" class="active"><a href="#region" aria-controls="region" role="tab" data-toggle="tab">Районы</a></li>
     <li role="presentation"><a href="#meter"       aria-controls="meter"       role="tab" data-toggle="tab">Типы счетчиков</a></li>
     <li role="presentation"><a href="#transformer" aria-controls="transformer" role="tab" data-toggle="tab">Типы трансформаторов</a></li>
     <li role="presentation"><a href="#line"        aria-controls="line"        role="tab" data-toggle="tab">Линии</a></li>
@@ -50,7 +50,7 @@
   <div class="tab-content">
     <!-- regions -->
     <div role="tabpanel" class="tab-pane fade in active" id="region">
-    	<h4 align="center">Регионы <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 40, :height => 40) %></h4>
+    	<h4 align="center">Районы <%= image_tag('moldova-map.png', :alt => "Районы", :width => 40, :height => 40) %></h4>
     	<% @thesaurus = @regions %>
     	<%= render 'thesaurus/onethesaurus' %> 
     </div>

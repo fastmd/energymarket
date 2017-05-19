@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170517131648) do
+ActiveRecord::Schema.define(version: 20170519113639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,10 +114,10 @@ ActiveRecord::Schema.define(version: 20170517131648) do
     t.date     "actdate",                                            null: false
     t.integer  "meter_id",                                           null: false
     t.boolean  "f",                                   default: true, null: false
-    t.decimal  "actp180",    precision: 14, scale: 4
-    t.decimal  "actp280",    precision: 14, scale: 4
-    t.decimal  "actp380",    precision: 14, scale: 4
-    t.decimal  "actp480",    precision: 14, scale: 4
+    t.decimal  "actp180",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp280",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp380",    precision: 14, scale: 4,                null: false
+    t.decimal  "actp480",    precision: 14, scale: 4,                null: false
     t.boolean  "r",                                   default: true, null: false
     t.decimal  "actp580",    precision: 14, scale: 4
     t.decimal  "actp880",    precision: 14, scale: 4

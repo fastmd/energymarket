@@ -49,31 +49,23 @@
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Счетчик</label>
 						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
-				</div>
+				</div><br><br>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">1.8.0</label>
+		   				<label for='comment' class="control-label">Активный прием A+</label>
 						<%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">2.8.0</label>
+		   				<label for='comment' class="control-label">Активная отдача A-</label>
 						<%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">3.8.0</label>
+		   				<label for='comment' class="control-label">Реактивный прием R+</label>
 						<%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">4.8.0</label>
+		   				<label for='comment' class="control-label">Реактивная отдача R-</label>
 						<%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">5.8.0</label>						
-						<%= number_field_tag 'actp580', @mv_params[:actp580], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">8.8.0</label>						
-						<%= number_field_tag 'actp880', @mv_params[:actp880], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
+				</div><br><br>
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Комментарий</label>
 						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
@@ -108,12 +100,10 @@
 		   <th>№</th>
 		   <th>Дата актирования</th>
 		   <th>Счетчик</th>
-		   <th>1.8.0</th>
-		   <th>2.8.0</th>
-		   <th>3.8.0</th>
-		   <th>4.8.0</th>
-		   <th>5.8.0</th>
-		   <th>8.8.0</th>
+		   <th>Активный прием А+</th>
+		   <th>Активная отдача А-</th>
+		   <th>Реактивный прием R+</th>
+		   <th>Реактивная отдача R-</th>
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -137,8 +127,6 @@
 					<td><%= item.actp280 %></td>
 					<td><%= item.actp380 %></td>
 					<td><%= item.actp480 %></td>
-					<td><%= item.actp580 %></td>
-					<td><%= item.actp880 %></td>
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>

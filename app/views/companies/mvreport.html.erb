@@ -22,16 +22,14 @@
   <thead>
     <tr class="info">
       <th>Nr</th>
-      <th>Точка учета</th>
-      <th>Код точки учета</th>    
+      <th>Код точки учета</th>
+      <th>Точка учета</th>       
       <th>№ счетчика</th>
       <th>Дата</th>      
-      <th>1.8.0</th>
-      <th>2.8.0</th>
-      <th>3.8.0</th>
-      <th>4.8.0</th>
-      <th>5.8.0</th>
-      <th>8.8.0</th>      
+      <th>Активный прием A+</th>
+      <th>Активная отдача A-</th>
+      <th>Реактивный прием R+</th>
+      <th>Реактивная отдача R-</th>   
       <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
       <th>Дата изменений</th>  
     </tr>  
@@ -46,16 +44,14 @@
 		 <tr>
 	   <% end %>
       	 <td><%= i %></td>
-      	 <td><%= Mpoint.find(item.id).name %> <%= Mpoint.find(item.id).mesubstation.name %> <%= Mpoint.find(item.id).voltcl %> Î <%= Mpoint.find(item.id).meconname %> F </td>
       	 <td><%= item.cod %></td>
+      	 <td><%= Mpoint.find(item.id).mesubstation.name %> <%= Mpoint.find(item.id).voltcl %> Î <%= Mpoint.find(item.id).meconname %> F </td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.actdate %></td>
       	 <td><%= item.actp180 %></td>
       	 <td><%= item.actp280 %></td>
       	 <td><%= item.actp380 %></td>
       	 <td><%= item.actp480 %></td>
-      	 <td><%= item.actp580 %></td>
-      	 <td><%= item.actp880 %></td>
       	 <td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
       	 <td><%= item.mvalue_updated_at %></td>
       </tr>

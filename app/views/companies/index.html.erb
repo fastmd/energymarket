@@ -118,7 +118,6 @@
 			<tr class="info">
 			   <th>№</th>
 			   <th>Наименование</th>
-			   <th>Краткое наименование</th>
 			   <th>Код</th>
 			   <th>Точки учета</th>
 			   <th>Отчеты</th>
@@ -137,7 +136,6 @@
 			   <% end %>
 						<% i = i + 1 %>						
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
-						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.shname %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
 						<td><%= link_to "Открыть", company_path(item,:flr_id => @flr.id), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>
