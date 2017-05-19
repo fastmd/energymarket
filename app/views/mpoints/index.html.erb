@@ -64,6 +64,7 @@
 			   <% end %>   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>Тех.расход</th>
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -94,7 +95,8 @@
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
   						<% end %>    
   						<td><%= item.comment %></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
                         <td><%= link_to " " , company_path(:id => item.company_id, :flr_id => @flr.id), :class=> "glyphicon glyphicon-search" %></td>
 					</tr>		
 				<% end %>			

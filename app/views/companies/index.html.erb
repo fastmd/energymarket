@@ -70,11 +70,11 @@
 						<%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ), class: "form-control" %>
 				</div>			       
 			    <div class="form-group">                   
-		   				<label for='thesauru_id' class="control-label">Подстанция (подкл. потребитель)</label>
+		   				<label for='thesauru_id' class="control-label">Подстанция (ME)</label>
 		   				<%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" , class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">		
-		   				<label for='meconname' class="control-label">Присоединение (запитан потребитель)</label>
+		   				<label for='meconname' class="control-label">Точка учета (МЕ)</label>
 		   				<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
 		   		</div>
 		   		<div class="form-group">		
@@ -82,7 +82,7 @@
 		   				<%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета",  :size=>"50", class: "form-control" %>
 				</div>
 				<div class="form-group">
-		   				<label for='clconname' class="control-label">Присоединение установки учета</label>
+		   				<label for='clconname' class="control-label">Точка учета (потребитель)</label>
 		   				<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
     		   	</div>
     		   	<div class="form-group">		   				
@@ -96,6 +96,8 @@
 		   		<div class="form-group">		
 		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>
 		   				<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
+		   			    <label for='fct' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Считать тех.расход</span></label>
+		   				<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
 		   		</div>							        
   			            <%= hidden_field_tag :flr_id, @flr.id %>
   			            <%= hidden_field_tag :parentform, 'newcompanympoint' %>

@@ -71,6 +71,8 @@
 		   		<div class="form-group">		
 		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>						
 						<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
+		   				<label for='fct' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Считать тех.расход</span></label>						
+						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>						
 			    </div>	
 	  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
 	  			<%= hidden_field_tag :id, @mpoint.id %>
@@ -109,6 +111,7 @@
 			   <% end %>   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>Тех.расход</th>
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -142,7 +145,8 @@
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
   						<% end %>    
   						<td><%= item.comment %></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
                         <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519113639) do
+ActiveRecord::Schema.define(version: 20170519124119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 20170519113639) do
     t.integer  "cod"
     t.integer  "furnizor_id",                                               null: false
     t.integer  "mesubstation_id"
+    t.boolean  "fct",                                      default: true,   null: false
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
     t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
     t.index ["mesubstation_id"], name: "index_mpoints_on_mesubstation_id", using: :btree

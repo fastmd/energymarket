@@ -231,7 +231,8 @@ private
     mpoint.clconname = t
     mpoint.voltcl = params[:voltcl]  
     mpoint.comment = params[:comment]
-    mpoint.f = if params[:f].nil? then false else true end  
+    mpoint.f = if params[:f].nil? then false else true end
+    mpoint.fct = if params[:fct].nil? then false else true end    
     mpoint    
   end      
   
