@@ -545,8 +545,10 @@ private
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
         tr_losses_rxx = result[:tr_losses_rxx] = tr_losses_rxx.round(4)
         tr_losses_rkz = result[:tr_losses_rkz] = tr_losses_rkz.round(4)
-        result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz 
+        result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz
+        result[:tr_losses_p_formula] = tr_losses_pxx.to_s + " + " + tr_losses_pkz.to_s + " = " 
         result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz
+        result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s + " = " 
         result[:ttaus] = ttaus            
       end  # if tr.count
       # линии              
