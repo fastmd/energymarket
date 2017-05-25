@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   resources :trparams do
   end
   
+  get 'transformators/show' => 'transformators/index'
   get 'transformators/index'
   get 'transformators/edit'
   get 'transformators/destroy'
@@ -33,6 +34,18 @@ Rails.application.routes.draw do
   get 'lnparams/destroy'
   resources :lnparams do
   end
+  
+  get 'lines/index'
+  get 'lines/edit'
+  get 'lines/destroy'
+  resources :lines do
+  end 
+  
+  get 'wires/index'
+  get 'wires/edit'
+  get 'wires/destroy'
+  resources :wires do
+  end 
   
   get 'welcome/index'
   get 'welcome/help'
@@ -124,7 +137,15 @@ end
 
 resources :mpoints  do  
   resources :lnparams
+end
+
+resources :lnparams  do  
+  resources :lines
 end    
+
+resources :lines  do  
+  resources :wires
+end 
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

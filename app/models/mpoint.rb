@@ -3,7 +3,10 @@ class Mpoint < ApplicationRecord
  has_many   :mvalues, through: :meters, inverse_of: :mpoint
  has_many   :trparams, inverse_of: :mpoint
  has_many   :transformators, through: :trparams, inverse_of: :mpoint
- has_many   :lnparams, inverse_of: :mpoint 
+ has_many   :lnparams, inverse_of: :mpoint
+ has_many   :lines, through: :lnparams, inverse_of: :mpoint
+ has_many   :vlnparams, inverse_of: :mpoint
+ has_many   :valllnparams, inverse_of: :mpoint 
  belongs_to :company, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :furnizor, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :mesubstation, inverse_of: :mpoints

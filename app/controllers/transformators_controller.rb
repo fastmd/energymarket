@@ -15,6 +15,10 @@ class TransformatorsController < ApplicationController
   def new
   end
   
+  def show
+    redirect_to transformators_index_path(:page => params[:page])
+  end
+  
   def create
     @flag = 'add'
     @transformator = Transformator.new(transformator_params)
@@ -42,7 +46,7 @@ class TransformatorsController < ApplicationController
       flash[:warning] = "Нельзя удалить трансформатор #{transformator.name}, которому принадлежат точки учета (#{ss_count} шт.)" 
     else transformator.destroy 
     end
-    redirect_to transformator_index_path(:page => @page)
+    redirect_to transformators_index_path(:page => @page)
   end  
   
 private  
@@ -119,7 +123,7 @@ private
     transformator.ukz = transformator_params[:ukz]
     transformator.i0 = transformator_params[:i0]
     transformator.qkz = tmp   
-    transformator.name = transformator_params[:name]
+    transformator.name = (transformator_params[:name]).lstrip.rstrip
     transformator.comment = transformator_params[:comment] 
     transformator.f = transformator_params[:f] 
     transformator    

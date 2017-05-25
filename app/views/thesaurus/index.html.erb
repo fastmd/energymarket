@@ -42,8 +42,6 @@
   <ul class="nav nav-tabs" role="tablist" id="myTab">
     <li role="presentation" class="active"><a href="#region" aria-controls="region" role="tab" data-toggle="tab">Районы</a></li>
     <li role="presentation"><a href="#meter"       aria-controls="meter"       role="tab" data-toggle="tab">Типы счетчиков</a></li>
-    <li role="presentation"><a href="#transformer" aria-controls="transformer" role="tab" data-toggle="tab">Типы трансформаторов</a></li>
-    <li role="presentation"><a href="#line"        aria-controls="line"        role="tab" data-toggle="tab">Линии</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -60,18 +58,6 @@
     	<% @thesaurus = @metertypes %>
     	<%= render 'thesaurus/onethesaurus' %>
     </div>    
-    <!-- transformers --> 
-    <div role="tabpanel" class="tab-pane fade" id="transformer">
-    	<h4 align="center">Типы трансформаторов <%= image_tag('tr-r.png', :alt => "Трансформаторы", :width => 40, :height => 40) %></h4>
-    	<% @thesaurus = @transformers %>
-    	<%= render 'thesaurus/onethesaurus' %> 
-    </div>
-    <!-- lines -->    	
-    <div role="tabpanel" class="tab-pane fade" id="line">
-    	<h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 40) %></h4>
-    	<% @thesaurus = @lines %>
-    	<%= render 'thesaurus/onethesaurus' %>
-    </div>
   </div>
 
 </div>

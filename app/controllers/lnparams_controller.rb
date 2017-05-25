@@ -3,89 +3,73 @@ before_filter :check_user
 before_filter :redirect_cancel, only: [:create, :update]  
 
   def index
-    if params[:id].nil? then
-      @lnparam = Lnparam.new
-    else
-      @lnparam = Lnparam.find(params[:id])
-    end 
-    indexviewall 
-    @flag = params[:flag]
   end
-  
+      
+  def new
+  end
+   
   def create
-    if params[:line_id].nil? or params[:line_id]=='' then
-      @mp = Mpoint.find(params[:mpoint_id])
-      line = @mp.lnparams.new(f: true)
-    else
-      line = Lnparam.find(params[:line_id])
-      @mp = Mpoint.find(line.mpoint_id)      
-    end 
-    tmp = params[:k_scr].to_f * params[:k_tr].to_f * params[:k_peb].to_f  * params[:ro].to_f * params[:l].to_f * 1000
-    if (params[:q].to_f != 0) then tmp = tmp / params[:q].to_f end 
-    line.l = params[:l]
-    line.ro = params[:ro]
-    line.k_scr = params[:k_scr]
-    line.k_tr = params[:k_tr]
-    line.k_peb = params[:k_peb] 
-    line.k_f = params[:k_f] 
-    line.q = params[:q]
-    line.r = tmp 
-    line.f = if params[:f].nil? then false else true end 
-    line.comment = params[:comment]
-    line.mark = params[:mark]
-    begin
-      if line.save! then redirect_to mpoint_path(@mp) end
-    rescue
-         flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."
-         if params[:line_id].nil? or params[:line_id]=='' then
-            redirect_to mpoint_path(@mp,:r =>params[:r],:l=>params[:l],:ro =>params[:ro],:k_scr =>params[:k_scr],
-                                    :k_tr =>params[:k_tr],:k_peb =>params[:k_peb],:k_f =>params[:k_f],:q =>params[:q],:f =>params[:f],:comment=>params[:comment],:mark=>params[:mark],:flag=>'ladd')
-         else
-            redirect_to mpoint_path(@mp,:line_id=>line.id,:l=>line.l,:ro=>line.ro,:k_scr=>line.k_scr,:k_tr=>line.k_tr,
-                                    :k_peb=>line.k_peb,:k_f=>line.k_f,:q=>line.q,:f=>line.f,:comment=>line.comment,:mark=>line.mark,:flag=>'ledit')
-         end    
-    end     
-  end
+    @flag = 'ladd'
+    @mp = Mpoint.find(lnparam_params[:mpoint_id])
+    @lnparam = Lnparam.new(lnparam_params)
+    lnparam_save
+  end 
   
   def edit
-    @line = Lnparam.find(params[:line_id])
-    @mp = Mpoint.find(@line.mpoint_id)
-    redirect_to mpoint_path(@mp,:line_id=>@line.id,:l=>@line.l,:ro=>@line.ro,:k_scr=>@line.k_scr,:k_tr=>@line.k_tr,
-                                  :k_peb=>@line.k_peb,:k_f=>@line.k_f,:q=>@line.q,:f=>@line.f,:comment=>@line.comment,:mark=>@line.mark,:flag=>'ledit')
+    flash.discard 
+    @lnparam = Lnparam.find(params[:ln_id])
+    @mp = Mpoint.find(@lnparam.mpoint_id)
+    redirect_to mpoint_path(@mp,:ln_id=>@lnparam.id,:flag=>'ledit')
   end
- 
+  
+  def update
+    @flag = 'edit'
+    @mp = Mpoint.find(lnparam_params[:mpoint_id]) 
+    @lnparam = Lnparam.find(params[:id])
+    @lnparam = lnparam_init(@lnparam)
+    lnparam_save
+  end 
+  
   def destroy
-    @line = Lnparam.find(params[:line_id])
-    @mp = Mpoint.find(@line.mpoint_id)
-    @line.destroy
+    @lnparam = Lnparam.find(params[:ln_id])
+    @mp = Mpoint.find(@lnparam.mpoint_id)
+    @lnparam.destroy
     redirect_to mpoint_path(@mp)
   end
 
 private
 
-  def indexviewall
-    @lnparams = Lnparam.all.order(l: :asc)
-    @page = params[:page] 
-    if !@lnparam.nil? && !@lnparam.id.nil? then 
-      i = 0
-      n = 0
-      @lnparams.each do |item|
-        if item.id == @lnparam.id then n = i end
-        i += 1   
-      end
-      @page = (n / $PerPage + 0.5).round       
-    end  
-    if @page.nil? then 
-      @page = 1
-    elsif !@lnparams.nil? &&  @lnparams.count < (@page.to_i - 1) * $PerPage then 
-      @page = ((@lnparams.count-1) / $PerPage + 0.5).round    
-    end  
-    unless @lnparams.nil? then @lnparams = @lnparams.paginate(:page => @page, :per_page => $PerPage ) end              
-  end
-
   def redirect_cancel
-    @mp = Mpoint.find(params[:mpoint_id])
-    redirect_to mpoint_path(@mp, :flag => nil) if params[:cancel]
-  end  
+     if params[:cancel] then   
+        flash.discard
+        @mp = Mpoint.find(lnparam_params[:mpoint_id]) 
+        redirect_to mpoint_path(@mp, :flag => nil)
+    end
+  end
+ 
+  def lnparam_save
+      begin
+        if @lnparam.save! then 
+          flash.discard
+          flash[:notice] = "Линия подключена."          
+          redirect_to mpoint_path(@mp, :flag => nil)
+        end          
+      rescue
+        flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."
+        redirect_to mpoint_path(@mp,:ln_id=>@lnparam.id,:flag=>'ledit')     
+      end    
+  end
+  
+  def lnparam_params
+    params.require(:lnparam).permit(:comment, :mpoint_id, :line_id, :f)
+  end
+    
+  def lnparam_init(lnparam)
+    lnparam.mpoint_id = lnparam_params[:mpoint_id]
+    lnparam.line_id = lnparam_params[:line_id]
+    lnparam.comment = lnparam_params[:comment]    
+    lnparam.f = lnparam_params[:f]   
+    lnparam    
+  end   
     
 end

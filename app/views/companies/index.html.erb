@@ -61,6 +61,10 @@
 						<label for='name'class="control-label">Наименование</label>
 						<%= text_field_tag('name', @mpoint.name, class: "form-control",  :size=>"50", placeholder: "Точка учета...") %>
 				</div>
+				<div class="form-group">		   				
+		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>
+		   				<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
+		   		</div><br>
 				<div class="form-group">		
 						<label for='company_id' class="control-label">Потребитель</label>
 						<%= select_tag "company_id", options_for_select( @comps, if !@mpoint.company_id.nil? then @mpoint.company_id else nil end ), class: "form-control" %>
@@ -72,7 +76,7 @@
 			    <div class="form-group">                   
 		   				<label for='thesauru_id' class="control-label">Подстанция (ME)</label>
 		   				<%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" , class: "form-control" %>
-		   		</div>		
+		   		</div><br>		
 		   		<div class="form-group">		
 		   				<label for='meconname' class="control-label">Точка учета (МЕ)</label>
 		   				<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
@@ -85,10 +89,6 @@
 		   				<label for='clconname' class="control-label">Точка учета (потребитель)</label>
 		   				<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
     		   	</div>
-    		   	<div class="form-group">		   				
-		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>
-		   				<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
-		   		</div>
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Комментарий</label>
 		   				<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
@@ -98,7 +98,7 @@
 		   				<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
 		   			    <label for='fct' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Считать тех.расход</span></label>
 		   				<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
-		   		</div>							        
+		   		</div><br>							        
   			            <%= hidden_field_tag :flr_id, @flr.id %>
   			            <%= hidden_field_tag :parentform, 'newcompanympoint' %>
   			            <%= hidden_field_tag :page, @page %> 

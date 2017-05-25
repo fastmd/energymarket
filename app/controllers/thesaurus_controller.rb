@@ -53,10 +53,8 @@ private
     @pagename = 'Справочник'
     @metertypes = Thesauru.where("name = ?", 'meter').order(:cvalue, :created_at)
     @regions = Thesauru.where("name = ?", 'region').order(:cvalue, :created_at)
-    @transformers = Thesauru.where("name = ?", 'transformer').order(:cvalue, :created_at)
-    @lines = Thesauru.where("name = ?", 'line').order(:cvalue, :created_at)
     @thesaurus = @regions
-    @names=[ ['Регион','region'], ['Тип счетчика','meter'], ['Тип трансформатора','transformer'], ['Линия','line'] ] 
+    @names=[ ['Район','region'], ['Тип счетчика','meter'] ] 
     @current = params[:current]
   end
   

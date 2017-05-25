@@ -16,11 +16,11 @@
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование трансформатора<% else %>Ввод нового трансформатора<% end %></h4>
 		<%= simple_form_for(@transformator, html: { class: 'form-inline' }) do |f| %>
 		      <%= f.input :unom, label: 'Uном ', placeholder: 'Uном... ', priority: [ "10/0,4" ], collection: [ "10/0,4", "6/0,4", "10/6"], include_blank: false %>		      
-			  <%= f.input :snom, label: 'Sном ', placeholder: 'Sном... ', as: :decimal, :input_html => {value: number_with_precision(f.object.snom, precision: 2)} %>
+			  <%= f.input :snom, label: 'Sном ', placeholder: 'Sном... ', as: :decimal, :input_html => {value: number_with_precision(f.object.snom, precision: 2)} %><br><br>
 			  <%= f.input :ukz, label: 'Uкз ', placeholder: 'Uкз... ', as: :decimal %>
 			  <%= f.input :pkz, label: 'Pкз ', placeholder: 'Pкз... ', as: :decimal %>
-			  <%= f.input :pxx, label: 'Pxx ', placeholder: 'Pxx... ', as: :decimal %>
-			  <%= f.input :i0, label: 'I0 ', placeholder: 'I0... ', as: :decimal %>
+			  <%= f.input :pxx, label: 'P0 ', placeholder: 'P0... ', as: :decimal %>
+			  <%= f.input :i0, label: 'I0 ', placeholder: 'I0... ', as: :decimal %><br><br>
 			  <%= f.input :name, label: 'Тип ', placeholder: 'Тип трансформатора', as: :string, :input_html => { :size => 25}  %>
 			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 25}  %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
@@ -44,8 +44,8 @@
 			   <th>Uном, кВ</th>
 			   <th>Sном, кВА</th>			   
 			   <th>Uкз, %</th>
-			   <th>Pкз, кВатт</th>
-			   <th>P0, кВатт</th>
+			   <th>Pкз, кВт</th>
+			   <th>P0, кВт</th>
 			   <th>I0, %</th>
 			   <th>Qкз, кВар</th>
 			   <th>Тип</th>

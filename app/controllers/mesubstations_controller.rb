@@ -12,6 +12,10 @@ class MesubstationsController < ApplicationController
     @flag = params[:flag]
   end
   
+  def show
+    redirect_to mesubstations_index_path(:page => params[:page])
+  end
+  
   def new
   end
   
@@ -47,7 +51,7 @@ class MesubstationsController < ApplicationController
 private  
 
   def indexviewall
-    @mesubstations = Mesubstation.all.order(name: :asc)
+    @mesubstations = Mesubstation.all.order(filial_id: :asc, region_id: :asc, name: :asc)
     @page = params[:page] 
     if !@mesubstation.nil? && !@mesubstation.id.nil? then 
       i = 0

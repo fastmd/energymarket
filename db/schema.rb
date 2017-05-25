@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519124119) do
+ActiveRecord::Schema.define(version: 20170525112902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,21 +42,30 @@ ActiveRecord::Schema.define(version: 20170519124119) do
     t.integer  "mpoints_count"
   end
 
-  create_table "lnparams", force: :cascade do |t|
-    t.decimal  "l",          precision: 10, scale: 4,                  null: false
-    t.decimal  "r",          precision: 14, scale: 8,                  null: false
-    t.integer  "mpoint_id",                                            null: false
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
+  create_table "lines", force: :cascade do |t|
+    t.string   "name",                                                      null: false
+    t.decimal  "l",               precision: 10, scale: 4,                  null: false
+    t.decimal  "r",               precision: 14, scale: 8,                  null: false
+    t.decimal  "k_tr",            precision: 10, scale: 4, default: "1.03", null: false
+    t.decimal  "k_f",             precision: 10, scale: 4, default: "1.15", null: false
+    t.integer  "wire_id",                                                   null: false
+    t.integer  "mesubstation_id",                                           null: false
+    t.boolean  "f",                                        default: true,   null: false
     t.text     "comment"
-    t.decimal  "ro",         precision: 10, scale: 4,                  null: false
-    t.decimal  "k_scr",      precision: 10, scale: 4,                  null: false
-    t.decimal  "k_tr",       precision: 10, scale: 4,                  null: false
-    t.decimal  "k_peb",      precision: 10, scale: 4,                  null: false
-    t.decimal  "q",          precision: 10, scale: 4,                  null: false
-    t.decimal  "k_f",        precision: 10, scale: 4, default: "1.15", null: false
-    t.boolean  "f",                                   default: true,   null: false
-    t.string   "mark"
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.index ["mesubstation_id"], name: "index_lines_on_mesubstation_id", using: :btree
+    t.index ["wire_id"], name: "index_lines_on_wire_id", using: :btree
+  end
+
+  create_table "lnparams", force: :cascade do |t|
+    t.integer  "mpoint_id",                 null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.text     "comment"
+    t.boolean  "f",          default: true, null: false
+    t.integer  "line_id",                   null: false
+    t.index ["line_id"], name: "index_lnparams_on_line_id", using: :btree
     t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
 
@@ -199,6 +208,21 @@ ActiveRecord::Schema.define(version: 20170519124119) do
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
   end
 
+  create_table "wires", force: :cascade do |t|
+    t.string   "name",                                               null: false
+    t.decimal  "ro",         precision: 10, scale: 4,                null: false
+    t.decimal  "k_scr",      precision: 10, scale: 4,                null: false
+    t.decimal  "k_peb",      precision: 10, scale: 4,                null: false
+    t.decimal  "q",          precision: 10, scale: 4,                null: false
+    t.boolean  "f",                                   default: true, null: false
+    t.text     "comment"
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+  end
+
+  add_foreign_key "lines", "mesubstations"
+  add_foreign_key "lines", "wires"
+  add_foreign_key "lnparams", "lines"
   add_foreign_key "lnparams", "mpoints"
   add_foreign_key "mesubstations", "filials"
   add_foreign_key "mesubstations", "thesaurus", column: "region_id"

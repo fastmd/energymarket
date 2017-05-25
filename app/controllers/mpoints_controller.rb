@@ -104,8 +104,9 @@ helper_method :sort_column, :sort_direction
       end
     else 
       @transformators = Transformator.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+      @lines = Vline.where("mesubstation_id = ?", @mp.mesubstation).order(name: :asc)
       @trp = @mp.trparams.all
-      @lnp = @mp.lnparams.all
+      @lnp = @mp.valllnparams.all
       @tau = Tau.all 
       if !@flag.nil? && (@flag=='tedit' || @flag=='tadd') then
         @comment = params[:comment] 
@@ -114,6 +115,7 @@ helper_method :sort_column, :sort_direction
         @mark = params[:mark]     
       end   
       if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
+        @ln_id = params[:ln_id]
         @l  = params[:l]
         @ro  = params[:ro]      
         @k_scr = params[:k_scr]
@@ -127,6 +129,7 @@ helper_method :sort_column, :sort_direction
         @mark = params[:mark]         
       end 
       if @tr_id then @tr = Trparam.find(@tr_id) else @tr = @mp.trparams.build end
+      if @ln_id then @ln = Lnparam.find(@ln_id) else @ln = @mp.lnparams.build end  
     end    
   end
 

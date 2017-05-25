@@ -51,7 +51,7 @@ private
       begin
         if @trparam.save! then 
           flash.discard
-          flash[:notice] = "Трансформатор  сохранен."          
+          flash[:notice] = "Трансформатор  подключен."          
           redirect_to mpoint_path(@mp, :flag => nil)
         end          
       rescue

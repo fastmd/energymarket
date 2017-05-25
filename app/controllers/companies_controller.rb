@@ -552,7 +552,7 @@ private
         result[:ttaus] = ttaus            
       end  # if tr.count
       # линии              
-      ln  = mpoint.lnparams.where("f = 'true'") 
+      ln  = mpoint.vlnparams.where("f = 'true'") 
       ln_losses_ng = ln_losses_kr = 0.0        
       if ln.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then

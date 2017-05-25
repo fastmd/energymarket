@@ -23,9 +23,11 @@
     </div>
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='tedit' && @flag!='tadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
-		<h3 align="center"><% if @flag=='tedit' %>Редактирование параметров трансформатора<% else  %>Ввод нового транcформатора<% end %></h3>
+		<h3 align="center"><% if @flag=='tedit' %>Редактирование параметров трансформатора<% else  %>Подключение нового транcформатора<% end %></h3>
 		<%= simple_form_for(@tr, html: { class: 'form-inline' }) do |f| %>
-				<%= f.association :transformator, label: 'Тип трансформатора ', :label_method => lambda { |transformator| "#{transformator.unom} | #{transformator.snom} | #{transformator.name}"}, value_method: :id, include_blank: false, prompt: "Тип трансформатора..." %>
+				<%= f.association :transformator, label: 'Тип трансформатора ', 
+				    :label_method => lambda { |transformator| "Unom = #{transformator.unom} кВ | Snom = #{transformator.snom} кВА | Usc = #{transformator.ukz} % | Марка: #{transformator.name}"}, 
+				    value_method: :id, include_blank: false, prompt: "Тип трансформатора..." %>
 				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
 				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
 				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
@@ -99,55 +101,20 @@
     </div>
     <div id="collapseTwo" class="panel-collapse <%= if (@flag!='ledit' && @flag!='ladd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingTwo">
       <div class="panel-body">
-		<h3 align="center"><% if @flag=='ledit' %>Редактирование параметров линии<% else  %>Ввод новой линии<% end %></h3>
-		<%= form_for([@mp,@mp.lnparams.build], html: { class: 'form-inline' }) do |f| %>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Длина линии L,км</label>						
-						<%= number_field_tag 'l', @l, placeholder: "Длина...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Сопротивление материала r20, Ом</label>
-						<%= number_field_tag 'ro', @ro, placeholder: "Сопротивление...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Коэффициент скрутки Kr</label>
-						<%= number_field_tag 'k_scr', @k_scr, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Коэффициент трассы Ktr</label>
-						<%= number_field_tag 'k_tr', @k_tr, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Коэффициент пов. эффекта и близости Kc</label>
-						<%= number_field_tag 'k_peb', @k_peb, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Коэффициент формы Кф</label>
-						<%= number_field_tag 'k_f', @k_f, placeholder: "Коэффициент...", min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Mapка</label>
-						<%= text_field_tag 'mark', @mark, placeholder: 'Марка...',  :size=>"20", class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Сечение провода q, мм2</label>
-						<%= number_field_tag 'q', @q, placeholder: "Сечение...", min: 0.01, max: 1000000, step: 0.01, class: "form-control" %>
-				</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Комментарий</label>
-						<%= text_field_tag 'comment', @comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
-		   		</div>		
-		   		<div class="form-group">
-		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>						
-						<%= check_box_tag 'f', 'yes', if !defined?(@f) then 'yes' elsif @f=='true' then 'yes' end, class: "form-control" %>
-		   		</div>					        
-	  			<%= hidden_field_tag :mpoint_id, @mp.id %>
-	  			<%= hidden_field_tag :line_id, @line_id %> 
+		<h3 align="center"><% if @flag=='ledit' %>Редактирование параметров линии<% else  %>Подключение новой линии<% end %></h3>
+		<%= simple_form_for(@ln, html: { class: 'form-inline' }) do |f| %>
+				<%= f.association :line, label: 'Линия ', 
+				    :collection => @lines, value_method: :id,
+				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
+				    include_blank: false, prompt: "Линия..." %>				    
+				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
+				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
+				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
 	            <div  align="center"> 
 				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить линию?" } %>                            	                
 				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
-	            </div> 	
-	    <% end %>
+	            </div> 	                
+		<% end %>
       </div>
     </div>
 </div>  
@@ -158,15 +125,17 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
+		   <th>Наименование</th>
 		   <th>Длина линии L, км</th>
-		   <th>Сопротивление линии r, Ом</th>
-		   <th>Сопротивление материала r20, Ом</th>
-		   <th>Коэффициент скрутки Kr</th>
+		   <th>Сопротивление линии R, Ом</th>
 		   <th>Коэффициент трассы Ktr</th>
+		   <th>Коэффициент формы Кf</th>
+		   <th>Марка провода</th>
+		   <th>Сечение провода q, мм&sup2;</th>
+		   <th>Удельное сопротивление материала ρ20, Ом*мм&sup2;/м</th>
+		   <th>Коэффициент скрутки Kr</th>
 		   <th>Коэффициент пов. эффекта и близости Kc</th>
-		   <th>Коэффициент формы Кф</th>
-		   <th>Марка</th>
-		   <th>Сечение провода q, мм2</th>
+		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th>.........</th>
@@ -182,19 +151,21 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= i  %></td>
+					<td><%= item.line_name %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>
-					<td><%= item.ro %></td>
-					<td><%= item.k_scr %></td>
 					<td><%= item.k_tr %></td>
-					<td><%= item.k_peb %></td>
 					<td><%= item.k_f %></td>
-					<td><%= item.mark %></td>
+					<td><%= item.wire_name %></td>
 					<td><%= item.q %></td>
-					<td><%= item.comment %></td>
+					<td><%= item.ro %></td>
+					<td><%= item.k_scr %></td>	
+					<td><%= item.k_peb %></td>	
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  					<td><%= link_to " ", lnparams_edit_path(:line_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
-  						<%= link_to " ", lnparams_destroy_path(:line_id => item.id), :class=> "glyphicon glyphicon-remove",
+					<td><%= item.comment %></td>
+					<td><span class="glyphicon glyphicon-<%= if item.line_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  					<td><%= link_to " ", lnparams_edit_path(:ln_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
+  						<%= link_to " ", lnparams_destroy_path(:ln_id => item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию?" } %></td>  												
 				</tr>
 			<% end %>	  

@@ -1,0 +1,79 @@
+<% provide(:title, 'Справочник-Провода') %>
+	 
+<h4 align="center">Справочник - Типы провода <%= image_tag('wire3.png', :alt => "Провода", :width => 50, :height => 30) %></h4>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          <% if @flag=='edit' then %>Редактировать провод<% else %>Добавить провод<% end %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<h4 align="center"><% if @flag=='edit' then %>Редактирование провода<% else %>Ввод нового провода<% end %></h4>
+		<%= simple_form_for(@wire, html: { class: 'form-inline' }) do |f| %>
+		      <%= f.input :name, label: 'Марка провода ', placeholder: 'Марка провода ...', as: :string, :input_html => { :size => 25}  %>
+		      <%= f.input :k_scr, label: 'Коэффициент скрутки Kr ', placeholder: 'Kr... ', priority: [ 1 ], collection: [ 1, 1.02 ], include_blank: false %>		      
+			  <%= f.input :ro, label: 'ρ20, Ом*мм2/м ', placeholder: 'ρ20 ... ', priority: [ 0.0295 ], collection: [ 0.0295, 0.0175, 0.134 ], include_blank: false %><br><br>
+			  <%= f.input :q, label: 'Сечение провода q, мм2; ', placeholder: 'Сечение провода... ', as: :decimal %>
+			  <%= f.input :k_peb, label: 'Коэффициент пов. эффекта и близости Kc ', placeholder: 'Kc... ', as: :decimal %>
+			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 25}  %>
+			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
+  			  <%= hidden_field_tag :page, @page %>
+  			  </br></br>       
+  			  <div  align="center">
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+			 </div> 
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>		           	           
+
+<table  class="table table-striped  table-hover table-condensed">
+		<thead>
+			<tr class="info">
+			   <th>№</th>
+			   <th>Марка провода </th>
+			   <th>Коэффициент скрутки Kr</th>			   
+			   <th>ρ20, Ом*мм&sup2;/м</th>
+			   <th>Сечение провода q, мм&sup2;</th>
+			   <th>Коэффициент пов. эффекта и близости Kc</th>
+			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>.........</th>			   
+			</tr>	
+		</thead>
+		<tbody>
+   			<% i = 0%>
+			<% @wires.each do |item| %>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
+			    	<tr class="success">
+			   <% else %> 	
+					<tr>
+			   <% end %>
+						<% i = i + 1 %>						
+						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.k_scr %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.ro %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.q %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.k_peb %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.comment %><% if item.f == false then %></em><% end %></td>
+                        <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+                        <td><%= link_to " " , wires_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+  						    <%= link_to " " , wires_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить провод #{item.name} ?" } %></td> 
+					</tr>		
+			<% end %>			
+		</tbody>
+</table>
+
+<center><small><%= if !@wires.nil? then will_paginate @wires, renderer: BootstrapPagination::Rails end %></small></center>
+
+
