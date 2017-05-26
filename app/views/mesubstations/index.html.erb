@@ -1,4 +1,24 @@
 <% provide(:title, 'Справочник-Подстанции') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= form_tag("/mesubstations/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:mesubstation_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:mesubstation_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование") %>
+		</div>
+		<% end %></li>
+	<li><%= form_tag("/mesubstations/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qfilial, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qfilial, options_for_select(@ffils, @qfilial), class: "form-control", prompt: "Филиал...", include_blank: false, title: "Филиал") %>
+		  <%= select_tag(:qregion, options_for_select(@fregions, @qregion), class: "form-control", prompt: "Район...", include_blank: false, title: "Район") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "филиал, район") %>
+		</div>
+		<% end %></li>	    
+  </ul>  
+</nav>
 	 
 <h4 align="center">Справочник - Подстанции <%= image_tag('consumator.png', :alt => "Подстанции", :width => 60, :height => 40) %></h4>
 
@@ -40,7 +60,7 @@
 			   <th>Код</th>			   
 			   <th>Наименование</th>
 			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
-			   <th>Регион <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
+			   <th>Район <%= image_tag('moldova-map.png', :alt => "Регионы", :width => 25, :height => 25) %></th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
 			</tr>	
@@ -57,8 +77,8 @@
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
-						<td><% if item.f == false then %><em><% end %><%= if item.filial then item.filial.name end %><% if item.f == false then %></em><% end %></td>
-						<td><% if item.f == false then %><em><% end %><%= if item.region then item.region.cvalue end %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.filial_name %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= item.region_name %><% if item.f == false then %></em><% end %></td>
                         <td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
                         <td><%= link_to " " , mesubstations_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , mesubstations_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",

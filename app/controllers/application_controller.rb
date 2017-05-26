@@ -7,11 +7,14 @@ class ApplicationController < ActionController::Base
   $PerPage = 10
   $Luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'] 
   $data_for_search = ''
+  $mesubstation_search = ''
   $qmesubstation = ''
   $qcompany = ''
   $qregion = ''
   $qfilial = ''
-  $qfurnizor = '' 
+  $qfurnizor = ''
+  $mesubstation_qregion = ''
+  $mesubstation_qfilial = '' 
   
   def nav_menu
    if !current_user.nil? then 

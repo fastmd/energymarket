@@ -51,7 +51,37 @@ class MesubstationsController < ApplicationController
 private  
 
   def indexviewall
-    @mesubstations = Mesubstation.all.order(filial_id: :asc, region_id: :asc, name: :asc)
+    @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
+    @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
+    if params[:filter] then
+        $mesubstation_qregion = @qregion = params[:qregion].to_s
+        $mesubstation_qfilial = @qfilial = params[:qfilial].to_s
+        @data_for_search = $mesubstation_search = '' 
+    else
+        if params[:search] then
+            $mesubstation_search = @data_for_search = params[:mesubstation_search].to_s
+            $mesubstation_qregion = ''
+            $mesubstation_qfilial = ''          
+        else
+            @data_for_search = $mesubstation_search
+            unless @data_for_search.empty? then $mesubstation_qregion = $mesubstation_qfilial = '' end
+        end
+        @qregion = $mesubstation_qregion
+        @qfilial = $mesubstation_qfilial
+    end 
+    if @data_for_search.empty? then
+      if @qregion.empty? and @qfilial.empty? then   
+       @mesubstations = Vallmesubstation.all.order(filial_name: :asc, region_name: :asc, name: :asc, id: :asc)
+      else        
+       @mesubstations =  Vallmesubstation.where("(?='' or region_name=?) and (?='' or filial_name=?)", 
+                               @qregion, @qregion, @qfilial, @qfilial).order(filial_name: :asc, region_name: :asc, name: :asc, id: :asc)
+      end  
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       @mesubstations =  Vallmesubstation.where(" to_char(cod,'99999999999999999') like ? or upper(name) like ? ", 
+                               data_for_search, data_for_search).order(filial_name: :asc, region_name: :asc, name: :asc, id: :asc)
+    end        
     @page = params[:page] 
     if !@mesubstation.nil? && !@mesubstation.id.nil? then 
       i = 0

@@ -62,31 +62,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company = Company.find(params[:cp_id])
       params[:cp_id] = nil
     end  
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    if params[:filter] then
-        $qmesubstation = @qmesubstation = params[:qmesubstation].to_s
-        $qcompany = @qcompany = params[:qcompany].to_s
-        $qregion = @qregion = params[:qregion].to_s
-        $qfilial = @qfilial = params[:qfilial].to_s
-        $qfurnizor = @qfurnizor = params[:qfurnizor].to_s
-        @data_for_search = $data_for_search = '' 
-    else
-        if params[:search] then
-            $data_for_search = @data_for_search = params[:q].to_s
-            $qmesubstation = ''
-            $qcompany = ''
-            $qregion = ''
-            $qfilial = ''
-            $qfurnizor = ''            
-        else
-            @data_for_search = $data_for_search
-        end
-        @qmesubstation = $qmesubstation
-        @qcompany = $qcompany
-        @qregion = $qregion
-        @qfilial = $qfilial
-        @qfurnizor = $qfurnizor
-    end    
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end   
     @mpoint = Mpoint.new 
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)
@@ -618,6 +594,30 @@ private
    end
   
    def indexview
+    if params[:filter] then
+        $qmesubstation = @qmesubstation = params[:qmesubstation].to_s
+        $qcompany = @qcompany = params[:qcompany].to_s
+        $qregion = @qregion = params[:qregion].to_s
+        $qfilial = @qfilial = params[:qfilial].to_s
+        $qfurnizor = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = $data_for_search = '' 
+    else
+        if params[:search] then
+            $data_for_search = @data_for_search = params[:q].to_s
+            $qmesubstation = ''
+            $qcompany = ''
+            $qregion = ''
+            $qfilial = ''
+            $qfurnizor = ''            
+        else
+            @data_for_search = $data_for_search
+        end
+        @qmesubstation = $qmesubstation
+        @qcompany = $qcompany
+        @qregion = $qregion
+        @qfilial = $qfilial
+        @qfurnizor = $qfurnizor
+    end      
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
     if @data_for_search.empty? then
       if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
