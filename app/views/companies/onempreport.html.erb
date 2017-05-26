@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", companies_path(:id => @flr.id, :cp_id => @id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-level-up" %></li>
     <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
     <li><%= form_tag companies_onempreport_path(:id => @flr.id, :mp_id => @mp.id, :page => @page) do %>
@@ -18,8 +18,8 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-piggy-bank"
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-tower" end %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(:id => @mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>

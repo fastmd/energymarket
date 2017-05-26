@@ -9,7 +9,7 @@
 		  <%= label_tag(:q, "Искать:", class: "control-label") %>
 		  <%= search_field_tag(:q, @data_for_search, placeholder: 'Enter your search query here', class: "form-control") %>
 		  <%= hidden_field_tag :id, @flr.id %>
-		  <%= submit_tag("Поиск", class: "btn btn-primary") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search") %>
 		</div>
 		<% end %></li>
 	<li><%= form_tag("/companies/index", method: "get", class: 'form-inline') do %>
@@ -21,7 +21,7 @@
 		  <%= select_tag(:qregion, options_for_select(@fregions, @qregion), class: "form-control", prompt: "Регион...", include_blank: false) %>
 		  <%= select_tag(:qmesubstation, options_for_select(@fsstations, @qmesubstation), class: "form-control", prompt: "Подстанция...", include_blank: false) %>
 		  <%= hidden_field_tag :id, @flr.id %>
-		  <%= submit_tag("Фильтр", class: "btn btn-primary") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter") %>
 		</div>
 		<% end %></li>	    
   </ul>  

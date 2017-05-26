@@ -5,7 +5,13 @@ class ApplicationController < ActionController::Base
   before_filter :nav_menu 
   $GreenDelay = 60*60
   $PerPage = 10
-  $Luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie']  
+  $Luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'] 
+  $data_for_search = ''
+  $qmesubstation = ''
+  $qcompany = ''
+  $qregion = ''
+  $qfilial = ''
+  $qfurnizor = '' 
   
   def nav_menu
    if !current_user.nil? then 

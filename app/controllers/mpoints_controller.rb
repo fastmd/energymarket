@@ -135,12 +135,30 @@ helper_method :sort_column, :sort_direction
 
   def index
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    @data_for_search = params[:q].to_s
-    @qmesubstation = params[:qmesubstation].to_s
-    @qcompany = params[:qcompany].to_s
-    @qregion = params[:qregion].to_s
-    @qfilial = params[:qfilial].to_s
-    @qfurnizor = params[:qfurnizor].to_s
+    if params[:filter] then
+        $qmesubstation = @qmesubstation = params[:qmesubstation].to_s
+        $qcompany = @qcompany = params[:qcompany].to_s
+        $qregion = @qregion = params[:qregion].to_s
+        $qfilial = @qfilial = params[:qfilial].to_s
+        $qfurnizor = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = $data_for_search = '' 
+    else
+        if params[:search] then
+            $data_for_search = @data_for_search = params[:q].to_s
+            $qmesubstation = ''
+            $qcompany = ''
+            $qregion = ''
+            $qfilial = ''
+            $qfurnizor = ''            
+        else
+            @data_for_search = $data_for_search
+        end
+        @qmesubstation = $qmesubstation
+        @qcompany = $qcompany
+        @qregion = $qregion
+        @qfilial = $qfilial
+        @qfurnizor = $qfurnizor
+    end 
     if @data_for_search.empty? then
       if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")

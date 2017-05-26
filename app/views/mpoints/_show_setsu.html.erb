@@ -8,7 +8,7 @@
  	
 <ul class="breadcrumb">
   <li><%= link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
-  <li><%= link_to "Филиал: #{@mp.mesubstation.filial.name}", companies_index_path(:id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-tower" %></li>
+  <li><%= link_to "Филиал: #{@mp.mesubstation.filial.name}", companies_index_path(:id => @mp.mesubstation.filial,:cp_id => @mp.company_id), :class => "glyphicon glyphicon-tower" %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>

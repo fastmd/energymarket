@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", companies_path(:id => @flr.id, :page => @page), :class => "glyphicon glyphicon-level-up" %></li>                  
+    <li><%= link_to "Назад", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-level-up" %></li>                  
   </ul>  
 </nav>
 
@@ -11,8 +11,8 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %></li>
+  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-piggy-bank"
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-tower" end %></li>
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 

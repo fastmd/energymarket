@@ -1,6 +1,6 @@
 class CompaniesController < ApplicationController
 before_filter :check_user
-before_filter :redirect_cancel, only: [:create, :update]    
+before_filter :redirect_cancel, only: [:create, :update] 
   
   def new
   end
@@ -63,12 +63,30 @@ before_filter :redirect_cancel, only: [:create, :update]
       params[:cp_id] = nil
     end  
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    @data_for_search = params[:q].to_s
-    @qmesubstation = params[:qmesubstation].to_s
-    @qcompany = params[:qcompany].to_s
-    @qregion = params[:qregion].to_s
-    @qfilial = params[:qfilial].to_s
-    @qfurnizor = params[:qfurnizor].to_s   
+    if params[:filter] then
+        $qmesubstation = @qmesubstation = params[:qmesubstation].to_s
+        $qcompany = @qcompany = params[:qcompany].to_s
+        $qregion = @qregion = params[:qregion].to_s
+        $qfilial = @qfilial = params[:qfilial].to_s
+        $qfurnizor = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = $data_for_search = '' 
+    else
+        if params[:search] then
+            $data_for_search = @data_for_search = params[:q].to_s
+            $qmesubstation = ''
+            $qcompany = ''
+            $qregion = ''
+            $qfilial = ''
+            $qfurnizor = ''            
+        else
+            @data_for_search = $data_for_search
+        end
+        @qmesubstation = $qmesubstation
+        @qcompany = $qcompany
+        @qregion = $qregion
+        @qfilial = $qfilial
+        @qfurnizor = $qfurnizor
+    end    
     @mpoint = Mpoint.new 
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)

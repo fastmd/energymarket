@@ -10,7 +10,7 @@
   <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
   <li><%= link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
   	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
-  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_index_path(:id => @mp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank") %></li>
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_index_path(:id => @mp.furnizor_id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-piggy-bank") %></li>
   <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.clsstation}" %></strong></li>
 </ul>

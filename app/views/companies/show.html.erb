@@ -2,7 +2,7 @@
 	           
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-level-up" %></li>
   </ul>  
 </nav>
 
@@ -13,8 +13,8 @@
   <li><%= if (@fpr > 5) 
   	         then link_to(if @flr.name.upcase.include?("FEE") then "Поставщик: #{@flr.name} #{image_tag('fee.png', :size => 25)}".html_safe
   	                      elsif @flr.name.upcase.include?("FENOSA") then "Поставщик: #{@flr.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
-  	                      else "Поставщик: #{@flr.name}" end, companies_path(:id => @flr.id), :class => "glyphicon glyphicon-piggy-bank")
-  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id), :class => "glyphicon glyphicon-tower" end %>
+  	                      else "Поставщик: #{@flr.name}" end, companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-piggy-bank")
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-tower" end %>
   </li>  
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
