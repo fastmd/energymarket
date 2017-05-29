@@ -20,7 +20,7 @@
   <li><%= if (@fpr > 5) 
   	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-piggy-bank"
   	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-tower" end %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(:id => @mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
 	

@@ -52,6 +52,9 @@ class LinesController < ApplicationController
 private  
 
   def indexviewall
+    @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
+    @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
+    @fsstations  = Mesubstation.select(:name).distinct.order(name: :asc).pluck(:name) 
     @lines = Vallline.all.order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc)
     @page = params[:page] 
     if !@line.nil? && !@line.id.nil? then 

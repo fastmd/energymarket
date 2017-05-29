@@ -78,7 +78,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   
   def show     
     @cp =  Company.find(params[:id])
-    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
+    if @fpr < 6  then  @flr = Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
     @mpoint = @cp.mpoints.build
     @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )

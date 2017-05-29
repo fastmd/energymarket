@@ -1,4 +1,25 @@
 <% provide(:title, 'Справочник-Линии') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= form_tag("/lines/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:mesubstation_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:mesubstation_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование") %>
+		</div>
+		<% end %></li>
+	<li><%= form_tag("/lines/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qfilial, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qfilial, options_for_select(@ffils, @qfilial), class: "form-control", prompt: "Филиал...", include_blank: false, title: "Филиал") %>
+		  <%= select_tag(:qregion, options_for_select(@fregions, @qregion), class: "form-control", prompt: "Район...", include_blank: false, title: "Район") %>
+		  <%= select_tag(:qmesubstation, options_for_select(@fsstations, @qmesubstation), class: "form-control", prompt: "Подстанция...#{@qmesubstation}", include_blank: false, title: "Подстанция") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "филиал, район, подстанция") %>
+		</div>
+		<% end %></li>	    
+  </ul>  
+</nav>
 	 
 <h4 align="center">Справочник - Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4>
 
