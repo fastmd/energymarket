@@ -13,7 +13,7 @@
     	<div class="form-group">
 		  <%= label_tag(:qq, "Фильтр:", class: "control-label") %>
 		  <%= select_tag(:qq, options_for_select(@fqs, @qq), class: "form-control", prompt: "Сечение провода q, мм2...", include_blank: false, title: "Сечение провода q, мм2") %>
-		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "Uном, Sном, Uкз") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "Сечение провода q, мм2") %>
 		</div>
 		<% end %></li>			    
   </ul>  

@@ -79,8 +79,8 @@ private
       if @qunom.empty? and @qsnom.empty? and @qukz.empty? then   
            @transformators = Transformator.all.order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)
       else  
-           @transformators = Transformator.where("(?='' or unom=?) and (?='' or trim(to_char(snom,'99999999.9')) like ?) and (?='' or trim(to_char(ukz,'99999999.9')) like ?)", 
-                               @qunom, @qunom, @qsnom, @qsnom, @qukz, @qukz).order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)      
+           @transformators = Transformator.where("(?='' or unom=?) and (?='' or trim(to_char(snom,'99999999.9')) like ?) and (?='' or trim(to_char(ukz,'99999999.9')) like ?or trim(to_char(ukz,'99999999.99')) like ?)", 
+                               @qunom, @qunom, @qsnom, @qsnom, @qukz, @qukz, @qukz).order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)      
       end  
     else
        @data_for_search = @data_for_search.upcase
