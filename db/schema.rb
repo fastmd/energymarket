@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170526105401) do
+ActiveRecord::Schema.define(version: 20170530114842) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,6 +131,8 @@ ActiveRecord::Schema.define(version: 20170526105401) do
     t.boolean  "r",                                   default: true, null: false
     t.decimal  "actp580",    precision: 14, scale: 4
     t.decimal  "actp880",    precision: 14, scale: 4
+    t.integer  "trab"
+    t.decimal  "dwa",        precision: 20, scale: 4
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 

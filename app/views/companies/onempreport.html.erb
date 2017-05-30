@@ -106,7 +106,8 @@
       <th>Энергия 1.8.0, kWh</th>      
       <th>Энергия 2.8.0, kWh</th>
       <th>Энергия 3.8.0, kVAh</th>
-      <th>Энергия 4.8.0, kVAh</th> 
+      <th>Энергия 4.8.0, kVAh</th>
+      <th>Потребление<br>субабонента, kWh</th> 
     </tr>  
   </thead>
   <tbody>
@@ -115,6 +116,7 @@
       <td><%= @energies[:waliv_formula] %><strong><%= @energies[:waliv] %></strong></td>
       <td><%= @energies[:wri_formula] %><strong><%= @energies[:wri] %></strong></td>
       <td><%= @energies[:wrc_formula] %><strong><%= @energies[:wrc] %></strong></td>
+      <td><strong><%= @energies[:wasub] %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -124,12 +126,14 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
+      <th>Время работы<br> электроустановки, часы</th>	
       <th>Tраб, часы</th>	
       <th>cos φ</th>      
     </tr>  
   </thead>
   <tbody>
     <tr>
+      <td><strong><%= @energies[:trab] %></strong></td>	
       <td><%= @energies[:workt_formula] %><strong><%= @energies[:workt] %></strong></td>	
       <td><%= @losses[:cosfi_formula] %><strong><%= @losses[:cosfi] %></strong></td>
     </tr>

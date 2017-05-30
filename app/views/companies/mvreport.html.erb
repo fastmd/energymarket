@@ -29,7 +29,9 @@
       <th>Активный прием A+</th>
       <th>Активная отдача A-</th>
       <th>Реактивный прием R+</th>
-      <th>Реактивная отдача R-</th>   
+      <th>Реактивная отдача R-</th>
+	  <th>Время работы<br> электроустановки, часы</th>
+	  <th>Потребление<br> субабонента, кВт*ч</th>         
       <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
       <th>Дата изменений</th>  
     </tr>  
@@ -52,6 +54,8 @@
       	 <td><%= item.actp280 %></td>
       	 <td><%= item.actp380 %></td>
       	 <td><%= item.actp480 %></td>
+		 <td><%= item.trab %></td>
+		 <td><%= item.dwa %></td>      	 
       	 <td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
       	 <td><%= item.mvalue_updated_at %></td>
       </tr>

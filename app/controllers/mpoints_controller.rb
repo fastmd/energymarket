@@ -83,7 +83,7 @@ helper_method :sort_column, :sort_direction
       end
       if @flag.nil? then
         if @mvs.count==0 then
-          @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,
+          @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,:trab=>nil,:dwa=>nil,
                         :actdate=>Date.current,:comment=>nil,:f=>'true',:r=>'true'} 
         else 
           @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.meter_id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
@@ -92,6 +92,7 @@ helper_method :sort_column, :sort_direction
         end                
       elsif (@flag=='mvedit' || @flag=='mvadd') then
          @mv_params = {:mv_id=>params[:mv_id],:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
+                       :trab=>params[:trab],:dwa=>params[:dwa],
                        :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r]}   
       end       
       @mvs = @mvs.paginate(:page => params[:page], :per_page => @perpage = $PerPage)      

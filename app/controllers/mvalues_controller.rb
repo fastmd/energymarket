@@ -13,6 +13,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     mv.actp280 = params[:actp280]
     mv.actp380 = params[:actp380]
     mv.actp480 = params[:actp480]
+    mv.trab = params[:trab]
+    mv.dwa = params[:dwa]
     mv.actdate = params[:actdate]
     mv.comment = params[:comment]
     mv.f = if params[:f].nil? then false else true end
@@ -23,10 +25,12 @@ before_filter :redirect_cancel, only: [:create, :update]
           flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
           if params[:mv_id].nil? or params[:mv_id]=='' then
             redirect_to mpoint_path(mp,:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
+                                       :trab=>params[:trab],:dwa=>params[:dwa], 
                                        :actdate =>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:flag=>'mvadd',:met=>params[:met])
           else
             redirect_to mpoint_path(mp,:mv_id=>mv.id,
                                        :meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280 =>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
+                                       :trab=>params[:trab],:dwa=>params[:dwa],
                                        :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:flag=>'mvedit',:met=>params[:met])
           end    
      end   
@@ -41,6 +45,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     mp  = met.mpoint
     redirect_to mpoint_path(mp, :flag=>'mvedit', :met => params[:met], :mv_id => mv.id, 
                                 :meter_id=>mv.meter_id,:actp180=>mv.actp180,:actp280=>mv.actp280,:actp380=>mv.actp380,:actp480=>mv.actp480,
+                                :trab=>mv.trab,:dwa=>mv.dwa,
                                 :actdate=>mv.actdate,:comment=>mv.comment,:f=>mv.f,:r=>mv.r)
   end
 

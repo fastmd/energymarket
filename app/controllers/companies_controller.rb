@@ -381,7 +381,7 @@ private
   def one_mp_indicii(mp_id, ddate_b, ddate_e, ddate_mb, ddate_me)
     result={}
     mpoint = Mpoint.find(mp_id)
-    wa = waliv = wri = wrc = 0.0
+    wa = waliv = wri = wrc = wasub = 0.0
     indicii = []       
     mvnum = 0 
     meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end))", mp_id, ddate_b, ddate_e).order(:meter_id)
@@ -396,7 +396,7 @@ private
        mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate, :mvalue_updated_at).last
        unless mvalues.nil? then dddate_e = mvalues.actdate end       
        # indicii      
-       dtsum = 0
+       dtsum = trabsum = 0
        result[:wa_formula] = ""
        result[:waliv_formula] = ""
        result[:wri_formula] = ""
@@ -412,7 +412,13 @@ private
               date1 = mvalue1.actdate         #date1           
               date0 = mvalue0.actdate         #date0
               dt = (date1 - date0).to_i       #dt
-              dtsum += dt                     #dtsum
+              trab = mvalue1.trab             #trab from act
+              dwa  = mvalue1.dwa              #dwa  from act 
+              if trab.nil? or trab == 0 then 
+                dtsum += dt                     #dtsum
+              else
+                trabsum += trab
+              end    
               indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
               indicii0[:ind1_180] = mvalue1.actp180          #180
               ind1 = if mvalue1.actp180.nil? then 0 else mvalue1.actp180 end
@@ -423,6 +429,7 @@ private
               if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
               result[:wa_formula] += dind.to_s + " * " + koef.to_s
               wa += energy
+              unless dwa.nil? then wasub +=dwa end
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
               indicii0[:ind0_280] = mvalue0.actp280          #280
@@ -456,11 +463,13 @@ private
        result[:indicii] = indicii
        result[:mvnum] = mvnum
        if mvnum == 2 then
-         # work hours 
-         result[:workt] = dtsum * 24
-         result[:workt_formula] = dtsum.to_s + " * 24 = "        
+         # work hours
+         result[:trab] = trabsum 
+         result[:workt] = dtsum * 24 + trabsum
+         result[:workt_formula] = dtsum.to_s + " * 24 + " + trabsum.to_s + " = "        
          # energies
          result[:wa] = wa
+         result[:wasub] = wasub
          result[:wa_formula] += " = "
          result[:waliv] = waliv
          result[:waliv_formula] += " = "
@@ -604,11 +613,7 @@ private
     else
         if params[:search] then
             $data_for_search = @data_for_search = params[:q].to_s
-            $qmesubstation = ''
-            $qcompany = ''
-            $qregion = ''
-            $qfilial = ''
-            $qfurnizor = ''            
+            $qmesubstation = $qcompany = $qregion = $qfilial = $qfurnizor = ''            
         else
             @data_for_search = $data_for_search
         end
