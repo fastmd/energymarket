@@ -470,6 +470,8 @@ private
          # energies
          result[:wa] = wa
          result[:wasub] = wasub
+         result[:wa_without_wasub] = wa - wasub
+         result[:wa_without_wasub_formula] = wa.to_s + " - " + wasub.to_s + " = " 
          result[:wa_formula] += " = "
          result[:waliv] = waliv
          result[:waliv_formula] += " = "
@@ -486,8 +488,8 @@ private
     result={}
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 && (indicii[:wa]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
-      wa    = indicii[:wa] 
+    if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
+      wa    = indicii[:wa_without_wasub] 
       waliv = indicii[:waliv]
       wri   = indicii[:wri]
       wrc   = indicii[:wrc]

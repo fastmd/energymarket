@@ -107,7 +107,8 @@
       <th>Энергия 2.8.0, kWh</th>
       <th>Энергия 3.8.0, kVAh</th>
       <th>Энергия 4.8.0, kVAh</th>
-      <th>Потребление<br>субабонента, kWh</th> 
+      <th>Потребление<br>субабонента, kWh</th>
+      <th>Потребление за вычетом<br> потребления<br>субабонента, kWh</th> 
     </tr>  
   </thead>
   <tbody>
@@ -117,6 +118,7 @@
       <td><%= @energies[:wri_formula] %><strong><%= @energies[:wri] %></strong></td>
       <td><%= @energies[:wrc_formula] %><strong><%= @energies[:wrc] %></strong></td>
       <td><strong><%= @energies[:wasub] %></strong></td>
+      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= @energies[:wa_without_wasub] %></strong></td>
     </tr>
   </tbody>
 </table>
