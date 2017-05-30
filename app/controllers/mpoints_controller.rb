@@ -172,10 +172,10 @@ helper_method :sort_column, :sort_direction
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (upper(company_name||company_shname) like ? "+ 
-                               "or upper(cod||name) like ? "+ 
-                               "or upper(filial_name||region_name||furnizor_name) like ? "+ 
-                               "or upper(mesubstation_name) like ?) ", 
+                               "and (upper(company_name||company_shname) like upper(?) "+ 
+                               "or upper(cod||name) like upper(?) "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                               "or upper(mesubstation_name) like upper(?)) ", 
                                @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order("#{sort_column} #{sort_direction}")
     end 
     @comps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)

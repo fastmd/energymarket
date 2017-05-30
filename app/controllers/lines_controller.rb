@@ -55,7 +55,40 @@ private
     @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
     @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
     @fsstations  = Mesubstation.select(:name).distinct.order(name: :asc).pluck(:name) 
-    @lines = Vallline.all.order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc)
+    #-----------------------------
+    if params[:filter] then
+        $mesubstation_qregion = @qregion = params[:qregion].to_s
+        $mesubstation_qfilial = @qfilial = params[:qfilial].to_s
+        $line_qmesubstation = @qmesubstation = params[:qmesubstation].to_s
+        @data_for_search = $line_search = '' 
+    else
+        if params[:search] then
+            $line_search = @data_for_search = params[:line_search].to_s
+            $mesubstation_qregion = ''
+            $mesubstation_qfilial = ''
+            $line_qmesubstation = ''          
+        else
+            @data_for_search = $line_search
+            unless @data_for_search.empty? then $mesubstation_qregion = $mesubstation_qfilial = $line_qmesubstation = '' end
+        end
+        @qregion = $mesubstation_qregion
+        @qfilial = $mesubstation_qfilial
+        @qmesubstation = $line_qmesubstation
+    end 
+    if @data_for_search.empty? then
+      if @qregion.empty? and @qfilial.empty? and @qmesubstation.empty? then   
+           @lines = Vallline.all.order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)
+      else  
+           @lines = Vallline.where("(?='' or region_name=?) and (?='' or filial_name=?) and (?='' or mesubstation_name=?)", 
+                               @qregion, @qregion, @qfilial, @qfilial, @qmesubstation, @qmesubstation).order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)      
+      end  
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       @lines = Vallline.where("upper(name) like upper(?) ", 
+                               data_for_search).order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)
+    end 
+    #-----------------------------    
     @page = params[:page] 
     if !@line.nil? && !@line.id.nil? then 
       i = 0

@@ -1,4 +1,23 @@
 <% provide(:title, 'Справочник-Провода') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= form_tag("/wires/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:wire_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:wire_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "марка") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "марка") %>
+		</div>
+		<% end %></li>
+   	<li><%= form_tag("/wires/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qq, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qq, options_for_select(@fqs, @qq), class: "form-control", prompt: "Сечение провода q, мм2...", include_blank: false, title: "Сечение провода q, мм2") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "Uном, Sном, Uкз") %>
+		</div>
+		<% end %></li>			    
+  </ul>  
+</nav>
 	 
 <h4 align="center">Справочник - Типы провода <%= image_tag('wire3.png', :alt => "Провода", :width => 50, :height => 30) %></h4>
 

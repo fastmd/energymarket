@@ -4,9 +4,9 @@
   <ul class="nav nav-pills pull-left">
     <li><%= form_tag("/lines/index", method: "get", class: 'form-inline') do %>
     	<div class="form-group">
-		  <%= label_tag(:mesubstation_search, "Искать:", class: "control-label") %>
-		  <%= search_field_tag(:mesubstation_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование") %>
-		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование") %>
+		  <%= label_tag(:line_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:line_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "наименование") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "наименование") %>
 		</div>
 		<% end %></li>
 	<li><%= form_tag("/lines/index", method: "get", class: 'form-inline') do %>

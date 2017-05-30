@@ -1,4 +1,25 @@
 <% provide(:title, 'Справочник-Трансформаторы') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= form_tag("/transformators/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:transformator_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:transformator_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "тип") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "тип") %>
+		</div>
+		<% end %></li>
+   	<li><%= form_tag("/transformators/index", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qunom, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qunom, options_for_select(@funoms, @qunom), class: "form-control", prompt: "Uном...", include_blank: false, title: "Uном") %>
+		  <%= select_tag(:qsnom, options_for_select(@fsnoms, @qsnom), class: "form-control", prompt: "Sном...", include_blank: false, title: "Sном") %>
+		  <%= select_tag(:qukz, options_for_select(@fukzs, @qukz), class: "form-control", prompt: "Uкз...", include_blank: false, title: "Uкз") %>
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter", title: "Uном, Sном, Uкз") %>
+		</div>
+		<% end %></li>			    
+  </ul>  
+</nav>
 	 
 <h4 align="center">Справочник - Трансформаторы <%= image_tag('tr-r.png', :alt => "Трансформаторы", :width => 40, :height => 30) %></h4>
 

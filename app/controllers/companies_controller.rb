@@ -632,10 +632,10 @@ private
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (upper(company_name||company_shname) like ? "+ 
-                               "or upper(cod||name) like ? "+ 
-                               "or upper(filial_name||region_name||furnizor_name) like ? "+ 
-                               "or upper(mesubstation_name) like ?) ", 
+                               "and (upper(company_name||company_shname) like upper(?) "+ 
+                               "or upper(cod||name) like upper(?) "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                               "or upper(mesubstation_name) like upper(?)) ", 
                                @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
     end
     @companies = (Company.order(shname: :asc).find(company_list))     
@@ -658,7 +658,21 @@ private
   end  
   
   def indexviewall
-    @companies = Company.all.order(name: :asc)
+    #-----------------------------------------
+    if params[:search] then
+       $company_search = @data_for_search = params[:company_search].to_s        
+    else
+       @data_for_search = $company_search
+    end
+    if @data_for_search.empty? then
+       @companies = Company.all.order(shname: :asc, name: :asc, cod: :asc, id: :asc) 
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       @companies = Company.where(" upper(cod) like upper(?) or upper(name) like upper(?) or upper(shname) like upper(?) ", 
+                               data_for_search, data_for_search, data_for_search).order(shname: :asc, name: :asc, cod: :asc, id: :asc)
+    end   
+    #-----------------------------------------
     @page = params[:page] 
     if !@company.nil? && !@company.id.nil? then 
       i = 0

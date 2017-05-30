@@ -79,7 +79,7 @@ private
     else
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
-       @mesubstations =  Vallmesubstation.where(" to_char(cod,'99999999999999999') like ? or upper(name) like ? ", 
+       @mesubstations =  Vallmesubstation.where(" to_char(cod,'99999999999999999') like upper(?) or upper(name) like upper(?) ", 
                                data_for_search, data_for_search).order(filial_name: :asc, region_name: :asc, name: :asc, id: :asc)
     end        
     @page = params[:page] 

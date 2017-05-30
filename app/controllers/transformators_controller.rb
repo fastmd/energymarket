@@ -52,7 +52,42 @@ class TransformatorsController < ApplicationController
 private  
 
   def indexviewall
-    @transformators = Transformator.all.order(unom: :asc, snom: :asc, name: :asc)
+    @funoms = Transformator.select(:unom).distinct.order(unom: :asc).pluck(:unom)
+    @fsnoms = Transformator.select(:snom).distinct.order(snom: :asc).pluck(:snom)
+    @fukzs = Transformator.select(:ukz).distinct.order(ukz: :asc).pluck(:ukz)
+    #-----------------------------
+    if params[:filter] then
+        $transformator_qunom = @qunom = params[:qunom].to_s
+        $transformator_qsnom = @qsnom = params[:qsnom].to_s
+        $transformator_qukz = @qukz = params[:qukz].to_s
+        @data_for_search = $transformator_search = '' 
+    else
+        if params[:search] then
+            $transformator_search = @data_for_search = params[:transformator_search].to_s
+            $transformator_qunom = $transformator_qsnom = $transformator_qukz = ''          
+        else
+            @data_for_search = $transformator_search
+            unless @data_for_search.empty? then 
+              $transformator_qunom = $transformator_qsnom = $transformator_qukz = '' 
+            end
+        end
+        @qunom= $transformator_qunom
+        @qsnom = $transformator_qsnom
+        @qukz = $transformator_qukz
+    end 
+    if @data_for_search.empty? then
+      if @qunom.empty? and @qsnom.empty? and @qukz.empty? then   
+           @transformators = Transformator.all.order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)
+      else  
+           @transformators = Transformator.where("(?='' or unom=?) and (?='' or trim(to_char(snom,'99999999.9')) like ?) and (?='' or trim(to_char(ukz,'99999999.9')) like ?)", 
+                               @qunom, @qunom, @qsnom, @qsnom, @qukz, @qukz).order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)      
+      end  
+    else
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       @transformators = Transformator.where("upper(name) like upper(?) ", data_for_search).order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)
+    end 
+    #-----------------------------     
     @page = params[:page] 
     if !@transformator.nil? && !@transformator.id.nil? then 
       i = 0

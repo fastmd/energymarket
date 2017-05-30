@@ -1,5 +1,17 @@
 <% provide(:title, 'Справочник-Потребители') %>
 
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= form_tag("/companies/all", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:company_search, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:company_search, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование, краткое наименование") %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование, краткое наименование") %>
+		</div>
+		<% end %></li>    
+  </ul>  
+</nav>
+
 <h4 align="center">Справочник-Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h4>	 
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">

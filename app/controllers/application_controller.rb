@@ -8,13 +8,22 @@ class ApplicationController < ActionController::Base
   $Luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'] 
   $data_for_search = ''
   $mesubstation_search = ''
+  $line_search = ''
+  $company_search = ''
+  $transformator_search = ''
+  $wire_search = ''
   $qmesubstation = ''
   $qcompany = ''
   $qregion = ''
   $qfilial = ''
   $qfurnizor = ''
   $mesubstation_qregion = ''
-  $mesubstation_qfilial = '' 
+  $mesubstation_qfilial = ''
+  $line_qmesubstation = ''
+  $transformator_qunom = ''
+  $transformator_qsnom = ''
+  $transformator_qukz = ''
+  $wire_qq = ''   
   
   def nav_menu
    if !current_user.nil? then 
