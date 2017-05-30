@@ -238,7 +238,7 @@ before_filter :redirect_cancel, only: [:create, :update]
               unless indicii1[:ind1_380].nil? then report_rind[12]  = indicii1[:ind1_380].round end
               unless indicii1[:ind1_480].nil? then report_rind[13]  = indicii1[:ind1_480].round end
               unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
-              unless energies[:wa].nil? then report_rind[15]  = energies[:wa].round end
+              unless energies[:wa_without_wasub].nil? then report_rind[15]  = energies[:wa_without_wasub].round end
               unless energies[:wri].nil? then report_rind[16]  = energies[:wri].round end
               unless energies[:wrc].nil? then report_rind[17]  = energies[:wrc].round end
               unless losses.nil? then
@@ -279,7 +279,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     nr = 0
-    cp_enrgsums = [ 0.0, 0.0, 0.0, 0.0]
+    cp_enrgsums = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     trlosses = 0.0 
     lnlosses = 0.0
     consumteh = 0.0 
@@ -333,6 +333,14 @@ before_filter :redirect_cancel, only: [:create, :update]
           @report << [nil,'Energie r/liv',nil,nil,nil,nil,nil,nil,nil,energies[:wrc],nil]
           cp_enrgsums[3] += energies[:wrc]  
         end
+        unless energies[:wasub].nil? then 
+          @report << [nil,'Energie a/pr subabonent',nil,nil,nil,nil,nil,nil,nil,energies[:wasub],nil]
+          cp_enrgsums[4] += energies[:wasub]  
+        end
+        unless energies[:wa_without_wasub].nil? then 
+          @report << [nil,'Energie a/pr fara subabonent',nil,nil,nil,nil,nil,nil,nil,energies[:wa_without_wasub],nil]
+          cp_enrgsums[5] += energies[:wa_without_wasub]  
+        end
         # Trab
         unless energies[:workt].nil? then @report << [nil,'Tраб, часы',nil,nil,nil,nil,nil,nil,nil,energies[:workt],2] end
         # pierderi   
@@ -360,7 +368,9 @@ before_filter :redirect_cancel, only: [:create, :update]
           consumteh += losses[:consumteh] 
         end    
       end  # mpoint.each
-    @report << ['∑','Итого Energie a/pr',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[0],4]       
+    @report << ['∑','Итого Energie a/pr',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[0],4]
+    @report << ['∑','Итого Energie a/pr subabonent',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[4],4]
+    @report << ['∑','Итого Energie a/pr fara subabonent',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[5],4]       
     @report << ['∑','Итого Energie a/liv',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[1],4]
     @report << ['∑','Итого Energie r/pr',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[2],4]       
     @report << ['∑','Итого Energie r/liv',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[3],4]            
