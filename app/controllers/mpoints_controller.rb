@@ -255,6 +255,7 @@ private
     mpoint.comment = params[:comment]
     mpoint.f = if params[:f].nil? then false else true end
     mpoint.fct = if params[:fct].nil? then false else true end
+    mpoint.fctc = if params[:fctc].nil? then nil else true end  
     mpoint.cosfi = params[:cosfi]      
     mpoint    
   end      

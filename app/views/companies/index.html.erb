@@ -98,6 +98,8 @@
 		   				<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
 		   			    <label for='fct' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Считать тех.расход</span></label>
 		   				<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
+		   			    <label for='fctc' class="control-label"><span class="glyphicon glyphicon-oil" aria-hidden="true">Тех.расход только емкостной</span></label>
+		   				<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>
 			    <div class="form-group">		   				
 		   				<label for='cosfi' class="control-label">cos φ</label>		
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>

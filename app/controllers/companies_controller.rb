@@ -499,11 +499,16 @@ private
     result={}
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
+    if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
       wa    = indicii[:wa_without_wasub] 
       waliv = indicii[:waliv]
-      wri   = indicii[:wri]
-      wrc   = indicii[:wrc]
+      if wa!=0 || waliv == 0 then 
+        wri   = indicii[:wri]
+        wrc   = indicii[:wrc]
+      else
+        wrc   = indicii[:wri]
+        wri   = indicii[:wrc]        
+      end    
       wr    = indicii[:wri] + indicii[:wrc]
       workt = indicii[:workt]       
       # косинус фи 
@@ -623,11 +628,17 @@ private
              wrif = result[:wrif] = 0.0
              result[:wrif_formula] = "0.0"
            end
-           ct = result[:consumteh] = ((wrc + wrif ) * 0.1).round(4)
-           result[:consumtehi] = ((wrif ) * 0.1).round(4)
-           result[:consumtehi_formula] = wrif.to_s + " * 0.1"
-           result[:consumtehc] = ((wrc) * 0.1).round(4)
-           result[:consumtehc_formula] = wrc.to_s + " * 0.1"
+           unless mpoint.fctc then
+             ct = result[:consumteh] = ((wrc + wrif ) * 0.1).round(4)
+             result[:consumtehi] = ((wrif ) * 0.1).round(4)
+             result[:consumtehi_formula] = wrif.to_s + " * 0.1"
+             result[:consumtehc] = ((wrc) * 0.1).round(4)
+             result[:consumtehc_formula] = wrc.to_s + " * 0.1"
+           else
+             ct = result[:consumteh] = ((wrc ) * 0.1).round(4)
+             result[:consumtehc] = ((wrc) * 0.1).round(4)
+             result[:consumtehc_formula] = wrc.to_s + " * 0.1"             
+           end    
        end #if wa               
      end # if mvnum
    result

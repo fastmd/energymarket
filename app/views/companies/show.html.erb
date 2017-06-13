@@ -72,7 +72,9 @@
 		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
 		   				<label for='fct' class="control-label">Считать тех.расход</label>						
-						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>						
+						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
+						<label for='fctc' class="control-label">Тех.расход только емкостной</label>						
+						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>					
 			    </div>
 			    <div class="form-group">		   				
 		   				<label for='cosfi' class="control-label">cos φ</label>		
@@ -115,7 +117,8 @@
 			   <% end %>   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>Тех.расход</th>
+			   <th>Тех. расход</th>
+			   <th>Тех. расх. емк.</th>
 			   <th>cos φ</th>			   
 			   <th>.........</th>	   
 			</tr>	
@@ -152,6 +155,7 @@
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  						<td><% if item.fctc then %><span class="glyphicon glyphicon-oil" aria-hidden="true"></span><% end %></td>
   						<td><%= item.cosfi %></td>      						
                         <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
   						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
