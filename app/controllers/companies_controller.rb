@@ -345,7 +345,8 @@ before_filter :redirect_cancel, only: [:create, :update]
         unless energies[:workt].nil? then @report << [nil,'Tраб, часы',nil,nil,nil,nil,nil,nil,nil,energies[:workt],2] end
         # pierderi   
         losses = one_mp_losses(mp.id, energies)
-        unless losses[:cosfi].nil? then @report << [nil,'cos φ',nil,nil,nil,nil,nil,nil,nil,losses[:cosfi],nil] end
+        unless losses[:cosfi].nil? then @report << [nil,'cos φ расчетный',nil,nil,nil,nil,nil,nil,nil,losses[:cosfi],nil] end
+        unless losses[:cosfi_contract].nil? then @report << [nil,'cos φ контрактный',nil,nil,nil,nil,nil,nil,nil,losses[:cosfi_contract],2] end
         unless losses[:tau].nil? then @report << [nil,'ζ',nil,nil,nil,nil,nil,nil,nil,losses[:tau],nil] end  
         unless losses[:tr_losses_pxx].nil? then @report << [nil,'Потери тр-ра Pxx',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_pxx],nil] end
         unless losses[:tr_losses_pkz].nil? then @report << [nil,'Потери тр-ра Pкз',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_pkz],nil] end
@@ -510,7 +511,13 @@ private
         cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
         result[:cosfi] = cosfi
         result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
-      end 
+      end
+      # косинус фи контрактный
+      result[:cosfi_contract] = cosfi_contract = mpoint.cosfi
+      if !cosfi_contract.nil? and cosfi_contract != 0 then
+        result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
+        result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 = " # tg fi
+      end   
       #tau
       taus  = Tau.all
       ttaus = []  
@@ -544,13 +551,20 @@ private
                     :wa => wa}
           if tritem.transformator.snom == 0 then
             flash[:warning] = "Невозможно рассчитать потери КЗ тр-ра для #{mpoint.name}, т.к. Snom = 0 !"                   
-          else  
-            tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+          else 
             if result[:tr_losses_pkz_formula] != "" then result[:tr_losses_pkz_formula] += " + "  end
-            result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
-            tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-            if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end
-            result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+            if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end              
+            if tgfi_contract.nil? then 
+              result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+              result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+              tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+            else
+              result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
+              result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
+              tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+            end                            
           end
           tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
           if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end

@@ -69,11 +69,15 @@
 						<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">		
-		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>						
+		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
-		   				<label for='fct' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Считать тех.расход</span></label>						
+		   				<label for='fct' class="control-label">Считать тех.расход</label>						
 						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>						
-			    </div>	
+			    </div>
+			    <div class="form-group">		   				
+		   				<label for='cosfi' class="control-label">cos φ</label>		
+						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
+		   		</div>
 	  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
 	  			<%= hidden_field_tag :id, @mpoint.id %>
 	  			<%= hidden_field_tag :flr_id, @flr.id %> 
@@ -112,6 +116,7 @@
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>Тех.расход</th>
+			   <th>cos φ</th>			   
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -146,9 +151,10 @@
   						<% end %>    
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
-                        <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil" %>
-  						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove",
+  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  						<td><%= item.cosfi %></td>      						
+                        <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
+  						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
   						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>
 					</tr>		
 				<% end %>			

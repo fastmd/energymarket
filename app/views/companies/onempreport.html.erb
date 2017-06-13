@@ -48,49 +48,49 @@
   	<% unless @indicii.nil? then%>
     <% @indicii.each do |item| %>
       <tr>
-      	 <td><%= item[:meternum] %></td>
+      	 <td><%= number_with_delimiter(item[:meternum], delimiter: " ") %></td>
       	 <td>Дата съема</td>
       	 <td><%= item[:date1] %></td>
       	 <td><%= item[:date0] %></td>
-      	 <td><%= item[:dt] %>, дни</td>
+      	 <td><strong><%= number_with_delimiter(item[:dt], delimiter: " ") %>, дни</strong></td>
       	 <td></td>
       	 <td></td>
       </tr>
       <tr>
       	 <td></td>
       	 <td>1.8.0</td>
-      	 <td><%= item[:ind1_180] %></td>
-      	 <td><%= item[:ind0_180] %></td>
-      	 <td><%= item[:dind_180] %></td>
-      	 <td><%= item[:koef] %></td>
-      	 <td><%= item[:enrg_180] %></td>
+      	 <td><%= number_with_delimiter(item[:ind1_180], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:ind0_180], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:dind_180], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
+      	 <td><strong><%= number_with_delimiter(item[:enrg_180], delimiter: " ") %></strong></td>
       </tr>
       <tr>
       	 <td></td>
       	 <td>2.8.0</td>
-      	 <td><%= item[:ind1_280] %></td>
-      	 <td><%= item[:ind0_280] %></td>
-      	 <td><%= item[:dind_280] %></td>
-      	 <td><%= item[:koef] %></td>
-      	 <td><%= item[:enrg_280] %></td>
+      	 <td><%= number_with_delimiter(item[:ind1_280], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:ind0_280], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:dind_280], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
+      	 <td><strong><%= number_with_delimiter(item[:enrg_280], delimiter: " ") %></strong></td>
       </tr>
       <tr>
       	 <td></td>
       	 <td>3.8.0</td>
-      	 <td><%= item[:ind1_380] %></td>
-      	 <td><%= item[:ind0_380] %></td>
-      	 <td><%= item[:dind_380] %></td>
-      	 <td><%= item[:koef] %></td>
-      	 <td><%= item[:enrg_380] %></td>
+      	 <td><%= number_with_delimiter(item[:ind1_380], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:ind0_380], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:dind_380], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
+      	 <td><strong><%= number_with_delimiter(item[:enrg_380], delimiter: " ") %></strong></td>
       </tr>
       <tr>
       	 <td></td>
       	 <td>4.8.0</td>
-      	 <td><%= item[:ind1_480] %></td>
-      	 <td><%= item[:ind0_480] %></td>
-      	 <td><%= item[:dind_480] %></td>
-      	 <td><%= item[:koef] %></td>
-      	 <td><%= item[:enrg_480] %></td>
+      	 <td><%= number_with_delimiter(item[:ind1_480], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:ind0_480], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:dind_480], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
+      	 <td><strong><%= number_with_delimiter(item[:enrg_480], delimiter: " ") %></strong></td>
       </tr>      
     <% end %>
     <% end %>
@@ -113,12 +113,12 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @energies[:wa_formula] %><strong><%= @energies[:wa] %></strong></td>
-      <td><%= @energies[:waliv_formula] %><strong><%= @energies[:waliv] %></strong></td>
-      <td><%= @energies[:wri_formula] %><strong><%= @energies[:wri] %></strong></td>
-      <td><%= @energies[:wrc_formula] %><strong><%= @energies[:wrc] %></strong></td>
-      <td><strong><%= @energies[:wasub] %></strong></td>
-      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= @energies[:wa_without_wasub] %></strong></td>
+      <td><%= @energies[:wa_formula] %><strong><%= number_with_delimiter(@energies[:wa], delimiter: " ") %></strong></td>
+      <td><%= @energies[:waliv_formula] %><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wri_formula] %><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -130,14 +130,18 @@
     <tr class="success">
       <th>Время работы<br> электроустановки, часы</th>	
       <th>Tраб, часы</th>	
-      <th>cos φ</th>      
+      <th>cos φ расчетный</th>
+      <th>cos φ контрактный</th>
+      <th>tg φ контрактный</th>        
     </tr>  
   </thead>
   <tbody>
     <tr>
-      <td><strong><%= @energies[:trab] %></strong></td>	
-      <td><%= @energies[:workt_formula] %><strong><%= @energies[:workt] %></strong></td>	
-      <td><%= @losses[:cosfi_formula] %><strong><%= @losses[:cosfi] %></strong></td>
+      <td><strong><%= number_with_delimiter(@energies[:trab], delimiter: " ") %></strong></td>	
+      <td><%= @energies[:workt_formula] %><strong><%= number_with_delimiter(@energies[:workt], delimiter: " ") %></strong></td>	
+      <td><%= @losses[:cosfi_formula] %><strong><%= number_with_delimiter(@losses[:cosfi], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@losses[:cosfi_contract], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@losses[:tgfi_contract], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -166,13 +170,13 @@
 	  <tr>
       	 <td><%= j+= 1 %></td>
 		 <td><%= item.mark %></td>
-		 <td><%= item.unom %></td>
-		 <td><%= item.snom %></td>
-		 <td><%= item.ukz %></td>
-		 <td><%= item.pkz %></td>
-		 <td><%= item.pxx %></td>
-		 <td><%= item.io %></td>
-		 <td><%= item.qkz %></td>
+		 <td><%= number_with_delimiter(item.unom, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.snom, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.ukz, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.pkz, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.pxx, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.io, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.qkz, delimiter: " ") %></td>
       </tr>
     <% end %>
    <% end %> 
@@ -225,11 +229,11 @@
     <tr>
       <td><%= item[:tau] %></td>
       <td><%= item[:tm] %></td>
-      <td><%= item[:cosfi] %></td>
-      <td><%= item[:snom] %></td>
-      <td><%= item[:wi_formula] %><strong><%= item[:wi] %></strong></td>      
-      <td><%= item[:wi09_formula] %><strong><%= item[:wi09] %></strong></td>
-      <td><%= item[:wa] %></td>
+      <td><%= number_with_delimiter(item[:cosfi], delimiter: " ") %></td>
+      <td><%= number_with_delimiter(item[:snom], delimiter: " ") %></td>
+      <td><%= item[:wi_formula] %><strong><%= number_with_delimiter(item[:wi], delimiter: " ") %></strong></td>      
+      <td><%= item[:wi09_formula] %><strong><%= number_with_delimiter(item[:wi09], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(item[:wa], delimiter: " ") %></td>
     </tr>
     <% end %>
     <% end %>
@@ -252,12 +256,12 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:tr_losses_pxx_formula] %> = <strong><%= @losses[:tr_losses_pxx] %></strong></td>
-      <td><%= @losses[:tr_losses_pkz_formula] %> = <strong><%= @losses[:tr_losses_pkz] %></strong></td>
-      <td><%= @losses[:tr_losses_rxx_formula] %> = <strong><%= @losses[:tr_losses_rxx] %></strong></td>
-      <td><%= @losses[:tr_losses_rkz_formula] %> = <strong><%= @losses[:tr_losses_rkz] %></strong></td>
-      <td><%= @losses[:tr_losses_p_formula] %><strong><%= @losses[:tr_losses_p] %></strong></td>
-      <td><%= @losses[:tr_losses_r_formula] %><strong><%= @losses[:tr_losses_r] %></strong></td>
+      <td><%= @losses[:tr_losses_pxx_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_pxx], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_pkz_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_pkz], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_rxx_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_rxx], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_rkz_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_rkz], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_p_formula] %><strong><%= number_with_delimiter(@losses[:tr_losses_p], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_r_formula] %><strong><%= number_with_delimiter(@losses[:tr_losses_r], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -286,13 +290,13 @@
       <% @lnp.each do |item| %>
 	  <tr>
       	 <td><%= j+= 1 %></td>
-		 <td><%= item.l %></td>									
-		 <td><%= item.r %></td>
-		 <td><%= item.ro %></td>
-		 <td><%= item.k_scr %></td>
-		 <td><%= item.k_tr %></td>
-		 <td><%= item.k_peb %></td>
-		 <td><%= item.k_f %></td>
+		 <td><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
+		 <td><%= number_with_delimiter(item.r, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.ro, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.k_scr, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.k_tr, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.k_peb, delimiter: " ") %></td>
+		 <td><%= number_with_delimiter(item.k_f, delimiter: " ") %></td>
 		 <td><%= item.mark %></td>
 		 <td><%= item.q %></td>
       </tr>
@@ -314,9 +318,9 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:ln_losses_ng_formula] %> = <strong><%= @losses[:ln_losses_ng] %></strong></td>
-      <td><%= @losses[:ln_losses_kr] %></td>
-      <td><strong><%= @losses[:ln_losses] %></strong></td>
+      <td><%= @losses[:ln_losses_ng_formula] %> = <strong><%= number_with_delimiter(@losses[:ln_losses_ng], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:ln_losses_kr], delimiter: " ") %></td>
+      <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -339,14 +343,14 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:wal_formula] %> = <strong><%= @losses[:wal] %></strong></td>
-      <td><%= @losses[:wrl_formula] %> = <strong><%= @losses[:wrl] %></strong></td>
-      <td><%= @losses[:cosf_formula] %> = <strong><%= @losses[:cosf] %></strong></td>
-      <td><%= @losses[:wrio_formula] %> = <strong><%= @losses[:wrio] %></strong></td>
-      <td><%= @losses[:wrif_formula] %> = <strong><%= @losses[:wrif] %></strong></td>
-      <td><%= @losses[:consumtehi_formula] %> = <strong><%= @losses[:consumtehi] %></strong></td>
-      <td><%= @losses[:consumtehc_formula] %> = <strong><%= @losses[:consumtehc] %></strong></td>
-      <td><strong><%= @losses[:consumteh] %></strong></td>
+      <td><%= @losses[:wal_formula] %> = <strong><%= number_with_delimiter(@losses[:wal], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrl_formula] %> = <strong><%= number_with_delimiter(@losses[:wrl], delimiter: " ") %></strong></td>
+      <td><%= @losses[:cosf_formula] %> = <strong><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrio_formula] %> = <strong><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrif_formula] %> = <strong><%= number_with_delimiter(@losses[:wrif], delimiter: " ") %></strong></td>
+      <td><%= @losses[:consumtehi_formula] %> = <strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
+      <td><%= @losses[:consumtehc_formula] %> = <strong><%= number_with_delimiter(@losses[:consumtehc], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@losses[:consumteh], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>

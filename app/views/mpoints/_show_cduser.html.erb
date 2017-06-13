@@ -132,13 +132,13 @@
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-				    <td><%= item.meter.meternum %>(<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
-					<td><%= item.actp180 %></td>
-					<td><%= item.actp280 %></td>
-					<td><%= item.actp380 %></td>
-					<td><%= item.actp480 %></td>
+				    <td><%= number_with_delimiter(item.meter.meternum, delimiter: " ") %>(<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
+					<td><%= number_with_delimiter(item.actp180, delimiter: " ") %></td>
+					<td><%= number_with_delimiter(item.actp280, delimiter: " ") %></td>
+					<td><%= number_with_delimiter(item.actp380, delimiter: " ") %></td>
+					<td><%= number_with_delimiter(item.actp480, delimiter: " ") %></td>
 					<td><%= item.trab %></td>
-					<td><%= item.dwa %></td>					
+					<td><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>					
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>

@@ -48,14 +48,14 @@
       	 <td><%= i %></td>
       	 <td><%= item.cod %></td>
       	 <td><%= Mpoint.find(item.id).mesubstation.name %> <%= Mpoint.find(item.id).voltcl %> Î <%= Mpoint.find(item.id).meconname %> F </td>
-      	 <td><%= item.meternum %></td>
+      	 <td><%= number_with_delimiter(item.meternum, delimiter: " ", separator: ".") %></td>
       	 <td><%= item.actdate %></td>
-      	 <td><%= item.actp180 %></td>
-      	 <td><%= item.actp280 %></td>
-      	 <td><%= item.actp380 %></td>
-      	 <td><%= item.actp480 %></td>
+      	 <td><%= number_with_delimiter(item.actp180, delimiter: " ", separator: ".") %></td>
+      	 <td><%= number_with_delimiter(item.actp280, delimiter: " ", separator: ".") %></td>
+      	 <td><%= number_with_delimiter(item.actp380, delimiter: " ", separator: ".") %></td>
+      	 <td><%= number_with_delimiter(item.actp480, delimiter: " ", separator: ".") %></td>
 		 <td><%= item.trab %></td>
-		 <td><%= item.dwa %></td>      	 
+		 <td><%= number_with_delimiter(item.dwa, delimiter: " ", separator: ".") %></td>      	 
       	 <td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
       	 <td><%= item.mvalue_updated_at %></td>
       </tr>

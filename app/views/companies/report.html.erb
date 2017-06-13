@@ -72,7 +72,7 @@
       	                       else "success" end %>>     
       <% end %>	
       	<% item.each do |x| %>
-      	   <td><%= x %></td>
+      	   <td><%= number_with_delimiter(x, delimiter: " ", separator: ".") %></td>
       	<% end %> 
       </tr>
     <% end %>
