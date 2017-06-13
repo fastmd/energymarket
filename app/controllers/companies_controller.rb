@@ -595,8 +595,13 @@ private
             rk_s += lnitem.r.to_s
           end
           if rk_s == '( ' then  rk_s = rk.to_s else rk_s += " ) * " + ln.first.k_f.to_s + " ^2 " end 
-          ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wr ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
-          result[:ln_losses_ng_formula] = rk_s + " * ( " + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"  
+          if tgfi_contract.nil? then   
+            ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wr ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
+            result[:ln_losses_ng_formula] = rk_s + " * ( " + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"
+          else
+            ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
+            result[:ln_losses_ng_formula] = rk_s + ") * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2)) / ( 1000 * ( #{mpoint.voltcl} ^2 ) * #{workt} )"            
+          end      
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end
