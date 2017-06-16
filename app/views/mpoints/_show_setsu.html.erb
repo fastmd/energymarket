@@ -135,6 +135,7 @@
 		   <th>Удельное сопротивление материала ρ20, Ом*мм&sup2;/м</th>
 		   <th>Коэффициент скрутки Kr</th>
 		   <th>Коэффициент пов. эффекта и близости Kc</th>
+		   <th>Uном, кВ</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -160,7 +161,8 @@
 					<td><%= item.q %></td>
 					<td><%= item.ro %></td>
 					<td><%= item.k_scr %></td>	
-					<td><%= item.k_peb %></td>	
+					<td><%= item.k_peb %></td>
+					<td><%= item.unom %></td>		
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.line_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>

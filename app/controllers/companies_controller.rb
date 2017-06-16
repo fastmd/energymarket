@@ -592,21 +592,19 @@ private
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
-          rk = 0.0
-          rk_s = '( '
+          result[:ln_losses_ng_formula] = ''
           ln.each do |lnitem|
-            rk += lnitem.r * (lnitem.k_f ** 2)
-            if rk_s != '( ' then rk_s += " + " end
-            rk_s += lnitem.r.to_s
+            if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
+            if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
+            if tgfi_contract.nil? then   
+              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (wa ** 2 + wr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
+              result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{wa} ^2 + #{wr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
+            else
+              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (wa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((unom) ** 2) * workt) ).round(4)
+              result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{wa} ^2 * (1 + #{tgfi_contract} ^2)) / (1000 * #{unom} ^2 * #{workt}) "            
+            end              
           end
-          if rk_s == '( ' then  rk_s = rk.to_s else rk_s += " ) * " + ln.first.k_f.to_s + " ^2 " end 
-          if tgfi_contract.nil? then   
-            ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 + wr ** 2) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
-            result[:ln_losses_ng_formula] = rk_s + " * ( " + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / ( 1000 * ( " + (mpoint.voltcl).to_s + " ^2 ) * " + workt.to_s + ")"
-          else
-            ln_losses_ng = result[:ln_losses_ng] = ( rk * (wa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((mpoint.voltcl) ** 2) * workt) ).round(4)
-            result[:ln_losses_ng_formula] = rk_s + ") * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2)) / ( 1000 * ( #{mpoint.voltcl} ^2 ) * #{workt} )"            
-          end      
+          result[:ln_losses_ng] = ln_losses_ng     
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           result[:ln_losses] = ln_losses_ng + ln_losses_kr              
         end

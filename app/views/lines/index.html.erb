@@ -45,7 +45,8 @@
 		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br><br>		      
 			  <%= f.association :wire, label: 'Провод ', 
 				    :label_method => lambda { |wire| "#{wire.name} | q = #{wire.q} | ρ20 = #{wire.ro} | Kr = #{wire.k_scr} | Kc = #{wire.k_peb} "}, 
-				    value_method: :id, include_blank: false, prompt: "Провод..." %>		  
+				    value_method: :id, include_blank: false, prompt: "Провод..." %>
+			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal %>	    		  
 			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 25}  %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
   			  <%= hidden_field_tag :page, @page %>
@@ -78,6 +79,7 @@
 			   <th>Удельное сопротивление материала ρ20, Ом*мм&sup2;/м</th>
 			   <th>Коэффициент скрутки Kr</th>
 			   <th>Коэффициент пов. эффекта и близости Kc</th>
+			   <th>Uном, кВ</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -106,7 +108,8 @@
 						<td><%= item.q %></td>
 						<td><%= item.ro %></td>
 						<td><%= item.k_scr %></td>	
-						<td><%= item.k_peb %></td>	
+						<td><%= item.k_peb %></td>
+						<td><%= item.unom %></td>	
 						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<td><%= item.comment %></td>
 						<td><span class="glyphicon glyphicon-<%= if item.wire_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>

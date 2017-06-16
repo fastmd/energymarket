@@ -282,6 +282,7 @@
 		   <th>Коэффициент формы Кф</th>
 		   <th>Марка</th>
 		   <th>Сечение провода q, мм2</th>
+		   <th>Uном, кВ</th>
     	</tr>  
    </thead>
    <tbody>
@@ -299,6 +300,7 @@
 		 <td><%= number_with_delimiter(item.k_f, delimiter: " ") %></td>
 		 <td><%= item.mark %></td>
 		 <td><%= item.q %></td>
+		 <td><%= item.unom %></td>
       </tr>
     <% end %>
    <% end %> 

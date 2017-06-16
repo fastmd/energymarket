@@ -139,7 +139,7 @@ private
   end
   
   def line_params
-    params.require(:line).permit(:name,:l,:k_tr,:k_f,:wire_id,:mesubstation_id,:comment,:f)
+    params.require(:line).permit(:name,:l,:k_tr,:k_f,:wire_id,:mesubstation_id,:comment,:f,:unom)
   end
   
   def line_init(line)
@@ -153,7 +153,8 @@ private
     line.wire_id = line_params[:wire_id]
     line.mesubstation_id = line_params[:mesubstation_id]
     line.comment = line_params[:comment] 
-    line.f = line_params[:f] 
+    line.f = line_params[:f]
+    line.unom = line_params[:unom] 
     line    
   end
    
