@@ -54,17 +54,19 @@
 			   <th>Точка учета (МЕ)</th>
 			   <th>Точка учета (потребитель)</th>
 			   <th><%= sort_link "company_shname", "Потребитель", @flr.id %><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>			   
-			   <th>Класс напряжения, кВ</th>
-               <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+			   <th>Uном, кВ</th> 
+			   <th>Без тех. расхода</th>
+			   <th>Тех. расх. емк.</th>
+			   <th>cos φ</th>
+			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 			      <th>Счетчики</th>
 			      <th>Показания</th>
 			   <% else %>
 			      <th>Параметры</th>
 			      <th>Расчет</th>		   
-			   <% end %>   
-			   <th>Комментарий</th>
-			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>Тех.расход</th>
+			   <% end %>
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -87,16 +89,18 @@
 						<td><%= item.clconname %></td>
 						<td><%= item.company_shname %></td>						
 						<td><%= item.voltcl %></td>
+  						<td><% if item.fct then %><span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span><% end %></td>
+  						<td><% if item.fctc then %><span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span><% end %></td>
+  						<td><%= item.cosfi %></td> 						      						  						
+  						<td><%= item.comment %></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
   						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %></td>
   						<% else %>
   						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %></td>
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
-  						<% end %>    
-  						<td><%= item.comment %></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>      						
+  						<% end %>      						
                         <td><%= link_to " " , company_path(:id => item.company_id, :flr_id => @flr.id), :class=> "glyphicon glyphicon-search" %></td>
 					</tr>		
 				<% end %>			

@@ -447,9 +447,11 @@ private
               ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280         
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
-              if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-              result[:waliv_formula] += dind.to_s + " * " + koef.to_s
-              waliv += energy
+              if mvalue1.fanulare then 
+                if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+                result[:waliv_formula] += dind.to_s + " * " + koef.to_s
+                waliv += energy
+              end
               indicii0[:ind1_380] = mvalue1.actp380          #380 
               ind1 = if mvalue1.actp380.nil? then 0 else mvalue1.actp380 end
               indicii0[:ind0_380] = mvalue0.actp380          #380
@@ -501,14 +503,9 @@ private
     mvnum = indicii[:mvnum]       
     if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
       wa    = indicii[:wa_without_wasub] 
-      waliv = indicii[:waliv]
-      if wa!=0 || waliv == 0 then 
-        wri   = indicii[:wri]
-        wrc   = indicii[:wrc]
-      else
-        wrc   = indicii[:wri]
-        wri   = indicii[:wrc]        
-      end    
+      waliv = indicii[:waliv] 
+      wri   = indicii[:wri]
+      wrc   = indicii[:wrc]  
       wr    = indicii[:wri] + indicii[:wrc]
       workt = indicii[:workt]       
       # косинус фи 
@@ -610,15 +607,16 @@ private
         end
       end  # if ln.count
       # cos fi with losses           
-      if wa >= 10000 and mpoint.fct then
-           wal = result[:wal] = wa + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
-           result[:wal_formula] = wa.to_s + " + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
+      if wa >= 10000 and not(mpoint.fct) then
+           wal = result[:wal] = wa + waliv + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
+           result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
            wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx
            result[:wrl_formula] = wri.to_s + " + " + tr_losses_rkz.to_s + " + " + tr_losses_rxx.to_s
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
            result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
-           wrio = result[:wrio] = (wal * 0.567).round(4)
-           result[:wrio_formula] = wal.to_s + " * 0.567"
+           if mpoint.voltcl == 0.4 then  tgficonst = 0.426 else tgficonst = 0.567 end
+           wrio = result[:wrio] = (wal * tgficonst).round(4)
+           result[:wrio_formula] = " #{wal} * #{tgficonst} "
            if wrio < wri then
              wrif = result[:wrif] = wri - wrio
              result[:wrif_formula] = wri.to_s + " - " + wrio.to_s

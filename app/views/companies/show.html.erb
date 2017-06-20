@@ -69,17 +69,19 @@
 						<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">		
-		   				<label for='f' class="control-label">Активный</label>						
-						<%= check_box_tag 'f', 'yes', @mpoint.f, class: "form-control" %>
-		   				<label for='fct' class="control-label">Считать тех.расход</label>						
+		   				<label for='fct' class="control-label">Не считать тех.расход <span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
-						<label for='fctc' class="control-label">Тех.расход только емкостной</label>						
+						<label for='fctc' class="control-label">Тех.расход только емкостной <span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>					
 			    </div>
 			    <div class="form-group">		   				
 		   				<label for='cosfi' class="control-label">cos φ</label>		
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
 		   		</div>
+		   		<div class="form-group">		
+		   				<label for='f' class="control-label">Активный</label>						
+						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>				
+			    </div>		   		
 	  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
 	  			<%= hidden_field_tag :id, @mpoint.id %>
 	  			<%= hidden_field_tag :flr_id, @flr.id %> 
@@ -107,19 +109,19 @@
 			   <th>Подстанция (МЕ)</th>
 			   <th>Точка учета (МЕ)</th>
 			   <th>Точка учета (потребитель)</th>			   
-			   <th>Класс напряжения, кВ</th>
-               <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+			   <th>Uном, кВ</th> 
+			   <th>Без тех. расхода</th>
+			   <th>Тех. расх. емк.</th>
+			   <th>cos φ</th>
+			   <th>Комментарий</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 			      <th>Счетчики</th>
 			      <th>Показания</th>
 			   <% else %>
 			      <th>Параметры</th>
 			      <th>Расчет</th>		   
-			   <% end %>   
-			   <th>Комментарий</th>
-			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>Тех. расход</th>
-			   <th>Тех. расх. емк.</th>
-			   <th>cos φ</th>			   
+			   <% end %>  
 			   <th>.........</th>	   
 			</tr>	
 		</thead>
@@ -140,23 +142,23 @@
 						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
 						<td><%= item.meconname %></td>
 						<td><%= item.clconname %></td>						
-						<td><%= item.voltcl %></td>
+						<td><%= item.voltcl %></td> 
+  						<td><% if item.fct then %><span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span><% end %></td>
+  						<td><% if item.fctc then %><span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span><% end %></td>
+  						<td><%= item.cosfi %></td>
+  						<td><%= item.comment %></td>
+  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
-						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id) %></td>
-  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item) %>
+						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %></td>
+  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
   						<% else %>
-  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item) %>
-  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
-  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td>
-  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page) %></td>      						
-  						<% end %>    
-  						<td><%= item.comment %></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  						<td><span class="glyphicon glyphicon-<%= if item.fct then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  						<td><% if item.fctc then %><span class="glyphicon glyphicon-oil" aria-hidden="true"></span><% end %></td>
-  						<td><%= item.cosfi %></td>      						
+  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
+  						    <!--   <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td> -->
+  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %></td>      						
+  						<% end %>     						
                         <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
   						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
   						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>

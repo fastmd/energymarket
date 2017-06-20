@@ -20,5 +20,4 @@ class Mpoint < ApplicationRecord
  validates  :voltcl, presence: true
  validates  :company_id, presence: true
  validates  :furnizor_id, presence: true
- validates  :f, presence: true
 end
