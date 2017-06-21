@@ -83,7 +83,8 @@
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>.........</th>			   
+			   <th>.........</th>
+			   <th><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>			   
 			</tr>	
 		</thead>
 		<tbody>
@@ -113,9 +114,10 @@
 						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<td><%= item.comment %></td>
 						<td><span class="glyphicon glyphicon-<%= if item.wire_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-                      <td><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+                        <td><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , lines_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить линию #{item.name} ?" } %></td> 
+  						                 data: { confirm: "Удалить линию #{item.name} ?" } %></td>
+  						<td><%= if item.lnparams.count!=0 then item.lnparams.count end %></td>                  
 					</tr>		
 			<% end %>			
 		</tbody>
