@@ -201,9 +201,38 @@ before_filter :redirect_cancel, only: [:create, :update]
     end
     # report init
     @report = Array[]
+    # filter
+    @data_for_search = $data_for_search
+    @qmesubstation = $qmesubstation
+    @qcompany = $qcompany
+    @qregion = $qregion
+    @qfilial = $qfilial
+    @qfurnizor = $qfurnizor    
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    companies = (Company.where(f: 'true').order(name: :asc).find(company_list))
+    if @data_for_search.empty? then
+      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
+       @filter = 0
+      else
+       @filter = 1         
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                               " and (?='' or furnizor_name=?)", 
+                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).pluck(:company_id).uniq
+      end  
+    else
+       @filter = 1
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (upper(company_name||company_shname) like upper(?) "+ 
+                               "or upper(cod||name) like upper(?) "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                               "or upper(mesubstation_name) like upper(?)) ", 
+                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
+    end    
+    companies = (Company.where(f: 'true').order(shname: :asc).find(company_list))
     if companies.count != 0 then 
       nr = 0
       companies.each do |cp|
