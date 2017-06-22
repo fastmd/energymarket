@@ -536,6 +536,9 @@ private
             tr_losses_pxx += workt * tritem.transformator.pxx
             if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
             result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.transformator.pxx).to_s
+          else
+            if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
+            result[:tr_losses_pxx_formula] += "наш трансформатор"             
           end  
           #tau
           tau = taus.last.taum
@@ -565,10 +568,10 @@ private
                 tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
               else
-                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((tm ) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((tm ) * ((tritem.transformator.snom) ** 2))                
+                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
               end  
             else
               unless mpoint.four then
@@ -577,16 +580,21 @@ private
                 tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
               else
-                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} * #{tritem.transformator.snom} ^2 ) "
-                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} * #{tritem.transformator.snom} ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ) * ((tritem.transformator.snom) ** 2))                
+                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{workt} * #{tritem.transformator.snom} ^2 ) "
+                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{workt} * #{tritem.transformator.snom} ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((workt) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((workt) * ((tritem.transformator.snom) ** 2))                
               end  
             end                            
           end
-          tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
-          if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
-          result[:tr_losses_rxx_formula] += " (" + tritem.transformator.i0.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2  / 10000 - " + tritem.transformator.pxx.to_s + " ^2 ) ^0.5 * " + workt.to_s
+          unless mpoint.four then
+            tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
+            if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
+            result[:tr_losses_rxx_formula] += " (" + tritem.transformator.i0.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2  / 10000 - " + tritem.transformator.pxx.to_s + " ^2 ) ^0.5 * " + workt.to_s
+          else
+            if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
+            result[:tr_losses_rxx_formula] += "наш трансформатор"
+          end  
         end  # tr.each
         tr_losses_pxx = result[:tr_losses_pxx] = tr_losses_pxx.round(4)
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
