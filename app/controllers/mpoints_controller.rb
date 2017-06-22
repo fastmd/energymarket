@@ -209,13 +209,15 @@ def showmvalues
     if @data_for_search.empty? then
       if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")
-      else        
+      else
+       @filter = 1         
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                " and (?='' or furnizor_name=?)", 
                                @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order("#{sort_column} #{sort_direction}")
       end  
     else
+       @filter = 1
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 

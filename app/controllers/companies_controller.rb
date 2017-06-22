@@ -684,18 +684,22 @@ private
         @qregion = $qregion
         @qfilial = $qfilial
         @qfurnizor = $qfurnizor
-    end      
+    end
+    @filter = 0      
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
     if @data_for_search.empty? then
       if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
-      else        
+       @filter = 0
+      else
+       @filter = 1         
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                " and (?='' or furnizor_name=?)", 
                                @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).pluck(:company_id).uniq
       end  
     else
+       @filter = 1
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
