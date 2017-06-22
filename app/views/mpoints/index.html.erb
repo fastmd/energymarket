@@ -58,6 +58,7 @@
 			   <th>Без тех. расхода</th>
 			   <th>Тех. расх. емк.</th>
 			   <th>cos φ</th>
+			   <th>Наш тр-р</th>
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
@@ -91,7 +92,8 @@
 						<td><%= item.voltcl %></td>
   						<td><% if item.fct then %><span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span><% end %></td>
   						<td><% if item.fctc then %><span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span><% end %></td>
-  						<td><%= item.cosfi %></td> 						      						  						
+  						<td><%= item.cosfi %></td>
+  						<td><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td> 						      						  						
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 

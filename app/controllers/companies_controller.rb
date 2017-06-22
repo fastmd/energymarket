@@ -532,9 +532,11 @@ private
       result[:tr_losses_rkz_formula] = ""
       if tr.count != 0 then
         tr.each do |tritem|
-          tr_losses_pxx += workt * tritem.transformator.pxx
-          if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
-          result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.transformator.pxx).to_s
+          unless mpoint.four then
+            tr_losses_pxx += workt * tritem.transformator.pxx
+            if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
+            result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.transformator.pxx).to_s
+          end  
           #tau
           tau = taus.last.taum
           tm = taus.last.tm
@@ -557,15 +559,29 @@ private
             if result[:tr_losses_pkz_formula] != "" then result[:tr_losses_pkz_formula] += " + "  end
             if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end              
             if tgfi_contract.nil? then 
-              result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
-              result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
-              tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-              tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              unless mpoint.four then
+                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              else
+                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((tm ) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((tm ) * ((tritem.transformator.snom) ** 2))                
+              end  
             else
-              result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
-              result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
-              tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-              tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              unless mpoint.four then
+                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
+                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+              else
+                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} * #{tritem.transformator.snom} ^2 ) "
+                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} * #{tritem.transformator.snom} ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ) * ((tritem.transformator.snom) ** 2))                
+              end  
             end                            
           end
           tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
@@ -607,7 +623,7 @@ private
         end
       end  # if ln.count
       # cos fi with losses           
-      if wa >= 10000 and not(mpoint.fct) then
+      if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl<=10 then
            wal = result[:wal] = wa + waliv + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
            result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
            wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx

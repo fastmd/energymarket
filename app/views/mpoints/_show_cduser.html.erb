@@ -73,7 +73,11 @@
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Потребление субабонента, кВт*ч</label>
 						<%= number_field_tag 'dwa', @mv_params[:dwa], max: 1000000000, step: 1, class: "form-control", title: 'если есть (необязательный параметр)' %>
-				</div><br><br>				
+				</div><br><br>
+				<div class="form-group">
+		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не анулировать отдачу)</span></label>
+						<%= check_box_tag 'fanulare', 'yes', if (@mv_params[:fanulare])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div>
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Комментарий</label>
 						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
@@ -83,7 +87,7 @@
 						<%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end, class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">
-		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Расчетный день</span></label>
+		   				<label for='r' class="control-label"><span class="glyphicon glyphicon-pushpin" aria-hidden="true">Расчетный день</span></label>
 						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
 		   		</div>		
 				<%= hidden_field_tag :mpoint_id, @mp.id %>
@@ -107,16 +111,17 @@
 		<tr class="info">
 		   <th>№</th>
 		   <th>Дата актирования</th>
-		   <th>Счетчик</th>
+		   <th title="№ счетчика (дата установки счетчика)">Счетчик</th>
 		   <th>Активный прием А+</th>
 		   <th>Активная отдача А-</th>
 		   <th>Реактивный прием R+</th>
 		   <th>Реактивная отдача R-</th>
 		   <th>Время работы<br> электроустановки, часы</th>
 		   <th>Потребление<br> субабонента, кВт*ч</th>
+		   <th title="Не анулировать отдачу">Учет<br> А-</th>
 		   <th>Комментарий</th>
-		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-		   <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
+		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+		   <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
 		   <th>.........</th>
 		</tr>	
 	</thead>
@@ -132,13 +137,14 @@
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-				    <td><%= number_with_delimiter(item.meter.meternum, delimiter: " ") %>(<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
+				    <td><%= number_with_delimiter(item.meter.meternum, delimiter: " ") %> (<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
 					<td><%= number_with_delimiter(item.actp180, delimiter: " ") %></td>
 					<td><%= number_with_delimiter(item.actp280, delimiter: " ") %></td>
 					<td><%= number_with_delimiter(item.actp380, delimiter: " ") %></td>
 					<td><%= number_with_delimiter(item.actp480, delimiter: " ") %></td>
 					<td><%= item.trab %></td>
-					<td><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>					
+					<td><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
+					<td><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
 					<td><%= item.comment %></td>
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>

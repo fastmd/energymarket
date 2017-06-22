@@ -79,6 +79,7 @@ Rails.application.routes.draw do
   get 'mpoints/new'
   get 'mpoints/show'
   post 'mpoints/show'
+  get 'mpoints/showmvalues'  
   get 'mpoints/index'
   get 'mpoints/search' => 'mpoints/index'
   post 'mpoints/search' => 'mpoints/index'

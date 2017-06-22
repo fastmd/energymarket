@@ -79,6 +79,10 @@
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
 		   		</div>
 		   		<div class="form-group">		
+		   				<label for='four' class="control-label"><span class="glyphicon glyphicon-flag" aria-hidden="true">Наш трансформатор </span></label>						
+						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
+			    </div>		   		
+		   		<div class="form-group">		
 		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>				
 			    </div>		   		
@@ -113,6 +117,7 @@
 			   <th>Без тех. расхода</th>
 			   <th>Тех. расх. емк.</th>
 			   <th>cos φ</th>
+			   <th>Наш тр-р</th> 	
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
@@ -120,7 +125,8 @@
 			      <th>Показания</th>
 			   <% else %>
 			      <th>Параметры</th>
-			      <th>Расчет</th>		   
+			      <th>Расчет</th>
+			      <th>Показания</th>		   
 			   <% end %>  
 			   <th>.........</th>	   
 			</tr>	
@@ -146,6 +152,7 @@
   						<td><% if item.fct then %><span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span><% end %></td>
   						<td><% if item.fctc then %><span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span><% end %></td>
   						<td><%= item.cosfi %></td>
+  						<td><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td> 	
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
@@ -156,8 +163,11 @@
   						<% else %>
   						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
   						    <!--   <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), "#" %>
-  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %></td> -->
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), "#" %>--></td> 
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %></td>      						
+                           <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
+  						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "xlsx") %>
+  						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "pdf") %></td>
   						<% end %>     						
                         <td><%= link_to " " , mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
   						    <%= link_to " " , mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",

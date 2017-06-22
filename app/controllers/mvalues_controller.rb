@@ -18,7 +18,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     mv.actdate = params[:actdate]
     mv.comment = params[:comment]
     mv.f = if params[:f].nil? then false else true end
-    mv.r = if params[:r].nil? then false else true end      
+    mv.r = if params[:r].nil? then false else true end
+    mv.fanulare = if params[:fanulare].nil? then nil else true end        
     begin  
       if mv.save! then redirect_to mpoint_path(mp, :met => params[:met]) end
     rescue
@@ -26,12 +27,12 @@ before_filter :redirect_cancel, only: [:create, :update]
           if params[:mv_id].nil? or params[:mv_id]=='' then
             redirect_to mpoint_path(mp,:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
                                        :trab=>params[:trab],:dwa=>params[:dwa], 
-                                       :actdate =>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:flag=>'mvadd',:met=>params[:met])
+                                       :actdate =>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:fanulare=>params[:fanulare],:flag=>'mvadd',:met=>params[:met])
           else
             redirect_to mpoint_path(mp,:mv_id=>mv.id,
                                        :meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280 =>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
                                        :trab=>params[:trab],:dwa=>params[:dwa],
-                                       :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:flag=>'mvedit',:met=>params[:met])
+                                       :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:fanulare=>params[:fanulare],:flag=>'mvedit',:met=>params[:met])
           end    
      end   
   end
@@ -46,7 +47,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     redirect_to mpoint_path(mp, :flag=>'mvedit', :met => params[:met], :mv_id => mv.id, 
                                 :meter_id=>mv.meter_id,:actp180=>mv.actp180,:actp280=>mv.actp280,:actp380=>mv.actp380,:actp480=>mv.actp480,
                                 :trab=>mv.trab,:dwa=>mv.dwa,
-                                :actdate=>mv.actdate,:comment=>mv.comment,:f=>mv.f,:r=>mv.r)
+                                :actdate=>mv.actdate,:comment=>mv.comment,:f=>mv.f,:r=>mv.r,:fanulare=>mv.fanulare)
   end
 
   def show
