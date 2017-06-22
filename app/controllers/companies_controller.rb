@@ -563,15 +563,15 @@ private
             if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end              
             if tgfi_contract.nil? then 
               unless mpoint.four then
-                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
-                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wri ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
               else
-                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wri ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
+                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
+                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
               end  
             else
               unless mpoint.four then
