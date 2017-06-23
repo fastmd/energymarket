@@ -1,7 +1,5 @@
 <% provide(:title, 'Расчет') %>
 
-<%= @lll.inspect %>
-
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-level-up" %></li>
@@ -109,6 +107,7 @@
       <th>Энергия A-, kWh</th>
       <th>Энергия R+, kVAh</th>
       <th>Энергия R-, kVAh</th>
+      <th>Энергия R, kVAh</th>
       <th>Потребление<br>субабонента, kWh</th>
       <th>Потребление за вычетом<br> потребления<br>субабонента, kWh</th> 
     </tr>  
@@ -119,6 +118,7 @@
       <td><%= @energies[:waliv_formula] %><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
       <td><%= @energies[:wri_formula] %><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
       <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wr_formula] %><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
       <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
       <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
     </tr>

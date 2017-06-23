@@ -143,9 +143,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
     @ddate_b = @ddate.change(day: 1) - 1.month
-    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_mb = @ddate_b + 1.month - 1.day 
     @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
-    ddate_me = @ddate_e.change(day: 1)   
+    @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
     @mp = Mpoint.find(params[:mp_id])
@@ -158,7 +158,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[] 
     # indicii si energie        
-    @energies = one_mp_indicii(@mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+    @energies = one_mp_indicii(@mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
     @indicii = @energies[:indicii]
     # pierderi   
     @losses = one_mp_losses(@mp.id, @energies)
@@ -178,9 +178,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
     @ddate_b = @ddate.change(day: 1) - 1.month
-    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_mb = @ddate_b + 1.month - 1.day 
     @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
-    ddate_me = @ddate_e.change(day: 1)   
+    @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
     # title
@@ -247,7 +247,7 @@ before_filter :redirect_cancel, only: [:create, :update]
             nr += 1
             report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.mesubstation.name}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
-            energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+            energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
             if indicii.nil? then
               report_rind[@title1.count] = 1
@@ -300,9 +300,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
     @ddate_b = @ddate.change(day: 1) - 1.month
-    ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_mb = @ddate_b + 1.month - 1.day 
     @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
-    ddate_me = @ddate_e.change(day: 1)   
+    @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
     # report init
@@ -321,7 +321,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         nr += 1  
         report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
-        energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, ddate_mb, ddate_me)
+        energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         indicii = energies[:indicii]
         if indicii.nil? or indicii.count==0 then
           report_rind[10] = 1
@@ -546,14 +546,24 @@ private
          result[:wri] = wri
          result[:wri_formula] += " = "
          result[:wrc] = wrc
-         result[:wrc_formula] += " = "         
+         result[:wrc_formula] += " = "
+         result[:wr] = wri + wrc
+         result[:wr_formula] = " #{wri} + #{wrc} = "
+         # косинус фи контрактный
+         result[:cosfi_contract] = cosfi_contract = mpoint.cosfi
+         if !cosfi_contract.nil? and cosfi_contract != 0 then
+           result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
+           result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 = " # tg fi
+           result[:wr] = (wa - wasub) * tgfi_contract
+           result[:wr_formula] = " #{wa - wasub} * #{tgfi_contract} = "           
+         end 
        end # if mvnum
      end # if meters.count 
      result
   end
 
   def one_mp_losses(mp_id, indicii)
-    result={}
+    result={}   
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
     if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
@@ -561,7 +571,7 @@ private
       waliv = indicii[:waliv] 
       wri   = indicii[:wri]
       wrc   = indicii[:wrc]  
-      wr    = indicii[:wri] + indicii[:wrc]
+      wr    = indicii[:wr]
       workt = indicii[:workt]       
       # косинус фи 
       if wa != 0 || wri != 0 then 
@@ -570,11 +580,9 @@ private
         result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
       end
       # косинус фи контрактный
-      result[:cosfi_contract] = cosfi_contract = mpoint.cosfi
-      if !cosfi_contract.nil? and cosfi_contract != 0 then
-        result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
-        result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 = " # tg fi
-      end   
+      result[:cosfi_contract] = indicii[:cosfi_contract]
+      result[:tgfi_contract] = indicii[:tgfi_contract] # tg fi
+      result[:tgfi_contract_formula] = indicii[:tgfi_contract_formula] # tg fi 
       #tau
       taus  = Tau.all
       ttaus = []  
@@ -586,7 +594,7 @@ private
       result[:tr_losses_pkz_formula] = ""
       result[:tr_losses_rkz_formula] = ""
       if tr.count != 0 then
-        tr.each do |tritem|
+        tr.each do |tritem|                  
           unless mpoint.four then
             tr_losses_pxx += workt * tritem.transformator.pxx
             if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
@@ -616,31 +624,17 @@ private
           else 
             if result[:tr_losses_pkz_formula] != "" then result[:tr_losses_pkz_formula] += " + "  end
             if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end              
-            if tgfi_contract.nil? then 
-              unless mpoint.four then
+            unless mpoint.four then
                 result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
                 result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
                 tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-              else
+            else
                 result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
                 result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
                 tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
-              end  
-            else
-              unless mpoint.four then
-                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
-                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * #{tau} * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{tm} ^2 * #{tritem.transformator.snom} ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
-              else
-                result[:tr_losses_pkz_formula] += "#{tritem.transformator.pkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{workt} * #{tritem.transformator.snom} ^2 ) "
-                result[:tr_losses_rkz_formula] += "#{tritem.transformator.qkz} * 1.15 ^2 * ( #{wa} ^2 * (1 + #{tgfi_contract} ^2 )) / (#{workt} * #{tritem.transformator.snom} ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((workt) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 * (1 + tgfi_contract ** 2)) / ((workt) * ((tritem.transformator.snom) ** 2))                
-              end  
-            end                            
+            end                             
           end
           unless mpoint.four then
             tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
@@ -649,7 +643,7 @@ private
           else
             if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
             result[:tr_losses_rxx_formula] += "наш трансформатор"
-          end  
+          end           
         end  # tr.each
         tr_losses_pxx = result[:tr_losses_pxx] = tr_losses_pxx.round(4)
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
@@ -661,10 +655,9 @@ private
         result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s + " = " 
         result[:ttaus] = ttaus            
       end  # if tr.count
-      # линии              
+      # линии         
       ln  = mpoint.vlnparams.where("f = 'true'") 
-      ln_losses_ng = ln_losses_kr = 0.0 
-      @lll = []       
+      ln_losses_ng = ln_losses_kr = 0.0      
       if ln.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
@@ -673,18 +666,25 @@ private
           ln.each do |lnitem|
             if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
             if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
-            @lll << Vmpointslnparam.where("line_id = ?", lnitem.line_id).count << lnitem.line_id
-            mpcount = Vmpointslnparam.where("line_id = ?", lnitem.line_id).count
-            lwa = wa
+            mpcount = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id).count
+            lwa = wa  
             lwr = wr
-            if mpcount > 2 then  
-            end   
-            if tgfi_contract.nil? then   
-                ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
-                result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 + #{lwr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
-            else
-                ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((unom) ** 2) * workt) ).round(4)
-                result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 * (1 + #{tgfi_contract} ^2)) / (1000 * #{unom} ^2 * #{workt}) "            
+            if mpcount > 0 then
+              related_lines = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id)
+              related_lines.each do |rlnitem|
+                related_energies = one_mp_indicii(rlnitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+                if related_energies[:mvnum] == 2 then 
+                    lwa += related_energies[:wa_without_wasub] 
+                    lwr += related_energies[:wr]
+                end    
+              end  
+            end    
+            ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
+            result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 + #{lwr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
+            if mpcount > 0 then
+              k = (wa ** 2 + wr ** 2) / (lwa ** 2 + lwr ** 2)
+              ln_losses_ng = (ln_losses_ng * k).round(4)
+              result[:ln_losses_ng_formula] += " * #{k.round(4)}"
             end
           end
           result[:ln_losses_ng] = ln_losses_ng     
@@ -722,7 +722,7 @@ private
              result[:consumtehc_formula] = wrc.to_s + " * 0.1"             
            end    
        end #if wa               
-     end # if mvnum
+     end # if mvnum  
    result
    end
   
