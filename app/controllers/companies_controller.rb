@@ -637,7 +637,8 @@ private
       end  # if tr.count
       # линии              
       ln  = mpoint.vlnparams.where("f = 'true'") 
-      ln_losses_ng = ln_losses_kr = 0.0        
+      ln_losses_ng = ln_losses_kr = 0.0 
+      @lll = []       
       if ln.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
@@ -646,13 +647,19 @@ private
           ln.each do |lnitem|
             if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
             if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
+            @lll << Vmpointslnparam.where("line_id = ?", lnitem.line_id).count << lnitem.line_id
+            mpcount = Vmpointslnparam.where("line_id = ?", lnitem.line_id).count
+            lwa = wa
+            lwr = wr
+            if mpcount > 2 then  
+            end   
             if tgfi_contract.nil? then   
-              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (wa ** 2 + wr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
-              result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{wa} ^2 + #{wr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
+                ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
+                result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 + #{lwr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
             else
-              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (wa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((unom) ** 2) * workt) ).round(4)
-              result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{wa} ^2 * (1 + #{tgfi_contract} ^2)) / (1000 * #{unom} ^2 * #{workt}) "            
-            end              
+                ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 * (1 + tgfi_contract ** 2)) / (1000 * ((unom) ** 2) * workt) ).round(4)
+                result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 * (1 + #{tgfi_contract} ^2)) / (1000 * #{unom} ^2 * #{workt}) "            
+            end
           end
           result[:ln_losses_ng] = ln_losses_ng     
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
@@ -671,8 +678,8 @@ private
            wrio = result[:wrio] = (wal * tgficonst).round(4)
            result[:wrio_formula] = " #{wal} * #{tgficonst} "
            if wrio < wri then
-             wrif = result[:wrif] = wri - wrio
-             result[:wrif_formula] = wri.to_s + " - " + wrio.to_s
+             wrif = result[:wrif] = wrl - wrio
+             result[:wrif_formula] = wrl.to_s + " - " + wrio.to_s
            else
              wrif = result[:wrif] = 0.0
              result[:wrif_formula] = "0.0"
