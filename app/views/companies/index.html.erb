@@ -104,6 +104,14 @@
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
 		   		</div>
 		   		<div class="form-group">		
+		   				<label for='four' class="control-label">Наш трансформатор <span class="glyphicon glyphicon-flag" aria-hidden="true"></span></label>						
+						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
+			    </div>
+			    <div class="form-group">		
+		   				<label for='fturn' class="control-label">Счетчик обратный <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></label>						
+						<%= check_box_tag 'fturn', 'yes', @mpoint.fturn, class: "form-control" %>				
+			    </div>		   		
+		   		<div class="form-group">		
 		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>						   				
 		   		</div><br>							        

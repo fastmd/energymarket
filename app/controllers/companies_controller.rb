@@ -466,9 +466,17 @@ private
               ind0 = if mvalue0.actp180.nil? then 0 else mvalue0.actp180 end
               dind = indicii0[:dind_180] = (ind1 - ind0).round(4)   #dind   180      
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
-              if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
-              result[:wa_formula] += dind.to_s + " * " + koef.to_s
-              wa += energy
+              unless mpoint.fturn then
+                if result[:wa_formula] != "" then result[:wa_formula] += " + "  end  
+                result[:wa_formula] += dind.to_s + " * " + koef.to_s
+                wa += energy
+              else
+                if mvalue1.fanulare then 
+                  if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+                  result[:waliv_formula] += dind.to_s + " * " + koef.to_s
+                  waliv += energy
+                end
+              end  
               unless dwa.nil? then wasub +=dwa end
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
@@ -476,29 +484,47 @@ private
               ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280         
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
-              if mvalue1.fanulare then 
-                if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-                result[:waliv_formula] += dind.to_s + " * " + koef.to_s
-                waliv += energy
-              end
+              unless mpoint.fturn then 
+                if mvalue1.fanulare then 
+                  if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+                  result[:waliv_formula] += dind.to_s + " * " + koef.to_s
+                  waliv += energy
+                end
+              else
+                if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
+                result[:wa_formula] += dind.to_s + " * " + koef.to_s
+                wa += energy                
+              end  
               indicii0[:ind1_380] = mvalue1.actp380          #380 
               ind1 = if mvalue1.actp380.nil? then 0 else mvalue1.actp380 end
               indicii0[:ind0_380] = mvalue0.actp380          #380
               ind0 = if mvalue0.actp380.nil? then 0 else mvalue0.actp380 end
               dind = indicii0[:dind_380] = (ind1 - ind0).round(4)   #dind 380         
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
-              if result[:wri_formula] != "" then result[:wri_formula] += " + "  end
-              result[:wri_formula] += dind.to_s + " * " + koef.to_s
-              wri += energy
+              unless mpoint.fturn then
+                if result[:wri_formula] != "" then result[:wri_formula] += " + "  end   
+                result[:wri_formula] += dind.to_s + " * " + koef.to_s
+                wri += energy
+              else
+                if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end                 
+                result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
+                wrc += energy                
+              end  
               indicii0[:ind1_480] = mvalue1.actp480          #480
               ind1 = if mvalue1.actp480.nil? then 0 else mvalue1.actp480 end
               indicii0[:ind0_480] = mvalue0.actp480          #480
               ind0 = if mvalue0.actp480.nil? then 0 else mvalue0.actp480 end
               dind = indicii0[:dind_480] = (ind1 - ind0).round(4)   #dind 480         
-              energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480
-              if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end
-              result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
-              wrc += energy          
+              energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
+              unless mpoint.fturn then
+                if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end                 
+                result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
+                wrc += energy
+              else
+                if result[:wri_formula] != "" then result[:wri_formula] += " + "  end   
+                result[:wri_formula] += dind.to_s + " * " + koef.to_s
+                wri += energy                
+              end            
          end # if mvalues.count
          indicii  << indicii0     
        end  # meters.each
