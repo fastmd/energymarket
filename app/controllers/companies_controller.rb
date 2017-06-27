@@ -682,7 +682,7 @@ private
             ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
             result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 + #{lwr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
             if mpcount > 0 then
-              k = (wa ** 2 + wr ** 2) / (lwa ** 2 + lwr ** 2)
+              k = (wa + wr) / (lwa + lwr)
               ln_losses_ng = (ln_losses_ng * k).round(4)
               result[:ln_losses_ng_formula] += " * #{k.round(4)}"
             end
