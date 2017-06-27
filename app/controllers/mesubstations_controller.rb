@@ -54,20 +54,20 @@ private
     @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
     @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
     if params[:filter] then
-        $mesubstation_qregion = @qregion = params[:qregion].to_s
-        $mesubstation_qfilial = @qfilial = params[:qfilial].to_s
-        @data_for_search = $mesubstation_search = '' 
+        @@mesubstation_qregion = @qregion = params[:qregion].to_s
+        @@mesubstation_qfilial = @qfilial = params[:qfilial].to_s
+        @data_for_search = @@mesubstation_search = '' 
     else
         if params[:search] then
-            $mesubstation_search = @data_for_search = params[:mesubstation_search].to_s
-            $mesubstation_qregion = ''
-            $mesubstation_qfilial = ''          
+            @@mesubstation_search = @data_for_search = params[:mesubstation_search].to_s
+            @@mesubstation_qregion = ''
+            @@mesubstation_qfilial = ''          
         else
-            @data_for_search = $mesubstation_search
-            unless @data_for_search.empty? then $mesubstation_qregion = $mesubstation_qfilial = '' end
+            @data_for_search = @@mesubstation_search
+            unless @data_for_search.empty? then @@mesubstation_qregion = @@mesubstation_qfilial = '' end
         end
-        @qregion = $mesubstation_qregion
-        @qfilial = $mesubstation_qfilial
+        @qregion = @@mesubstation_qregion
+        @qfilial = @@mesubstation_qfilial
     end 
     if @data_for_search.empty? then
       if @qregion.empty? and @qfilial.empty? then   

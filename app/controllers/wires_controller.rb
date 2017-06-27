@@ -55,19 +55,19 @@ private
     @fqs = Wire.select(:q).distinct.order(q: :asc).pluck(:q)
     #-----------------------------
     if params[:filter] then
-        $wire_qq = @qq = params[:qq].to_s
-        @data_for_search = $wire_search = '' 
+        @@wire_qq = @qq = params[:qq].to_s
+        @data_for_search = @@wire_search = '' 
     else
         if params[:search] then
-            $wire_search = @data_for_search = params[:wire_search].to_s
-            $wire_qq = ''          
+            @@wire_search = @data_for_search = params[:wire_search].to_s
+            @@wire_qq = ''          
         else
-            @data_for_search = $wire_search
+            @data_for_search = @@wire_search
             unless @data_for_search.empty? then 
-              $wire_qq = '' 
+              @@wire_qq = '' 
             end
         end
-        @qq= $wire_qq
+        @qq= @@wire_qq
     end 
     if @data_for_search.empty? then
       if @qq.empty? then   
