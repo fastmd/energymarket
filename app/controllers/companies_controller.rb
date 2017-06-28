@@ -710,17 +710,16 @@ private
              wrif = result[:wrif] = 0.0
              result[:wrif_formula] = "0.0"
            end
-           unless mpoint.fctc then
-             ct = result[:consumteh] = ((wrc + wrif ) * 0.1).round(4)
-             result[:consumtehi] = ((wrif ) * 0.1).round(4)
-             result[:consumtehi_formula] = wrif.to_s + " * 0.1"
-             result[:consumtehc] = ((wrc) * 0.1).round(4)
+           cti = ctc = 0.0
+           unless mpoint.fctc then                     
+             result[:consumtehc] = ctc = ((wrc) * 0.1).round(4)
              result[:consumtehc_formula] = wrc.to_s + " * 0.1"
-           else
-             ct = result[:consumteh] = ((wrc ) * 0.1).round(4)
-             result[:consumtehc] = ((wrc) * 0.1).round(4)
-             result[:consumtehc_formula] = wrc.to_s + " * 0.1"             
-           end    
+           end
+           unless mpoint.fctl then 
+             result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
+             result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
+           end
+           ct = result[:consumteh] = ctc + ctl    
        end #if wa               
      end # if mvnum  
    result

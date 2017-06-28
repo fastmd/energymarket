@@ -94,10 +94,12 @@
 		   				<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
 		   		</div>		
 		   		<div class="form-group">		
-		   				<label for='fct' class="control-label">Не считать тех.расход <span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span></label>						
+		   				<label for='fct' class="control-label">Не считать тех.расход <%= image_tag('faract.png', :alt => "без СТ", :width => 35, :height => 25) %></label>						
 						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
-						<label for='fctc' class="control-label">Тех.расход только емкостной <span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span></label>						
-						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>					
+						<label for='fctc' class="control-label">Не считать емкостной тех расход <%= image_tag('c.png', :alt => "без СТ емк", :width => 35, :height => 25) %></label>						
+						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>
+					    <label for='fctl' class="control-label">Не считать индуктивный тех расход <%= image_tag('l1.png', :alt => "без СТ инд", :width => 35, :height => 25) %></label>						
+						<%= check_box_tag 'fctl', 'yes', @mpoint.fctl, class: "form-control" %>					
 			    </div>
 			    <div class="form-group">		   				
 		   				<label for='cosfi' class="control-label">cos φ</label>		
@@ -108,7 +110,7 @@
 						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
 			    </div>
 			    <div class="form-group">		
-		   				<label for='fturn' class="control-label">Счетчик обратный <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></label>						
+		   				<label for='fturn' class="control-label">Обратное включение счетчика <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fturn', 'yes', @mpoint.fturn, class: "form-control" %>				
 			    </div>		   		
 		   		<div class="form-group">		

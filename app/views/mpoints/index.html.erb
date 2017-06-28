@@ -55,8 +55,7 @@
 			   <th>Точка учета (потребитель)</th>
 			   <th><%= sort_link "company_shname", "Потребитель", @flr.id %><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></th>			   
 			   <th>Uном, кВ</th> 
-			   <th title="Не считать тех расход">Без CT</th>
-			   <th title="Только емкостной тех расход">CT емк.</th>
+			   <th title="Особенности расчета тех расхода">Тех. расход</th>
 			   <th title="Сos из контракта">cos φ</th>
 			   <th title="Не считать потери хх в трансформаторе">Наш тр-р</th>
 			   <th title="Обратное включение счетчика">Обр.сч.</th> 
@@ -92,8 +91,9 @@
 						<td><%= item.clconname %></td>
 						<td><%= item.company_shname %></td>						
 						<td><%= item.voltcl %></td>
-  						<td title="Не считать тех расход"><% if item.fct then %><span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span><% end %></td>
-  						<td title="Только емкостной тех расход"><% if item.fctc then %><span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span><% end %></td>
+  						<td ><% if item.fct then %><%= image_tag('faract.png', :alt => "без СТ", :width => 30, :height => 20, :title => "Не считать тех расход") %><% end %>
+                             <% if item.fctc then %><%= image_tag('c.png', :alt => "без СТ емк", :width => 30, :height => 20, :title => "Не считать емкостной тех расход") %><% end %>
+							 <% if item.fctl then %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 30, :height => 20, :title => "Не считать индуктивный тех расход") %><% end %></td>
   						<td title="Сos из контракта"><%= item.cosfi %></td>
   						<td title="Не считать потери хх в трансформаторе"><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
   						<td title="Обратное включение счетчика"><% if item.fturn then %><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><% end %></td> 					      						  						
