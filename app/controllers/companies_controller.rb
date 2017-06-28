@@ -719,7 +719,7 @@ private
              result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
-           ct = result[:consumteh] = ctc + ctl    
+           ct = result[:consumteh] = ctc + cti    
        end #if wa               
      end # if mvnum  
    result
