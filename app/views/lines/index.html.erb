@@ -79,12 +79,12 @@
 			   <th>Удельное сопротивление материала ρ20, Ом*мм&sup2;/м</th>
 			   <th>Коэффициент скрутки Kr</th>
 			   <th>Коэффициент пов. эффекта и близости Kc</th>
-			   <th>Uном, кВ</th>
+			   <th title="Используется вместо Uном точки учета">Uном, кВ</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>
-			   <th><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>			   
+			   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>			   
 			</tr>	
 		</thead>
 		<tbody>
@@ -110,14 +110,14 @@
 						<td><%= item.ro %></td>
 						<td><%= item.k_scr %></td>	
 						<td><%= item.k_peb %></td>
-						<td><%= item.unom %></td>	
+						<td title="Используется вместо Uном точки учета"><%= item.unom %></td>	
 						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<td><%= item.comment %></td>
 						<td><span class="glyphicon glyphicon-<%= if item.wire_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
                         <td><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , lines_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию #{item.name} ?" } %></td>
-  						<td><%= if item.lnparams.count!=0 then item.lnparams.count end %></td>                  
+  						<td title="Кол-во точек учета, которым принадлежит линия"><%= if item.lnparams.count!=0 then item.lnparams.count end %></td>                  
 					</tr>		
 			<% end %>			
 		</tbody>

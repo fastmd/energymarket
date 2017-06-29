@@ -30,18 +30,18 @@
 
 <%= "Denumirea furnizorului:  #{@mp.furnizor.name}" %></br>
 
-<h4 align="center">Показания</h4> 
+<h4 align="center">Показания в том виде, как были введены в БД</h4> 
 <small>
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
-    <tr class="success">
-      <th>Nr счетчика</th>
-      <th>Тип данных</th>    
-      <th>Данные текущие</th>
-      <th>Данные предыдущие</th>
-      <th>Разница</th>
-      <th>Коэффициент</th>  
-      <th>Энергия, kWh</th> 
+    <tr>
+      <th class="warning">Nr счетчика</th>
+      <th class="warning">Тип данных</th>    
+      <th class="warning">Данные текущие</th>
+      <th class="warning">Данные предыдущие</th>
+      <th class="success">Разница</th>
+      <th class="warning">Коэффициент</th>  
+      <th class="success">Энергия, kWh</th> 
     </tr>  
   </thead>
   <tbody>
@@ -58,7 +58,7 @@
       </tr>
       <tr>
       	 <td></td>
-      	 <td>1.8.0</td>
+      	 <td>Активный прием А+</td>
       	 <td><%= number_with_delimiter(item[:ind1_180], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:ind0_180], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_180], delimiter: " ") %></td>
@@ -67,7 +67,7 @@
       </tr>
       <tr>
       	 <td></td>
-      	 <td>2.8.0</td>
+      	 <td>Активная отдача А-</td>
       	 <td><%= number_with_delimiter(item[:ind1_280], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:ind0_280], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_280], delimiter: " ") %></td>
@@ -76,7 +76,7 @@
       </tr>
       <tr>
       	 <td></td>
-      	 <td>3.8.0</td>
+      	 <td>Реактивный прием R+</td>
       	 <td><%= number_with_delimiter(item[:ind1_380], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:ind0_380], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_380], delimiter: " ") %></td>
@@ -85,12 +85,39 @@
       </tr>
       <tr>
       	 <td></td>
-      	 <td>4.8.0</td>
+      	 <td>Реактивная отдача R-</td>
       	 <td><%= number_with_delimiter(item[:ind1_480], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:ind0_480], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_480], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
       	 <td><strong><%= number_with_delimiter(item[:enrg_480], delimiter: " ") %></strong></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>Время работы электроустановки, часы</td>
+      	 <td><%= number_with_delimiter(item[:trab], delimiter: " ") %></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>Потребление субабонента, kWh</td>
+      	 <td><%= number_with_delimiter(item[:dwa], delimiter: " ") %></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      </tr>
+      <tr>
+      	 <td></td>
+      	 <td>Учет А- (не аннулировать отдачу)</td>
+      	 <td><% if item[:fanulare] then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
       </tr>      
     <% end %>
     <% end %>
@@ -103,13 +130,13 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Энергия A+, kWh</th>      
-      <th>Энергия A-, kWh</th>
-      <th>Энергия R+, kVAh</th>
-      <th>Энергия R-, kVAh</th>
-      <th>Энергия R, kVAh</th>
-      <th>Потребление<br>субабонента, kWh</th>
-      <th>Потребление за вычетом<br> потребления<br>субабонента, kWh</th> 
+      <th>Энергия Wa+, kWh</th>      
+      <th>Энергия Wa-, kWh</th>
+      <th>Энергия Wri, kVAh</th>
+      <th>Энергия Wrc, kVAh</th>
+      <th>Энергия Wr=Wri+Wrc, kVAh</th>
+      <th class="warning">Потребление<br>субабонента, kWh</th>
+      <th>Потребление за вычетом<br> потребления<br>субабонента, Wa, kWh</th> 
     </tr>  
   </thead>
   <tbody>
@@ -131,8 +158,12 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Время работы<br> электроустановки, часы</th>
-      <th>cos φ контрактный</th>
+      <th class="warning">Класс напряжения, кВ</th>
+      <th class="warning" title="Особенности расчета тех расхода" class="warning">Тех. расход</th>
+	  <th class="warning" title="Не считать потери хх в трансформаторе">Наш тр-р</th>
+	  <th class="warning" title="Обратное включение счетчика">Обр.сч.</th> 
+      <th class="warning">Время работы<br> электроустановки, часы</th>
+      <th class="warning">cos φ контрактный</th>
       <th>tg φ контрактный</th>   
       <th>Tраб, часы</th>	
       <th>cos φ расчетный</th>
@@ -140,6 +171,12 @@
   </thead>
   <tbody>
     <tr>
+      <td><strong><%= @mp.voltcl %></strong></td>
+      <td ><% if @mp.fct then %><%= image_tag('faract.png', :alt => "без СТ", :width => 30, :height => 20, :title => "Не считать тех расход") %><% end %>
+           <% if @mp.fctc then %><%= image_tag('c.png', :alt => "без СТ емк", :width => 30, :height => 20, :title => "Не считать емкостной тех расход") %><% end %>
+	       <% if @mp.fctl then %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 30, :height => 20, :title => "Не считать индуктивный тех расход") %><% end %></td>
+	  <td title="Не считать потери хх в трансформаторе"><% if @mp.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
+  	  <td title="Обратное включение счетчика"><% if @mp.fturn then %><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><% end %></td>      	
       <td><strong><%= number_with_delimiter(@energies[:trab], delimiter: " ") %></strong></td>	
       <td><strong><%= number_with_delimiter(@losses[:cosfi_contract], delimiter: " ") %></strong></td>
       <td><%= @losses[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@losses[:tgfi_contract], delimiter: " ") %></strong></td>

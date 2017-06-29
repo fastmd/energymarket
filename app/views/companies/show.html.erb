@@ -152,7 +152,7 @@
 						<td><%= if item.filial then item.filial.name end %></td>
 						<td><%= if item.region then item.region.cvalue end %></td>
 						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
-						<td><%= item.meconname %></td>
+						<td><%= if item.meconname.count("a-zA-Zа-яА-Я") > 0 then item.meconname else "#{item.voltcl} Î #{item.meconname} F" end %></td>
 						<td><%= item.clconname %></td>						
 						<td><%= item.voltcl %></td> 
   						<td ><% if item.fct then %><%= image_tag('faract.png', :alt => "без СТ", :width => 30, :height => 20, :title => "Не считать тех расход") %><% end %>

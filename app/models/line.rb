@@ -6,7 +6,7 @@ class Line < ApplicationRecord
   validates_associated :wire
   validates :wire_id, presence: true, numericality: { only_integer: true }
   validates_associated :mesubstation
-  validates :name, presence: true, length: { minimum: 2, maximum: 20 }
+  validates :name, presence: true, length: { minimum: 2, maximum: 25 }
   validates :mesubstation_id, presence: true, numericality: { only_integer: true }
   validates :l, presence: true, numericality: true
   validates :k_tr, presence: true, numericality: true

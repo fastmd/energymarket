@@ -49,6 +49,10 @@ Rails.application.routes.draw do
   
   get 'welcome/index'
   get 'welcome/help'
+  get 'welcome/counter'
+  get 'welcome/mvalue'
+  get 'welcome/mpoint'
+  get 'welcome/thesaurus'  
   
   get 'thesaurus/index'
   post 'thesaurus/index'

@@ -26,9 +26,25 @@ helper_method :sort_column, :sort_direction
   end
   
   def help
-    @pagename = 'Помощь'
+    @pagename = 'Справка'
   end
 
+  def thesaurus
+    @pagename = 'Справка-Справочник'
+  end
+ 
+  def counter
+    @pagename = 'Справка-Счетчики'
+  end
+  
+  def mvalue
+    @pagename = 'Справка-Показания'
+  end
+  
+  def mpoint
+    @pagename = 'Справка-Точки учета'
+  end  
+  
 private
   def sortable_columns
     ["name"]

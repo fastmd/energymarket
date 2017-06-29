@@ -75,7 +75,7 @@
 						<%= number_field_tag 'dwa', @mv_params[:dwa], max: 1000000000, step: 1, class: "form-control", title: 'если есть (необязательный параметр)' %>
 				</div><br><br>
 				<div class="form-group">
-		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не анулировать отдачу)</span></label>
+		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не аннулировать отдачу)</span></label>
 						<%= check_box_tag 'fanulare', 'yes', if (@mv_params[:fanulare])=='true' then 'yes' else nil end, class: "form-control" %>
 		   		</div>
 		   		<div class="form-group">		
@@ -116,8 +116,8 @@
 		   <th>Активная отдача А-</th>
 		   <th>Реактивный прием R+</th>
 		   <th>Реактивная отдача R-</th>
-		   <th>Время работы<br> электроустановки, часы</th>
-		   <th>Потребление<br> субабонента, кВт*ч</th>
+		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
+		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента, кВт*ч</th>
 		   <th title="Не анулировать отдачу">Учет<br> А-</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -142,12 +142,12 @@
 					<td><%= number_with_delimiter(item.actp280, delimiter: " ") %></td>
 					<td><%= number_with_delimiter(item.actp380, delimiter: " ") %></td>
 					<td><%= number_with_delimiter(item.actp480, delimiter: " ") %></td>
-					<td><%= item.trab %></td>
-					<td><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
-					<td><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
+					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>
+					<td title="Вычитается из Wa до расчета потерь"><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
+					<td title="Не анулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
 					<td><%= item.comment %></td>
-					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
+					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+					<td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
   					<td><%= link_to " " , mvalues_edit_path(:mv_id => item.id, :met => unless @met.nil? then @met.id else nil end), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " " , mvalues_destroy_path(:mv_id => item.id), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить показания за #{item.actdate.to_formatted_s(:day_month_year)} ?" } %></td>  						

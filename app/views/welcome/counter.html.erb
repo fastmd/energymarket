@@ -1,0 +1,50 @@
+<% provide(:title, @pagename) %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= link_to "Назад", welcome_help_path, :class => "glyphicon glyphicon-level-up" %></li>
+  </ul>  
+</nav>
+
+<h4 align="center"><%= @pagename %> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></h4>	
+<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> - Редактирование объекта.</br>
+<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> - Удаление объекта (объект, от которого зависят другие объекты, удалить нельзя).</br>
+<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> - Объект участвует в расчетах.</br>
+<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> - Объект не участвует в расчетах.</br>
+<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> - Расчетный день (если в течение месяца было более 1-го съема показаний).</br></br>
+
+<h5><%= image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) %><strong> Добавление/Замена счетчика</strong></h5>
+<ul>
+  <li>Открыть точки учета (Поставщик/Потребитель/точки учета)</br>
+  	  <%= image_tag('counter/mpoints.png') %></br></br>
+  </li>
+  <li>Открыть счетчики (/точка учета/счетчики)</br>
+  	  <%= image_tag('counter/counters.png') %></br></br>
+  </li>		
+  <li>Добавить новый счетчик (дата монтажа = дата установки счетчика = ставить реальную дату, т.к. она влияет на валидность показаний).</br>
+  	  Прим.: счетчик всегда добавляется как новый, даже если он уже принадлежал ранее данной точке учета.</br>
+  	  Если снять галочку <span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span>, счетчик и соответствующие ему показания выпадут из расчетов.</br>
+  	  <%= image_tag('counter/newcounter.png') %></br></br> 
+  </li>
+  <li>Внести показания для нового счетчика. Показания счетчика, выпадающие за период его актульности, не участвуют в расчетах.</br></li>
+  <li>Установить расчетный день <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></br></li>
+</ul></br>
+
+<h5><%= image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) %><strong> Редактирование параметров счетчика</strong></h5>
+<ul>
+  <li>Открыть счетчики (Поставщик/Потребитель/точки учета/счетчики). Нажать <kbd><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></kbd>.</br>
+  	  <%= image_tag('counter/counter.png') %></br></br>
+  </li>		
+  <li>В открывшейся форме изменить нужные параметры.</br>
+  	  Если снять галочку <span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span>, счетчик и соответствующие ему показания выпадут из расчетов.</br>
+  	  <%= image_tag('counter/counteredit.png') %></br></br> 
+  </li>
+</ul></br>
+
+<h5><%= image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) %><strong> Удаление счетчика</strong></h5>
+<ul>
+  <li>Открыть счетчики (Поставщик/Потребитель/точки учета/счетчики). Нажать <kbd><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></kbd>. 
+  	  Счетчик, за которым числятся показания, удалить нельзя. Сначала надо удалить показания.</br>
+  	  <%= image_tag('counter/counterdel.png') %></br></br>
+  </li>		
+</ul></br>

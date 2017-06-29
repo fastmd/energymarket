@@ -245,7 +245,7 @@ before_filter :redirect_cancel, only: [:create, :update]
            if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.mesubstation.name}","#{mp.voltcl} Î #{mp.meconname} F",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -319,7 +319,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     else
       @mpoints.each do |mp| 
         nr += 1  
-        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", "#{mp.voltcl} Î #{mp.meconname} F", "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end, "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         indicii = energies[:indicii]
@@ -436,7 +436,8 @@ private
        mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate, :mvalue_updated_at).last
        unless mvalues.nil? then dddate_e = mvalues.actdate end       
        # indicii      
-       dtsum = trabsum = 0
+       dtsum  = 0
+       trabsum = nil
        result[:wa_formula] = ""
        result[:waliv_formula] = ""
        result[:wri_formula] = ""
@@ -446,20 +447,22 @@ private
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
          mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate, :mvalue_updated_at)
          if mvalues.count != 0 then
-              if mvalues.count != 1 then  mvnum = 2 end
+              if mvalues.count != 1 then  mvnum = 2 end  
               mvalue0 = mvalues.first
               mvalue1 = mvalues.last               
               date1 = mvalue1.actdate         #date1           
               date0 = mvalue0.actdate         #date0
               dt = (date1 - date0).to_i       #dt
               trab = mvalue1.trab             #trab from act
-              dwa  = mvalue1.dwa              #dwa  from act 
+              dwa  = mvalue1.dwa              #dwa  from act
+              indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
               if trab.nil? or trab == 0 then 
                 dtsum += dt                     #dtsum
               else
+                if trabsum.nil? then trabsum = 0 end 
                 trabsum += trab
-              end    
-              indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
+                indicii0[:trab] = trab
+              end     
               indicii0[:ind1_180] = mvalue1.actp180          #180
               ind1 = if mvalue1.actp180.nil? then 0 else mvalue1.actp180 end
               indicii0[:ind0_180] = mvalue0.actp180          #180 
@@ -471,13 +474,17 @@ private
                 result[:wa_formula] += dind.to_s + " * " + koef.to_s
                 wa += energy
               else
+                if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+                result[:waliv_formula] += dind.to_s + " * " + koef.to_s                
                 if mvalue1.fanulare then 
-                  if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-                  result[:waliv_formula] += dind.to_s + " * " + koef.to_s
                   waliv += energy
+                  indicii0[:fanulare] = mvalue1.fanulare
                 end
               end  
-              unless dwa.nil? then wasub +=dwa end
+              unless dwa.nil? then 
+                wasub +=dwa
+                indicii0[:dwa] = dwa 
+              end
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
               indicii0[:ind0_280] = mvalue0.actp280          #280
@@ -485,10 +492,11 @@ private
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280         
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
               unless mpoint.fturn then 
+                if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
+                result[:waliv_formula] += dind.to_s + " * " + koef.to_s                
                 if mvalue1.fanulare then 
-                  if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-                  result[:waliv_formula] += dind.to_s + " * " + koef.to_s
                   waliv += energy
+                  indicii0[:fanulare] = mvalue1.fanulare
                 end
               else
                 if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
@@ -532,9 +540,14 @@ private
        result[:mvnum] = mvnum
        if mvnum == 2 then
          # work hours
-         result[:trab] = trabsum 
-         result[:workt] = dtsum * 24 + trabsum
-         result[:workt_formula] = dtsum.to_s + " * 24 + " + trabsum.to_s + " = "        
+         if trabsum.nil? then
+          result[:workt] = dtsum * 24
+          result[:workt_formula] = dtsum.to_s + " * 24  = "
+         else
+          result[:trab] = trabsum 
+          result[:workt] = dtsum * 24 + trabsum
+          result[:workt_formula] = dtsum.to_s + " * 24 + " + trabsum.to_s + " = "
+         end           
          # energies
          result[:wa] = wa
          result[:wasub] = wasub
