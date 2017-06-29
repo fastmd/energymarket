@@ -51,19 +51,19 @@
 						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
 				</div><br><br>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Активный прием A+</label>
+		   				<label for='comment' class="control-label">Активный прием</label>
 						<%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Активная отдача A-</label>
+		   				<label for='comment' class="control-label">Активная отдача</label>
 						<%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Реактивный прием R+</label>
+		   				<label for='comment' class="control-label">Реактивный прием</label>
 						<%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Реактивная отдача R-</label>
+		   				<label for='comment' class="control-label">Реактивная отдача</label>
 						<%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div><br><br>
 		   		<div class="form-group">		
@@ -112,10 +112,10 @@
 		   <th>№</th>
 		   <th>Дата актирования</th>
 		   <th title="№ счетчика (дата установки счетчика)">Счетчик</th>
-		   <th>Активный прием А+</th>
-		   <th>Активная отдача А-</th>
-		   <th>Реактивный прием R+</th>
-		   <th>Реактивная отдача R-</th>
+		   <th>Активный прием</th>
+		   <th>Активная отдача</th>
+		   <th>Реактивный прием</th>
+		   <th>Реактивная отдача</th>
 		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
 		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента, кВт*ч</th>
 		   <th title="Не анулировать отдачу">Учет<br> А-</th>
