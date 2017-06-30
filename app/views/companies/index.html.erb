@@ -3,6 +3,7 @@
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", welcome_index_path, :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Справка", companies_helpmpoint_path(:id => @flr.id, :page => @page), :class => "glyphicon glyphicon-info-sign" %></li>    
     <li><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 40, :height => 30), companies_reports_path(:id => @flr.id, :page => @page) %></li>
     <li><%= form_tag("/companies/index", method: "get", class: 'form-inline') do %>
     	<div class="form-group">

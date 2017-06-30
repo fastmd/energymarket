@@ -2,6 +2,15 @@ class CompaniesController < ApplicationController
 before_filter :check_user
 before_filter :redirect_cancel, only: [:create, :update] 
   
+  def helpmpoint
+    @pagename = 'Справка-Точки учета'
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @page = params[:page]
+    unless params[:cp_id].nil? then
+      @company = Company.find(params[:cp_id])
+    end  
+  end
+  
   def new
   end
   

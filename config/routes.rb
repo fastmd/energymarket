@@ -107,6 +107,7 @@ Rails.application.routes.draw do
   post 'companies/onempreport'
   get 'companies/show'
   post 'companies/show'
+  get 'companies/helpmpoint'
 
 resources :filials  do
   resources :mesubstations
