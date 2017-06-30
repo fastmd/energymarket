@@ -3,6 +3,12 @@ before_filter :check_user
 before_filter :redirect_cancel, only: [:create, :update]
 helper_method :sort_column, :sort_direction   
   
+  def helpmvalue
+    @pagename = 'Справка-Показания'
+    @mp =  Mpoint.find(params[:id])
+    unless (params[:met]).nil? || (params[:met]) == ''  then  @met = Meter.find(params[:met]) end 
+  end
+  
   def new  
   end
   

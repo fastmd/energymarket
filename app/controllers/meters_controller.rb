@@ -2,6 +2,11 @@ class MetersController < ApplicationController
 before_filter :redirect_cancel, only: [:create, :update]
 before_filter :check_user, only: [:index]   
   
+  def helpcounter
+    @pagename = 'Справка-Счетчики'
+    @mp =  Mpoint.find(params[:id]) 
+  end
+  
   def index
     @flag = params[:flag]  
     @mp =  Mpoint.find(params[:id]) 

@@ -3,6 +3,7 @@
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id, :flr_id => @mp.furnizor_id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign" %></li>
   </ul>  
 </nav>
 

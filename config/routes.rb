@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post 'meters/show'
   get 'meters/destroy'
   get 'meters/edit'
+  get 'meters/helpcounter'
 
   get 'static_pages/home'
   get 'static_pages/help'
@@ -90,6 +91,7 @@ Rails.application.routes.draw do
   get 'mpoints/edit'
   get 'mpoints/destroy'
   get 'mpoints/update'
+  get 'mpoints/helpmvalue'
   
   get 'companies/index'
   get 'companies/all' 
