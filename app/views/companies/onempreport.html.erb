@@ -145,7 +145,8 @@
       <th class="warning">Класс напряжения, кВ</th>
       <th class="warning" title="Особенности расчета тех расхода" class="warning">Тех. расход</th>
 	  <th class="warning" title="Не считать потери хх в трансформаторе">Наш тр-р</th>
-	  <th class="warning" title="Обратное включение счетчика">Обр.сч.</th> 
+	  <th class="warning" title="Обратное включение счетчика">Обр.сч.</th>
+	  <th class="warning" title="Граница раздела и точка учета не совпадают">Граница</br>раздела</th> 
       <th class="warning">Время работы<br> электроустановки, часы</th>
       <th class="warning">cos φ контрактный</th>
       <th>tg φ контрактный</th>   
@@ -160,7 +161,8 @@
            <% if @mp.fctc then %><%= image_tag('c.png', :alt => "без СТ емк", :width => 30, :height => 20, :title => "Не считать емкостной тех расход") %><% end %>
 	       <% if @mp.fctl then %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 30, :height => 20, :title => "Не считать индуктивный тех расход") %><% end %></td>
 	  <td title="Не считать потери хх в трансформаторе"><% if @mp.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
-  	  <td title="Обратное включение счетчика"><% if @mp.fturn then %><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><% end %></td>      	
+  	  <td title="Обратное включение счетчика"><% if @mp.fturn then %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><% end %></td>
+  	  <td title="Граница раздела и точка учета не совпадают"><% if @mp.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td>      	
       <td><strong><%= number_with_delimiter(@energies[:trab], delimiter: " ") %></strong></td>	
       <td><strong><%= number_with_delimiter(@losses[:cosfi_contract], delimiter: " ") %></strong></td>
       <td><%= @losses[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@losses[:tgfi_contract], delimiter: " ") %></strong></td>
@@ -235,34 +237,6 @@
    </tbody>
 </table>     	
 </small>
-
-<!--	
-<h4 align="center">ζ</h4>
-<small>
-<table class="table table-striped table-hover table-condensed table-sm">
-	<thead>
-		<tr>
-		   <th colspan="1" width="5%" class="info">№</th>
-		   <th colspan="1" width="5%" class="info">Tm, ч.</th>
-		   <th colspan="1" width="5%" class="info">ζm, ч.</th>
-		   <th colspan="1" width="85%" class="info"></th>
-		</tr>	
-	</thead>
-	<tbody>					
-			<% i = 0%>
-			<% @tau.each do |item| %>
-				<tr>		
-					<% i = i + 1 %>		        
-					<td><%= i  %></td>
-					<td><%= item.tm %></td>									
-					<td><%= item.taum %></td>
-					<td></td>									
-				</tr>
-			<% end %>	  
-	</tbody>
-</table>
-</small>
--->
 
 <small>
 <table class="table table-striped table-condensed  table-hover">	
@@ -407,7 +381,7 @@
     <tr>      
       <td>Суммарные, kWh</td>
       <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
-      <td></td>
+      <td><%= @losses[:ln_losses_formula] %></td>
     </tr>
   </tbody>
 </table>
@@ -426,29 +400,34 @@
   <tbody>
     <tr>
       <td>Wa с потерями, kWh</td>	
-      <td><strong><%= number_with_delimiter(@losses[:wal], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:wal], delimiter: " ") %></td>
       <td><%= @losses[:wal_formula] %></td>
     </tr>
     <tr>
       <td>Wr с потерями, kVAh</td>	
-      <td><strong><%= number_with_delimiter(@losses[:wrl], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:wrl], delimiter: " ") %></td>
       <td><%= @losses[:wrl_formula] %></td>
     </tr>
     <tr>
       <td>cos φ</td>	
-      <td><strong><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></td>
       <td><%= @losses[:cosf_formula] %></td>
     </tr>
     <tr>
       <td>Wrio</td>	
-      <td><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></td>
       <td><%= @losses[:wrio_formula] %></td>
     </tr>
     <tr>
       <td>Wrif</td>	
-      <td><strong><%= number_with_delimiter(@losses[:wrif], delimiter: " ") %></strong></td>
+      <td><%= number_with_delimiter(@losses[:wrif], delimiter: " ") %></td>
       <td><%= @losses[:wrif_formula] %></td>
     </tr>
+    <tr>
+      <td>Wrcf</td>	
+      <td><%= number_with_delimiter(@losses[:wrcf], delimiter: " ") %></td>
+      <td><%= @losses[:wrcf_formula] %></td>
+    </tr>    
     <tr>
       <td>CTi</td>	
       <td><strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
@@ -462,8 +441,34 @@
     <tr>
       <td>CT</td>	
       <td><strong><%= number_with_delimiter(@losses[:consumteh], delimiter: " ") %></strong></td>
-      <td></td>
+      <td><%= @losses[:consumteh_formula] %></td>
     </tr>
   </tbody>
+</table>
+</small>
+
+<h4 align="center">ζ</h4>
+<small>
+<table class="table table-striped table-hover table-condensed table-sm">
+	<thead>
+		<tr>
+		   <th colspan="1" width="5%" class="info">№</th>
+		   <th colspan="1" width="5%" class="info">Tm, ч.</th>
+		   <th colspan="1" width="5%" class="info">ζm, ч.</th>
+		   <th colspan="1" width="85%" class="info"></th>
+		</tr>	
+	</thead>
+	<tbody>					
+			<% i = 0%>
+			<% @tau.each do |item| %>
+				<tr>		
+					<% i = i + 1 %>		        
+					<td><%= i  %></td>
+					<td><%= item.tm %></td>									
+					<td><%= item.taum %></td>
+					<td></td>									
+				</tr>
+			<% end %>	  
+	</tbody>
 </table>
 </small>

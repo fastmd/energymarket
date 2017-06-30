@@ -306,7 +306,8 @@ private
     mpoint.fctc = if params[:fctc].nil? then nil else true end
     mpoint.fctl = if params[:fctl].nil? then nil else true end
     mpoint.four = if params[:four].nil? then nil else true end
-    mpoint.fturn = if params[:fturn].nil? then nil else true end   
+    mpoint.fturn = if params[:fturn].nil? then nil else true end
+    mpoint.fmargin = if params[:fmargin].nil? then nil else true end    
     mpoint.cosfi = params[:cosfi]      
     mpoint    
   end      

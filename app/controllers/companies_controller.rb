@@ -554,7 +554,7 @@ private
          # energies
          result[:wa] = wa
          result[:wasub] = wasub
-         result[:wa_without_wasub] = wa - wasub
+         result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end
          result[:wa_without_wasub_formula] = wa.to_s + " - " + wasub.to_s + " = " 
          result[:wa_formula] += " = "
          result[:waliv] = waliv
@@ -705,7 +705,8 @@ private
           end
           result[:ln_losses_ng] = ln_losses_ng     
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
-          result[:ln_losses] = ln_losses_ng + ln_losses_kr              
+          result[:ln_losses] = ln_losses_ng + ln_losses_kr
+          result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"              
         end
       end  # if ln.count
       # cos fi with losses           
@@ -714,12 +715,14 @@ private
            result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
            wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx
            result[:wrl_formula] = wri.to_s + " + " + tr_losses_rkz.to_s + " + " + tr_losses_rxx.to_s
+           wrcf = result[:wrcf] = wrc - tr_losses_rkz - tr_losses_rxx
+           result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_rkz.to_s + " - " + tr_losses_rxx.to_s           
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
            result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
            if mpoint.voltcl == 0.4 then  tgficonst = 0.426 else tgficonst = 0.567 end
            wrio = result[:wrio] = (wal * tgficonst).round(4)
            result[:wrio_formula] = " #{wal} * #{tgficonst} "
-           if wrio < wri then
+           if wrio < wrl then
              wrif = result[:wrif] = wrl - wrio
              result[:wrif_formula] = wrl.to_s + " - " + wrio.to_s
            else
@@ -727,15 +730,21 @@ private
              result[:wrif_formula] = "0.0"
            end
            cti = ctc = 0.0
-           unless mpoint.fctc then                     
-             result[:consumtehc] = ctc = ((wrc) * 0.1).round(4)
-             result[:consumtehc_formula] = wrc.to_s + " * 0.1"
+           unless mpoint.fctc then
+             unless mpoint.fmargin then                     
+               result[:consumtehc] = ctc = ((wrc) * 0.1).round(4)
+               result[:consumtehc_formula] = wrc.to_s + " * 0.1"
+             else
+               result[:consumtehc] = ctc = if wrcf > 0 then ((wrcf) * 0.1).round(4) else 0.0 end
+               result[:consumtehc_formula] = if wrcf > 0 then "#{wrcf} * 0.1" else "0.0" end
+             end    
            end
            unless mpoint.fctl then 
              result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
-           ct = result[:consumteh] = ctc + cti    
+           ct = result[:consumteh] = cti + ctc
+           result[:consumteh_formula] = "#{cti} + #{ctc}"    
        end #if wa               
      end # if mvnum  
    result

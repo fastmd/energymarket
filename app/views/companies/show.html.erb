@@ -77,7 +77,7 @@
 						<%= check_box_tag 'fctl', 'yes', @mpoint.fctl, class: "form-control" %>						
 			    </div>
 			    <div class="form-group">		   				
-		   				<label for='cosfi' class="control-label">cos φ</label>		
+		   				<label for='cosfi' class="control-label">cos φ контрактный</label>		
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
 		   		</div>
 		   		<div class="form-group">		
@@ -85,9 +85,13 @@
 						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
 			    </div>
 			    <div class="form-group">		
-		   				<label for='fturn' class="control-label">Обратное включение счетчика <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></label>						
+		   				<label for='fturn' class="control-label">Обратное включение счетчика <span class="glyphicon glyphicon-random" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fturn', 'yes', @mpoint.fturn, class: "form-control" %>				
 			    </div>
+			    <div class="form-group">		
+		   				<label for='fmargin' class="control-label">Граница раздела и точка учета не совпадают <span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></label>						
+						<%= check_box_tag 'fmargin', 'yes', @mpoint.fmargin, class: "form-control" %>				
+			    </div>			    
 		   		<div class="form-group">		
 		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>				
@@ -122,8 +126,9 @@
 			   <th>Uном, кВ</th> 
 			   <th title="Особенности расчета тех расхода">Тех. расход</th>
 			   <th title="Сos из контракта">cos φ</th>
-			   <th title="Не считать потери хх в трансформаторе">Наш тр-р</th>
-			   <th title="Обратное включение счетчика">Обр.сч.</th> 	
+			   <th title="Наш трансформатор - не считать потери хх в трансформаторе"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></th>
+			   <th title="Обратное включение счетчика"><span class="glyphicon glyphicon-random" aria-hidden="true"></span></th>
+			   <th title="Граница раздела и точка учета не совпадают"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></th> 	
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
@@ -159,8 +164,9 @@
                              <% if item.fctc then %><%= image_tag('c.png', :alt => "без СТ емк", :width => 30, :height => 20, :title => "Не считать емкостной тех расход") %><% end %>
 							 <% if item.fctl then %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 30, :height => 20, :title => "Не считать индуктивный тех расход") %><% end %></td>
   						<td title="Сos из контракта"><%= item.cosfi %></td>
-  						<td title="Не считать потери хх в трансформаторе"><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
-  						<td title="Обратное включение счетчика"><% if item.fturn then %><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><% end %></td> 	
+  						<td title="Наш трансформатор - не считать потери хх в трансформаторе"><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
+  						<td title="Обратное включение счетчика"><% if item.fturn then %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><% end %></td>
+  						<td title="Граница раздела и точка учета не совпадают"><% if item.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td> 	
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
