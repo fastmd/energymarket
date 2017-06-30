@@ -13,6 +13,16 @@
   </ul>  
 </nav>
 
+    <%= "month_for_report = #{@month_for_report}" %>
+    <%= "ddate = #{@ddate}" %>
+    <%= "luna = #{@luna}" %>
+    <%= "ddate_b = #{@ddate_b}" %>
+    <%= "ddate_mb = #{@ddate_mb}" %>
+    <%= "ddate_e = #{@ddate_e}" %>
+    <%= "ddate_me = #{@ddate_me}" %>
+    <%= "luna_b = #{@luna_b}" %>
+    <%= "luna_e = #{@luna_e}" %>
+
 <ul class="breadcrumb">
   <li><%= if (@fpr > 5) 
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
@@ -125,34 +135,6 @@
 </table>
 </small>
 
-<h4 align="center">Энергии</h4>
-<small>
-<table class="table table-striped table-condensed  table-hover">	
-  <thead>
-    <tr class="success">
-      <th>Энергия Wa+, kWh</th>      
-      <th>Энергия Wa-, kWh</th>
-      <th>Энергия Wri, kVAh</th>
-      <th>Энергия Wrc, kVAh</th>
-      <th>Энергия Wr=Wri+Wrc, kVAh</th>
-      <th class="warning">Потребление<br>субабонента, kWh</th>
-      <th>Потребление за вычетом<br> потребления<br>субабонента, Wa, kWh</th> 
-    </tr>  
-  </thead>
-  <tbody>
-    <tr>
-      <td><%= @energies[:wa_formula] %><strong><%= number_with_delimiter(@energies[:wa], delimiter: " ") %></strong></td>
-      <td><%= @energies[:waliv_formula] %><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wri_formula] %><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wr_formula] %><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
-      <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
-    </tr>
-  </tbody>
-</table>
-</small>
-
 <h4 align="center">Дополнительные параметры</h4>
 <small>
 <table class="table table-striped table-condensed  table-hover">	
@@ -182,6 +164,34 @@
       <td><%= @losses[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@losses[:tgfi_contract], delimiter: " ") %></strong></td>
       <td><%= @energies[:workt_formula] %><strong><%= number_with_delimiter(@energies[:workt], delimiter: " ") %></strong></td>	
       <td><%= @losses[:cosfi_formula] %><strong><%= number_with_delimiter(@losses[:cosfi], delimiter: " ") %></strong></td>      
+    </tr>
+  </tbody>
+</table>
+</small>
+
+<h4 align="center">Энергии</h4>
+<small>
+<table class="table table-striped table-condensed  table-hover">	
+  <thead>
+    <tr class="success">
+      <th>Энергия Wa+, kWh</th>      
+      <th>Энергия Wa-, kWh</th>
+      <th>Энергия Wri, kVAh</th>
+      <th>Энергия Wrc, kVAh</th>
+      <th>Энергия Wr=Wri+Wrc, kVAh</th>
+      <th class="warning">Потребление<br>субабонента, kWh</th>
+      <th>Потребление за вычетом<br> потребления<br>субабонента, Wa, kWh</th> 
+    </tr>  
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @energies[:wa_formula] %><strong><%= number_with_delimiter(@energies[:wa], delimiter: " ") %></strong></td>
+      <td><%= @energies[:waliv_formula] %><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wri_formula] %><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wr_formula] %><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>
@@ -223,7 +233,8 @@
    </tbody>
 </table>     	
 </small>
-	
+
+<!--	
 <h4 align="center">ζ</h4>
 <small>
 <table class="table table-striped table-hover table-condensed table-sm">
@@ -249,6 +260,7 @@
 	</tbody>
 </table>
 </small>
+-->
 
 <small>
 <table class="table table-striped table-condensed  table-hover">	
@@ -286,22 +298,41 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Pxx, kWh</th>
-      <th>Pкз, kWh</th>      
-      <th>Rxx, kVAh</th>
-      <th>Rкз, kVAh</th>
-      <th>P суммарные, kWh</th>
-      <th>R суммарные, kVAh</th>  
+      <th style="width:150px; max-width:150px;">Параметр</th>
+      <th style="width:100px; max-width:200px;">Значение</th>      
+      <th>Расчет</th> 
     </tr>  
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:tr_losses_pxx_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_pxx], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tr_losses_pkz_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_pkz], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tr_losses_rxx_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_rxx], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tr_losses_rkz_formula] %> = <strong><%= number_with_delimiter(@losses[:tr_losses_rkz], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tr_losses_p_formula] %><strong><%= number_with_delimiter(@losses[:tr_losses_p], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tr_losses_r_formula] %><strong><%= number_with_delimiter(@losses[:tr_losses_r], delimiter: " ") %></strong></td>
+      <td>Pxx, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_pxx], delimiter: " ") %></strong></td>    	
+      <td><%= @losses[:tr_losses_pxx_formula] %></td>
+    </tr>
+    <tr>
+      <td>Pкз, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_pkz], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_pkz_formula] %></td>
+    </tr>
+    <tr>
+      <td>Rxx, kVAh</td>	      
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_rxx], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_rxx_formula] %></td>
+    </tr>
+    <tr>
+      <td>Rкз, kVAh</td>
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_rkz], delimiter: " ") %></strong></td>	      
+      <td><%= @losses[:tr_losses_rkz_formula] %></td>
+    </tr>
+    <tr>
+      <td>P суммарные, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_p], delimiter: " ") %></strong></td>	      
+      <td><%= @losses[:tr_losses_p_formula] %></td>
+    </tr>
+    <tr>
+      <td>R суммарные, kVAh</td> 	      
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_r], delimiter: " ") %></strong></td>
+      <td><%= @losses[:tr_losses_r_formula] %></td>
     </tr>
   </tbody>
 </table>
@@ -323,7 +354,7 @@
 		   <th>Марка</th>
 		   <th>Сечение провода q, мм2</th>
 		   <th>Uном, кВ</th>
-		   <th><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
+		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
     	</tr>  
    </thead>
    <tbody>
@@ -342,7 +373,7 @@
 		 <td><%= item.mark %></td>
 		 <td><%= item.q %></td>
 		 <td><%= item.unom %></td>
-		 <td><%= Vmpointslnparam.where("line_id = ?", item.line_id).count %></td>
+		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.where("line_id = ?", item.line_id).count %></td>
       </tr>
     <% end %>
    <% end %> 
@@ -355,16 +386,26 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Нагрузочные, kWh</th>
-      <th>На корону, kWh</th>      
-      <th>Суммарные, kWh</th>
+      <th style="width:150px; max-width:150px;">Параметр</th>
+      <th style="width:100px; max-width:200px;">Значение</th>      
+      <th>Расчет</th>    	
     </tr>  
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:ln_losses_ng_formula] %> = <strong><%= number_with_delimiter(@losses[:ln_losses_ng], delimiter: " ") %></strong></td>
+      <td>Нагрузочные, kWh</td>	
+      <td><strong><%= number_with_delimiter(@losses[:ln_losses_ng], delimiter: " ") %></strong></td>
+      <td><%= @losses[:ln_losses_ng_formula] %></td>
+    </tr>
+    <tr>
+      <td>На корону, kWh</td>
       <td><%= number_with_delimiter(@losses[:ln_losses_kr], delimiter: " ") %></td>
+      <td></td>
+    </tr>
+    <tr>      
+      <td>Суммарные, kWh</td>
       <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
@@ -375,26 +416,51 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Энергия активная с потерями, kWh</th>
-      <th>Энергия реактивная с потерями, kVAh</th>      
-      <th>cos φ</th>
-      <th>Wrio</th>
-      <th>Wrif</th>
-      <th>CTi</th>
-      <th>CTc</th>
-      <th>CT</th>      
+      <th style="width:150px; max-width:150px;">Параметр</th>
+      <th style="width:100px; max-width:200px;">Значение</th>      
+      <th>Расчет</th>     	 
     </tr>  
   </thead>
   <tbody>
     <tr>
-      <td><%= @losses[:wal_formula] %> = <strong><%= number_with_delimiter(@losses[:wal], delimiter: " ") %></strong></td>
-      <td><%= @losses[:wrl_formula] %> = <strong><%= number_with_delimiter(@losses[:wrl], delimiter: " ") %></strong></td>
-      <td><%= @losses[:cosf_formula] %> = <strong><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></strong></td>
-      <td><%= @losses[:wrio_formula] %> = <strong><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></strong></td>
-      <td><%= @losses[:wrif_formula] %> = <strong><%= number_with_delimiter(@losses[:wrif], delimiter: " ") %></strong></td>
-      <td><%= @losses[:consumtehi_formula] %> = <strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
-      <td><%= @losses[:consumtehc_formula] %> = <strong><%= number_with_delimiter(@losses[:consumtehc], delimiter: " ") %></strong></td>
+      <td>Wa с потерями, kWh</td>	
+      <td><strong><%= number_with_delimiter(@losses[:wal], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wal_formula] %></td>
+    </tr>
+    <tr>
+      <td>Wr с потерями, kVAh</td>	
+      <td><strong><%= number_with_delimiter(@losses[:wrl], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrl_formula] %></td>
+    </tr>
+    <tr>
+      <td>cos φ</td>	
+      <td><strong><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></strong></td>
+      <td><%= @losses[:cosf_formula] %></td>
+    </tr>
+    <tr>
+      <td>Wrio</td>	
+      <td><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrio_formula] %></td>
+    </tr>
+    <tr>
+      <td>Wrif</td>	
+      <td><strong><%= number_with_delimiter(@losses[:wrif], delimiter: " ") %></strong></td>
+      <td><%= @losses[:wrif_formula] %></td>
+    </tr>
+    <tr>
+      <td>CTi</td>	
+      <td><strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
+      <td><%= @losses[:consumtehi_formula] %></td>
+    </tr>
+    <tr>
+      <td>CTc</td>	
+      <td><strong><%= number_with_delimiter(@losses[:consumtehc], delimiter: " ") %></strong></td>
+      <td><%= @losses[:consumtehc_formula] %></td>
+    </tr>
+    <tr>
+      <td>CT</td>	
       <td><strong><%= number_with_delimiter(@losses[:consumteh], delimiter: " ") %></strong></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
