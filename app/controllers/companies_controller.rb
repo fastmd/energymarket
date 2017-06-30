@@ -604,7 +604,7 @@ private
       ttaus = []  
       # трансформаторы
       tr  = mpoint.trparams.where("f = 'true'")
-      tr_losses_pxx = tr_losses_pkz = tr_losses_rxx = tr_losses_rkz = 0.0
+      tr_losses_p = tr_losses_pxx = tr_losses_pkz = tr_losses_r = tr_losses_rxx = tr_losses_rkz = 0.0
       result[:tr_losses_pxx_formula] = ""
       result[:tr_losses_rxx_formula] = ""
       result[:tr_losses_pkz_formula] = ""
@@ -665,15 +665,15 @@ private
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
         tr_losses_rxx = result[:tr_losses_rxx] = tr_losses_rxx.round(4)
         tr_losses_rkz = result[:tr_losses_rkz] = tr_losses_rkz.round(4)
-        result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz
+        tr_losses_p = result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz
         result[:tr_losses_p_formula] = tr_losses_pxx.to_s + " + " + tr_losses_pkz.to_s 
-        result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz
+        tr_losses_r = result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz
         result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s  
         result[:ttaus] = ttaus            
       end  # if tr.count
       # линии         
       ln  = mpoint.vlnparams.where("f = 'true'") 
-      ln_losses_ng = ln_losses_kr = 0.0      
+      ln_losses = ln_losses_ng = ln_losses_kr = 0.0      
       if ln.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
@@ -705,18 +705,18 @@ private
           end
           result[:ln_losses_ng] = ln_losses_ng     
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
-          result[:ln_losses] = ln_losses_ng + ln_losses_kr
+          ln_losses = result[:ln_losses] = ln_losses_ng + ln_losses_kr
           result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"              
         end
       end  # if ln.count
       # cos fi with losses           
       if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl<=10 then
-           wal = result[:wal] = wa + waliv + tr_losses_pkz + tr_losses_pxx + ln_losses_ng + ln_losses_kr
-           result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_pkz.to_s + " + " + tr_losses_pxx.to_s + " + " + ln_losses_ng.to_s + " + " + ln_losses_kr.to_s
-           wrl = result[:wrl] = wri + tr_losses_rkz + tr_losses_rxx
-           result[:wrl_formula] = wri.to_s + " + " + tr_losses_rkz.to_s + " + " + tr_losses_rxx.to_s
-           wrcf = result[:wrcf] = wrc - tr_losses_rkz - tr_losses_rxx
-           result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_rkz.to_s + " - " + tr_losses_rxx.to_s           
+           wal = result[:wal] = wa + waliv + tr_losses_p + ln_losses
+           result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_p.to_s + " + " + ln_losses.to_s
+           wrl = result[:wrl] = wri + tr_losses_r
+           result[:wrl_formula] = wri.to_s + " + " + tr_losses_r.to_s
+           wrcf = result[:wrcf] = wrc - tr_losses_r
+           result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_r.to_s           
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
            result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
            if mpoint.voltcl == 0.4 then  tgficonst = 0.426 else tgficonst = 0.567 end
