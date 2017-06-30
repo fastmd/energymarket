@@ -141,19 +141,16 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
     # month   
     if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+   #if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end   #changed for month to be liked by setsu
     @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)# - 1.month
-    @ddate_mb = @ddate_b + 1.month - 1.day 
+    @ddate_b = @ddate.change(day: 1)
+   #@ddate_b = @ddate.change(day: 1) - 1.month #changed for month to be liked by setsu
+    @ddate_mb = @ddate_b + 1.month - 1.day    
     @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
+   #@ddate_e = @ddate.change(day: 1) + 1.month - 1.day #changed for month to be liked by setsu
     @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
-    #@ddate_b = @ddate.change(day: 1) - 1.month
-    #@ddate_mb = @ddate_b + 1.month - 1.day 
-    #@ddate_e = @ddate.change(day: 1) + 1.month - 1.day
-    #@ddate_me = @ddate_e.change(day: 1)   
-    #@luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
-    #@luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
     @mp = Mpoint.find(params[:mp_id])
     @cp = @mp.company  
     # title
@@ -181,11 +178,11 @@ before_filter :redirect_cancel, only: [:create, :update]
     @month_for_report = params[:month_for_report]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
     # month   
-    if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1) - 1.month
+    @ddate_b = @ddate.change(day: 1)
     @ddate_mb = @ddate_b + 1.month - 1.day 
-    @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
+    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
     @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
@@ -303,11 +300,11 @@ before_filter :redirect_cancel, only: [:create, :update]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
     # month   
-    if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
     @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1) - 1.month
+    @ddate_b = @ddate.change(day: 1)
     @ddate_mb = @ddate_b + 1.month - 1.day 
-    @ddate_e = @ddate.change(day: 1) + 1.month - 1.day
+    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
     @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
