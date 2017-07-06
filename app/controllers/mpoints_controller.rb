@@ -189,31 +189,32 @@ def showmvalues
   def index
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
     if params[:filter] then
-        @@qmesubstation = @qmesubstation = params[:qmesubstation].to_s
-        @@qcompany = @qcompany = params[:qcompany].to_s
-        @@qregion = @qregion = params[:qregion].to_s
-        @@qfilial = @qfilial = params[:qfilial].to_s
-        @@qfurnizor = @qfurnizor = params[:qfurnizor].to_s
-        @data_for_search = @@data_for_search = '' 
+        cookies[:qmesubstation] = @qmesubstation = params[:qmesubstation].to_s
+        cookies[:qcompany] = @qcompany = params[:qcompany].to_s
+        cookies[:qregion] = @qregion = params[:qregion].to_s
+        cookies[:qfilial] = @qfilial = params[:qfilial].to_s
+        cookies[:qfurnizor] = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = ''
+        cookies.delete(:data_for_search) 
     else
         if params[:search] then
-            @@data_for_search = @data_for_search = params[:q].to_s
-            @@qmesubstation = ''
-            @@qcompany = ''
-            @@qregion = ''
-            @@qfilial = ''
-            @@qfurnizor = ''            
+            cookies[:data_for_search] = @data_for_search = params[:q].to_s
+            cookies.delete(:qmesubstation)
+            cookies.delete(:qcompany)
+            cookies.delete(:qregion)
+            cookies.delete(:qfilial)
+            cookies.delete(:qfurnizor)            
         else
-            @data_for_search = @@data_for_search
+            @data_for_search = cookies[:data_for_search]
         end
-        @qmesubstation = @@qmesubstation
-        @qcompany = @@qcompany
-        @qregion = @@qregion
-        @qfilial = @@qfilial
-        @qfurnizor = @@qfurnizor
-    end 
-    if @data_for_search.empty? then
-      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+        @qmesubstation = cookies[:qmesubstation]
+        @qcompany = cookies[:qcompany]
+        @qregion = cookies[:qregion]
+        @qfilial = cookies[:qfilial]
+        @qfurnizor = cookies[:qfurnizor]
+    end
+    if @data_for_search.nil? or @data_for_search.empty? then
+      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")
       else
        @filter = 1         

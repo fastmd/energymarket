@@ -57,26 +57,31 @@ private
     @fukzs = Transformator.select(:ukz).distinct.order(ukz: :asc).pluck(:ukz)
     #-----------------------------
     if params[:filter] then
-        @@transformator_qunom = @qunom = params[:qunom].to_s
-        @@transformator_qsnom = @qsnom = params[:qsnom].to_s
-        @@transformator_qukz = @qukz = params[:qukz].to_s
-        @data_for_search = @@transformator_search = '' 
+        cookies[:transformator_qunom] = @qunom = params[:qunom].to_s
+        cookies[:transformator_qsnom] = @qsnom = params[:qsnom].to_s
+        cookies[:transformator_qukz] = @qukz = params[:qukz].to_s
+        @data_for_search = ''
+        cookies.delete(:transformator_search)  
     else
         if params[:search] then
-            @@transformator_search = @data_for_search = params[:transformator_search].to_s
-            @@transformator_qunom = @@transformator_qsnom = @@transformator_qukz = ''          
+            cookies[:transformator_search] = @data_for_search = params[:transformator_search].to_s
+            cookies.delete(:transformator_qunom)
+            cookies.delete(:transformator_qsnom)
+            cookies.delete(:transformator_qukz)         
         else
-            @data_for_search = @@transformator_search
-            unless @data_for_search.empty? then 
-              @@transformator_qunom = @@transformator_qsnom = @@transformator_qukz = '' 
+            @data_for_search = cookies[:transformator_search]
+            unless (@data_for_search.nil? or @data_for_search.empty?) then 
+              cookies.delete(:transformator_qunom)
+              cookies.delete(:transformator_qsnom)
+              cookies.delete(:transformator_qukz) 
             end
         end
-        @qunom= @@transformator_qunom
-        @qsnom = @@transformator_qsnom
-        @qukz = @@transformator_qukz
+        @qunom= cookies[:transformator_qunom]
+        @qsnom = cookies[:transformator_qsnom]
+        @qukz = cookies[:transformator_qukz]
     end 
-    if @data_for_search.empty? then
-      if @qunom.empty? and @qsnom.empty? and @qukz.empty? then   
+    if @data_for_search.nil? or @data_for_search.empty? then
+      if (@qunom.nil? or @qunom.empty?) and (@qsnom.nil? or @qsnom.empty?) and (@qukz.nil? or @qukz.empty?) then   
            @transformators = Transformator.all.order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)
       else  
            @transformators = Transformator.where("(?='' or unom=?) and (?='' or trim(to_char(snom,'99999999.9')) like ?) and (?='' or trim(to_char(ukz,'99999999.9')) like ? or trim(to_char(ukz,'99999999.99')) like ?)", 

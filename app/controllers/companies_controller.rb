@@ -216,16 +216,16 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     # filter
-    @data_for_search = @@data_for_search
-    @qmesubstation = @@qmesubstation
-    @qcompany = @@qcompany
-    @qregion = @@qregion
-    @qfilial = @@qfilial
-    @qfurnizor = @@qfurnizor    
+    @data_for_search = cookies[:data_for_search]
+    @qmesubstation = cookies[:qmesubstation]
+    @qcompany = cookies[:qcompany]
+    @qregion = cookies[:qregion]
+    @qfilial = cookies[:qfilial]
+    @qfurnizor = cookies[:qfurnizor]   
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    if @data_for_search.empty? then
-      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+    if (@data_for_search.nil? or @data_for_search.empty?) then
+      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
        @filter = 0
       else
@@ -337,12 +337,12 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     # filter
-    @data_for_search = @@data_for_search
-    @qmesubstation = @@qmesubstation
-    @qcompany = @@qcompany
-    @qregion = @@qregion
-    @qfilial = @@qfilial
-    @qfurnizor = @@qfurnizor    
+    @data_for_search = cookies[:data_for_search]
+    @qmesubstation = cookies[:qmesubstation]
+    @qcompany = cookies[:qcompany]
+    @qregion = cookies[:qregion]
+    @qfilial = cookies[:qfilial]
+    @qfurnizor = cookies[:qfurnizor]  
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
     if @data_for_search.empty? then
@@ -933,29 +933,34 @@ private
   
    def indexview
     if params[:filter] then
-        @@qmesubstation = @qmesubstation = params[:qmesubstation].to_s
-        @@qcompany = @qcompany = params[:qcompany].to_s
-        @@qregion = @qregion = params[:qregion].to_s
-        @@qfilial = @qfilial = params[:qfilial].to_s
-        @@qfurnizor = @qfurnizor = params[:qfurnizor].to_s
-        @data_for_search = @@data_for_search = '' 
+        cookies[:qmesubstation] = @qmesubstation = params[:qmesubstation].to_s
+        cookies[:qcompany] = @qcompany = params[:qcompany].to_s
+        cookies[:qregion] = @qregion = params[:qregion].to_s
+        cookies[:qfilial] = @qfilial = params[:qfilial].to_s
+        cookies[:qfurnizor] = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = ''
+        cookies.delete(:data_for_search) 
     else
         if params[:search] then
-            @@data_for_search = @data_for_search = params[:q].to_s
-            @@qmesubstation = @@qcompany = @@qregion = @@qfilial = @@qfurnizor = ''            
+            cookies[:data_for_search] = @data_for_search = params[:q].to_s
+            cookies.delete(:qmesubstation)
+            cookies.delete(:qcompany)
+            cookies.delete(:qregion)
+            cookies.delete(:qfilial)
+            cookies.delete(:qfurnizor)            
         else
-            @data_for_search = @@data_for_search
+            @data_for_search = cookies[:data_for_search]
         end
-        @qmesubstation = @@qmesubstation
-        @qcompany = @@qcompany
-        @qregion = @@qregion
-        @qfilial = @@qfilial
-        @qfurnizor = @@qfurnizor
+        @qmesubstation = cookies[:qmesubstation]
+        @qcompany = cookies[:qcompany]
+        @qregion = cookies[:qregion]
+        @qfilial = cookies[:qfilial]
+        @qfurnizor = cookies[:qfurnizor]
     end
     @filter = 0      
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    if @data_for_search.empty? then
-      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+    if @data_for_search.nil? or @data_for_search.empty? then
+      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
        @filter = 0
       else
@@ -998,11 +1003,11 @@ private
   def indexviewall
     #-----------------------------------------
     if params[:search] then
-       @@company_search = @data_for_search = params[:company_search].to_s        
+       cookies[:company_search] = @data_for_search = params[:company_search].to_s
     else
-       @data_for_search = @@company_search
+       @data_for_search = cookies[:company_search]
     end
-    if @data_for_search.empty? then
+    if @data_for_search.nil? or @data_for_search.empty? then
        @companies = Company.all.order(shname: :asc, name: :asc, cod: :asc, id: :asc) 
     else
        @data_for_search = @data_for_search.upcase

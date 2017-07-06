@@ -54,23 +54,27 @@ private
     @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
     @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
     if params[:filter] then
-        @@mesubstation_qregion = @qregion = params[:qregion].to_s
-        @@mesubstation_qfilial = @qfilial = params[:qfilial].to_s
-        @data_for_search = @@mesubstation_search = '' 
+        cookies[:mesubstation_qregion] = @qregion = params[:qregion].to_s
+        cookies[:mesubstation_qfilial] = @qfilial = params[:qfilial].to_s
+        @data_for_search = ''
+        cookies.delete(:mesubstation_search)  
     else
         if params[:search] then
-            @@mesubstation_search = @data_for_search = params[:mesubstation_search].to_s
-            @@mesubstation_qregion = ''
-            @@mesubstation_qfilial = ''          
+            cookies[:mesubstation_search] = @data_for_search = params[:mesubstation_search].to_s
+            cookies.delete(:mesubstation_qregion)
+            cookies.delete(:mesubstation_qfilial)         
         else
-            @data_for_search = @@mesubstation_search
-            unless @data_for_search.empty? then @@mesubstation_qregion = @@mesubstation_qfilial = '' end
+            @data_for_search = cookies[:mesubstation_search]
+            unless (@data_for_search.nil? or @data_for_search.empty?) then 
+              cookies.delete(:mesubstation_qregion)
+              cookies.delete(:mesubstation_qfilial) 
+            end
         end
-        @qregion = @@mesubstation_qregion
-        @qfilial = @@mesubstation_qfilial
+        @qregion = cookies[:mesubstation_qregion]
+        @qfilial = cookies[:mesubstation_qfilial]
     end 
-    if @data_for_search.empty? then
-      if @qregion.empty? and @qfilial.empty? then   
+    if @data_for_search.nil? or @data_for_search.empty? then
+      if (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) then   
        @mesubstations = Vallmesubstation.all.order(filial_name: :asc, region_name: :asc, name: :asc, id: :asc)
       else        
        @mesubstations =  Vallmesubstation.where("(?='' or region_name=?) and (?='' or filial_name=?)", 

@@ -57,26 +57,31 @@ private
     @fsstations  = Mesubstation.select(:name).distinct.order(name: :asc).pluck(:name) 
     #-----------------------------
     if params[:filter] then
-        @@mesubstation_qregion = @qregion = params[:qregion].to_s
-        @@mesubstation_qfilial = @qfilial = params[:qfilial].to_s
-        @@line_qmesubstation = @qmesubstation = params[:qmesubstation].to_s
-        @data_for_search = @@line_search = '' 
+        cookies[:mesubstation_qregion] = @qregion = params[:qregion].to_s
+        cookies[:mesubstation_qfilial] = @qfilial = params[:qfilial].to_s
+        cookies[:line_qmesubstation] = @qmesubstation = params[:qmesubstation].to_s
+        @data_for_search = ''
+        cookies.delete(:line_search)  
     else
         if params[:search] then
-            @@line_search = @data_for_search = params[:line_search].to_s
-            @@mesubstation_qregion = ''
-            @@mesubstation_qfilial = ''
-            @@line_qmesubstation = ''          
+            cookies[:line_search] = @data_for_search = params[:line_search].to_s
+            cookies.delete(:mesubstation_qregion)
+            cookies.delete(:mesubstation_qfilial)
+            cookies.delete(:line_qmesubstation)         
         else
-            @data_for_search = @@line_search
-            unless @data_for_search.empty? then @@mesubstation_qregion = @@mesubstation_qfilial = @@line_qmesubstation = '' end
+            @data_for_search = cookies[:line_search]
+            unless (@data_for_search.nil? or @data_for_search.empty?) then 
+              cookies.delete(:mesubstation_qregion)
+              cookies.delete(:mesubstation_qfilial)
+              cookies.delete(:line_qmesubstation)  
+            end
         end
-        @qregion = @@mesubstation_qregion
-        @qfilial = @@mesubstation_qfilial
-        @qmesubstation = @@line_qmesubstation
+        @qregion = cookies[:mesubstation_qregion]
+        @qfilial = cookies[:mesubstation_qfilial]
+        @qmesubstation = cookies[:line_qmesubstation]
     end 
-    if @data_for_search.empty? then
-      if @qregion.empty? and @qfilial.empty? and @qmesubstation.empty? then   
+    if @data_for_search.nil? or @data_for_search.empty? then
+      if (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qmesubstation.nil? or @qmesubstation.empty?) then   
            @lines = Vallline.all.order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)
       else  
            @lines = Vallline.where("(?='' or region_name=?) and (?='' or filial_name=?) and (?='' or mesubstation_name=?)", 
