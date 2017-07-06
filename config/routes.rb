@@ -98,6 +98,8 @@ Rails.application.routes.draw do
   get 'companies/update'
   get 'companies/destroy'
   get 'companies/edit'
+  get 'companies/simplereports'
+  post 'companies/simplereports'  
   get 'companies/reports'
   post 'companies/reports'
   get 'companies/report'

@@ -30,7 +30,10 @@
 		   	                                       elsif item.name.upcase.include?("FENOSA") then image_tag('fenosa.png', :alt => "Fenosa", :width => 25, :height => 25) end %></td>
 		   <td align="center"><%= link_to "Открыть", companies_path(:id => item.id), :class=> "glyphicon glyphicon-lamp" %></td>
 		   <td align="center"><%= link_to "Открыть", mpoints_path(:id => item.id), :class=> "glyphicon glyphicon-lamp" %></td>
-		   <td align="center"><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 30, :height => 25), companies_reports_path(:id => item.id) %></td>
+		   <td align="center"><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 30, :height => 25, :title => "Отчет FidereDirecte"), companies_reports_path(:id => item.id) %>
+		   					  <%= link_to image_tag('nezna.png', :alt => "Отчет", :width => 23, :height => 25, :title => "Отчет Model lista fidere directe"), companies_simplereports_path(:id => item.id) %>
+		   					<!--  <%= link_to image_tag('lampmoney.png', :alt => "Отчет", :width => 30, :height => 25, :title => "Отчет Lista consumatorilor directi"), companies_simplereports_path(:id => item.id) %> -->
+		   </td>
 		   <td align="center"><%= item.comment %></td>
 		</tr>
 	  <% end %>
