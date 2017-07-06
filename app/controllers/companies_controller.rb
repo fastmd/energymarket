@@ -345,8 +345,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     @qfurnizor = cookies[:qfurnizor]  
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    if @data_for_search.empty? then
-      if @qmesubstation.empty? and @qcompany.empty? and @qregion.empty? and @qfilial.empty? and @qfurnizor.empty? then   
+if (@data_for_search.nil? or @data_for_search.empty?) then
+      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
        @filter = 0
       else
@@ -461,7 +461,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
       @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
       @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,enrgsums[:consumteh],nil,nil]                 
-      @report << ['∑','Summa pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]     
+      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]     
     end  #companies.count
     respond_to do |format|
       format.html
