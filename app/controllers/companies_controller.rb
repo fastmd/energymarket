@@ -648,7 +648,7 @@ private
               indicii0[:ind0_180] = mvalue0.actp180          #180 
               ind0 = if mvalue0.actp180.nil? then 0 else mvalue0.actp180 end
               dind = indicii0[:dind_180] = (ind1 - ind0).round(4)   #dind   180 
-              if dind < 0 then dind = indicii0[:dind_180] = (dind + case when ind0>=10000 then 99999.9999 when ind0<1000 then 999.99999 else 9999.9999 end).round(4) end   #dind   180  
+              if dind < 0 then dind = indicii0[:dind_180] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   180  
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
               unless mpoint.fturn then
                 if result[:wa_formula] != "" then result[:wa_formula] += " + "  end  
@@ -671,7 +671,7 @@ private
               indicii0[:ind0_280] = mvalue0.actp280          #280
               ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end                
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280
-              if dind < 0 then dind = indicii0[:dind_280] = (dind + case when ind0>=10000 then 99999.9999 when ind0<1000 then 999.99999 else 9999.9999 end).round(4) end   #dind   280  
+              if dind < 0 then dind = indicii0[:dind_280] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   280  
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
               unless mpoint.fturn then 
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
@@ -690,7 +690,7 @@ private
               indicii0[:ind0_380] = mvalue0.actp380          #380
               ind0 = if mvalue0.actp380.nil? then 0 else mvalue0.actp380 end
               dind = indicii0[:dind_380] = (ind1 - ind0).round(4)   #dind 380
-              if dind < 0 then dind = indicii0[:dind_380] = (dind + case when ind0>=10000 then 99999.9999 when ind0<1000 then 999.99999 else 9999.9999 end).round(4) end   #dind   380           
+              if dind < 0 then dind = indicii0[:dind_380] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   380           
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
               unless mpoint.fturn then
                 if result[:wri_formula] != "" then result[:wri_formula] += " + "  end   
@@ -706,7 +706,7 @@ private
               indicii0[:ind0_480] = mvalue0.actp480          #480
               ind0 = if mvalue0.actp480.nil? then 0 else mvalue0.actp480 end
               dind = indicii0[:dind_480] = (ind1 - ind0).round(4)   #dind 480
-              if dind < 0 then dind = indicii0[:dind_480] = (dind + case when ind0>=10000 then 99999.9999 when ind0<1000 then 999.99999 else 9999.9999 end).round(4) end   #dind   480           
+              if dind < 0 then dind = indicii0[:dind_480] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   480           
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
               unless mpoint.fturn then
                 if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end                 
