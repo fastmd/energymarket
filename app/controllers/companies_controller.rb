@@ -405,10 +405,10 @@ if (@data_for_search.nil? or @data_for_search.empty?) then
                 @report << report_rind[0..@title1.count]
                 report_rind[0..4] = [nil,nil,nil,nil,nil]
                 unless inditem[:date1].nil? then
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,inditem[:meternum],inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],inditem[:koef],inditem[:enrg_180],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,inditem[:meternum],inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],inditem[:koef],inditem[:enrg_280],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,inditem[:meternum],inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],inditem[:koef],inditem[:enrg_380],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,inditem[:meternum],inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],inditem[:koef],inditem[:enrg_480],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,nil,inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],inditem[:koef],inditem[:enrg_180],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,nil,inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],inditem[:koef],inditem[:enrg_280],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,nil,inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],inditem[:koef],inditem[:enrg_380],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,nil,inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],inditem[:koef],inditem[:enrg_480],nil,nil]
                 end
               end
               unless energies[:wasub].nil? then 
@@ -428,25 +428,25 @@ if (@data_for_search.nil? or @data_for_search.empty?) then
               unless losses.nil? then
                 # report Pierderi LEA                
                 unless losses[:ln_losses].nil? then
-                  if enrgsums[:losses].nil? then enrgsums[:losses] = energies[:ln_losses] else enrgsums[:losses] += energies[:ln_losses]  end             
+                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end             
                   report_rind = [nil,"Pierderi LEA, kWh",nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses].round(4),nil,nil]
                   @report << report_rind[0..@title1.count]
                 end
                 # report Pierderi transf
                 unless losses[:tr_losses_p].nil? then
-                  if enrgsums[:losses].nil? then enrgsums[:losses] = energies[:tr_losses_p] else enrgsums[:losses] += energies[:tr_losses_p] end                                     
+                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:tr_losses_p] else enrgsums[:losses] += losses[:tr_losses_p] end                                     
                   report_rind = [nil,"Pierderi transf, kWh",nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_p].round(4),nil,nil]
                   @report << report_rind[0..@title1.count]
                 end  
                 # report Consum Tehnologic inductiv                  
                 unless losses[:consumtehi].nil? then
-                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = energies[:consumtehi] else enrgsums[:consumteh] += energies[:consumtehi] end                   
+                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehi] else enrgsums[:consumteh] += losses[:consumtehi] end                   
                   report_rind = [nil,"Consum Tehnologic inductiv",nil,nil,nil,nil,nil,nil,nil,losses[:consumtehi].round(4),nil,nil]
                   @report << report_rind[0..@title1.count] 
                 end              
                 # report Consum Tehnologic capacitiv
                 unless losses[:consumtehc].nil? then                
-                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = energies[:consumtehc] else enrgsums[:consumteh] += energies[:consumtehc]  end                 
+                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehc] else enrgsums[:consumteh] += losses[:consumtehc]  end                 
                   report_rind = [nil,"Consum Tehnologic capacitiv",nil,nil,nil,nil,nil,nil,nil,losses[:consumtehc].round(4),nil,nil]   
                   @report << report_rind[0..@title1.count]
                 end    
