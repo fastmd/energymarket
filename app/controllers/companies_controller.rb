@@ -146,20 +146,9 @@ before_filter :redirect_cancel, only: [:create, :update]
   def onempreport
     @page = params[:page]
     @id = params[:id]
-    @month_for_report = params[:month_for_report]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
-    # month   
-    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
-   #if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end   #changed for month to be liked by setsu
-    @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)
-   #@ddate_b = @ddate.change(day: 1) - 1.month #changed for month to be liked by setsu
-    @ddate_mb = @ddate_b + 1.month - 1.day    
-    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
-   #@ddate_e = @ddate.change(day: 1) + 1.month - 1.day #changed for month to be liked by setsu
-    @ddate_me = @ddate_e.change(day: 1)   
-    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
-    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    # month
+    monthforreports
     @mp = Mpoint.find(params[:mp_id])
     @cp = @mp.company  
     # title
@@ -181,22 +170,12 @@ before_filter :redirect_cancel, only: [:create, :update]
     @tau = Tau.all   
   end
    
-
-
   def reports
     @page = params[:page]
     @id = params[:id]
-    @month_for_report = params[:month_for_report]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
     # month   
-    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
-    @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)
-    @ddate_mb = @ddate_b + 1.month - 1.day 
-    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
-    @ddate_me = @ddate_e.change(day: 1)   
-    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
-    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    monthforreports
     # title
     @lista_title = []
     @lista_title << "LISTA de calcul a intrarii energiei electrice pentru"
@@ -207,21 +186,11 @@ before_filter :redirect_cancel, only: [:create, :update]
               'Data citirii','Indicatii pr. activ','Indicatii pr. reactiv L','Indicatii pr. reactiv C',
               'Coeficient contor','ENERGIA, kWh activ','ENERGIA, kWh reactiv L','ENERGIA, kWh reactiv C',
               'Pierderi LEA, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv','Consum Tehnologic, kWh capacitiv']
-    i = 1
-    @title2 = []
-    @title1.each do |t|
-      @title2 << i
-      i += 1
-    end
+    titleforreports
     # report init
     @report = Array[]
     # filter
-    @data_for_search = cookies[:data_for_search]
-    @qmesubstation = cookies[:qmesubstation]
-    @qcompany = cookies[:qcompany]
-    @qregion = cookies[:qregion]
-    @qfilial = cookies[:qfilial]
-    @qfurnizor = cookies[:qfurnizor]   
+    cookiesforreports  
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
     if (@data_for_search.nil? or @data_for_search.empty?) then
@@ -306,46 +275,24 @@ before_filter :redirect_cancel, only: [:create, :update]
  
   def simplereports
     @page = params[:page]
-    @id = params[:id]
-    @month_for_report = params[:month_for_report]
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
+    @id = params[:id] 
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end     
     # month   
-    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
-    @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)
-    @ddate_mb = @ddate_b + 1.month - 1.day 
-    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
-    @ddate_me = @ddate_e.change(day: 1)   
-    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
-    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    monthforreports
     # title
     @lista_title = []
     @lista_title << "LISTA de calcul a intrarii energiei electrice pentru"
     @lista_title << ("consumatori  alimentați direct de la stații  electrice Î.S. ”Moldelectrica”" + (if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name}") 
     @lista_title << "pentru luna #{@luna} anul #{@ddate.year}"
     @title1 = ['№','RRE,SE si liniilor','Punctul de evidenta','','№ contor.',"Indicatii \n #{@luna_e}","Indicatii \n #{@luna_b}",'Diferenta indicat.','Coeficient contor.','ENERGIE, kWh','Note']
-    i = 1
-    @title2 = []
-    @title1.each do |t|
-      if t == '' then
-        @title2 << nil
-      else 
-        @title2 << i
-        i += 1
-      end  
-    end
+    titleforreports
     # report init
     @report = Array[]
     # filter
-    @data_for_search = cookies[:data_for_search]
-    @qmesubstation = cookies[:qmesubstation]
-    @qcompany = cookies[:qcompany]
-    @qregion = cookies[:qregion]
-    @qfilial = cookies[:qfilial]
-    @qfurnizor = cookies[:qfurnizor]  
+    cookiesforreports 
     # companies
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
-if (@data_for_search.nil? or @data_for_search.empty?) then
+    if (@data_for_search.nil? or @data_for_search.empty?) then
       if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
        company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
        @filter = 0
@@ -470,21 +417,68 @@ if (@data_for_search.nil? or @data_for_search.empty?) then
     end  
   end
  
+  def regionreports
+    @page = params[:page]
+    @id = params[:id] 
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end     
+    # month   
+    monthforreports
+    # title
+    @lista_title = []
+    @lista_title << "LISTA consumatorilor directi alimentati de la statiunile electrice Î.S. ”Moldelectrica”"
+    @lista_title << ((if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name} pentru luna #{@luna} anul #{@ddate.year}") 
+    @title1 = ['№','Statiunea Î.S. ”Moldelectrica” de unde este alimentat consumatorul','№ fider de unde este alimemtat TF al consumatorului',
+               'Denumirea consumatorului','Wa, kWh',"Pierderi LEA, kWh","Pierderile transformatorului, kWh",'Consum Tehnologic (CT), kWh']
+    titleforreports
+    # filter
+    cookiesforreports
+    mpoints = mpointsforreports                             
+    # report init
+    @report = Array[]
+    enrgsums = {}
+    nr = 0
+    # mpoints
+    region = ''
+    if mpoints.count == 0 then
+      flash[:warning] = "Нет данных для отчета. #{@flr.name} не имеет точек учета." 
+    else
+      mpoints.each do |mp|
+        # report rind
+        if region != mp.region_name then
+          region = mp.region_name 
+          @report << [nil,"FRED #{region}",nil,nil,nil,nil,nil,nil,2]
+        end
+        nr += 1
+        report_rind = [nr,"#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.company_name}",nil,nil,nil,nil,nil]
+        # indicii si energie        
+        energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+        indicii = energies[:indicii]
+        if indicii.nil? then
+           report_rind[@title1.count] = 1      
+        else
+           enrgsums = add_one_mp_indicii(energies, enrgsums)       
+           # pierderi   
+           losses = one_mp_losses(mp.id, energies)
+           enrgsums = add_one_mp_losses(losses, enrgsums) 
+           # report
+           report_rind[4] = energies[:wa_without_wasub]   
+           report_rind[5] = losses[:ln_losses]   
+           report_rind[6] = losses[:tr_losses_p]
+           report_rind[7] = losses[:consumteh]        
+        end # indicii null
+        @report << report_rind[0..@title1.count]         
+      end  # mpoints each
+      @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
+    end  # mpoints.count                                                      
+  end
+ 
   def report
     @page = params[:page]
     @id = params[:cp_id]
-    @month_for_report = params[:month_for_report]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
-    # month   
-    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
-    @luna = $Luni[@ddate.month.to_i-1]
-    @ddate_b = @ddate.change(day: 1)
-    @ddate_mb = @ddate_b + 1.month - 1.day 
-    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
-    @ddate_me = @ddate_e.change(day: 1)   
-    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
-    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s
+    # month
+    monthforreports
     # report init
     @report = Array[]
     nr = 0
@@ -598,8 +592,73 @@ if (@data_for_search.nil? or @data_for_search.empty?) then
   
 private 
 
+  def monthforreports   
+    # month 
+    @month_for_report = params[:month_for_report]   
+    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    #if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end   #changed for month to be liked by setsu
+    @luna = $Luni[@ddate.month.to_i-1]
+    @ddate_b = @ddate.change(day: 1)
+    #@ddate_b = @ddate.change(day: 1) - 1.month #changed for month to be liked by setsu
+    @ddate_mb = @ddate_b + 1.month - 1.day    
+    @ddate_e = @ddate.change(day: 1) + 2.month - 1.day
+    #@ddate_e = @ddate.change(day: 1) + 1.month - 1.day #changed for month to be liked by setsu
+    @ddate_me = @ddate_e.change(day: 1)   
+    @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
+    @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s 
+  end
+  
+  def titleforreports  
+    i = 1
+    @title2 = []
+    @title1.each do |t|
+      if t == '' then
+        @title2 << nil
+      else 
+        @title2 << i
+        i += 1
+      end  
+    end
+  end
+  
+  def cookiesforreports
+    # filter
+    @data_for_search = cookies[:data_for_search]
+    @qmesubstation = cookies[:qmesubstation]
+    @qcompany = cookies[:qcompany]
+    @qregion = cookies[:qregion]
+    @qfilial = cookies[:qfilial]
+    @qfurnizor = cookies[:qfurnizor] 
+  end 
+  
+  def mpointsforreports
+    if (@data_for_search.nil? or @data_for_search.empty?) then
+      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then
+        @filter = 0
+        mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:region_name, :mesubstation_name)
+      else     
+        @filter = 1         
+        mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                               " and (?='' or furnizor_name=?)", 
+                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name)
+      end
+    else
+       @filter = 1
+       @data_for_search = @data_for_search.upcase
+       data_for_search = "%" + @data_for_search + "%"
+       mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                               "and (upper(company_name||company_shname) like upper(?) "+ 
+                               "or upper(cod||name) like upper(?) "+ 
+                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                               "or upper(mesubstation_name) like upper(?)) ", 
+                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order(:region_name, :mesubstation_name)    
+    end
+    mpoints 
+  end    
+
   def one_mp_indicii(mp_id, ddate_b, ddate_e, ddate_mb, ddate_me)
-    result={}
+    result = {}
     mpoint = Mpoint.find(mp_id)
     wa = waliv = wri = wrc = wasub = 0.0
     indicii = []       
@@ -757,6 +816,33 @@ private
        end # if mvnum
      end # if meters.count 
      result
+  end
+
+  def add_one_mp_indicii(energies, result = {})  
+    mvnum = energies[:mvnum]
+    if mvnum == 2 then
+      unless energies[:wa_without_wasub].nil? then 
+         if result[:wa_without_wasub].nil? then result[:wa_without_wasub] = 0.0 end           
+         result[:wa_without_wasub] += energies[:wa_without_wasub]
+      end
+    end # if mvnum
+    result
+  end
+
+  def add_one_mp_losses(losses, result = {})
+    unless losses[:tr_losses_p].nil? then 
+      if result[:tr_losses_p].nil? then result[:tr_losses_p] = 0.0 end           
+      result[:tr_losses_p] += losses[:tr_losses_p]
+    end
+    unless losses[:ln_losses].nil? then 
+      if result[:ln_losses].nil? then result[:ln_losses] = 0.0 end           
+      result[:ln_losses] += losses[:ln_losses]
+    end
+    unless losses[:consumteh].nil? then 
+      if result[:consumteh].nil? then result[:consumteh] = 0.0 end           
+      result[:consumteh] += losses[:consumteh]
+    end
+    result
   end
 
   def one_mp_losses(mp_id, indicii)

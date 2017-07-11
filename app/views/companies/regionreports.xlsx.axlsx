@@ -22,6 +22,9 @@ wb.styles do |style|
                                    :b => true, :bg_color => "e6ffe6") 
     simplesel_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:left, :top, :bottom] },
                                    alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
+                                   :b => true, :bg_color => "e6ffe6")
+    simpleser_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:right, :top, :bottom] },
+                                   alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
                                    :b => true, :bg_color => "e6ffe6") 
     simplese_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:top, :bottom] },
                                    alignment: { horizontal: :center, vertical: :center, wrap_text: :true },
@@ -41,7 +44,7 @@ wb.styles do |style|
                                    :bg_color => "e6f2ff",
                                    :border => { :style => :thin, :color => "000000", :edges => [:left, :right, :top, :bottom] }, 
                                    alignment: { horizontal: :center, vertical: :center, wrap_text: :true })                                   
-    
+    last_cell = style.add_style( :border => { :style => :thin, :color => "000000", :edges => [:top] })    
     margins = {:left => 0.7, :right => 0.5, :top => 1.2, :bottom => 1.2, :header => 0.7, :footer => 0.7}
     setup = {:fit_to_width => 1, :orientation => :portrait, :paper_width => "210mm", :paper_height => "297mm"}
     options = {:grid_lines => false, :headings => false, :horizontal_centered => true}
@@ -50,39 +53,38 @@ wb.styles do |style|
 	wb.add_worksheet(name: "Lista", :page_margins => margins, :page_setup => setup, :print_options => options, :header_footer => header_footer ) do |sheet|
 	    sheet.add_row [nil, Time.now.strftime("Lista a fost generata %d.%m.%Y la %H:%M")] 
 	    sheet.add_row [""]
-	    sheet.add_row ["LISTA"], style: [header_cell]
-	    sheet.add_row ["de calcul a intrarii energiei electrice pentru"], style: [header_cell]
-	    sheet.add_row ["consumatori  alimentați direct de la stații  electrice Î.S. ”Moldelectrica”" + (if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name}"], style: [header_cell]
-	    sheet.add_row ["pentru luna #{@luna} anul #{@ddate.year}"], style: [header_cell]
-	    sheet.merge_cells('A3:J3')
-        sheet.merge_cells('A4:J4')
-        sheet.merge_cells('A5:J5')
-        sheet.merge_cells('A6:J6')
-	    sheet.add_row [""]
-	    sheet.add_row [nil, "#{@flr.name}"]
+	    widths = [5, 25, 15, 25, 15, 15, 15, 15]
+	    ltitle = []
+	    @lista_title.each do |item|
+	       ltitle[0] = item
+	       sheet.add_row ltitle, style: [header_cell]
+	    end   
+	    sheet.merge_cells('A3:H3')
+        sheet.merge_cells('A4:H4')
 	    sheet.add_row [""] 	    
-	    sheet.add_row ["№", "RRE,SE si liniilor", "Punctul de evidenta", "", "№ contor.", 
-	                   "Indicatii \n #{@luna_e}", "Indicatii \n #{@luna_b}",
-	                   "Diferenta indicat.", "Coeficient contor.", "Energie kWh","Note"], 
-    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
-    		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15, 15]
-        sheet.merge_cells('C9:D9')    		           
-	    sheet.add_row ["1", "2", "3", "", "4", "5", "6", "7", "8", "9", "10"], 
-    		           style: [theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell],
-    		           :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15, 15]   		           
-        sheet.merge_cells('C10:D10') 
+	    sheet.add_row @title1, 
+    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
+    		           :widths => widths    		           
+	    sheet.add_row @title2, 
+    		           style: [theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell],
+    		           :widths => widths   		           
     	if !@report.nil? then	              
-  		@report.each do |item|
-  		    if (item[0]!='∑') then
-    		sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10]], 
-    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell ,simple_cell,simple_cell],
-    		              :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15, 15]
-    		else
-    		sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]], 
-    		              style: [simplesel_cell, lsimples_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell ,simples_cell,simples_cell],
-    		              :widths=>[5, :auto, 15, 15, 15, 15, 15, 15, 15, 15, 15]    		
-    		end   # '∑'         
-    	end  # report each   
-     end 	#report nil  		
-  end  # sheet
-end # style
+  			@report.each do |item|
+  		    	case when (item[0].nil?) then
+    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
+    		              style: [simplese_cell, lsimples_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell],
+    		              :widths => widths  		    	
+  		    	     when (item[0] == '∑') then
+    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
+    		              style: [simplesel_cell, lsimples_cell, simplese_cell, simplese_cell, simples_cell, simples_cell, simples_cell, simples_cell],
+    		              :widths => widths
+    		         else       		    	
+    		  		    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
+    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell],
+    		              :widths => widths 
+    			end                   		
+    		end             
+    	end    
+     end    		
+ end 
+  
