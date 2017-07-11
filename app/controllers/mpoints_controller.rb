@@ -239,7 +239,9 @@ def showmvalues
     @furns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
     @fils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
     @regions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name) 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )        
+    @page = params[:page]
+    if @page.nil? then @page = 1 end 
+    @mp =  @mp.paginate(:page => @page, :per_page => @perpage = $PerPage )        
   end
   
   def search

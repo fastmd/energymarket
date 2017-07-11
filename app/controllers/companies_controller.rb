@@ -173,7 +173,9 @@ before_filter :redirect_cancel, only: [:create, :update]
   def reports
     @page = params[:page]
     @id = params[:id]
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @vc = params[:vc]
+    @va = params[:va]     
     # month   
     monthforreports
     # title
@@ -276,7 +278,9 @@ before_filter :redirect_cancel, only: [:create, :update]
   def simplereports
     @page = params[:page]
     @id = params[:id] 
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end     
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @vc = params[:vc]
+    @va = params[:va]        
     # month   
     monthforreports
     # title
@@ -420,7 +424,9 @@ before_filter :redirect_cancel, only: [:create, :update]
   def regionreports
     @page = params[:page]
     @id = params[:id] 
-    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end     
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @vc = params[:vc]
+    @va = params[:va]       
     # month   
     monthforreports
     # title
@@ -431,6 +437,8 @@ before_filter :redirect_cancel, only: [:create, :update]
                'Denumirea consumatorului','Wa, kWh',"Pierderi LEA, kWh","Pierderile transformatorului, kWh",'Consum Tehnologic (CT), kWh']
     titleforreports
     # filter
+    dataforfilterselect
+    filtertocookies
     cookiesforreports
     mpoints = mpointsforreports                             
     # report init
@@ -1015,6 +1023,46 @@ private
        end #if wa               
      end # if mvnum  
    result
+   end
+   
+   def dataforfilterselect
+    @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+    @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+    @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
+    @fcomps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)
+    @fsstations = Vallmpoint.select(:mesubstation_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(mesubstation_name: :asc).pluck(:mesubstation_name)
+    @ffurns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
+    @ffils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
+    @fregions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name) 
+   end
+   
+   def filtertocookies
+    if params[:filter] then
+        cookies[:qmesubstation] = @qmesubstation = params[:qmesubstation].to_s
+        cookies[:qcompany] = @qcompany = params[:qcompany].to_s
+        cookies[:qregion] = @qregion = params[:qregion].to_s
+        cookies[:qfilial] = @qfilial = params[:qfilial].to_s
+        cookies[:qfurnizor] = @qfurnizor = params[:qfurnizor].to_s
+        @data_for_search = ''
+        cookies.delete(:data_for_search) 
+    else
+        if params[:search] then
+            cookies[:data_for_search] = @data_for_search = params[:q].to_s
+            cookies.delete(:qmesubstation)
+            cookies.delete(:qcompany)
+            cookies.delete(:qregion)
+            cookies.delete(:qfilial)
+            cookies.delete(:qfurnizor)            
+        else
+            @data_for_search = cookies[:data_for_search]
+        end
+        @qmesubstation = cookies[:qmesubstation]
+        @qcompany = cookies[:qcompany]
+        @qregion = cookies[:qregion]
+        @qfilial = cookies[:qfilial]
+        @qfurnizor = cookies[:qfurnizor]
+    end     
    end
   
    def indexview

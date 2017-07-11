@@ -2,9 +2,12 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", companies_path(:id => @flr.id, :page => @page), :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_simplereports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
-    <li><%= form_tag companies_simplereports_path(:id => @id) do %>
+    <li><%= link_to "Назад", case @vc when "companies" then companies_path(:id => @flr.id, :page => @page) 
+    	                              when "mpoints"   then mpoints_path(:id => @flr.id, :page => @page) 
+    	                              else welcome_index_path end, :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, 
+                    companies_simplereports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx", :vc => @vc, :va => @va, :page => @page) %></li>
+    <li><%= form_tag companies_simplereports_path(:id => @id, :vc => @vc, :va => @va, :page => @page) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
                 <%= image_submit_tag("nezna.png",class: 'submit_button',:alt => "Пересчет", :width => 40, :height => 40, :title => "Пересчет") %>
                 <% end %></li>                   

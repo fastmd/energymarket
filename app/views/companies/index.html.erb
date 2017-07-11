@@ -4,9 +4,12 @@
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", welcome_index_path, :class => "glyphicon glyphicon-level-up" %></li>
     <li><%= link_to "Справка", companies_helpmpoint_path(:id => @flr.id, :page => @page), :class => "glyphicon glyphicon-info-sign" %></li>    
-    <li><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 40, :height => 30, :title => "Отчет FidereDirecte"), companies_reports_path(:id => @flr.id, :page => @page) %></li>
-    <li><%= link_to image_tag('nezna.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Model lista fidere directe"), companies_simplereports_path(:id => @flr.id, :page => @page) %></li>
-    <li><%= link_to image_tag('lampmoney.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Lista consumatorilor directi"), companies_regionreports_path(:id => @flr.id, :page => @page) %></li>
+    <li><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 40, :height => 30, :title => "Отчет FidereDirecte"), 
+                    companies_reports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>
+    <li><%= link_to image_tag('nezna.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Model lista fidere directe"), 
+                    companies_simplereports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>
+    <li><%= link_to image_tag('lampmoney.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Lista consumatorilor directi"), 
+                    companies_regionreports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>
     <li><%= form_tag("/companies/index", method: "get", class: 'form-inline') do %>
     	<div class="form-group">
 		  <%= label_tag(:q, "Искать:", class: "control-label") %>
