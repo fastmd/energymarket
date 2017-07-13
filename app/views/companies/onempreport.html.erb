@@ -409,10 +409,20 @@
       <td><%= @losses[:wrl_formula] %></td>
     </tr>
     <tr>
-      <td>cos φ</td>	
+      <td>cos φ расч</td>	
       <td><%= number_with_delimiter(@losses[:cosf], delimiter: " ") %></td>
       <td><%= @losses[:cosf_formula] %></td>
     </tr>
+    <tr>
+      <td>cos φ конст.</td>	
+      <td><%= number_with_delimiter(@losses[:cosfconst], delimiter: " ") %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>tg φ конст.</td>	
+      <td><%= number_with_delimiter(@losses[:tgfconst], delimiter: " ") %></td>
+      <td></td>
+    </tr> 
     <tr>
       <td>Wrio</td>	
       <td><%= number_with_delimiter(@losses[:wrio], delimiter: " ") %></td>

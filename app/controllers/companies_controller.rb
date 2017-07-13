@@ -984,17 +984,31 @@ private
           result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"              
         end
       end  # if ln.count
-      # cos fi with losses           
-      if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl<=10 then
-           wal = result[:wal] = wa + waliv + tr_losses_p + ln_losses
-           result[:wal_formula] = wa.to_s + " + #{waliv} + " + tr_losses_p.to_s + " + " + ln_losses.to_s
-           wrl = result[:wrl] = wri + tr_losses_r
-           result[:wrl_formula] = wri.to_s + " + " + tr_losses_r.to_s
+      # cos fi with losses
+      wal = result[:wal] = wa + waliv + tr_losses_p + ln_losses
+      result[:wal_formula] = "#{wa} + #{waliv} + #{tr_losses_p} + #{ln_losses} ;            " + if wa >= 10000 then "#{wa} >= 10000 ► считать СТ" else "#{wa} < 10000 ► не считать СТ" end 
+      if mpoint.voltcl > 10 then result[:wal_formula] += "; #{mpoint.voltcl} кВ > 10 кВ ► не считать СТ " end
+      if mpoint.fct then result[:wal_formula] += "; установлен флаг ► не считать СТ " end
+      wrl = result[:wrl] = wri + tr_losses_r
+      result[:wrl_formula] = "#{wri} + #{tr_losses_r}"          
+      if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl <= 10 then
+           if mpoint.fctс then result[:wal_formula] += "; установлен флаг ► не считать СТ(С) " end
+           if mpoint.fctl then result[:wal_formula] += "; установлен флаг ► не считать СТ(L) " end
+           if mpoint.fmargin then result[:wal_formula] += "; установлен флаг граница раздела " end
            wrcf = result[:wrcf] = wrc - tr_losses_r
            result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_r.to_s           
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
            result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
-           if mpoint.voltcl == 0.4 then  tgficonst = 0.426 else tgficonst = 0.567 end
+           if mpoint.voltcl == 0.4 then  
+             tgficonst = 0.426
+             cosficonst = 0.92 
+           else 
+             tgficonst = 0.567
+             cosficonst = 0.87 
+           end
+           result[:tgficonst] = tgficonst
+           result[:cosficonst] = cosficonst
+           if cosf > cosficonst then result[:cosf_formula] += "; #{cosf} > #{cosficonst} ► не считать СТ(L) " end 
            wrio = result[:wrio] = (wal * tgficonst).round(4)
            result[:wrio_formula] = " #{wal} * #{tgficonst} "
            if wrio < wrl then
@@ -1014,7 +1028,7 @@ private
                result[:consumtehc_formula] = if wrcf > 0 then "#{wrcf} * 0.1" else "0.0" end
              end    
            end
-           unless mpoint.fctl then 
+           unless (mpoint.fctl and cosf <= cosficonst) then 
              result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
