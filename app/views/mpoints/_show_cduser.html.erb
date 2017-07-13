@@ -139,10 +139,10 @@
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
 				    <td><%= number_with_delimiter(item.meter.meternum, delimiter: " ") %> (<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
-					<td><%= number_with_delimiter(item.actp180, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp280, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp380, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp480, delimiter: " ") %></td>
+					<td><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
 					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>
 					<td title="Вычитается из Wa до расчета потерь"><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
 					<td title="Не анулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						

@@ -71,8 +71,8 @@
       <tr>
       	 <td></td>
       	 <td>Активный прием</td>
-      	 <td><%= number_with_delimiter(item[:ind1_180], delimiter: " ") %></td>
-      	 <td><%= number_with_delimiter(item[:ind0_180], delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind1_180], precision: 4, delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind0_180], precision: 4, delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_180], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
       	 <td><strong><%= number_with_delimiter(item[:enrg_180], delimiter: " ") %></strong></td>
@@ -80,8 +80,8 @@
       <tr>
       	 <td></td>
       	 <td>Активная отдача</td>
-      	 <td><%= number_with_delimiter(item[:ind1_280], delimiter: " ") %></td>
-      	 <td><%= number_with_delimiter(item[:ind0_280], delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind1_280], precision: 4, delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind0_280], precision: 4, delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_280], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
       	 <td><strong><%= number_with_delimiter(item[:enrg_280], delimiter: " ") %></strong></td>
@@ -89,8 +89,8 @@
       <tr>
       	 <td></td>
       	 <td>Реактивный прием</td>
-      	 <td><%= number_with_delimiter(item[:ind1_380], delimiter: " ") %></td>
-      	 <td><%= number_with_delimiter(item[:ind0_380], delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind1_380], precision: 4, delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind0_380], precision: 4, delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_380], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
       	 <td><strong><%= number_with_delimiter(item[:enrg_380], delimiter: " ") %></strong></td>
@@ -98,8 +98,8 @@
       <tr>
       	 <td></td>
       	 <td>Реактивная отдача</td>
-      	 <td><%= number_with_delimiter(item[:ind1_480], delimiter: " ") %></td>
-      	 <td><%= number_with_delimiter(item[:ind0_480], delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind1_480], precision: 4, delimiter: " ") %></td>
+      	 <td><%= number_with_precision(item[:ind0_480], precision: 4, delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:dind_480], delimiter: " ") %></td>
       	 <td><%= number_with_delimiter(item[:koef], delimiter: " ") %></td>
       	 <td><strong><%= number_with_delimiter(item[:enrg_480], delimiter: " ") %></strong></td>
