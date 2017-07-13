@@ -993,7 +993,7 @@ private
       result[:wrl_formula] = "#{wri} + #{tr_losses_r}"          
       if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl <= 10 then
            if mpoint.fctc then result[:wal_formula] += "; установлен флаг ► не считать СТ(С) " end
-        #   if mpoint.fctl then result[:wal_formula] += "; установлен флаг ► не считать СТ(L) " end
+           if mpoint.fctl then result[:wal_formula] += "; установлен флаг ► не считать СТ(L) " end
            if mpoint.fmargin then result[:wal_formula] += "; установлен флаг граница раздела " end
            wrcf = result[:wrcf] = wrc - tr_losses_r
            result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_r.to_s           
