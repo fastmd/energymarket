@@ -1019,8 +1019,8 @@ private
              result[:wrif_formula] = "0.0"
            end
            cti = ctc = 0.0
-           unless mpoint.fctc then
-             unless mpoint.fmargin then                     
+           if mpoint.fctc.nil? or mpoint.fctc == false then
+             if mpoint.fmargin.nil? or mpoint.fmargin == false then                     
                result[:consumtehc] = ctc = ((wrc) * 0.1).round(4)
                result[:consumtehc_formula] = wrc.to_s + " * 0.1"
              else
@@ -1028,7 +1028,7 @@ private
                result[:consumtehc_formula] = if wrcf > 0 then "#{wrcf} * 0.1" else "0.0" end
              end    
            end
-           unless (mpoint.fctl and cosf <= cosficonst) then 
+           if (mpoint.fctl.nil? or mpoint.fctl == false or cosf <= cosficonst) then 
              result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
