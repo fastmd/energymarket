@@ -49,7 +49,7 @@ wb.styles do |style|
     header_footer = {:different_first => false, :odd_header => '&L&F : &A&R&D &T', :odd_footer => 'pagina &C&P din &N'} 
     
     tstyle1 = tstyle2 = []
-    emptyrow = ["","","","","","","","","","","","","","","","","","","","","",""]
+    emptyrow = ["","","","","","","","","","","","","","","","","","","","","","","",""]
     @title1.each do 
       tstyle1 << theader_cell
       tstyle2 << theaderb_cell
@@ -65,24 +65,24 @@ wb.styles do |style|
         sheet.merge_cells('A4:J4')
         sheet.merge_cells('A5:J5')
 	    sheet.add_row [""] 	    
-	    sheet.add_row @title1, style: tstyle1, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20]   		           
-	    sheet.add_row @title2, style: tstyle2, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20] 		           
+	    sheet.add_row @title1, style: tstyle1, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20]   		           
+	    sheet.add_row @title2, style: tstyle2, :widths => [5,20,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20,20,20] 		           
     	if !@report.nil? then	              
   		  @report.each do |item|
   		    color = item.pop
   		    if (color.nil?) then
-    		sheet.add_row item, style: [simple_cell,lsimple_cell,lsimple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,
+    		sheet.add_row item, style: [simple_cell,lsimple_cell,lsimple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,
     		                            simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell,simple_cell], 
-    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]
+    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]
     		else
-    		sheet.add_row item, style: [simplec_cell,lsimplec_cell,lsimplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,
+    		sheet.add_row item, style: [simplec_cell,lsimplec_cell,lsimplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,
     		                            simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell,simplec_cell], 
-    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]  		
+    		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]  		
     		end              
     	  end
-        sheet.add_row emptyrow, style: [last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,
+        sheet.add_row emptyrow, style: [last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,
                                     last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell], 
-    		                :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]     	     
+    		                :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]     	     
        end 	  		
   end  
 end 
