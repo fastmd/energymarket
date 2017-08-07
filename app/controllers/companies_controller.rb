@@ -873,7 +873,7 @@ private
         result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
       end
       # косинус фи контрактный
-      result[:cosfi_contract] = indicii[:cosfi_contract]
+      unless indicii[:cosfi_contract].nil? then cosfi = result[:cosfi_contract] = indicii[:cosfi_contract] end  
       result[:tgfi_contract] = indicii[:tgfi_contract] # tg fi
       result[:tgfi_contract_formula] = indicii[:tgfi_contract_formula] # tg fi 
       #tau
