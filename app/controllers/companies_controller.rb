@@ -14,7 +14,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   def new
   end
   
-  def all
+  def all    
     if params[:cp_id].nil? then
       @company = Company.new
     else
@@ -672,18 +672,17 @@ private
     mpoint = Mpoint.find(mp_id)
     wa = waliv = wri = wrc = wasub = 0.0
     indicii = []       
-    mvnum = 0 
-    meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end) OR (? <= relevance_date AND ? >= relevance_end))", mp_id, ddate_b, ddate_e, ddate_b, ddate_e).order(:meter_id)
-    if meters.count == 0 then
-       flash[:warning] = "У точки учета #{mpoint.name} нет счетчиков!"          
-    else 
-       # billing days
-       dddate_b = ddate_b
-       dddate_e = ddate_e
-       mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate, :mvalue_updated_at).first
-       unless mvalues.nil? then dddate_b = mvalues.actdate end
-       mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate, :mvalue_updated_at).last
-       unless mvalues.nil? then dddate_e = mvalues.actdate end       
+    mvnum = 0
+    # billing days
+    dddate_b = ddate_b
+    dddate_e = ddate_e
+    mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate).first
+    unless mvalues.nil? then dddate_b = mvalues.actdate end
+    mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate).last
+    unless mvalues.nil? then dddate_e = mvalues.actdate end 
+    #meters
+    meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end) OR (? <= relevance_date AND ? >= relevance_end))", mp_id, dddate_b, dddate_e, dddate_b, dddate_e).order(:meter_id)
+    if meters.count != 0 then      
        # indicii      
        dtsum  = 0
        trabsum = nil
