@@ -20,13 +20,14 @@
 		<tr class="info">
 		   <th>№</th>
 		   <th>Дата актирования</th>
-		   <th title="№ счетчика (дата установки счетчика)">Счетчик</th>
-		   <th>Активный прием А+</th>
-		   <th>Активная отдача А-</th>
-		   <th>Реактивный прием R+</th>
-		   <th>Реактивная отдача R-</th>
-		   <th>Время работы<br> электроустановки, часы</th>
-		   <th>Потребление<br> субабонента, кВт*ч</th>
+		   <th title="№ счетчика"  width="8%" >Счетчик</th>
+		   <th title="Дата установки счетчика">Дата монтажа</th>
+		   <th>Активный прием</th>
+		   <th>Активная отдача</th>
+		   <th>Реактивный прием</th>
+		   <th>Реактивная отдача</th>
+		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
+		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента(+)<br> Недоучет(-), кВт*ч</th>
 		   <th title="Не анулировать отдачу">Учет<br> А-</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -37,25 +38,30 @@
 	  <% i = 0%>
 	  <% if !@mvs.nil? %>
 			<% @mvs.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
-			    <tr class="success">
-			   <% else %> 	
-				<tr>
+			   <% if (item.relevance_end < item.actdate) or (item.relevance_date > item.actdate) %>
+			     <tr class="danger">						   
+			   <% else %>
+				   <% if item.mvalue_updated_at > (Time.now.ago($GreenDelay)) %>
+				      <tr class="success">
+				   <% else %> 
+					<tr>
+				   <% end %>
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-				    <td><%= number_with_delimiter(item.meter.meternum, delimiter: " ") %> (<%= if !item.meter.relevance_date.nil? then item.meter.relevance_date.to_formatted_s(:day_month_year) end %>)</td>										
-					<td><%= number_with_delimiter(item.actp180, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp280, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp380, delimiter: " ") %></td>
-					<td><%= number_with_delimiter(item.actp480, delimiter: " ") %></td>
-					<td><%= item.trab %></td>
-					<td><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
-					<td><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>					
+				    <td><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
+					<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
+					<td><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
+					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
+					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>
+					<td title="Вычитается из Wa до расчета потерь"><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
+					<td title="Не анулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
 					<td><%= item.comment %></td>
-					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-					<td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>					
+					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+					<td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>	
 				</tr>
 			<% end %>	  
 	   <% end %>	

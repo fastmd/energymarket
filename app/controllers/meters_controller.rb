@@ -73,7 +73,7 @@ before_filter :check_user, only: [:index]
   def show
     @met =  Meter.find(params[:id])
     @mp = @met.mpoint
-    @mvs_all_pages = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)        
+    @mvs_all_pages = Vallmetersmvalue.where("?=id",@met.id).order(actdate: :desc, updated_at: :desc)        
     respond_to do |format|
       format.html
       format.pdf { send_data MpointsReport.new.to_pdf(@mvs_all_pages,@mp), :type => 'application/pdf', :filename => "history.pdf" }

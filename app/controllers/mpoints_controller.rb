@@ -150,15 +150,15 @@ def showmvalues
       i=0     
       unless (params[:met]).nil? || (params[:met]) == ''  then  
                                     @met = Meter.find(params[:met])
-                                    @mvs_all_pages = @met.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs_all_pages = Vallmetersmvalue.where("?=id",@met.id).order(actdate: :desc, updated_at: :desc)
                                     @mvs = @mvs_all_pages
-                                    @mets[i] = [(@met.meternum).to_s, @met.id]
+                                    @mets[i] = ["#{@met.meternum} | #{@met.relevance_date}", @met.id]
       else                          @met = nil
                                     met = @mp.meters.all.order('relevance_date desc nulls last', created_at: :desc)
-                                    @mvs_all_pages = @mp.mvalues.all.order(actdate: :desc, created_at: :desc, updated_at: :desc)
+                                    @mvs_all_pages = @mp.vallmetersmvalues.all.order(actdate: :desc, relevance_date: :desc,updated_at: :desc)
                                     @mvs = @mvs_all_pages
                                     met.each do |item|
-                                        @mets[i] = [(item.meternum).to_s, item.id]
+                                        @mets[i] = ["#{item.meternum} | #{item.relevance_date}", item.id]
                                         i+=1    
                                     end                                 
       end
@@ -167,7 +167,7 @@ def showmvalues
           @mv_params = {:mv_id=>nil,:meter_id=>if @mets.size!=0 then @mets[0][1] end,:actp180=>nil,:actp280=>nil,:actp380=>nil,:actp480=>nil,:trab=>nil,:dwa=>nil,
                         :actdate=>Date.current,:comment=>nil,:f=>'true',:r=>'true'} 
         else 
-          @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.meter_id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
+          @mv_params = {:mv_id=>nil,:meter_id=>@mvs.first.id,:actp180=>@mvs.first.actp180,:actp280=>@mvs.first.actp280,
                         :actp380=>@mvs.first.actp380,:actp480=>@mvs.first.actp480,
                         :actdate=>Date.current,:comment=>nil,:f=>'true',:r=>'true'} 
         end                

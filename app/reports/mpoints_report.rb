@@ -47,7 +47,7 @@ class MpointsReport < Prawn::Document
     data = []
     if !mvalues.nil? then
     items = mvalues.each do |item|
-      data << row(i+=1, item.actdate.to_formatted_s(:day_month_year),item.meter.meternum,item.actp180, item.actp280, item.actp380, item.actp480, item.comment)
+      data << row(i+=1, item.actdate.to_formatted_s(:day_month_year),item.meternum,item.actp180, item.actp280, item.actp380, item.actp480, item.comment)
     end
     end
     
