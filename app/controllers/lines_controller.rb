@@ -84,8 +84,8 @@ private
       if (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qmesubstation.nil? or @qmesubstation.empty?) then   
            @lines = Vallline.all.order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)
       else  
-           @lines = Vallline.where("(?='' or region_name=?) and (?='' or filial_name=?) and (?='' or mesubstation_name=?)", 
-                               @qregion, @qregion, @qfilial, @qfilial, @qmesubstation, @qmesubstation).order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)      
+           @lines = Vallline.where("(?='' or region_name=?) and (?='' or filial_name=?) and (?='' or mesubstation_name=? or mesubstation2_name=?)", 
+                               @qregion, @qregion, @qfilial, @qfilial, @qmesubstation, @qmesubstation, @qmesubstation).order(filial_name: :asc, region_name: :asc, mesubstation_name: :asc, name: :asc, id: :asc)      
       end  
     else
        @data_for_search = @data_for_search.upcase
@@ -144,7 +144,7 @@ private
   end
   
   def line_params
-    params.require(:line).permit(:name,:l,:k_tr,:k_f,:wire_id,:mesubstation_id,:comment,:f,:unom)
+    params.require(:line).permit(:name,:l,:k_tr,:k_f,:wire_id,:mesubstation_id,:mesubstation2_id,:comment,:f,:unom)
   end
   
   def line_init(line)
@@ -157,6 +157,7 @@ private
     line.k_f = line_params[:k_f]
     line.wire_id = line_params[:wire_id]
     line.mesubstation_id = line_params[:mesubstation_id]
+    line.mesubstation2_id = line_params[:mesubstation2_id]
     line.comment = line_params[:comment] 
     line.f = line_params[:f]
     line.unom = line_params[:unom] 

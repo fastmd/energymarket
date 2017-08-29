@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170630101519) do
+ActiveRecord::Schema.define(version: 20170828145459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,18 +43,20 @@ ActiveRecord::Schema.define(version: 20170630101519) do
   end
 
   create_table "lines", force: :cascade do |t|
-    t.string   "name",                                                      null: false
-    t.decimal  "l",               precision: 10, scale: 4,                  null: false
-    t.decimal  "r",               precision: 14, scale: 8,                  null: false
-    t.decimal  "k_tr",            precision: 10, scale: 4, default: "1.03", null: false
-    t.decimal  "k_f",             precision: 10, scale: 4, default: "1.15", null: false
-    t.integer  "wire_id",                                                   null: false
-    t.integer  "mesubstation_id",                                           null: false
-    t.boolean  "f",                                        default: true,   null: false
+    t.string   "name",                                                       null: false
+    t.decimal  "l",                precision: 10, scale: 4,                  null: false
+    t.decimal  "r",                precision: 14, scale: 8,                  null: false
+    t.decimal  "k_tr",             precision: 10, scale: 4, default: "1.03", null: false
+    t.decimal  "k_f",              precision: 10, scale: 4, default: "1.15", null: false
+    t.integer  "wire_id",                                                    null: false
+    t.integer  "mesubstation_id",                                            null: false
+    t.boolean  "f",                                         default: true,   null: false
     t.text     "comment"
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
-    t.decimal  "unom",            precision: 14, scale: 4
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
+    t.decimal  "unom",             precision: 14, scale: 4
+    t.integer  "mesubstation2_id"
+    t.index ["mesubstation2_id"], name: "index_lines_on_mesubstation2_id", using: :btree
     t.index ["mesubstation_id"], name: "index_lines_on_mesubstation_id", using: :btree
     t.index ["wire_id"], name: "index_lines_on_wire_id", using: :btree
   end
@@ -231,6 +233,7 @@ ActiveRecord::Schema.define(version: 20170630101519) do
   end
 
   add_foreign_key "lines", "mesubstations"
+  add_foreign_key "lines", "mesubstations", column: "mesubstation2_id"
   add_foreign_key "lines", "wires"
   add_foreign_key "lnparams", "lines"
   add_foreign_key "lnparams", "mpoints"

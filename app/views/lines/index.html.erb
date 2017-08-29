@@ -37,9 +37,12 @@
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование линии<% else %>Ввод новой линии<% end %></h4>
 		<%= simple_form_for(@line, html: { class: 'form-inline' }) do |f| %>
 		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}  %>
-		      <%= f.association :mesubstation, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
+		      <%= f.input :mesubstation_id, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
-				    value_method: :id, include_blank: false, prompt: "Подстанция..." %><br><br>	
+				    value_method: :id, include_blank: false, prompt: "Подстанция..." %>
+		      <%= f.input :mesubstation2_id, label: 'Подстанция2 (для отпаек) ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
+				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
+				    value_method: :id, include_blank: true, prompt: "Подстанция2..." %><br><br>	
 		      <%= f.input :l, label: 'Длина линии L, км ', placeholder: 'L... ', as: :decimal %>
 		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %>
 		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br><br>		      
@@ -70,6 +73,7 @@
 			   <th>Филиал</th>
 			   <th>Район</th>
 			   <th>Подстанция</th>
+			   <th>Подстанция2<br>(для отпаек)</th>
 			   <th>Длина линии L, км</th>
 			   <th>Сопротивление линии R, Ом</th>
 			   <th>Коэффициент трассы Ktr</th>
@@ -101,6 +105,7 @@
 						<td><%= item.filial_name %></td>
 						<td><%= item.region_name %></td>
 						<td><%= item.mesubstation_name %></td>
+						<td><%= item.mesubstation2_name %></td>
 						<td><%= item.l %></td>									
 						<td><%= item.r %></td>
 						<td><%= item.k_tr %></td>

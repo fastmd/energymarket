@@ -673,7 +673,7 @@ private
     wa = waliv = wri = wrc = wasub = 0.0
     indicii = []       
     mvnum = 0 
-    meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end))", mp_id, ddate_b, ddate_e).order(:meter_id)
+    meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end) OR (? <= relevance_date AND ? >= relevance_end))", mp_id, ddate_b, ddate_e, ddate_b, ddate_e).order(:meter_id)
     if meters.count == 0 then
        flash[:warning] = "У точки учета #{mpoint.name} нет счетчиков!"          
     else 

@@ -1,5 +1,7 @@
 class Mpoint < ApplicationRecord
  has_many   :meters, inverse_of: :mpoint
+ has_many   :vallmeters, inverse_of: :mpoint
+ has_many   :vallmetersmvalues, inverse_of: :mpoint
  has_many   :mvalues, through: :meters, inverse_of: :mpoint
  has_many   :trparams, inverse_of: :mpoint
  has_many   :transformators, through: :trparams, inverse_of: :mpoint

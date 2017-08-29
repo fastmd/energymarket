@@ -105,7 +105,7 @@
 		<%= simple_form_for(@ln, html: { class: 'form-inline' }) do |f| %>
 				<%= f.association :line, label: 'Линия ', 
 				    :collection => @lines, value_method: :id,
-				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
+				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.mesubstation2_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
 				    include_blank: false, prompt: "Линия..." %>				    
 				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
 				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
