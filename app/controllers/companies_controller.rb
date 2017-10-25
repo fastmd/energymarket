@@ -813,8 +813,14 @@ private
          # energies
          result[:wa] = wa
          result[:wasub] = wasub
-         result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end
-         result[:wa_without_wasub_formula] = wa.to_s + " - " + wasub.to_s + " = " 
+         
+         if wasub > 0 then
+          result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end 
+          result[:wa_without_wasub_formula] = wa.to_s +  " - " + wasub.to_s + " = "
+         else
+          result[:wa_without_wasub] = wa 
+          result[:wa_without_wasub_formula] = wa.to_s + " = "  
+         end    
          result[:wa_formula] += " = "
          result[:waliv] = waliv
          result[:waliv_formula] += " = "
