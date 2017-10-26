@@ -677,7 +677,8 @@ private
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate).first
     unless mvalues.nil? then dddate_b = mvalues.actdate end
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate).first
-    unless mvalues.nil? then dddate_e = mvalues.actdate end 
+    unless mvalues.nil? then dddate_e = mvalues.actdate end
+    daysinperiod = (dddate_e - dddate_b).to_i   #number of days between report dates
     #meters
     meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end) OR (? <= relevance_date AND ? >= relevance_end))", mp_id, dddate_b, dddate_e, dddate_b, dddate_e).order(:meter_id)
     if meters.count != 0 then      
@@ -803,17 +804,22 @@ private
        if mvnum == 2 then
          # work hours
          if trabsum.nil? then
-          result[:workt] = dtsum * 24
-          result[:workt_formula] = dtsum.to_s + " * 24  = "
+          #setsu said that trasformator and line work all the period, not only when the meter is on 
+          #result[:workt] = dtsum * 24          
+          #result[:workt_formula] = dtsum.to_s + " * 24  = "
+          result[:workt] = daysinperiod * 24          
+          result[:workt_formula] = daysinperiod.to_s + " * 24  = "          
          else
           result[:trab] = trabsum 
-          result[:workt] = dtsum * 24 + trabsum
-          result[:workt_formula] = dtsum.to_s + " * 24 + " + trabsum.to_s + " = "
+          #setsu said that trasformator and line work all the period, not only when the meter is on
+          #result[:workt] = dtsum * 24 + trabsum
+          #result[:workt_formula] = dtsum.to_s + " * 24 + " + trabsum.to_s + " = "
+          result[:workt] = trabsum
+          result[:workt_formula] = trabsum.to_s + " = "
          end           
          # energies
          result[:wa] = wa
-         result[:wasub] = wasub
-         
+         result[:wasub] = wasub       
          if wasub > 0 then
           result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end 
           result[:wa_without_wasub_formula] = wa.to_s +  " - " + wasub.to_s + " = "
