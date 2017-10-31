@@ -1,3 +1,4 @@
 <%= if (current_user.has_role? :cduser) || (@fpr > 5) 
 	then  render "show_cduser" 
     else  render "show_setsu"  end %>
+

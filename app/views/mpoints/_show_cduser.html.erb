@@ -131,14 +131,11 @@
 	  <% i = 0%>
 	  <% if !@mvs.nil? %>
 			<% @mvs.each do |item| %>
-			   <% if (item.relevance_end < item.actdate) or (item.relevance_date > item.actdate) %>
-			     <tr class="danger">						   
-			   <% else %>
-				   <% if item.mvalue_updated_at > (Time.now.ago($GreenDelay)) %>
-				      <tr class="success">
-				   <% else %> 
-					<tr>
-				   <% end %>
+			   <% case when item.actdatefail then %><tr class="danger">
+			   	    <% when item.frfail then %><tr class="warning">	
+			   	    <% when item.fzero then %><tr class="info">						   
+				    <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
+				    <% else %><tr>
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
@@ -151,7 +148,7 @@
 					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
 					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>
 					<td title="Вычитается из Wa до расчета потерь"><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
-					<td title="Не анулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
+					<td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
 					<td><%= item.comment %></td>
 					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
@@ -166,4 +163,9 @@
 
 <center><small><%= if !@mvs.nil? then will_paginate @mvs, renderer: BootstrapPagination::Rails end %></small></center>
 
-
+<h5><mark>Красных</mark> и <mark>желтых</mark> строк быть не должно!</h5>
+<h5><mark>Красная</mark> строка - проверить дату монтажа счетчика (дата съема показаний выпадает за временные границы работы счетчика)</h5>
+<h5><mark>Желтая</mark> строка  - проверить расчетный день <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>(выбрано больше одного расчетного дня в месяце или вообще ни одного)</h5>
+<h5><mark>Голубая</mark> строка - проверить переход через 0 (предыдущие показания больше текущих)</h5>
+<h5>Зеленая строка - недавно отредактированная строка</h5>
+<h5>Ярко-голубая строка - бегунок</h5>

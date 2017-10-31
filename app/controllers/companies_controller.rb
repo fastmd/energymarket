@@ -119,7 +119,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
-    @mvalues = Vmpointsmetersvalue.where("company_id = ? AND (actdate between ? AND  ?)", @id, @ddate_b, @ddate_e).order(:id, :meter_id, :actdate, :mvalue_updated_at)
+    @mvalues = Vmpointsmetersvalue.where("company_id = ? AND (actdate between ? AND  ?)", @id, @ddate_b, @ddate_e).order(:id, :actdate, :mvalue_updated_at)
     if @mvalues.count != 0
       @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
     end    

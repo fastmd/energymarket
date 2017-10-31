@@ -35,6 +35,7 @@
         <thead>
         <tr class="info">
       	   <th>Nr</th>
+      	   <th>ID</th>
 		   <th>Тип</th>
 		   <th>Uном, кВ</th>
 		   <th>Номинальная мощность Sном, кВА</th>
@@ -55,6 +56,7 @@
 		 <tr>
 	   <% end %>
       	 <td><%= j %></td>
+      	 <td><%= item.tr_id %></td>
 		 <td><%= item.mark %></td>
 		 <td><%= item.unom %></td>
 		 <td><%= item.snom %></td>
@@ -91,6 +93,7 @@
         <thead>
         <tr class="info">
       	   <th>Nr</th>
+      	   <th>ID</th>
 		   <th>Длина линии L, км</th>
 		   <th>Сопротивление линии r, Ом</th>
 		   <th>Сопротивление материала r20, Ом</th>
@@ -113,6 +116,7 @@
 		 <tr>
 	   <% end %>
       	 <td><%= j %></td>
+      	 <td><%= item.line_id %></td>
 		 <td><%= item.l %></td>									
 		 <td><%= item.r %></td>
 		 <td><%= item.ro %></td>

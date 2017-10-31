@@ -46,6 +46,7 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
+		   <th>ID</th>
 		   <th>Тип</th>
 		   <th>Uном, кВ</th>
 		   <th>Номинальная мощность Sном, кВА</th>
@@ -71,6 +72,7 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= i  %></td>
+					<td><%= item.transformator.id %></td>
 					<td><%= item.transformator.name %></td>
 					<td><%= item.transformator.unom %></td>
 					<td><%= item.transformator.snom %></td>
@@ -125,6 +127,7 @@
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
+		   <th>ID</th>
 		   <th>Наименование</th>
 		   <th>Длина линии L, км</th>
 		   <th>Сопротивление линии R, Ом</th>
@@ -139,7 +142,7 @@
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-		   <th>.........</th>
+		   <th>.........</th>	
 		</tr>	
 	</thead>
 	<tbody>					
@@ -152,6 +155,7 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= i  %></td>
+					<td><%= item.line_id %></td>
 					<td><%= item.line_name %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>
@@ -168,7 +172,7 @@
 					<td><span class="glyphicon glyphicon-<%= if item.line_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", lnparams_edit_path(:ln_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", lnparams_destroy_path(:ln_id => item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить линию?" } %></td>  												
+  						                 data: { confirm: "Удалить линию?" } %></td>		                   												
 				</tr>
 			<% end %>	  
 	</tbody>
