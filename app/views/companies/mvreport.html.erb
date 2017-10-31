@@ -33,21 +33,22 @@
 	  <th>Время работы<br> электроустановки, часы</th>
 	  <th>Потребление<br> субабонента, кВт*ч</th>
 	  <th title="Не анулировать отдачу">Учет<br> А-</th>         
-      <th><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
+      <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
     </tr>  
   </thead>
   <tbody>	
     <% @mvalues.each do |item| %>     	
-	   <% case when item.frfail then %><tr class="warning">	
-		 <% when item.fzero then %><tr class="info">						   
-		 <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
-		 <% else %><tr>
-	   <% end %>
        <% if x != item.id then %>
           <% i = 0 %>
           <% x = item.id %>
+          <tr>
        <td colspan=12><h5><center><%= "Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation} ") +  (item.voltcl.to_s) + ' Î ' + " #{item.meconname}" + ' F' %></center></h5></td>   
        <% else %>
+	     <% case when item.frfail then %><tr class="warning">	
+		   <% when item.fzero then %><tr class="info">						   
+		   <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
+		   <% else %><tr>
+	     <% end %>       
          <% i += 1 %>   		 
       	 <td><%= i %></td>
       	 <td><%= item.cod %></td>
@@ -60,7 +61,7 @@
 		 <td><%= item.trab %></td>
 		 <td><%= number_with_delimiter(item.dwa, delimiter: " ", separator: ".") %></td>
 		 <td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>      	 
-      	 <td><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
+      	 <td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
       <% end %>      	 
       </tr>
     <% end %>
