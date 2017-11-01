@@ -38,15 +38,12 @@
 	  <% i = 0%>
 	  <% if !@mvs.nil? %>
 			<% @mvs.each do |item| %>
-			   <% if (item.relevance_end < item.actdate) or (item.relevance_date > item.actdate) %>
-			     <tr class="danger">						   
-			   <% else %>
-				   <% if item.mvalue_updated_at > (Time.now.ago($GreenDelay)) %>
-				      <tr class="success">
-				   <% else %> 
-					<tr>
-				   <% end %>
-			   <% end %>		
+			   <% case when item.actdatefail then %><tr class="danger">
+			   	    <% when item.frfail then %><tr class="warning">	
+			   	    <% when item.fzero then %><tr class="info">						   
+				    <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
+				    <% else %><tr>
+			   <% end %>			
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
 					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
