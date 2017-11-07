@@ -319,6 +319,7 @@
 		   <th>Сечение провода q, мм2</th>
 		   <th>Uном, кВ</th>
 		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
+		   <th>Отпайка</th>
     	</tr>  
    </thead>
    <tbody>
@@ -338,6 +339,7 @@
 		 <td><%= item.q %></td>
 		 <td><%= item.unom %></td>
 		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.where("line_id = ?", item.line_id).count %></td>
+		 <td><%= item.mesubstation2_id %></td>
       </tr>
     <% end %>
    <% end %> 

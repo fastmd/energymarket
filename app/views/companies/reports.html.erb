@@ -10,8 +10,36 @@
 <!--    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_reports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> -->
     <li><%= form_tag companies_reports_path(:id => @id, :vc => @vc, :va => @va, :page => @page) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
-                <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 80, :height => 60) %>
-                <% end %></li>                   
+                <%= image_submit_tag("vjuh-suma.png",class: 'submit_button',:alt => "Пересчет", :width => 80, :height => 60) %>
+                <% end %></li>
+    <li><%= form_tag("/companies/reports", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:q, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:q, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование, филиал, район, поставщик, подстанция, точка учета") %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= hidden_field_tag :page, @page %>
+		  <%= hidden_field_tag :vc, @vc %>
+		  <%= hidden_field_tag :va, @va %>
+		  <%= hidden_field_tag :month_for_report, @ddate.to_formatted_s(:year_month) %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование, филиал, район, поставщик, подстанция, точка учета") %>
+		</div>
+		<% end %></li>
+	<li><%= form_tag("/companies/reports", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qcompany, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qcompany, options_for_select(@fcomps, @qcompany), class: "form-control", prompt: "Потребитель...#{@qcompany}", include_blank: false, title: "Потребитель") %>
+		  <%= select_tag(:qfurnizor, options_for_select(@ffurns, @qfurnizor), class: "form-control", prompt: "Поставщик...#{@qfurnizor}", include_blank: false, title: "Поставщик") %>
+		  <%= select_tag(:qfilial, options_for_select(@ffils, @qfilial), class: "form-control", prompt: "Филиал...#{@qfilial}", include_blank: false, title: "Филиал") %>
+		  <%= select_tag(:qregion, options_for_select(@fregions, @qregion), class: "form-control", prompt: "Район...#{@qregion}", include_blank: false, title: "Район") %>
+		  <%= select_tag(:qmesubstation, options_for_select(@fsstations, @qmesubstation), class: "form-control", prompt: "Подстанция...#{@qmesubstation}", include_blank: false, title: "Подстанция") %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= hidden_field_tag :page, @page %>
+		  <%= hidden_field_tag :vc, @vc %>
+		  <%= hidden_field_tag :va, @va %>
+		  <%= hidden_field_tag :month_for_report, @ddate.to_formatted_s(:year_month) %>		  
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter") %>
+		</div>
+		<% end %></li>                                   
   </ul>  
 </nav>
 

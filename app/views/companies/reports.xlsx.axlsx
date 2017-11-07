@@ -49,10 +49,11 @@ wb.styles do |style|
     header_footer = {:different_first => false, :odd_header => '&L&F : &A&R&D &T', :odd_footer => 'pagina &C&P din &N'} 
     
     tstyle1 = tstyle2 = []
-    emptyrow = ["","","","","","","","","","","","","","","","","","","","","","","",""]
+    emptyrow = []
     @title1.each do 
       tstyle1 << theader_cell
       tstyle2 << theaderb_cell
+      emptyrow << ""
     end 
 
 	wb.add_worksheet(name: "Lista", :page_margins => margins, :page_setup => setup, :print_options => options, :header_footer => header_footer ) do |sheet|
@@ -80,9 +81,9 @@ wb.styles do |style|
     		                    :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]  		
     		end              
     	  end
-        sheet.add_row emptyrow, style: [last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,
-                                    last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell], 
-    		                :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]     	     
+        sheet.add_row emptyrow, style: [last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,
+                                        last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell,last_cell], 
+                                :widths => [5,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,:auto,20,20]     	     
        end 	  		
   end  
 end 

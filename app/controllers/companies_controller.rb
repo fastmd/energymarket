@@ -170,7 +170,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @tau = Tau.all   
   end
    
-  def reports
+  def reports #kotik s summoi
     @page = params[:page]
     @id = params[:id]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
@@ -192,37 +192,15 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     # filter
-    cookiesforreports  
-    # companies
-    company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    if (@data_for_search.nil? or @data_for_search.empty?) then
-      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
-       @filter = 0
-      else
-       @filter = 1         
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
-                               " and (?='' or furnizor_name=?)", 
-                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).pluck(:company_id).uniq
-      end  
-    else
-       @filter = 1
-       @data_for_search = @data_for_search.upcase
-       data_for_search = "%" + @data_for_search + "%"
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (upper(company_name||company_shname) like upper(?) "+ 
-                               "or upper(cod||name) like upper(?) "+ 
-                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
-                               "or upper(mesubstation_name) like upper(?)) ", 
-                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
-    end    
-    companies = (Company.where(f: 'true').order(shname: :asc).find(company_list))
-    if companies.count != 0 then 
+    dataforfilterselect
+    filtertocookies
+    cookiesforreports
+    mpoints = mpointsforreports
+    #report    
       nr = 0
-      companies.each do |cp|
+      cp = nil
+      enrgsums = {}
         # mpoints 
-        mpoints = cp.mpoints.where(f: 'true').order(:name, :id)
         if mpoints.count == 0 then
           flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
         else
@@ -230,7 +208,7 @@ before_filter :redirect_cancel, only: [:create, :update]
            if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{cp.name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{mp.company_name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -252,22 +230,42 @@ before_filter :redirect_cancel, only: [:create, :update]
               unless indicii1[:ind1_reactivl].nil? then report_rind[12]  = indicii1[:ind1_reactivl] end
               unless indicii1[:ind1_reactivc].nil? then report_rind[13]  = indicii1[:ind1_reactivc] end
               unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
-              unless energies[:wa_without_wasub].nil? then report_rind[15]  = energies[:wa_without_wasub] end
-              unless energies[:wri].nil? then report_rind[16]  = energies[:wri] end
-              unless energies[:wrc].nil? then report_rind[17]  = energies[:wrc] end
+              unless energies[:wa_without_wasub].nil? then 
+                report_rind[15]  = energies[:wa_without_wasub]
+                if enrgsums[:wa_without_wasub].nil? then enrgsums[:wa_without_wasub] = energies[:wa_without_wasub] else enrgsums[:wa_without_wasub] += energies[:wa_without_wasub] end 
+              end
+              unless energies[:wri].nil? then 
+                report_rind[16]  = energies[:wri]
+                if enrgsums[:wri].nil? then enrgsums[:wri] = energies[:wri] else enrgsums[:wri] += energies[:wri] end 
+              end
+              unless energies[:wrc].nil? then 
+                report_rind[17]  = energies[:wrc]
+                if enrgsums[:wrc].nil? then enrgsums[:wrc] = energies[:wrc] else enrgsums[:wrc] += energies[:wrc] end 
+              end
               unless losses.nil? then
-                unless losses[:ln_losses].nil? then report_rind[18]  = losses[:ln_losses] end
-                unless losses[:tr_losses_p].nil? then report_rind[19]  = losses[:tr_losses_p] end                
-                unless losses[:consumtehi].nil? then report_rind[20]  = losses[:consumtehi] end
-                unless losses[:consumtehc].nil? then report_rind[21]  = losses[:consumtehc] end
-              end              
+                unless losses[:ln_losses].nil? then 
+                  report_rind[18]  = losses[:ln_losses]
+                  if enrgsums[:ln_losses].nil? then enrgsums[:ln_losses] = losses[:ln_losses] else enrgsums[:ln_losses] += losses[:ln_losses] end 
+                end
+                unless losses[:tr_losses_p].nil? then 
+                  report_rind[19]  = losses[:tr_losses_p]
+                  if enrgsums[:tr_losses_p].nil? then enrgsums[:tr_losses_p] = losses[:tr_losses_p] else enrgsums[:tr_losses_p] += losses[:tr_losses_p] end  
+                end                
+                unless losses[:consumtehi].nil? then 
+                  report_rind[20]  = losses[:consumtehi]
+                  if enrgsums[:consumtehi].nil? then enrgsums[:consumtehi] = losses[:consumtehi] else enrgsums[:consumtehi] += losses[:consumtehi] end  
+                end
+                unless losses[:consumtehc].nil? then 
+                  report_rind[21]  = losses[:consumtehc]
+                  if enrgsums[:consumtehc].nil? then enrgsums[:consumtehc] = losses[:consumtehc] else enrgsums[:consumtehc] += losses[:consumtehc] end  
+                end
+              end                
             end # indicii null
             @report << report_rind[0..@title1.count]  
-          end  # mpoints each        
-        end  # mpoints.count 
-       end 
-      end  #compaies each    
-    end  #companies.count
+          end         
+        end  # mpoints each
+        @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
+       end  # mpoints.count  
     respond_to do |format|
       format.html
       format.pdf { send_data ListaReports.new.to_pdf(@flr,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
@@ -275,7 +273,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     end  
   end
  
-  def simplereports
+  def simplereports #neznaika
     @page = params[:page]
     @id = params[:id] 
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
@@ -293,47 +291,26 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     # filter
-    cookiesforreports 
-    # companies
-    company_list = @flr.vallmpoints.pluck(:company_id).uniq
-    if (@data_for_search.nil? or @data_for_search.empty?) then
-      if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).pluck(:company_id).uniq
-       @filter = 0
-      else
-       @filter = 1         
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
-                               " and (?='' or furnizor_name=?)", 
-                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).pluck(:company_id).uniq
-      end  
-    else
-       @filter = 1
-       @data_for_search = @data_for_search.upcase
-       data_for_search = "%" + @data_for_search + "%"
-       company_list = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (upper(company_name||company_shname) like upper(?) "+ 
-                               "or upper(cod||name) like upper(?) "+ 
-                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
-                               "or upper(mesubstation_name) like upper(?)) ", 
-                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
-    end    
-    companies = (Company.where(f: 'true').order(shname: :asc).find(company_list))
-    if companies.count != 0 then 
+    dataforfilterselect
+    filtertocookies
+    cookiesforreports
+    mpoints = mpointsforreports    
+    # mpoints
+    if mpoints.count == 0 then
+          flash[:warning] = "Нет данных для отчета. Потребители не имеют точек учета." 
+    else 
       nr = 0
       enrgsums = {}
-      companies.each do |cp|
+      cp = nil #current company
+      mpoints.each do |mp|
         # report rind
-        nr += 1
-        report_rind = [nr,"#{cp.name}",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
-        @report << report_rind[0..@title1.count] 
-        # mpoints 
-        mpoints = cp.mpoints.where(f: 'true').order(:name, :id)
-        if mpoints.count == 0 then
-          flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
-        else
-          mpoints.each do |mp|
-           if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
+        if cp != mp.company_id then
+          cp = mp.company_id
+          nr += 1
+          report_rind = [nr,"#{mp.company_name}",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+          @report << report_rind[0..@title1.count] 
+        end
+        if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
@@ -402,18 +379,16 @@ before_filter :redirect_cancel, only: [:create, :update]
                   @report << report_rind[0..@title1.count]
                 end    
               end              
-            end # indicii null
-          end  # mpoints each        
-        end  # mpoints.count 
+            end # indicii null 
        end 
-      end  #companies each 
+      end  #mpoints each 
       @report << ['∑','Subabonent/Недоучёт',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
       @report << ['∑','Summa primirii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa],nil,4]      
       @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
       @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
       @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,enrgsums[:consumteh],nil,nil]                 
       @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]     
-    end  #companies.count
+    end  #mpoints.count
     respond_to do |format|
       format.html
       format.pdf { send_data ListaReports.new.to_pdf(@flr,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
@@ -421,7 +396,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     end  
   end
  
-  def regionreports
+  def regionreports #lamp
     @page = params[:page]
     @id = params[:id] 
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
@@ -480,13 +455,22 @@ before_filter :redirect_cancel, only: [:create, :update]
     end  # mpoints.count                                                      
   end
  
-  def report
+  def report  #kotik
     @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
     # month
     monthforreports
+    # title
+    @lista_title = []
+    @lista_title << "LISTA de calcul a intrarii energiei electrice la #{@cp.name}"
+    @lista_title << "pentru luna #{@luna} anul #{@ddate.year}"        
+    # filter
+    dataforfilterselect
+    cookiesforreports
+    @mpoints = mpointsforreports                             
+    # report init    
     # report init
     @report = Array[]
     nr = 0
@@ -495,7 +479,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     lnlosses = 0.0
     consumteh = 0.0 
     # mpoints 
-    @mpoints = @cp.mpoints.where(f: 'true').order(:name,:id)
+  #  @mpoints = @cp.mpoints.where(f: 'true').order(:name,:id)
     if @mpoints.count == 0 then
       flash[:warning] = "Нет данных для отчета. Потребитель #{@cp.name} не имеет точек учета." 
     else
@@ -643,24 +627,55 @@ private
     if (@data_for_search.nil? or @data_for_search.empty?) then
       if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then
         @filter = 0
-        mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:region_name, :mesubstation_name)
+        case when action_name == 'report' then
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " and company_id = ? ", @flr.id, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
+         when (action_name == 'reports' or action_name == 'simplereports') then
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
+         else
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:region_name, :mesubstation_name, :company_shname, :id)  
+        end 
       else     
-        @filter = 1         
-        mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
-                               " and (?='' or furnizor_name=?)", 
-                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name)
+        @filter = 1
+        case when action_name == 'report' then                
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                                 " and (?='' or furnizor_name=?)" + " and company_id = ? ", 
+                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
+         when (action_name == 'reports' or action_name == 'simplereports') then
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                                 " and (?='' or furnizor_name=?)", 
+                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
+         else
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                                 " and (?='' or furnizor_name=?)", 
+                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name, :company_shname, :id)          
+        end                         
       end
     else
        @filter = 1
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
-       mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                               "and (upper(company_name||company_shname) like upper(?) "+ 
-                               "or upper(cod||name) like upper(?) "+ 
-                               "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
-                               "or upper(mesubstation_name) like upper(?)) ", 
-                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order(:region_name, :mesubstation_name)    
+       case when action_name == 'report' then      
+         mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (upper(company_name||company_shname) like upper(?) "+ 
+                                 "or upper(cod||name) like upper(?) "+ 
+                                 "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                                 "or upper(mesubstation_name) like upper(?)) " + " and company_id = ? ", 
+                                 @flr.id, data_for_search, data_for_search, data_for_search, data_for_search, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
+        when (action_name == 'reports' or action_name == 'simplereports') then
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                                 " and (?='' or furnizor_name=?)", 
+                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)                                     
+
+        else
+          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
+                                 " and (?='' or furnizor_name=?)", 
+                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name, :company_shname, :id)       
+       end                                       
     end
     mpoints 
   end    
@@ -981,20 +996,25 @@ private
             if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
             if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
             mpcount = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id).count
-            lwa = wa  
+            mpcount_neotpaika = Vmpointslnparam.where("line_id = ? and id != ? and mesubstation2_id is not null", lnitem.line_id, lnitem.mpoint_id).count
+            lwa = wa
+            lwa_formula = "#{lwa}"  
             lwr = wr
+            lwr_formula = "#{lwr}"
             if mpcount > 0 then
               related_lines = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id)
               related_lines.each do |rlnitem|
                 related_energies = one_mp_indicii(rlnitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
                 if related_energies[:mvnum] == 2 then 
                     lwa += related_energies[:wa_without_wasub] 
+                    lwa_formula += " + #{related_energies[:wa_without_wasub]}" 
                     lwr += related_energies[:wr]
+                    lwr_formula += " + #{related_energies[:wr]}"
                 end    
               end  
             end    
             ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
-            result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * (#{lwa} ^2 + #{lwr} ^2) / (1000 * #{unom} ^2 * #{workt}) "
+            result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{workt}) "
             if mpcount > 0 then
               k = (wa + wr) / (lwa + lwr)
               ln_losses_ng = (ln_losses_ng * k).round(4)
@@ -1103,31 +1123,7 @@ private
    end
   
    def indexview
-    if params[:filter] then
-        cookies[:qmesubstation] = @qmesubstation = params[:qmesubstation].to_s
-        cookies[:qcompany] = @qcompany = params[:qcompany].to_s
-        cookies[:qregion] = @qregion = params[:qregion].to_s
-        cookies[:qfilial] = @qfilial = params[:qfilial].to_s
-        cookies[:qfurnizor] = @qfurnizor = params[:qfurnizor].to_s
-        @data_for_search = ''
-        cookies.delete(:data_for_search) 
-    else
-        if params[:search] then
-            cookies[:data_for_search] = @data_for_search = params[:q].to_s
-            cookies.delete(:qmesubstation)
-            cookies.delete(:qcompany)
-            cookies.delete(:qregion)
-            cookies.delete(:qfilial)
-            cookies.delete(:qfurnizor)            
-        else
-            @data_for_search = cookies[:data_for_search]
-        end
-        @qmesubstation = cookies[:qmesubstation]
-        @qcompany = cookies[:qcompany]
-        @qregion = cookies[:qregion]
-        @qfilial = cookies[:qfilial]
-        @qfurnizor = cookies[:qfurnizor]
-    end
+    filtertocookies
     @filter = 0      
     company_list = @flr.vallmpoints.pluck(:company_id).uniq
     if @data_for_search.nil? or @data_for_search.empty? then
