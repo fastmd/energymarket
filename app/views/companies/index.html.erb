@@ -170,7 +170,7 @@
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
 						<td><%= link_to "Открыть", company_path(item,:flr_id => @flr.id), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20), companies_report_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %></td>
-                        <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), companies_mvreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %>
+                        <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), companies_mvreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => 1) %>
                         	<%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 30, :height => 20), companies_mtreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %>
                         	<%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20), companies_paramreport_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %></td>
                         <td><%= item.comment %></td>

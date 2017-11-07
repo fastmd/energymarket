@@ -119,7 +119,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
-    @mvalues = Vmpointsmetersvalue.where("company_id = ? AND (actdate between ? AND  ?)", @id, @ddate_b, @ddate_e).order(:id, :actdate, :mvalue_updated_at)
+    @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id, :actdate, :mvalue_updated_at)
     if @mvalues.count != 0
       @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
     end    
@@ -130,7 +130,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
-    @meters = Vmpointsmeter.where("company_id = ?", @id).order(:name, :id, :relevance_date, :updated_at)
+    @meters = Vmpointsmeter.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " AND company_id = ?", @flr.id, @id).order(:name, :id, :relevance_date, :updated_at)
   end  
  
   def paramreport
@@ -138,8 +138,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end 
-    @trp = Vmpointstrparam.where("company_id = ?", @id).order(:name, :id, :tr_id, :updated_at)
-    @lnp = Vmpointslnparam.where("company_id = ?", @id).order(:name, :id, :ln_id, :updated_at)
+    @trp = Vmpointstrparam.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " AND company_id = ?", @flr.id, @id).order(:name, :id, :tr_id, :updated_at)
+    @lnp = Vmpointslnparam.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " AND company_id = ?", @flr.id, @id).order(:name, :id, :ln_id, :updated_at)
     @tau = Tau.all    
   end  
   
