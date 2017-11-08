@@ -183,11 +183,18 @@ before_filter :redirect_cancel, only: [:create, :update]
     @lista_title << "LISTA de calcul a intrarii energiei electrice pentru"
     @lista_title << ("consumatori  alimentați direct de la stații  electrice Î.S. ”Moldelectrica”" + (if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name}") 
     @lista_title << "pentru luna #{@luna} anul #{@ddate.year}"
+    @title00 = ['№',1,2],['№ locului de consum',1,2],['Nume client',1,2],['RRE,SE si liniilor',1,2],['Conexiunea',1,2],['№ contor.',1,2],
+              ['Data citirii',1,2],['Indicaţii luna precedenta',3,1],
+              ['Data citirii',1,2],['Indicaţii luna curenta',3,1],
+              ['Coeficient contor',1,2],['ENERGIA, kWh',3,1],
+              ['Pierderi LEA, kWh',1,2],['Pierderi trans, kWh',1,2],["Consum\n Tehnologic,\n kWh inductiv",1,2],["Consum\n Tehnologic, kWh\n capacitiv",1,2]
+    @title01 = ['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1]            
+    @title0 = ['','','','','','','','Indicaţii luna precedenta','','Indicaţii luna curenta','','ENERGIA, kWh','','','','']
     @title1 = ['№','№ locului de consum','Nume client','RRE,SE si liniilor','Conexiunea','№ contor.',
               'Data citirii','Indicatii activ','Indicatii reactiv L','Indicatii reactiv C',
               'Data citirii','Indicatii activ','Indicatii reactiv L','Indicatii reactiv C',
               'Coeficient contor','ENERGIA, kWh activ','ENERGIA, kWh reactiv L','ENERGIA, kWh reactiv C',
-              'Pierderi LEA, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv','Consum Tehnologic, kWh capacitiv']
+              'Pierderi LEA, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv',"Consum Tehnologic, kWh capacitiv"]
     titleforreports
     # report init
     @report = Array[]
@@ -214,22 +221,41 @@ before_filter :redirect_cancel, only: [:create, :update]
             indicii = energies[:indicii]
             if indicii.nil? then
               report_rind[@title1.count] = 1
-            else   
-              indicii0 = indicii.first
-              indicii1 = indicii.last
+            else 
+              indicii.each do |ind|
+                report_rind[5]  = ind[:meternum]
+                unless ind[:date0].nil? then report_rind[6]  = (ind[:date0]).to_formatted_s(:day_month_year) end
+                unless ind[:ind0_activ].nil? then report_rind[7]  = ind[:ind0_activ] end
+                unless ind[:ind0_reactivl].nil? then report_rind[8]  = ind[:ind0_reactivl] end
+                unless ind[:ind0_reactivc].nil? then report_rind[9]  = ind[:ind0_reactivc] end
+                unless ind[:date1].nil? then report_rind[10]  = (ind[:date1]).to_formatted_s(:day_month_year) end
+                unless ind[:ind1_activ].nil? then report_rind[11]  = ind[:ind1_activ] end
+                unless ind[:ind1_reactivl].nil? then report_rind[12]  = ind[:ind1_reactivl] end
+                unless ind[:ind1_reactivc].nil? then report_rind[13]  = ind[:ind1_reactivc] end
+                unless ind[:koef].nil? then report_rind[14]  = ind[:koef].round end
+                unless ind[:wa].nil? then report_rind[15]  = ind[:wa] end
+                unless ind[:wri].nil? then report_rind[16]  = ind[:wri].round end
+                unless ind[:wrc].nil? then report_rind[17]  = ind[:wrc].round end
+                if indicii.count != 1 or (!energies[:wasub].nil? and energies[:wasub] != 0) then           
+                  @report << report_rind[0..@title1.count]                
+                  report_rind = Array.new((@title1.count+1), nil)
+                end
+              end  
+         #     indicii0 = indicii.first
+         #     indicii1 = indicii.last
               # pierderi   
               losses = one_mp_losses(mp.id, energies)
               # report
-              report_rind[5]  = indicii0[:meternum]
-              unless indicii0[:date0].nil? then report_rind[6]  = (indicii0[:date0]).to_formatted_s(:day_month_year) end
-              unless indicii0[:ind0_activ].nil? then report_rind[7]  = indicii0[:ind0_activ] end
-              unless indicii0[:ind0_reactivl].nil? then report_rind[8]  = indicii0[:ind0_reactivl] end
-              unless indicii0[:ind0_reactivc].nil? then report_rind[9]  = indicii0[:ind0_reactivc] end
-              unless indicii1[:date1].nil? then report_rind[10]  = (indicii1[:date1]).to_formatted_s(:day_month_year) end
-              unless indicii1[:ind1_activ].nil? then report_rind[11]  = indicii1[:ind1_activ] end
-              unless indicii1[:ind1_reactivl].nil? then report_rind[12]  = indicii1[:ind1_reactivl] end
-              unless indicii1[:ind1_reactivc].nil? then report_rind[13]  = indicii1[:ind1_reactivc] end
-              unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
+         #     report_rind[5]  = indicii0[:meternum]
+         #     unless indicii0[:date0].nil? then report_rind[6]  = (indicii0[:date0]).to_formatted_s(:day_month_year) end
+         #     unless indicii0[:ind0_activ].nil? then report_rind[7]  = indicii0[:ind0_activ] end
+         #     unless indicii0[:ind0_reactivl].nil? then report_rind[8]  = indicii0[:ind0_reactivl] end
+         #     unless indicii0[:ind0_reactivc].nil? then report_rind[9]  = indicii0[:ind0_reactivc] end
+         #     unless indicii1[:date1].nil? then report_rind[10]  = (indicii1[:date1]).to_formatted_s(:day_month_year) end
+         #     unless indicii1[:ind1_activ].nil? then report_rind[11]  = indicii1[:ind1_activ] end
+         #     unless indicii1[:ind1_reactivl].nil? then report_rind[12]  = indicii1[:ind1_reactivl] end
+         #     unless indicii1[:ind1_reactivc].nil? then report_rind[13]  = indicii1[:ind1_reactivc] end
+         #     unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
               unless energies[:wa_without_wasub].nil? then 
                 report_rind[15]  = energies[:wa_without_wasub]
                 if enrgsums[:wa_without_wasub].nil? then enrgsums[:wa_without_wasub] = energies[:wa_without_wasub] else enrgsums[:wa_without_wasub] += energies[:wa_without_wasub] end 
@@ -259,7 +285,7 @@ before_filter :redirect_cancel, only: [:create, :update]
                   report_rind[21]  = losses[:consumtehc]
                   if enrgsums[:consumtehc].nil? then enrgsums[:consumtehc] = losses[:consumtehc] else enrgsums[:consumtehc] += losses[:consumtehc] end  
                 end
-              end                
+              end # losses null               
             end # indicii null
             @report << report_rind[0..@title1.count]  
           end         
@@ -734,13 +760,15 @@ private
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
               unless mpoint.fturn then
                 indicii0[:ind1_activ] = mvalue1.actp180          #indicii activ
-                indicii0[:ind0_activ] = mvalue0.actp180          #indicii activ                 
+                indicii0[:ind0_activ] = mvalue0.actp180          #indicii activ
+                indicii0[:wa] = energy                           #wa                 
                 if result[:wa_formula] != "" then result[:wa_formula] += " + "  end  
                 result[:wa_formula] += dind.to_s + " * " + koef.to_s
                 wa += energy
               else
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-                result[:waliv_formula] += dind.to_s + " * " + koef.to_s                
+                result[:waliv_formula] += dind.to_s + " * " + koef.to_s 
+                indicii0[:waliv] = energy                        #waliv               
                 if mvalue1.fanulare then 
                   waliv += energy
                   indicii0[:fanulare] = mvalue1.fanulare
@@ -759,14 +787,16 @@ private
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
               unless mpoint.fturn then 
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
-                result[:waliv_formula] += dind.to_s + " * " + koef.to_s                
+                result[:waliv_formula] += dind.to_s + " * " + koef.to_s 
+                indicii0[:waliv] = energy                        #waliv                
                 if mvalue1.fanulare then 
                   waliv += energy
                   indicii0[:fanulare] = mvalue1.fanulare
                 end
               else
                 indicii0[:ind1_activ] = mvalue1.actp280          #indicii activ
-                indicii0[:ind0_activ] = mvalue0.actp280          #indicii activ                   
+                indicii0[:ind0_activ] = mvalue0.actp280          #indicii activ 
+                indicii0[:wa] = energy                           #wa                  
                 if result[:wa_formula] != "" then result[:wa_formula] += " + "  end
                 result[:wa_formula] += dind.to_s + " * " + koef.to_s
                 wa += energy                
@@ -780,13 +810,15 @@ private
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
               unless mpoint.fturn then
                 indicii0[:ind1_reactivl] = mvalue1.actp380          #indicii reactivL
-                indicii0[:ind0_reactivl] = mvalue0.actp380          #indicii reactivL                 
+                indicii0[:ind0_reactivl] = mvalue0.actp380          #indicii reactivL
+                indicii0[:wri] = energy                             #wri                 
                 if result[:wri_formula] != "" then result[:wri_formula] += " + "  end   
                 result[:wri_formula] += dind.to_s + " * " + koef.to_s
                 wri += energy
               else
                 indicii0[:ind1_reactivc] = mvalue1.actp380          #indicii reactivC
-                indicii0[:ind0_reactivc] = mvalue0.actp380          #indicii reactivC                  
+                indicii0[:ind0_reactivc] = mvalue0.actp380          #indicii reactivC
+                indicii0[:wrc] = energy                             #wrc                   
                 if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end                 
                 result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
                 wrc += energy                
@@ -800,13 +832,15 @@ private
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
               unless mpoint.fturn then
                 indicii0[:ind1_reactivc] = mvalue1.actp480          #indicii reactivC
-                indicii0[:ind0_reactivc] = mvalue0.actp480          #indicii reactivC                 
+                indicii0[:ind0_reactivc] = mvalue0.actp480          #indicii reactivC
+                indicii0[:wrc] = energy                             #wrc                   
                 if result[:wrc_formula] != "" then result[:wrc_formula] += " + "  end                 
                 result[:wrc_formula] += dind.to_s + " * " + koef.to_s              
                 wrc += energy
               else
                 indicii0[:ind1_reactivl] = mvalue1.actp480          #indicii reactivL
-                indicii0[:ind0_reactivl] = mvalue0.actp480          #indicii reactivL                   
+                indicii0[:ind0_reactivl] = mvalue0.actp480          #indicii reactivL
+                indicii0[:wri] = energy                             #wri                    
                 if result[:wri_formula] != "" then result[:wri_formula] += " + "  end   
                 result[:wri_formula] += dind.to_s + " * " + koef.to_s
                 wri += energy                

@@ -60,13 +60,18 @@
 
 <small>
 <div class="table-responsive">	
-<table class="table table-striped table-condensed  table-hover">	
+<table class="table table-striped table-condensed table-hover">
   <thead>
-    <tr class="success">
-      <% @title1.each do |t| %>	
-        <th><%= t %></th>
+  	<tr class="success">
+      <% @title00.each do |t| %>	
+        <th colspan=<%= "#{t[1]}" %> rowspan=<%= "#{t[2]}" %>><%= "#{t[0]}" %></th>
       <% end %>
-    </tr>  
+    </tr>
+  	<tr class="success">
+      <% @title01.each do |t| %>	
+        <th colspan=<%= "#{t[1]}" %> rowspan=<%= "#{t[2]}" %>><%= t[0] %></th>
+      <% end %>
+    </tr>     
     <tr class="info">
       <% @title2.each do |t| %>	
         <th><%= t %></th>
@@ -85,8 +90,8 @@
       	                       when 3 then "info" 
       	                       else "success" end %>>     
       <% end %>	
-      	<% item.each do |x| %>
-      	   <td><%= x %></td>
+      	<% item.each_with_index do |x, index| %>
+      	   <td title=<%= @title1[index] %>><%= x %></td>
       	<% end %> 
       </tr>
     <% end %>
