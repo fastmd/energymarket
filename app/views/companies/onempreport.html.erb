@@ -103,13 +103,22 @@
       </tr>
       <tr>
       	 <td></td>
-      	 <td>Потребление субабонента(+) / недоучет(-), kWh</td>
+      	 <td>Потребление субабонента, kWh</td>
       	 <td><%= number_with_delimiter(item[:dwa], delimiter: " ") %></td>
       	 <td></td>
       	 <td></td>
       	 <td></td>
       	 <td></td>
       </tr>
+      <tr>
+      	 <td></td>
+      	 <td>Недоучет, kWh</td>
+      	 <td><%= number_with_delimiter(item[:undercount], delimiter: " ") %></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      	 <td></td>
+      </tr>      
       <tr>
       	 <td></td>
       	 <td>Учет А- (не аннулировать отдачу)</td>
@@ -152,8 +161,8 @@
   	  <td title="Обратное включение счетчика"><% if @mp.fturn then %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><% end %></td>
   	  <td title="Граница раздела и точка учета не совпадают"><% if @mp.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td>      	
       <td><strong><%= number_with_delimiter(@energies[:trab], delimiter: " ") %></strong></td>	
-      <td><strong><%= number_with_delimiter(@losses[:cosfi_contract], delimiter: " ") %></strong></td>
-      <td><%= @losses[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@losses[:tgfi_contract], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@energies[:cosfi_contract], delimiter: " ") %></strong></td>
+      <td><%= @energies[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@energies[:tgfi_contract], delimiter: " ") %></strong></td>
       <td><%= @energies[:workt_formula] %><strong><%= number_with_delimiter(@energies[:workt], delimiter: " ") %></strong></td>	
       <td><%= @losses[:cosfi_formula] %><strong><%= number_with_delimiter(@losses[:cosfi], delimiter: " ") %></strong></td>      
     </tr>
@@ -171,8 +180,10 @@
       <th>Энергия Wri, kVAh</th>
       <th>Энергия Wrc, kVAh</th>
       <th>Энергия Wr=Wri+Wrc, kVAh</th>
-      <th class="warning">Потребление<br>субабонента, kWh</th>
-      <th>Потребление за вычетом<br> потребления<br>субабонента, Wa, kWh</th> 
+      <th class="warning">Потребление<br>субабонента,<br> kWh</th>
+      <th class="warning">Недоучет,<br> kWh</th>
+      <th>Wa+ за вычетом<br> потребления<br>субабонента, Wa, kWh</th>
+      <th>Wa<br>с недоучетом, kWh</th> 
     </tr>  
   </thead>
   <tbody>
@@ -183,7 +194,9 @@
       <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
       <td><%= @energies[:wr_formula] %><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
       <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(@energies[:undercount], delimiter: " ") %></strong></td>
       <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_without_wasub_with_undercount_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub_with_undercount], delimiter: " ") %></strong></td>
     </tr>
   </tbody>
 </table>

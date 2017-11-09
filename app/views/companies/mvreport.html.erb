@@ -30,9 +30,10 @@
       <th>Активная отдача A-</th>
       <th>Реактивный прием R+</th>
       <th>Реактивная отдача R-</th>
-	  <th>Время работы<br> электроустановки, часы</th>
-	  <th>Потребление<br> субабонента, кВт*ч</th>
-	  <th title="Не анулировать отдачу">Учет<br> А-</th>         
+	  <th>Потребление<br> субабонента,<br> кВт*ч</th>
+	  <th>Недоучет,<br> кВт*ч</th>
+	  <th title="Не анулировать отдачу">Учет<br> А-</th>
+	  <th>Время работы<br> электроустановки,<br> часы</th>         
       <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
     </tr>  
   </thead>
@@ -54,13 +55,14 @@
       	 <td><%= item.cod %></td>
       	 <td><%= number_with_delimiter(item.meternum, delimiter: " ", separator: ".") %></td>
       	 <td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-      	 <td><%= number_with_delimiter(item.actp180, delimiter: " ", separator: ".") %></td>
-      	 <td><%= number_with_delimiter(item.actp280, delimiter: " ", separator: ".") %></td>
-      	 <td><%= number_with_delimiter(item.actp380, delimiter: " ", separator: ".") %></td>
-      	 <td><%= number_with_delimiter(item.actp480, delimiter: " ", separator: ".") %></td>
-		 <td><%= item.trab %></td>
-		 <td><%= number_with_delimiter(item.dwa, delimiter: " ", separator: ".") %></td>
-		 <td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>      	 
+      	 <td><%= number_with_delimiter(item.actp180, delimiter: " ", separator: ".", precision: 4) %></td>
+      	 <td><%= number_with_delimiter(item.actp280, delimiter: " ", separator: ".", precision: 4) %></td>
+      	 <td><%= number_with_delimiter(item.actp380, delimiter: " ", separator: ".", precision: 4) %></td>
+      	 <td><%= number_with_delimiter(item.actp480, delimiter: " ", separator: ".", precision: 4) %></td>
+		 <td><%= number_with_delimiter(item.dwa, delimiter: " ", separator: ".", precision: 4) %></td>
+		 <td><%= number_with_delimiter(item.undercount, delimiter: " ", separator: ".", precision: 4) %></td>
+		 <td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+		 <td><%= item.trab %></td>      	 
       	 <td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
       <% end %>      	 
       </tr>

@@ -26,9 +26,10 @@
 		   <th>Активная отдача</th>
 		   <th>Реактивный прием</th>
 		   <th>Реактивная отдача</th>
+		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента,<br> кВт*ч</th>
+		   <th title="Добавляется к Wa">Недоучет,<br> кВт*ч</th>
+		   <th title="Не аннулировать отдачу">Учет<br> А-</th>
 		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
-		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента(+)<br> Недоучет(-), кВт*ч</th>
-		   <th title="Не анулировать отдачу">Учет<br> А-</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -53,9 +54,10 @@
 					<td><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
 					<td><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
 					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
-					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>
-					<td title="Вычитается из Wa до расчета потерь"><%= number_with_delimiter(item.dwa, delimiter: " ") %></td>
-					<td title="Не анулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>						
+					<td title="Потребление субабонента, кВт*ч"><%= number_with_delimiter(item.dwa, delimiter: " ", precision: 4) %></td>
+					<td title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
+					<td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+				    <td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
 					<td><%= item.comment %></td>
 					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>	

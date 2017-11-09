@@ -241,24 +241,16 @@ before_filter :redirect_cancel, only: [:create, :update]
                   report_rind = Array.new((@title1.count+1), nil)
                 end
               end  
-         #     indicii0 = indicii.first
-         #     indicii1 = indicii.last
               # pierderi   
               losses = one_mp_losses(mp.id, energies)
               # report
-         #     report_rind[5]  = indicii0[:meternum]
-         #     unless indicii0[:date0].nil? then report_rind[6]  = (indicii0[:date0]).to_formatted_s(:day_month_year) end
-         #     unless indicii0[:ind0_activ].nil? then report_rind[7]  = indicii0[:ind0_activ] end
-         #     unless indicii0[:ind0_reactivl].nil? then report_rind[8]  = indicii0[:ind0_reactivl] end
-         #     unless indicii0[:ind0_reactivc].nil? then report_rind[9]  = indicii0[:ind0_reactivc] end
-         #     unless indicii1[:date1].nil? then report_rind[10]  = (indicii1[:date1]).to_formatted_s(:day_month_year) end
-         #     unless indicii1[:ind1_activ].nil? then report_rind[11]  = indicii1[:ind1_activ] end
-         #     unless indicii1[:ind1_reactivl].nil? then report_rind[12]  = indicii1[:ind1_reactivl] end
-         #     unless indicii1[:ind1_reactivc].nil? then report_rind[13]  = indicii1[:ind1_reactivc] end
-         #     unless indicii1[:koef].nil? then report_rind[14]  = indicii1[:koef].round end
-              unless energies[:wa_without_wasub].nil? then 
-                report_rind[15]  = energies[:wa_without_wasub]
-                if enrgsums[:wa_without_wasub].nil? then enrgsums[:wa_without_wasub] = energies[:wa_without_wasub] else enrgsums[:wa_without_wasub] += energies[:wa_without_wasub] end 
+              unless energies[:wa_without_wasub_with_undercount].nil? then 
+                report_rind[15]  = energies[:wa_without_wasub_with_undercount]
+                if enrgsums[:wa_without_wasub_with_undercount].nil? then 
+                  enrgsums[:wa_without_wasub_with_undercount] = energies[:wa_without_wasub_with_undercount] 
+                else 
+                  enrgsums[:wa_without_wasub_with_undercount] += energies[:wa_without_wasub_with_undercount] 
+                end 
               end
               unless energies[:wri].nil? then 
                 report_rind[16]  = energies[:wri]
@@ -290,7 +282,7 @@ before_filter :redirect_cancel, only: [:create, :update]
             @report << report_rind[0..@title1.count]  
           end         
         end  # mpoints each
-        @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
+        @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
        end  # mpoints.count  
     respond_to do |format|
       format.html
@@ -368,9 +360,12 @@ before_filter :redirect_cancel, only: [:create, :update]
               unless energies[:wasub].nil? then 
                 if enrgsums[:wasub].nil? then enrgsums[:wasub] = energies[:wasub] else enrgsums[:wasub] += energies[:wasub] end
               end
+              unless energies[:undercount].nil? then 
+                if enrgsums[:undercount].nil? then enrgsums[:undercount] = energies[:undercount] else enrgsums[:undercount] += energies[:undercount] end
+              end
               unless energies[:wa].nil? then 
                 if enrgsums[:wa].nil? then enrgsums[:wa] = energies[:wa] else enrgsums[:wa] += energies[:wa] end
-                if enrgsums[:w].nil? then enrgsums[:w] = energies[:wa_without_wasub]  else enrgsums[:w] += energies[:wa_without_wasub] end   
+                if enrgsums[:w].nil? then enrgsums[:w] = energies[:wa_without_wasub_with_undercount]  else enrgsums[:w] += energies[:wa_without_wasub_with_undercount] end   
               end
               unless energies[:waliv].nil? then
                 if enrgsums[:waliv].nil? then enrgsums[:waliv] = energies[:waliv] else enrgsums[:waliv] += energies[:waliv] end
@@ -408,7 +403,8 @@ before_filter :redirect_cancel, only: [:create, :update]
             end # indicii null 
        end 
       end  #mpoints each 
-      @report << ['∑','Subabonent/Недоучёт',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
+      @report << ['∑','Subabonent',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
+      @report << ['∑','Недоучёт',nil,nil,nil,nil,nil,nil,nil,enrgsums[:undercount],nil,4]
       @report << ['∑','Summa primirii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa],nil,4]      
       @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
       @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
@@ -470,14 +466,14 @@ before_filter :redirect_cancel, only: [:create, :update]
            losses = one_mp_losses(mp.id, energies)
            enrgsums = add_one_mp_losses(losses, enrgsums) 
            # report
-           report_rind[4] = energies[:wa_without_wasub]   
+           report_rind[4] = energies[:wa_without_wasub_with_undercount]   
            report_rind[5] = losses[:ln_losses]   
            report_rind[6] = losses[:tr_losses_p]
            report_rind[7] = losses[:consumteh]        
         end # indicii null
         @report << report_rind[0..@title1.count]         
       end  # mpoints each
-      @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
+      @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
     end  # mpoints.count                                                      
   end
  
@@ -709,7 +705,8 @@ private
   def one_mp_indicii(mp_id, ddate_b, ddate_e, ddate_mb, ddate_me)
     result = {}
     mpoint = Mpoint.find(mp_id)
-    wa = waliv = wri = wrc = wasub = 0.0
+    wa = waliv = wri = wrc = 0.0
+    wasub = waundercount = nil
     indicii = []       
     mvnum = 0
     # billing days
@@ -743,6 +740,7 @@ private
               dt = (date1 - date0).to_i       #dt
               trab = mvalue1.trab             #trab from act
               dwa  = mvalue1.dwa              #dwa  from act
+              undercount  = mvalue1.undercount  #undercount  from act
               indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
               if trab.nil? or trab == 0 then 
                 dtsum += dt                     #dtsum
@@ -775,8 +773,12 @@ private
                 end
               end  
               unless dwa.nil? then 
-                wasub +=dwa
+                if wasub.nil? then wasub = dwa else wasub += dwa end
                 indicii0[:dwa] = dwa 
+              end
+              unless undercount.nil? then 
+                if waundercount.nil? then waundercount = undercount else waundercount += undercount end
+                indicii0[:undercount] = undercount 
               end
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
@@ -868,14 +870,22 @@ private
          end           
          # energies
          result[:wa] = wa
-         result[:wasub] = wasub       
-         if wasub > 0 then
-          result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end 
-          result[:wa_without_wasub_formula] = wa.to_s +  " - " + wasub.to_s + " = "
+         unless wasub.nil? then result[:wasub] = wasub end
+         unless waundercount.nil? then result[:undercount] = waundercount end
+         if !wasub.nil? then      
+           result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end 
+           result[:wa_without_wasub_formula] = wa.to_s +  " - " + wasub.to_s + " = "
          else
-          result[:wa_without_wasub] = wa 
-          result[:wa_without_wasub_formula] = wa.to_s + " = "  
-         end    
+           result[:wa_without_wasub] = wa 
+           result[:wa_without_wasub_formula] = wa.to_s + " = "           
+         end
+         if !waundercount.nil? then     
+           result[:wa_without_wasub_with_undercount] = result[:wa_without_wasub] + waundercount
+           result[:wa_without_wasub_with_undercount_formula] = "#{result[:wa_without_wasub]} + #{waundercount} = "
+         else
+           result[:wa_without_wasub_with_undercount] = result[:wa_without_wasub]
+           result[:wa_without_wasub_with_undercount_formula] = "#{result[:wa_without_wasub]} = "           
+         end       
          result[:wa_formula] += " = "
          result[:waliv] = waliv
          result[:waliv_formula] += " = "
@@ -890,8 +900,8 @@ private
          if !cosfi_contract.nil? and cosfi_contract != 0 then
            result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
            result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 = " # tg fi
-           result[:wr] = (wa - wasub) * tgfi_contract
-           result[:wr_formula] = " #{wa - wasub} * #{tgfi_contract} = "           
+           result[:wr] = result[:wa_without_wasub] * tgfi_contract
+           result[:wr_formula] = " #{result[:wa_without_wasub]} * #{tgfi_contract} = "           
          end 
        end # if mvnum
      end # if meters.count 
@@ -901,9 +911,9 @@ private
   def add_one_mp_indicii(energies, result = {})  
     mvnum = energies[:mvnum]
     if mvnum == 2 then
-      unless energies[:wa_without_wasub].nil? then 
-         if result[:wa_without_wasub].nil? then result[:wa_without_wasub] = 0.0 end           
-         result[:wa_without_wasub] += energies[:wa_without_wasub]
+      unless energies[:wa_without_wasub_with_undercount].nil? then 
+         if result[:wa_without_wasub_with_undercount].nil? then result[:wa_without_wasub_with_undercount] = 0.0 end           
+         result[:wa_without_wasub_with_undercount] += energies[:wa_without_wasub_with_undercount]
       end
     end # if mvnum
     result
