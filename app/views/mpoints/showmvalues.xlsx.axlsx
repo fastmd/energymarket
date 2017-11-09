@@ -32,7 +32,17 @@ wb.styles do |style|
 	    sheet.add_row ["","Присоединение (запитан потребитель): #{@mp.meconname}"]
 	    sheet.add_row ["","Объект установки учета: #{@mp.clsstation}"]
 	    sheet.add_row ["","Присоединение установки учета: #{@mp.clconname}"]	    
-	    sheet.add_row [""]	    
+	    sheet.add_row [""]
+	    sheet.merge_cells('B1:J1')
+	    sheet.merge_cells('B3:J3')
+        sheet.merge_cells('B4:J4')
+        sheet.merge_cells('B5:J5')
+        sheet.merge_cells('B6:J6')	
+        sheet.merge_cells('B7:J7')	
+        sheet.merge_cells('B8:J8')	
+        sheet.merge_cells('B9:J9')
+        sheet.merge_cells('B10:J10')
+        sheet.merge_cells('B11:J11')	    	    
 	    sheet.add_row ["№", "Дата актирования", "№ счетчика", "A+", "A-", "R+", "R-", "Субабонент, кВт*ч", "Недоучет, кВт*ч", "Время работы", "Учитывать А-", "Комментарий"], 
     		              style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell]
     	i=0
