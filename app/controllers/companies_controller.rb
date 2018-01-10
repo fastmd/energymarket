@@ -166,7 +166,6 @@ before_filter :redirect_cancel, only: [:create, :update]
     @ttaus = @losses[:ttaus]
     # params
     @trp = Vmpointstrparam.where("id = ?", @mp.id).order(:name, :id, :tr_id, :updated_at)
-    @lnp = Vmpointslnparam.where("id = ?", @mp.id).order(:name, :id, :ln_id, :updated_at)
     dddate_b = @energies[:dddate_b]
     dddate_e = @energies[:dddate_e]
     @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:line_id,:condate)
