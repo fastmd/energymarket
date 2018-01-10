@@ -30,7 +30,7 @@
    <div class="container-fluid">	
    	  <% if !current_user.nil? %>
         <%= image_tag('octo.jpg', :alt => "image", :width => "20", :height => "20") %>
-        <%= "User: #{current_user.email}" %>  
+        <%= "Пользователь: #{current_user.email}" %>  
         <%= link_to "Выход", destroy_user_session_path, method: :delete, :class => "glyphicon glyphicon-hand-left" %>
       <% end %>        
   </div>

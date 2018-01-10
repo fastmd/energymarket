@@ -114,31 +114,25 @@ helper_method :sort_column, :sort_direction
       @transformators = Transformator.where("f = ?", true).order(name: :asc).pluck(:name, :id)
       @lines = Vline.where("mesubstation_id = ? or mesubstation2_id = ?", @mp.mesubstation, @mp.mesubstation).order(name: :asc)
       @trp = @mp.trparams.all
-      @lnp = @mp.valllnparams.all
-      @tau = Tau.all 
+      @lnp = @mp.valllnparams.all.order(condate: :desc, line_id: :asc)
+      @tau = Tau.all
+      @tr_id = params[:tr_id]
+      @ln_id = params[:ln_id] 
+      if @tr_id then @tr = Trparam.find(@tr_id) else @tr = @mp.trparams.build end
+      if @ln_id then @ln = Lnparam.find(@ln_id) else @ln = @mp.lnparams.build end
       if !@flag.nil? && (@flag=='tedit' || @flag=='tadd') then
-        @comment = params[:comment] 
-        @tr_id = params[:tr_id]
-        @f  = params[:f]
-        @mark = params[:mark]     
+        if (params.has_key?(:comment)) then @tr.comment = params[:comment] end  
+        if (params.has_key?(:transformator_id)) then @tr.transformator_id = params[:transformator_id] end 
+        if (params.has_key?(:f)) then @tr.f  = params[:f] end      
       end   
       if !@flag.nil? && (@flag=='ledit' || @flag=='ladd') then
-        @ln_id = params[:ln_id]
-        @l  = params[:l]
-        @ro  = params[:ro]      
-        @k_scr = params[:k_scr]
-        @k_tr = params[:k_tr]
-        @k_peb = params[:k_peb] 
-        @k_f = params[:k_f] 
-        @q = params[:q]
-        @comment = params[:comment] 
-        @line_id = params[:line_id]
-        @f = if (params.has_key?(:f)) then params[:f] else 'true' end
-        @mark = params[:mark]         
+        if (params.has_key?(:condate)) then @ln.condate = params[:condate] end 
+        if (params.has_key?(:comment)) then @ln.comment = params[:comment] end  
+        if (params.has_key?(:line_id)) then @ln.line_id = params[:line_id] end 
+        if (params.has_key?(:f)) then @ln.f =  params[:f] end      
       end 
-      if @tr_id then @tr = Trparam.find(@tr_id) else @tr = @mp.trparams.build end
-      if @ln_id then @ln = Lnparam.find(@ln_id) else @ln = @mp.lnparams.build end  
-    end    
+      #render inline: "<%= @lines.inspect %><br><br>" and return 
+    end   
   end
 
 def showmvalues

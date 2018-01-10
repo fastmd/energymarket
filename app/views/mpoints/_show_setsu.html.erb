@@ -42,7 +42,7 @@
 
 <h3 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %></h3>
 
-<table class="table table-striped  table-hover">
+<table class="table table-striped  table-hover  table-condensed">
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
@@ -105,12 +105,13 @@
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='ledit' %>Редактирование параметров линии<% else  %>Подключение новой линии<% end %></h3>
 		<%= simple_form_for(@ln, html: { class: 'form-inline' }) do |f| %>
+				<%= f.input :condate, label: 'Дата ', as: :date, start_year: 2016 , end_year: Date.today.year,  order: [:day, :month, :year]  %></br></br>		
 				<%= f.association :line, label: 'Линия ', 
 				    :collection => @lines, value_method: :id,
 				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.mesubstation2_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
-				    include_blank: false, prompt: "Линия..." %>				    
-				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
-				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
+				    include_blank: false, prompt: "Линия..." %><br></br>   				    
+				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %><br></br>
+				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %><br>
 				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
 	            <div  align="center"> 
 				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить линию?" } %>                            	                
@@ -123,22 +124,23 @@
 
 <h3 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h3>
 
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover table-condensed">
 	<thead>
 		<tr class="info">
 		   <th colspan="1" width="1%">№</th>
 		   <th>ID</th>
+		   <th>Дата</th>
 		   <th>Наименование</th>
 		   <th>Длина линии L, км</th>
 		   <th>Сопротивление линии R, Ом</th>
-		   <th>Коэффициент трассы Ktr</th>
-		   <th>Коэффициент формы Кf</th>
+		   <th>Коэф-т трассы Ktr</th>
+		   <th>Коэф-т формы Кf</th>
 		   <th>Марка провода</th>
 		   <th>Сечение провода q, мм&sup2;</th>
-		   <th>Удельное сопротивление материала ρ20, Ом*мм&sup2;/м</th>
-		   <th>Коэффициент скрутки Kr</th>
-		   <th>Коэффициент пов. эффекта и близости Kc</th>
-		   <th>Uном, кВ</th>
+		   <th>Удельное<br>сопр-ние<br>мат-ла<br>ρ20, Ом*мм&sup2;/м</th>
+		   <th>Коэф-т скрутки Kr</th>
+		   <th>Коэф-т пов. эффекта и близости Kc</th>
+		   <th>Uном, кВ</th>		   
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -156,6 +158,7 @@
 					<% i = i + 1 %>
 					<td><%= i  %></td>
 					<td><%= item.line_id %></td>
+					<td><%= if item.condate then item.condate.to_formatted_s(:day_month_year) end %></td>					
 					<td><%= item.line_name %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>

@@ -56,7 +56,7 @@ private
         end          
       rescue
         flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."
-        redirect_to mpoint_path(@mp,:tr_id=>@trparam.id,:flag=>'tedit')     
+        redirect_to mpoint_path(@mp,:tr_id=>@trparam.id,:flag=>'tedit',:transformator_id=>@trparam.transformator_id,:comment=>@trparam.comment,:f=>@trparam.f)     
       end    
   end
   

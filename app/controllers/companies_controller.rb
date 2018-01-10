@@ -167,6 +167,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     # params
     @trp = Vmpointstrparam.where("id = ?", @mp.id).order(:name, :id, :tr_id, :updated_at)
     @lnp = Vmpointslnparam.where("id = ?", @mp.id).order(:name, :id, :ln_id, :updated_at)
+    dddate_b = @energies[:dddate_b]
+    dddate_e = @energies[:dddate_e]
+    @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:line_id,:condate)
     @tau = Tau.all   
   end
    
@@ -403,8 +406,8 @@ before_filter :redirect_cancel, only: [:create, :update]
             end # indicii null 
        end 
       end  #mpoints each 
-      @report << ['∑','Subabonent',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
-      @report << ['∑','Недоучёт',nil,nil,nil,nil,nil,nil,nil,enrgsums[:undercount],nil,4]
+      @report << ['∑','Consum subabonatului',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
+      @report << ['∑','Consum nefacturat',nil,nil,nil,nil,nil,nil,nil,enrgsums[:undercount],nil,4]
       @report << ['∑','Summa primirii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa],nil,4]      
       @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
       @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
@@ -474,7 +477,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         @report << report_rind[0..@title1.count]         
       end  # mpoints each
       @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
-    end  # mpoints.count                                                      
+    end  # mpoints.count                                                     
   end
  
   def report  #kotik
@@ -851,6 +854,9 @@ private
          indicii  << indicii0     
        end  # meters.each
        result[:indicii] = indicii
+       result[:dddate_b] = dddate_b
+       result[:dddate_e] = dddate_e
+       result[:daysinperiod] = daysinperiod
        result[:mvnum] = mvnum
        if mvnum == 2 then
          # work hours
@@ -945,7 +951,10 @@ private
       wri   = indicii[:wri]
       wrc   = indicii[:wrc]  
       wr    = indicii[:wr]
-      workt = indicii[:workt]       
+      workt = indicii[:workt]
+      dddate_b = indicii[:dddate_b]
+      dddate_e = indicii[:dddate_e]
+      daysinperiod = indicii[:daysinperiod]       
       # косинус фи 
       if wa != 0 || wri != 0 then 
         cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
@@ -1028,43 +1037,59 @@ private
         result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s  
         result[:ttaus] = ttaus            
       end  # if tr.count
-      # линии         
-      ln  = mpoint.vlnparams.where("f = 'true'") 
-      ln_losses = ln_losses_ng = ln_losses_kr = 0.0      
-      if ln.count != 0 && workt != 0 then
+      # линии               
+      ln1 = mpoint.vlnparams.select(:line_id).distinct.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e) 
+      ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
+      if ln1.count != 0 && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
           result[:ln_losses_ng_formula] = ''
-          ln.each do |lnitem|
-            if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
-            if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
-            mpcount = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id).count
-            mpcount_neotpaika = Vmpointslnparam.where("line_id = ? and id != ? and mesubstation2_id is not null", lnitem.line_id, lnitem.mpoint_id).count
-            lwa = wa
-            lwa_formula = "#{lwa}"  
-            lwr = wr
-            lwr_formula = "#{lwr}"
-            if mpcount > 0 then
-              related_lines = Vmpointslnparam.where("line_id = ? and id != ?", lnitem.line_id, lnitem.mpoint_id)
-              related_lines.each do |rlnitem|
-                related_energies = one_mp_indicii(rlnitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
-                if related_energies[:mvnum] == 2 then 
-                    lwa += related_energies[:wa_without_wasub] 
-                    lwa_formula += " + #{related_energies[:wa_without_wasub]}" 
-                    lwr += related_energies[:wr]
-                    lwr_formula += " + #{related_energies[:wr]}"
-                end    
-              end  
-            end    
-            ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * workt) ).round(4)
-            result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{workt}) "
-            if mpcount > 0 then
-              k = (wa + wr) / (lwa + lwr)
-              ln_losses_ng = (ln_losses_ng * k).round(4)
-              result[:ln_losses_ng_formula] += " * #{k.round(4)}"
-            end
-          end
+          ln1.each do |lnitem1|
+            ln  = mpoint.vlnparams.where("line_id = ? and (? < condate_end) AND (? > condate)", lnitem1.line_id, dddate_b, dddate_e).order(:condate)
+            ln.each do |lnitem|
+              if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
+              if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
+              if lnitem.condate > dddate_b then tdddate_b = lnitem.condate else tdddate_b = dddate_b end
+              if lnitem.condate_end < dddate_e then tdddate_e = lnitem.condate_end else tdddate_e = dddate_e end
+              daysbdates = (tdddate_e - tdddate_b).to_i   #number of days between dates
+              hoursbdates = daysbdates * 24   #number of hours between dates
+              hoursinperiod = daysinperiod * 24   #number of hours in period       
+              mpcount = Vmpointslnparam.where("line_id = ? and id != ? AND (? < condate_end) AND (? > condate)", lnitem.line_id, lnitem.mpoint_id, tdddate_b, tdddate_b+1.day ).count
+              mpcount_neotpaika = Vmpointslnparam.where("line_id = ? and id != ? and mesubstation2_id is not null AND (? < condate_end) AND (? > condate)", lnitem.line_id, lnitem.mpoint_id, tdddate_b, tdddate_b+1.day).count
+              kwa = lwa = wa
+              lwa_formula = "#{lwa}"  
+              kwr = lwr = wr
+              lwr_formula = "#{lwr}"
+              if mpcount > 0 then
+                related_mpoints = Vmpointslnparam.where("(id != ?) AND (? = line_id) AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, lnitem.line_id, tdddate_b, tdddate_b+1.day)
+                related_mpoints.each do |rlnitem|
+                  related_energies = one_mp_indicii(rlnitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+                  if related_energies[:mvnum] == 2 then 
+                      lwa += related_energies[:wa_without_wasub] 
+                      lwa_formula += " + #{related_energies[:wa_without_wasub]}" 
+                      lwr += related_energies[:wr]
+                      lwr_formula += " + #{related_energies[:wr]}"
+                  end    
+                end  
+              end
+              if hoursbdates < hoursinperiod and hoursinperiod != 0 then 
+                lwa = lwa * hoursbdates / hoursinperiod
+                lwr = lwr * hoursbdates / hoursinperiod
+                lwa_formula = "( " + lwa_formula + " ) * #{hoursbdates}/#{hoursinperiod}"
+                lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{hoursinperiod}"
+                kwa = wa * hoursbdates / hoursinperiod
+                kwr = wr * hoursbdates / hoursinperiod                
+              end    
+              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) ).round(4)
+              result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
+              if mpcount > 0 then
+                k = (kwa + kwr) / (lwa + lwr)
+                ln_losses_ng = (ln_losses_ng * k).round(4)
+                result[:ln_losses_ng_formula] += " * #{k.round(4)}"
+              end
+            end # ln.each  
+          end # ln1.each
           result[:ln_losses_ng] = ln_losses_ng     
           ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
           ln_losses = result[:ln_losses] = ln_losses_ng + ln_losses_kr

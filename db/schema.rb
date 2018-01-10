@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109083321) do
+ActiveRecord::Schema.define(version: 20180104144544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 20171109083321) do
     t.text     "comment"
     t.boolean  "f",          default: true, null: false
     t.integer  "line_id",                   null: false
+    t.date     "condate"
     t.index ["line_id"], name: "index_lnparams_on_line_id", using: :btree
     t.index ["mpoint_id"], name: "index_lnparams_on_mpoint_id", using: :btree
   end
