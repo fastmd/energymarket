@@ -169,7 +169,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     dddate_b = @energies[:dddate_b]
     dddate_e = @energies[:dddate_e]
     @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:line_id,:condate)
-    @tau = Tau.all   
+    @tau = Tau.all
+    #render inline: "<%= @llnparam.inspect %><br><br><%= @lcondate.inspect %><br><br><%= @ldddate_e.inspect %><br><br><%= @dt.inspect %><br><br>" and return 
   end
    
   def reports #kotik s summoi
@@ -1050,15 +1051,15 @@ private
               if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
               if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end
               if lnitem.condate > dddate_b then tdddate_b = lnitem.condate else tdddate_b = dddate_b end
-              if lnitem.condate_end < dddate_e then tdddate_e = lnitem.condate_end else tdddate_e = dddate_e end
-              daysbdates = (tdddate_e - tdddate_b).to_i   #number of days between dates
-              hoursbdates = daysbdates * 24   #number of hours between dates
+              if lnitem.condate_end < dddate_e then tdddate_e = lnitem.condate_end else tdddate_e = dddate_e end             
+              daysbdates =  (tdddate_e.to_date - tdddate_b.to_date) .to_i   #number of days between dates
+              hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
               hoursinperiod = daysinperiod * 24   #number of hours in period       
               mpcount = Vmpointslnparam.where("line_id = ? and id != ? AND (? < condate_end) AND (? > condate)", lnitem.line_id, lnitem.mpoint_id, tdddate_b, tdddate_b+1.day ).count
               mpcount_neotpaika = Vmpointslnparam.where("line_id = ? and id != ? and mesubstation2_id is not null AND (? < condate_end) AND (? > condate)", lnitem.line_id, lnitem.mpoint_id, tdddate_b, tdddate_b+1.day).count
-              kwa = lwa = wa
+              kkwa = kwa = lwa = wa
               lwa_formula = "#{lwa}"  
-              kwr = lwr = wr
+              kkwr = kwr = lwr = wr
               lwr_formula = "#{lwr}"
               if mpcount > 0 then
                 related_mpoints = Vmpointslnparam.where("(id != ?) AND (? = line_id) AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, lnitem.line_id, tdddate_b, tdddate_b+1.day)
@@ -1069,6 +1070,8 @@ private
                       lwa_formula += " + #{related_energies[:wa_without_wasub]}" 
                       lwr += related_energies[:wr]
                       lwr_formula += " + #{related_energies[:wr]}"
+                      kkwa += related_energies[:wa_without_wasub]
+                      kkwr += related_energies[:wr]
                   end    
                 end  
               end
@@ -1076,17 +1079,17 @@ private
                 lwa = lwa * hoursbdates / hoursinperiod
                 lwr = lwr * hoursbdates / hoursinperiod
                 lwa_formula = "( " + lwa_formula + " ) * #{hoursbdates}/#{hoursinperiod}"
-                lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{hoursinperiod}"
-                kwa = wa * hoursbdates / hoursinperiod
-                kwr = wr * hoursbdates / hoursinperiod                
+                lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{hoursinperiod}"               
               end    
-              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) ).round(4)
               result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
+              # koef conform consumation
               if mpcount > 0 then
-                k = (kwa + kwr) / (lwa + lwr)
-                ln_losses_ng = (ln_losses_ng * k).round(4)
+                k = (kwa + kwr) / (kkwa + kkwr)  
                 result[:ln_losses_ng_formula] += " * #{k.round(4)}"
+              else
+                k = 1  
               end
+              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) * k ).round(4)
             end # ln.each  
           end # ln1.each
           result[:ln_losses_ng] = ln_losses_ng     

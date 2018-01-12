@@ -79,7 +79,7 @@ private
     lnparam.f = lnparam_params[:f]
     if !(lnparam_params['condate(1i)'].nil?) then
       #d = (params[:stdate]).to_datetime.in_time_zone 
-      lnparam.condate = DateTime.new( lnparam_params['condate(1i)'].to_i, lnparam_params['condate(2i)'].to_i, lnparam_params['condate(3i)'].to_i )
+      lnparam.condate = DateTime.new( lnparam_params['condate(1i)'].to_i, lnparam_params['condate(2i)'].to_i, lnparam_params['condate(3i)'].to_i, lnparam_params['condate(4i)'].to_i, lnparam_params['condate(5i)'].to_i )
     end    
     lnparam    
   end   
