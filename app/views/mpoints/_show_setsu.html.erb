@@ -158,7 +158,7 @@
 					<% i = i + 1 %>
 					<td><%= i  %></td>
 					<td><%= item.line_id %></td>
-					<td><%= if item.condate then item.condate.to_formatted_s(:day_month_year) end %></td>					
+					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>					
 					<td><%= item.line_name %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>

@@ -332,7 +332,9 @@
 		   <th>Сечение провода q, мм2</th>
 		   <th>Uном, кВ</th>
 		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
-		   <th>Отпайка</th>
+		   <th>ПСТ1</th>
+		   <th>ПСТ2</th>
+		   <th>Дата</th>
     	</tr>  
    </thead>
    <tbody>
@@ -351,8 +353,10 @@
 		 <td><%= item.mark %></td>
 		 <td><%= item.q %></td>
 		 <td><%= item.unom %></td>
-		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.where("line_id = ?", item.line_id).count %></td>
-		 <td><%= item.mesubstation2_id %></td>
+		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
+		 <td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
+		 <td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
+		 <td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>
       </tr>
     <% end %>
    <% end %> 

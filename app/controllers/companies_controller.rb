@@ -721,7 +721,7 @@ private
     unless mvalues.nil? then dddate_e = mvalues.actdate end
     daysinperiod = (dddate_e - dddate_b).to_i   #number of days between report dates
     #meters
-    meters = Vmpointsmeter.where("id = ? AND ((? between relevance_date AND relevance_end) OR (? between relevance_date AND relevance_end) OR (? <= relevance_date AND ? >= relevance_end))", mp_id, dddate_b, dddate_e, dddate_b, dddate_e).order(:meter_id)
+    meters = Vmpointsmeter.where("id = ? AND (? <  relevance_end) AND (? > relevance_date)", mp_id, dddate_b, dddate_e).order(:meter_id)
     if meters.count != 0 then      
        # indicii      
        dtsum  = 0
@@ -730,7 +730,8 @@ private
        result[:waliv_formula] = ""
        result[:wri_formula] = ""
        result[:wrc_formula] = ""
-       meters.each do |mitem|         
+       meters.each do |mitem|
+        if mitem.meternum != 0 then      #is it fake meter?    
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
          mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate, :mvalue_updated_at)
@@ -851,7 +852,8 @@ private
                 wri += energy                
               end            
          end # if mvalues.count
-         indicii  << indicii0     
+         indicii  << indicii0 
+        end # is it fake meter?     
        end  # meters.each
        result[:indicii] = indicii
        result[:dddate_b] = dddate_b
@@ -1075,12 +1077,16 @@ private
                   end    
                 end  
               end
-              if hoursbdates < hoursinperiod and hoursinperiod != 0 then 
-                lwa = lwa * hoursbdates / hoursinperiod
-                lwr = lwr * hoursbdates / hoursinperiod
-                lwa_formula = "( " + lwa_formula + " ) * #{hoursbdates}/#{hoursinperiod}"
-                lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{hoursinperiod}"               
-              end    
+              if workt != 0 then
+                if hoursbdates < workt then  
+                  lwa = lwa * hoursbdates / workt
+                  lwr = lwr * hoursbdates / workt
+                  lwa_formula = "( " + lwa_formula + " ) * #{hoursbdates}/#{workt}"
+                  lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{workt}" 
+                else
+                   hoursbdates = workt               
+                end 
+              end  
               result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
               # koef conform consumation
               if mpcount > 0 then

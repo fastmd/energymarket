@@ -37,7 +37,7 @@
 		   		</div>
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Заводской № счетчика</label>	
-						<%= number_field_tag 'meternum', @meter.meternum, min: 1, max: 9999999999, step: 1, class: "form-control" %>
+						<%= number_field_tag 'meternum', @meter.meternum, min: 0, max: 9999999999, step: 1, class: "form-control" %>
 		   		</div>
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Коэффициент трансформатора тока</label>	
