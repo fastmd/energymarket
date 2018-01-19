@@ -130,6 +130,8 @@
 		   <th colspan="1" width="1%">№</th>
 		   <th>ID</th>
 		   <th>Дата</th>
+		   <th>ПСТ1</th>
+		   <th>ПСТ2</th>
 		   <th>Наименование</th>
 		   <th>Длина линии L, км</th>
 		   <th>Сопротивление линии R, Ом</th>
@@ -158,7 +160,9 @@
 					<% i = i + 1 %>
 					<td><%= i  %></td>
 					<td><%= item.line_id %></td>
-					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>					
+					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>
+					<td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
+		            <td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>					
 					<td><%= item.line_name %></td>
 					<td><%= item.l %></td>									
 					<td><%= item.r %></td>

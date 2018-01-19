@@ -3,8 +3,8 @@
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
-    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li>
+ <!--  <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
+    <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> --> 
     <li><%= form_tag companies_onempreport_path(:id => @flr.id, :mp_id => @mp.id, :page => @page) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
                 <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 50, :height => 40) %> 
@@ -175,34 +175,63 @@
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th>Энергия Wa+, kWh</th>      
-      <th>Энергия Wa-, kWh</th>
-      <th>Энергия Wri, kVAh</th>
-      <th>Энергия Wrc, kVAh</th>
-      <th>Энергия Wr=Wri+Wrc, kVAh</th>
-      <th class="warning">Потребление<br>субабонента,<br> kWh</th>
-      <th class="warning">Недоучет,<br> kWh</th>
-      <th>Wa+ за вычетом<br> потребления<br>субабонента, Wa, kWh</th>
-      <th>Wa<br>с недоучетом, kWh</th> 
+      <th style="width:350px; max-width:350px;">Параметр</th>
+      <th style="width:100px; max-width:200px;">Значение</th>      
+      <th>Расчет</th>    	
     </tr>  
   </thead>
   <tbody>
     <tr>
-      <td><%= @energies[:wa_formula] %><strong><%= number_with_delimiter(@energies[:wa], delimiter: " ") %></strong></td>
-      <td><%= @energies[:waliv_formula] %><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wri_formula] %><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wrc_formula] %><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wr_formula] %><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
-      <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
-      <td><strong><%= number_with_delimiter(@energies[:undercount], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wa_without_wasub_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
-      <td><%= @energies[:wa_without_wasub_with_undercount_formula] %><strong><%= number_with_delimiter(@energies[:wa_without_wasub_with_undercount], delimiter: " ") %></strong></td>
+      <td>Энергия Wa+, kWh</td>	
+      <td><strong><%= number_with_delimiter(@energies[:wa], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_formula] %></td>
+    </tr>  	
+    <tr>
+      <td>Энергия Wa-, kWh</td>	
+      <td><strong><%= number_with_delimiter(@energies[:waliv], delimiter: " ") %></strong></td>
+      <td><%= @energies[:waliv_formula] %></td>
     </tr>
+    <tr>
+      <td>Энергия Wri, kVAh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wri], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wri_formula] %></td>
+    </tr>
+    <tr>      
+      <td>Энергия Wrc, kVAh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wrc], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wrc_formula] %></td>
+    </tr>
+    <tr>      
+      <td>Энергия Wr=Wri+Wrc, kVAh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wr_formula] %></td>
+    </tr>
+    <tr>      
+      <td>Потребление субабонента, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wasub], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>      
+      <td>Недоучет, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:undercount], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>      
+      <td>Wa+ за вычетом потребления субабонента, Wa, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wa_without_wasub], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_without_wasub_formula] %></td>
+    </tr>
+    <tr>      
+      <td>Wa с недоучетом, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:wa_without_wasub_with_undercount], delimiter: " ") %></strong></td>
+      <td><%= @energies[:wa_without_wasub_with_undercount_formula] %></td>
+    </tr>    
   </tbody>
 </table>
 </small>
 
-<h4 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %></h4>
+<h4 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %><% if @trp.empty? then %> - трансформаторов нет<% end %></h4>
+<% unless @trp.empty? then %>
 <small> 
 <table class="table table-striped table-condensed  table-hover">	
     <thead>
@@ -314,6 +343,7 @@
   </tbody>
 </table>
 </small>
+<% end %>
 
 <h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4> 
 <small>
@@ -375,6 +405,11 @@
     </tr>  
   </thead>
   <tbody>
+    <tr>
+      <td>Отпаечные, kWh</td>	
+      <td><strong><%= number_with_delimiter(@losses[:otpaika_losses], delimiter: " ") %></strong></td>
+      <td><%= @losses[:otpaika_losses_formula] %></td>
+    </tr>  	
     <tr>
       <td>Нагрузочные, kWh</td>	
       <td><strong><%= number_with_delimiter(@losses[:ln_losses_ng], delimiter: " ") %></strong></td>
@@ -464,6 +499,7 @@
 </table>
 </small>
 
+<% unless @trp.empty? then %>
 <h4 align="center">ζ</h4>
 <small>
 <table class="table table-striped table-hover table-condensed table-sm">
@@ -489,3 +525,4 @@
 	</tbody>
 </table>
 </small>
+<% end %>
