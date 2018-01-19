@@ -13,6 +13,8 @@
   </ul>  
 </nav>
 
+<%= @condates.inspect %>
+
 <ul class="breadcrumb">
   <li><%= if (@fpr > 5) 
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"

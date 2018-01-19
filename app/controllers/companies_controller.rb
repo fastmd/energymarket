@@ -168,7 +168,13 @@ before_filter :redirect_cancel, only: [:create, :update]
     @trp = Vmpointstrparam.where("id = ?", @mp.id).order(:name, :id, :tr_id, :updated_at)
     dddate_b = @energies[:dddate_b]
     dddate_e = @energies[:dddate_e]
-    @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:line_id,:condate)
+    @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:condate,:line_id)
+    @condates = @mp.vlnparams.select(:condate).distinct.where("(? < condate_end) AND (? > condate) AND (condate > ?)", dddate_b, dddate_e, dddate_b).pluck(:condate)
+    @condates += @mp.vlnparams.select(:condate_end).distinct.where("(? < condate_end) AND (? > condate) AND (condate_end < ?)", dddate_b, dddate_e, dddate_e).pluck(:condate_end)
+    @condates << dddate_b
+    @condates << dddate_e
+    @condates.uniq!
+    @condates.sort!    
     @tau = Tau.all
     #render inline: "<%= @llnparam.inspect %><br><br><%= @lcondate.inspect %><br><br><%= @ldddate_e.inspect %><br><br><%= @dt.inspect %><br><br>" and return 
   end
@@ -1039,10 +1045,49 @@ private
         result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s  
         result[:ttaus] = ttaus            
       end  # if tr.count
-      # линии               
+      #========begin=линии=========================================================== 
+      # start variables
+      ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
+      # counting lines
+      flines = mpoint.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).exists?
+      if flines && workt then
+        if mpoint.voltcl == 0 then
+          flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
+        else               
+          result[:ln_losses_ng_formula] = ''
+          # making of array of uniq dates whithin report period    
+          condates = mpoint.vlnparams.select(:condate).distinct.where("(? < condate_end) AND (? > condate) AND (condate > ?)", dddate_b, dddate_e, dddate_b).pluck(:condate)
+          condates += mpoint.vlnparams.select(:condate_end).distinct.where("(? < condate_end) AND (? > condate) AND (condate_end < ?)", dddate_b, dddate_e, dddate_e).pluck(:condate_end)
+          condates << dddate_b
+          condates.uniq!
+          condates.sort!
+          # analize each condate from the array
+          i = 0
+          c = condates.size         
+          condates.each do |icondate|
+            i += 1
+            # taking start and end of the current subperiod
+            tdddate_b = icondate
+            if i < c then tdddate_e = condates[i] else tdddate_e = dddate_e end
+            daysbdates =  (tdddate_e.to_date - tdddate_b.to_date).to_i   #number of days between dates
+            hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
+            if hoursbdates > workt then hoursbdates = workt end           
+            # lines at the start of the current subperiod    
+            otpaiki = mpoint.vlnparams.where(" mesubstation2_id is not null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b)
+            neotpaiki = mpoint.vlnparams.where(" mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b)
+            # begin otpaiki otpaiki otpaiki part 1
+            otpaiki_losses = nil
+            if otpaiki.exists? then
+              otpaiki_losses = 0
+            end
+            # end otpaiki otpaiki otpaiki part 1          
+          end # condates.each
+        end # if voltcl != 0
+      end           
+      #========end=линии===========================================================                
       ln1 = mpoint.vlnparams.select(:line_id).distinct.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e)
       ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
-      if ln1.count != 0 && workt != 0 then
+      if ln1.exists? && workt != 0 then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else               
@@ -1053,7 +1098,7 @@ private
               if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
               if lnitem.condate > dddate_b then tdddate_b = lnitem.condate else tdddate_b = dddate_b end
               if lnitem.condate_end < dddate_e then tdddate_e = lnitem.condate_end else tdddate_e = dddate_e end             
-              daysbdates =  (tdddate_e.to_date - tdddate_b.to_date) .to_i   #number of days between dates
+              daysbdates =  (tdddate_e.to_date - tdddate_b.to_date).to_i   #number of days between dates
               hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
               hoursinperiod = daysinperiod * 24   #number of hours in period 
               #--------------------------------
@@ -1074,7 +1119,7 @@ private
               otpaika_losses = nil
               if lnitem.mesubstation2_id.nil? then  #if neotpaika 
                  # otpaiki
-                 if cotpaika.count !=0 then # if otpaiki exist
+                 if cotpaika.count != 0 then # if otpaiki exist
                     otpaika_losses = 0
                     otpaika_losses_formula = '' 
                     cotpaika.each do |otpaikaitem|
