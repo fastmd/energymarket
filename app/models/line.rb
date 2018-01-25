@@ -3,6 +3,7 @@ class Line < ApplicationRecord
   belongs_to :mesubstation, -> { where("f=true").order('filial_id','region_id','name') }, class_name: "Mesubstation", inverse_of: :lines, foreign_key: "mesubstation_id"
   belongs_to :mesubstation, -> { where("f=true").order('filial_id','region_id','name') }, class_name: "Mesubstation", inverse_of: :lines, foreign_key: "mesubstation2_id"
   has_many  :lnparams, inverse_of: :line
+  has_many  :vlnparams, inverse_of: :line
   has_many  :mpoints, through: :lnparams, inverse_of: :line
   validates_associated :wire
   validates :wire_id, presence: true, numericality: { only_integer: true }

@@ -35,7 +35,7 @@
 		<%= form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
 				<div class="form-group"> 
 						<label for='cod' class="control-label">Код</label>
-	   					<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 1, max: 1000000000, step: 1 %>
+	   					<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 0, max: 1000000000, step: 1 %>
 		        </div>
 		        <div class="form-group">
 						<label for='name'class="control-label">Наименование</label>	   					

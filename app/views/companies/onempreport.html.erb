@@ -352,43 +352,48 @@
 <table class="table table-striped table-condensed  table-hover">	
     <thead>
         <tr class="info">
-      	   <th>Nr</th>
-		   <th>Длина линии L, км</th>
-		   <th>Сопротивление линии r, Ом</th>
-		   <th>Сопротивление материала r20, Ом</th>
-		   <th>Коэффициент скрутки Kr</th>
-		   <th>Коэффициент трассы Ktr</th>
-		   <th>Коэффициент пов. эффекта и близости Kc</th>
-		   <th>Коэффициент формы Кф</th>
-		   <th>Марка</th>
-		   <th>Сечение провода q, мм2</th>
+      	   <th>ID</th>
+      	   <th>Наименоание</th>
+		   <th title="Длина линии">L, км</th>
+		   <th title="Сопротивление линии">r, Ом</th>
+		   <th title="Сопротивление материала">r20, Ом</th>
+		   <th title="Коэффициент скрутки">Kr</th>
+		   <th title="Коэффициент трассы">Kr</th>
+		   <th title="Коэффициент пов. эффекта и близости">Kc</th>
+		   <th title="Коэффициент формы">Кф</th>
+		   <th title="Сечение провода">q, мм&sup2</th>
+		   <th title="Марка провода">Провод</th>
 		   <th>Uном, кВ</th>
 		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
 		   <th>ПСТ1</th>
 		   <th>ПСТ2</th>
 		   <th>Дата</th>
+		   <th>Комментарий при подключении</th>
+		   <th>Комментарий при линии</th>
     	</tr>  
    </thead>
    <tbody>
    <% unless @lnp.nil? then %>
-      <% j = 0 %>
       <% @lnp.each do |item| %>
 	  <tr>
-      	 <td><%= j+= 1 %></td>
-		 <td><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
-		 <td><%= number_with_delimiter(item.r, delimiter: " ") %></td>
-		 <td><%= number_with_delimiter(item.ro, delimiter: " ") %></td>
-		 <td><%= number_with_delimiter(item.k_scr, delimiter: " ") %></td>
-		 <td><%= number_with_delimiter(item.k_tr, delimiter: " ") %></td>
-		 <td><%= number_with_delimiter(item.k_peb, delimiter: " ") %></td>
-		 <td><%= number_with_delimiter(item.k_f, delimiter: " ") %></td>
-		 <td><%= item.mark %></td>
-		 <td><%= item.q %></td>
+      	 <td><%= item.id %></td>
+      	 <td><%= item.line.name %></td>
+		 <td title="Длина линии"><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
+		 <td title="Сопротивление линии"><%= number_with_delimiter(item.r, delimiter: " ") %></td>
+		 <td title="Сопротивление материала"><%= if item.l!=0 then number_with_delimiter(item.ro, delimiter: " ") end %></td>
+		 <td title="Коэффициент скрутки"><%= if item.l!=0 then number_with_delimiter(item.k_scr, delimiter: " ") end %></td>
+		 <td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
+		 <td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>
+		 <td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>
+		 <td title="Сечение провода"><%= if item.l!=0 then item.q end %></td>
+		 <td title="Марка провода"><%= if item.l!=0 then item.mark end %></td>
 		 <td><%= item.unom %></td>
 		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
 		 <td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
 		 <td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
-		 <td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>
+		 <td><%= if item.condate then item.condate.strftime("%d.%m.%Y_%H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y_%H:%M") end %></td>
+		 <td><%= item.comment %></td>
+		 <td><%= item.line.comment %></td>
       </tr>
     <% end %>
    <% end %> 
@@ -410,12 +415,22 @@
     <tr>
       <td>Отпаечные, kWh</td>	
       <td><strong><%= number_with_delimiter(@losses[:otpaika_losses], delimiter: " ") %></strong></td>
-      <td><%= @losses[:otpaika_losses_formula] %></td>
+      <td><% if @losses[:otpaika_losses_formula] then %>
+      	  <% @losses[:otpaika_losses_formula].each do |f| %>
+      	  с <%= f[0].strftime("%d.%m.%Y_%H:%M") %> по <%= f[1].strftime("%d.%m.%Y_%H:%M") %> <%= f[3] %> часов:</br>
+      	  <%= f[2] %></br>
+      	  <% end  %>
+      	  <% end  %></td>
     </tr>  	
     <tr>
       <td>Нагрузочные, kWh</td>	
       <td><strong><%= number_with_delimiter(@losses[:ln_losses_ng], delimiter: " ") %></strong></td>
-      <td><%= @losses[:ln_losses_ng_formula] %></td>
+      <td><% if @losses[:ln_losses_ng_formula] then %>
+      	  <% @losses[:ln_losses_ng_formula].each do |f| %>
+      	  с <%= f[0].strftime("%d.%m.%Y_%H:%M") %> по <%= f[1].strftime("%d.%m.%Y_%H:%M") %> <%= f[3] %> часов:</br>
+      	  <%= f[2] %></br>
+      	  <% end  %>
+      	  <% end  %></td>
     </tr>
     <tr>
       <td>На корону, kWh</td>

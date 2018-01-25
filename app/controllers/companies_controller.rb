@@ -154,7 +154,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # title
     @lista_title = []
     @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
-    @lista_title << "точка учета #{@mp.cod} #{@mp.mesubstation.name} #{@mp.voltcl} Î #{@mp.meconname} F" 
+    @lista_title << "точка учета #{@mp.cod} #{@mp.mesubstation.name} #{@mp.voltcl} Î #{@mp.meconname} F #{@mp.clconname}" 
     @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
     # report init
     @report = Array[] 
@@ -221,6 +221,7 @@ before_filter :redirect_cancel, only: [:create, :update]
           flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
         else
           mpoints.each do |mp|
+           if mp.cod != 0 then #test for fake mpoint 
            if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
@@ -289,7 +290,8 @@ before_filter :redirect_cancel, only: [:create, :update]
               end # losses null               
             end # indicii null
             @report << report_rind[0..@title1.count]  
-          end         
+          end 
+         end  #test for fake mpoint         
         end  # mpoints each
         @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
        end  # mpoints.count  
@@ -330,6 +332,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       enrgsums = {}
       cp = nil #current company
       mpoints.each do |mp|
+       if mp.cod != 0 then #test for fake mpoint 
         # report rind
         if cp != mp.company_id then
           cp = mp.company_id
@@ -411,6 +414,7 @@ before_filter :redirect_cancel, only: [:create, :update]
               end              
             end # indicii null 
        end 
+       end  #test for fake mpoint 
       end  #mpoints each 
       @report << ['∑','Consum subabonatului',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
       @report << ['∑','Consum nefacturat',nil,nil,nil,nil,nil,nil,nil,enrgsums[:undercount],nil,4]
@@ -418,7 +422,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
       @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
       @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,enrgsums[:consumteh],nil,nil]                 
-      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]     
+      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]    
     end  #mpoints.count
     respond_to do |format|
       format.html
@@ -457,6 +461,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       flash[:warning] = "Нет данных для отчета. #{@flr.name} не имеет точек учета." 
     else
       mpoints.each do |mp|
+       if mp.cod != 0 then #test for fake mpoint
         # report rind
         if region != mp.region_name then
           region = mp.region_name 
@@ -480,7 +485,8 @@ before_filter :redirect_cancel, only: [:create, :update]
            report_rind[6] = losses[:tr_losses_p]
            report_rind[7] = losses[:consumteh]        
         end # indicii null
-        @report << report_rind[0..@title1.count]         
+        @report << report_rind[0..@title1.count]  
+       end  #test for fake mpoint       
       end  # mpoints each
       @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
     end  # mpoints.count                                                     
@@ -514,7 +520,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @mpoints.count == 0 then
       flash[:warning] = "Нет данных для отчета. Потребитель #{@cp.name} не имеет точек учета." 
     else
-      @mpoints.each do |mp| 
+      @mpoints.each do |mp|
+       if mp.cod != 0 then #test for fake mpoint 
         nr += 1  
         report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end, "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
@@ -593,7 +600,8 @@ before_filter :redirect_cancel, only: [:create, :update]
         unless losses[:consumteh].nil? then 
           @report << [nil,'Технологический расход',nil,nil,nil,nil,nil,nil,nil,losses[:consumteh],2]
           consumteh += losses[:consumteh] 
-        end    
+        end 
+       end  #test for fake mpoint      
       end  # mpoint.each
     @report << ['∑','Итого Energie a/pr',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[0],4]
     @report << ['∑','Итого Energie a/pr subabonent',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[4],4]
@@ -604,7 +612,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @report << ['∑','Итого Потери в трансформаторах',nil,nil,nil,nil,nil,nil,nil,trlosses,3]
     @report << ['∑','Итого Потери ВЛ',nil,nil,nil,nil,nil,nil,nil,lnlosses,3]
     @report << ['∑','Итого Потери в трансформаторах и ВЛ',nil,nil,nil,nil,nil,nil,nil,trlosses+lnlosses,3]  
-    @report << ['∑','Итого Consum tehnologic',nil,nil,nil,nil,nil,nil,nil,consumteh,nil]            
+    @report << ['∑','Итого Consum tehnologic',nil,nil,nil,nil,nil,nil,nil,consumteh,nil]          
     end  # if mpoint.count
     respond_to do |format|
       format.html
@@ -1048,13 +1056,15 @@ private
       #========begin=линии=========================================================== 
       # start variables
       ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
-      # counting lines
+      # varifing if any lines exist
       flines = mpoint.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).exists?
       if flines && workt then
         if mpoint.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
-        else               
-          result[:ln_losses_ng_formula] = ''
+        else
+          unom = mpoint.voltcl               
+          result[:ln_losses_ng_formula] = Array.new 
+          result[:otpaika_losses_formula] = []    
           # making of array of uniq dates whithin report period    
           condates = mpoint.vlnparams.select(:condate).distinct.where("(? < condate_end) AND (? > condate) AND (condate > ?)", dddate_b, dddate_e, dddate_b).pluck(:condate)
           condates += mpoint.vlnparams.select(:condate_end).distinct.where("(? < condate_end) AND (? > condate) AND (condate_end < ?)", dddate_b, dddate_e, dddate_e).pluck(:condate_end)
@@ -1071,160 +1081,73 @@ private
             if i < c then tdddate_e = condates[i] else tdddate_e = dddate_e end
             daysbdates =  (tdddate_e.to_date - tdddate_b.to_date).to_i   #number of days between dates
             hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
-            if hoursbdates > workt then hoursbdates = workt end           
+            if hoursbdates > workt then hoursbdates = workt end
+            if hoursbdates != workt then
+              k_proportion_formula = "#{hoursbdates}/#{workt}"
+              k_proportion = hoursbdates.to_f/workt
+            else
+              k_proportion_formula = k_proportion = nil                
+            end            
             # lines at the start of the current subperiod    
             otpaiki = mpoint.vlnparams.where(" mesubstation2_id is not null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b)
-            neotpaiki = mpoint.vlnparams.where(" mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b)
-            # begin otpaiki otpaiki otpaiki part 1
-            otpaiki_losses = nil
-            if otpaiki.exists? then
-              otpaiki_losses = 0
+            neotpaiki = mpoint.vlnparams.where(" mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b).order(:id)
+            mpoint1 = mpoint.id
+            if (otpaiki.exists? and !neotpaiki) then
+              otpaiki.each do |otpaikaitem|
+                mpoints_list = Vmpointslnparam.where("(? = line_id) AND (? < condate_end) AND (? >= condate)", otpaikaitem.line_id, tdddate_b, tdddate_b).order(:id)
+                mpoints_list.each do |mpitem|
+                  neotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? >= condate)", mpitem.id, tdddate_b, tdddate_b).order(:id).first
+                  if neotpaika then 
+                    otpaiki = Vlnparam.where("mpoint_id=? AND mesubstation2_id is not null AND (? < condate_end) AND (? >= condate) ", mpitem.id, tdddate_b, tdddate_b)
+                    neotpaiki = Vlnparam.where("mpoint_id=? AND mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", mpitem.id, tdddate_b, tdddate_b).order(:id)                  
+                    break 
+                  end                
+                end
+              end
             end
-            # end otpaiki otpaiki otpaiki part 1          
+            #==== begin otpaiki part 1
+            otpaiki_losses = kwawr = nil
+            otpaiki_losses_formula = otpaiki_wa_formula = otpaiki_wr_formula = ''
+            if otpaiki.exists? then
+              otpaiki_losses = otpaiki_wa = otpaiki_wr = 0
+              otpaiki.each do |otpaikaitem|
+                r = walk_around_line(otpaikaitem, 'otpaika', tdddate_b, hoursbdates, k_proportion, k_proportion_formula, unom, otpaiki_losses, otpaiki_wa, otpaiki_wr, otpaiki_wa_formula, otpaiki_wr_formula,mpoint.id,kwawr)
+                otpaiki_losses += r[:losses]
+                if otpaiki_losses_formula == '' then otpaiki_losses_formula = r[:losses_formula] else otpaiki_losses_formula += ' + ' + r[:losses_formula] end
+                otpaiki_wa += r[:wa]
+                otpaiki_wr += r[:wr]
+                if otpaiki_wa_formula == '' then otpaiki_wa_formula = r[:wa_formula] else otpaiki_wa_formula += ' + ' + r[:wa_formula] end
+                if otpaiki_wr_formula == '' then otpaiki_wr_formula = r[:wr_formula] else otpaiki_wr_formula += ' + ' + r[:wr_formula] end
+                kwawr = r[:kwawr]
+              end   # otpaiki.each
+              #if result[:otpaika_losses_formula] then result[:otpaika_losses_formula] += " +\n\n " + otpaiki_losses_formula else result[:otpaika_losses_formula] = otpaiki_losses_formula end
+              result[:otpaika_losses_formula] << [tdddate_b, tdddate_e, otpaiki_losses_formula, hoursbdates]
+              if result[:otpaika_losses] then result[:otpaika_losses] += otpaiki_losses else result[:otpaika_losses] = otpaiki_losses end
+            end # if otpaiki            
+            # end otpaiki part 1         
+            #==== begin neotpaiki part 1
+            if neotpaiki then                                      
+            losses = 0
+            losses_formula = nil
+              neotpaiki.each do |neotpaikaitem|
+               # neotpaikaitem = neotpaiki 
+                r = walk_around_line(neotpaikaitem, 'neotpaika', tdddate_b, hoursbdates, k_proportion, k_proportion_formula, unom, otpaiki_losses, otpaiki_wa, otpaiki_wr, otpaiki_wa_formula, otpaiki_wr_formula,mpoint.id,kwawr)
+                losses += r[:losses]
+                if losses_formula then losses_formula += r[:losses_formula] else losses_formula = r[:losses_formula] end
+              end   # neotpaiki.each
+              ln_losses_ng += losses
+              result[:ln_losses_ng_formula] << [tdddate_b, tdddate_e, losses_formula, hoursbdates]
+            end  # if neotpaiki.exists?
+            # end neotpaiki part 1                    
           end # condates.each
+          result[:ln_losses_ng] = ln_losses_ng     
+          result[:ln_losses_kr] = ln_losses_kr
+          ln_losses = result[:ln_losses] = ln_losses_ng + ln_losses_kr
+          result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"
         end # if voltcl != 0
       end           
       #========end=линии===========================================================                
-      ln1 = mpoint.vlnparams.select(:line_id).distinct.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e)
-      ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
-      if ln1.exists? && workt != 0 then
-        if mpoint.voltcl == 0 then
-          flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
-        else               
-          result[:ln_losses_ng_formula] = ''
-          ln1.each do |lnitem1|
-            ln  = mpoint.vlnparams.where("line_id = ? and (? < condate_end) AND (? > condate)", lnitem1.line_id, dddate_b, dddate_e).order(:condate)
-            ln.each do |lnitem|
-              if !lnitem.unom.nil? and lnitem.unom != 0 then unom = lnitem.unom else unom = mpoint.voltcl end  
-              if lnitem.condate > dddate_b then tdddate_b = lnitem.condate else tdddate_b = dddate_b end
-              if lnitem.condate_end < dddate_e then tdddate_e = lnitem.condate_end else tdddate_e = dddate_e end             
-              daysbdates =  (tdddate_e.to_date - tdddate_b.to_date).to_i   #number of days between dates
-              hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
-              hoursinperiod = daysinperiod * 24   #number of hours in period 
-              #--------------------------------
-              cotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is not null AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, tdddate_b, tdddate_b+1.day)
-              cneotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, tdddate_b, tdddate_b+1.day)              
-              if lnitem.mesubstation2_id.nil? or cneotpaika.count == 0 then  #if neotpaika or net neotpaek
-                kkwa = kwa = lwa = wa
-                lwa_formula = "#{lwa}"  
-                kkwr = kwr = lwr = wr
-                lwr_formula = "#{lwr}"
-              else
-                kkwa = kwa = lwa = 0
-                lwa_formula = ''  
-                kkwr = kwr = lwr = 0
-                lwr_formula = ''                
-              end  #if neotpaika or net neotpaek              
-              # begin otpaiki otpaiki otpaiki part 1
-              otpaika_losses = nil
-              if lnitem.mesubstation2_id.nil? then  #if neotpaika 
-                 # otpaiki
-                 if cotpaika.count != 0 then # if otpaiki exist
-                    otpaika_losses = 0
-                    otpaika_losses_formula = '' 
-                    cotpaika.each do |otpaikaitem|
-                      otpaika_mpoints = Vmpointslnparam.where("(id != ?) AND (? = line_id) AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, otpaikaitem.line_id, tdddate_b, tdddate_b+1.day)
-                      otpaika_wa = otpaika_wr = 0
-                      otpaika_wa_formula = otpaika_wr_formula = ''
-                      otpaika_mpoints.each do |otpaikampitem|
-                        ccneotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? > condate)", otpaikampitem.id, tdddate_b, tdddate_b+1.day)
-                        if (ccneotpaika.count == 0) then
-                          otpaika_energies = one_mp_indicii(otpaikampitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
-                          if otpaika_energies[:mvnum] == 2 then 
-                              lwa += otpaika_energies[:wa_without_wasub] 
-                              lwa_formula += unless lwa_formula == '' then " + " else '' end + "#{otpaika_energies[:wa_without_wasub]}" 
-                              lwr += otpaika_energies[:wr]
-                              lwr_formula += unless lwr_formula == '' then " + " else '' end + "#{otpaika_energies[:wr]}"
-                              kkwa += otpaika_energies[:wa_without_wasub]
-                              kkwr += otpaika_energies[:wr]
-                              otpaika_wa += otpaika_energies[:wa_without_wasub]
-                              otpaika_wr += otpaika_energies[:wr]
-                              otpaika_wa_formula += unless otpaika_wa_formula == '' then " + " else '' end + "#{otpaika_energies[:wa_without_wasub]}"
-                              otpaika_wr_formula += unless otpaika_wr_formula == '' then " + " else '' end + "#{otpaika_energies[:wr]}"  
-                          end   # if mvnum 
-                        end                    
-                      end   # otpaika_mpoints.each
-                      # begin proportion conform time 
-                      if workt != 0 then
-                        if hoursbdates < workt then
-                          if otpaika_wa_formula != '' or otpaika_wr_formula != '' then  
-                            otpaika_wa = otpaika_wa * hoursbdates / workt
-                            otpaika_wr = otpaika_wr * hoursbdates / workt
-                            otpaika_wa_formula = "( " + otpaika_wa_formula + " ) * #{hoursbdates}/#{workt}"
-                            otpaika_wr_formula = "( " + otpaika_wr_formula + " ) * #{hoursbdates}/#{workt}"
-                          end 
-                        else
-                          hoursbdates = workt               
-                        end 
-                      end
-                      # end proportion conform time
-                      otpaika_losses += ( otpaikaitem.r * (otpaikaitem.k_f ** 2) * (otpaika_wa ** 2 + otpaika_wr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) ).round(4)
-                      if otpaika_losses_formula != '' then otpaika_losses_formula += " + " end   
-                      otpaika_losses_formula += "#{otpaikaitem.r} * #{otpaikaitem.k_f} ^2 * ( (#{otpaika_wa_formula}) ^2 + (#{otpaika_wr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
-                      result[:otpaika_losses_formula] = otpaika_losses_formula
-                      result[:otpaika_losses] = otpaika_losses                      
-                    end   # cotpaika.each
-                 end
-              end
-              # end otpaiki otpaiki otpaiki part 1
-              mpcount = Vmpointslnparam.select(:id).distinct.where("line_id = ? and id != ? AND (? < condate_end) AND (? > condate)", lnitem.line_id, lnitem.mpoint_id, tdddate_b, tdddate_b+1.day ).count  
-              if mpcount > 0 then
-                related_mpoints = Vmpointslnparam.where("(id != ?) AND (? = line_id) AND (? < condate_end) AND (? > condate)", lnitem.mpoint_id, lnitem.line_id, tdddate_b, tdddate_b+1.day)
-                related_mpoints.each do |rlnitem|
-                  ccneotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? > condate)", rlnitem.id, tdddate_b, tdddate_b+1.day)
-                  if rlnitem.mesubstation2_id.nil? or (ccneotpaika.count == 0 and cneotpaika.count == 0) then  #if neotpaika or net neotpaek
-                    related_energies = one_mp_indicii(rlnitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
-                    if related_energies[:mvnum] == 2 then 
-                        lwa += related_energies[:wa_without_wasub] 
-                        lwa_formula += unless lwa_formula == '' then " + " else '' end + "#{related_energies[:wa_without_wasub]}" 
-                        lwr += related_energies[:wr]
-                        lwr_formula += unless lwr_formula == '' then " + " else '' end + "#{related_energies[:wr]}"
-                        kkwa += related_energies[:wa_without_wasub]
-                        kkwr += related_energies[:wr]
-                    end
-                  end    #if neotpaika or net neotpaek
-                end  
-              end
-              # begin proportion conform time 
-              if workt != 0 then
-                if hoursbdates < workt then
-                  if lwa_formula != '' or lwr_formula != '' then  
-                    lwa = lwa * hoursbdates / workt
-                    lwr = lwr * hoursbdates / workt
-                    lwa_formula = "( " + lwa_formula + " ) * #{hoursbdates}/#{workt}"
-                    lwr_formula = "( " + lwr_formula + " ) * #{hoursbdates}/#{workt}"
-                  end 
-                else
-                  hoursbdates = workt               
-                end 
-              end
-              # end proportion conform time 
-              # begin otpaiki otpaiki otpaiki part 2
-              unless otpaika_losses.nil? then
-                lwa += otpaika_losses
-                lwa_formula += unless lwa_formula == '' then " + " end + "#{otpaika_losses}"
-              end 
-              # end otpaiki otpaiki otpaiki part 2
-              if lwa_formula != '' or lwr_formula != '' then
-                if result[:ln_losses_ng_formula] != '' then result[:ln_losses_ng_formula] += " + " end   
-                result[:ln_losses_ng_formula] += "#{lnitem.r} * #{lnitem.k_f} ^2 * ( (#{lwa_formula}) ^2 + (#{lwr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
-              end
-              # koef conform consumation
-              if mpcount > 0 and (kkwa + kkwr) != 0 then
-                k = (kwa + kwr) / (kkwa + kkwr)  
-                result[:ln_losses_ng_formula] += " * #{k.round(4)}"
-              else
-                k = 1  
-              end
-              ln_losses_ng += ( lnitem.r * (lnitem.k_f ** 2) * (lwa ** 2 + lwr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) * k ).round(4)
-            end # ln.each  
-          end # ln1.each
-          result[:ln_losses_ng] = ln_losses_ng     
-          ln_losses_kr = result[:ln_losses_kr] = ln_losses_kr.round(4)
-          ln_losses = result[:ln_losses] = ln_losses_ng + ln_losses_kr
-          result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"              
-        end
-      end  # if ln.count
+      #============================================================================
       # cos fi with losses
       wal = result[:wal] = wa + waliv + tr_losses_p + ln_losses
       result[:wal_formula] = "#{wa} + #{waliv} + #{tr_losses_p} + #{ln_losses} ;            " + if wa >= 10000 then "#{wa} >= 10000 ► считать СТ" else "#{wa} < 10000 ► не считать СТ" end 
@@ -1279,6 +1202,68 @@ private
      end # if mvnum  
    result
    end
+   
+   def walk_around_line(lineitem, f, tdddate_b, hoursbdates, k_proportion, k_proportion_formula, unom, otpaiki_losses, otpaiki_wa, otpaiki_wr, otpaiki_wa_formula, otpaiki_wr_formula,mpoint1,kwawr)
+    rez = {}
+    wa = wr = 0
+    wa_formula = wr_formula = ''
+    if !lineitem.unom.nil? and lineitem.unom != 0 then unom = lineitem.unom end 
+    mpoints_list = Vmpointslnparam.where("(? = line_id) AND (? < condate_end) AND (? >= condate)", lineitem.line_id, tdddate_b, tdddate_b)
+    mpoints_list.each do |mpitem|
+      fneotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? >= condate)", mpitem.id, tdddate_b, tdddate_b).any?
+      if (f == 'otpaika'  and !fneotpaika) or (f == 'neotpaika') then
+        energies = one_mp_indicii(mpitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+        if energies[:mvnum] == 2 then 
+           wa += energies[:wa_without_wasub] 
+           wa_formula += unless wa_formula == '' then " + " else '' end + "#{energies[:wa_without_wasub]}" 
+           wr += energies[:wr]
+           wr_formula += unless wr_formula == '' then " + " else '' end + "#{energies[:wr]}" 
+           if (mpitem.id == mpoint1) then
+             kwawr = energies[:wa_without_wasub] + energies[:wr]
+           end  
+        end   # if mvnum              
+      end # if otpaika or neopaika                   
+    end   # mpoints_list.each
+    if (f == 'neotpaika' and !otpaiki_losses.nil?) then
+       wa += otpaiki_wa
+       if otpaiki_wa_formula != '' then 
+         if wa_formula != '' then wa_formula += " + #{otpaiki_wa_formula}" else wa_formula = "#{otpaiki_wa_formula}" end
+       end
+       wr += otpaiki_wr 
+       if otpaiki_wr_formula != '' then 
+         if wr_formula != '' then wr_formula += " + #{otpaiki_wr_formula}" else wr_formula = "#{otpaiki_wr_formula}" end
+       end         
+    end    
+    kkwawr = wa + wr
+    rez[:kwawr] = kwawr
+    rez[:wa] = wa
+    rez[:wa_formula] = wa_formula
+    rez[:wr] = wr
+    rez[:wr_formula] = wr_formula        
+    if k_proportion and k_proportion != 1 then  
+       wa = wa * k_proportion
+       wr = wr * k_proportion
+       wa_formula = "( " + wa_formula + " ) * #{k_proportion_formula}"
+       wr_formula = "( " + wr_formula + " ) * #{k_proportion_formula}"
+    end    
+    if (f == 'neotpaika' and !otpaiki_losses.nil?) then
+       wa += otpaiki_losses 
+       wa_formula += " + #{otpaiki_losses}"        
+    end
+    if kwawr then
+      kw =  kwawr / kkwawr
+    end
+    losses_formula = "#{lineitem.r} * #{lineitem.k_f} ^2 * ( (#{wa_formula}) ^2 + (#{wr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
+    losses = ( lineitem.r * (lineitem.k_f ** 2) * (wa ** 2 + wr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) )        
+    if (f == 'neotpaika' and kw and kw != 1) then
+      losses_formula += " * #{kw.round(4)}"
+      losses *= kw  
+    end 
+    losses = losses.round(4)      
+    rez[:losses_formula] = losses_formula
+    rez[:losses] = losses   
+    rez
+   end 
    
    def dataforfilterselect
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
