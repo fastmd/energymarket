@@ -11,7 +11,7 @@ class Line < ApplicationRecord
   validates_associated :mesubstation
   validates :name, presence: true, length: { minimum: 2, maximum: 25 }
   validates :mesubstation_id, presence: true, numericality: { only_integer: true }
-  validates :mesubstation2_id, numericality: { only_integer: true, allow_nil: true }
+ # validates :mesubstation2_id, numericality: { only_integer: true, allow_nil: true }
   validates :l, presence: true, numericality: true
   validates :k_tr, presence: true, numericality: true
   validates :k_f, presence: true, numericality: true
