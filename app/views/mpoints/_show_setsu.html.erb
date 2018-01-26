@@ -42,10 +42,10 @@
 
 <h3 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %></h3>
 
+<small>
 <table class="table table-striped  table-hover  table-condensed">
 	<thead>
 		<tr class="info">
-		   <th colspan="1" width="1%">№</th>
 		   <th>ID</th>
 		   <th>Тип</th>
 		   <th>Uном, кВ</th>
@@ -63,15 +63,12 @@
 		</tr>	
 	</thead>
 	<tbody>					
-			<% i = 0 %>
 			<% @trp.each do |item| %>
 			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
 			   <% else %> 	
 				<tr>
 			   <% end %>		
-					<% i = i + 1 %>
-					<td><%= i  %></td>
 					<td><%= item.transformator.id %></td>
 					<td><%= item.transformator.name %></td>
 					<td><%= item.transformator.unom %></td>
@@ -92,6 +89,7 @@
 			<% end %>	  
 	</tbody>
 </table>
+</small>
 
 <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingTwo">
@@ -123,59 +121,59 @@
 </div>  
 
 <h3 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h3>
-
+<small>
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 		<tr class="info">
-		   <th colspan="1" width="1%">№</th>
-		   <th>ID</th>
-		   <th>Дата</th>
+      	   <th>ID</th>
+      	   <th>Наименование</th>
+		   <th title="Длина линии">L, км</th>
+		   <th title="Сопротивление линии">R, Ом</th>
+		   <th title="Удельное cопротивление материала">ρ20, Ом*мм&sup2;/м</th>
+		   <th title="Коэффициент скрутки">Kr</th>
+		   <th title="Коэффициент трассы">Kr</th>
+		   <th title="Коэффициент пов. эффекта и близости">Kc</th>
+		   <th title="Коэффициент формы">Кф</th>
+		   <th title="Сечение провода">q, мм&sup2</th>
+		   <th title="Марка провода">Провод</th>
+		   <th>Uном, кВ</th>
+		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
 		   <th>ПСТ1</th>
 		   <th>ПСТ2</th>
-		   <th>Наименование</th>
-		   <th>Длина линии L, км</th>
-		   <th>Сопротивление линии R, Ом</th>
-		   <th>Коэф-т трассы Ktr</th>
-		   <th>Коэф-т формы Кf</th>
-		   <th>Марка провода</th>
-		   <th>Сечение провода q, мм&sup2;</th>
-		   <th>Удельное<br>сопр-ние<br>мат-ла<br>ρ20, Ом*мм&sup2;/м</th>
-		   <th>Коэф-т скрутки Kr</th>
-		   <th>Коэф-т пов. эффекта и близости Kc</th>
-		   <th>Uном, кВ</th>		   
+		   <th>Дата</th>
+		   <th>Комментарий при подключении</th>
+		   <th>Комментарий при линии</th>		   
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
-		   <th>Комментарий</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th>.........</th>	
 		</tr>	
 	</thead>
 	<tbody>					
-			<% i = 0 %>
 			<% @lnp.each do |item| %>
 			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
 			    <tr class="success">
 			   <% else %> 	
 				<tr>
 			   <% end %>		
-					<% i = i + 1 %>
-					<td><%= i  %></td>
-					<td><%= item.line_id %></td>
-					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>
+			      	<td><%= item.line.id %></td>
+			      	<td><%= item.line.name %></td>
+					<td title="Длина линии"><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
+					<td title="Сопротивление линии"><%= number_with_delimiter(item.r, delimiter: " ") %></td>
+					<td title="Сопротивление материала"><%= if item.l!=0 then number_with_delimiter(item.ro, delimiter: " ") end %></td>
+					<td title="Коэффициент скрутки"><%= if item.l!=0 then number_with_delimiter(item.k_scr, delimiter: " ") end %></td>
+					<td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
+					<td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>
+					<td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>
+					<td title="Сечение провода"><%= if item.l!=0 then item.q end %></td>
+					<td title="Марка провода"><%= if item.l!=0 then item.mark end %></td>
+					<td><%= item.unom %></td>
+					<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
 					<td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
-		            <td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>					
-					<td><%= item.line_name %></td>
-					<td><%= item.l %></td>									
-					<td><%= item.r %></td>
-					<td><%= item.k_tr %></td>
-					<td><%= item.k_f %></td>
-					<td><%= item.wire_name %></td>
-					<td><%= item.q %></td>
-					<td><%= item.ro %></td>
-					<td><%= item.k_scr %></td>	
-					<td><%= item.k_peb %></td>
-					<td><%= item.unom %></td>		
-					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+					<td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
+					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y_%H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y_%H:%M") end %></td>
 					<td><%= item.comment %></td>
+					<td><%= item.line.comment %></td>		
+					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td><span class="glyphicon glyphicon-<%= if item.line_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
   					<td><%= link_to " ", lnparams_edit_path(:ln_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						<%= link_to " ", lnparams_destroy_path(:ln_id => item.id), :class=> "glyphicon glyphicon-remove",
@@ -184,7 +182,8 @@
 			<% end %>	  
 	</tbody>
 </table>
-
+</small>
+	
 <h3 align="center">ζ</h3>
 
 <table class="table table-striped table-hover table-condensed table-sm">

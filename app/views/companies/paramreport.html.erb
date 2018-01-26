@@ -31,10 +31,10 @@
         <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
         <% i += 1 %>
         <% j = 1 %>
+        <small>
         <table class="table table-striped table-condensed  table-hover">	
         <thead>
         <tr class="info">
-      	   <th>Nr</th>
       	   <th>ID</th>
 		   <th>Тип</th>
 		   <th>Uном, кВ</th>
@@ -55,7 +55,6 @@
 	   <% else %> 	
 		 <tr>
 	   <% end %>
-      	 <td><%= j %></td>
       	 <td><%= item.tr_id %></td>
 		 <td><%= item.mark %></td>
 		 <td><%= item.unom %></td>
@@ -71,7 +70,8 @@
       <% j += 1 %>
     <% end %>
     </tbody>
-    </table>     	
+    </table>
+    </small>     	
 <% end %>
 			
 <h3 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h3>
@@ -89,23 +89,27 @@
         <h4><%= "#{i}. Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation}") +  (item.voltcl.to_s) + ' Î ' + item.meconname + ' F' %></h4>
         <% i += 1 %>
         <% j = 1 %>
+        <small>
         <table class="table table-striped table-condensed  table-hover">	
         <thead>
         <tr class="info">
-      	   <th>Nr</th>
       	   <th>ID</th>
-		   <th>Длина линии L, км</th>
-		   <th>Сопротивление линии r, Ом</th>
-		   <th>Сопротивление материала r20, Ом</th>
-		   <th>Коэффициент скрутки Kr</th>
-		   <th>Коэффициент трассы Ktr</th>
-		   <th>Коэффициент пов. эффекта и близости Kc</th>
-		   <th>Коэффициент формы Кф</th>
-		   <th>Марка</th>
-		   <th>Сечение провода q, мм2</th>
+      	   <th>Наименование</th>
+		   <th title="Длина линии">L, км</th>
+		   <th title="Сопротивление линии">R, Ом</th>
+		   <th title="Удельное cопротивление материала">ρ20, Ом*мм&sup2;/м</th>
+		   <th title="Коэффициент скрутки">Kr</th>
+		   <th title="Коэффициент трассы">Kr</th>
+		   <th title="Коэффициент пов. эффекта и близости">Kc</th>
+		   <th title="Коэффициент формы">Кф</th>
+		   <th title="Сечение провода">q, мм&sup2</th>
+		   <th title="Марка провода">Провод</th>
 		   <th>Uном, кВ</th>
-		   <th>Комментарий</th>
-      	   <th>Дата изменений</th> 
+		   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
+		   <th>ПСТ1</th>
+		   <th>ПСТ2</th>
+		   <th>Дата</th>
+		   <th>Комментарий при подключении</th>
     	</tr>  
   		</thead>
   		<tbody>
@@ -115,25 +119,29 @@
 	   <% else %> 	
 		 <tr>
 	   <% end %>
-      	 <td><%= j %></td>
-      	 <td><%= item.line_id %></td>
-		 <td><%= item.l %></td>									
-		 <td><%= item.r %></td>
-		 <td><%= item.ro %></td>
-		 <td><%= item.k_scr %></td>
-		 <td><%= item.k_tr %></td>
-		 <td><%= item.k_peb %></td>
-		 <td><%= item.k_f %></td>
-		 <td><%= item.mark %></td>
-		 <td><%= item.q %></td>
-		 <td><%= item.unom %></td>
-		 <td><%= item.comment %></td>	
-      	 <td><%= item.updated_at %></td>
+			      	<td><%= item.line_id %></td>
+			      	<td><%= item.line_name %></td>
+					<td title="Длина линии"><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
+					<td title="Сопротивление линии"><%= number_with_delimiter(item.r, delimiter: " ") %></td>
+					<td title="Сопротивление материала"><%= if item.l!=0 then number_with_delimiter(item.ro, delimiter: " ") end %></td>
+					<td title="Коэффициент скрутки"><%= if item.l!=0 then number_with_delimiter(item.k_scr, delimiter: " ") end %></td>
+					<td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
+					<td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>
+					<td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>
+					<td title="Сечение провода"><%= if item.l!=0 then item.q end %></td>
+					<td title="Марка провода"><%= if item.l!=0 then item.mark end %></td>
+					<td><%= item.unom %></td>
+					<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
+					<td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
+					<td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
+					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y_%H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y_%H:%M") end %></td>
+					<td><%= item.comment %></td>
       </tr>
       <% j += 1 %>
     <% end %>
     </tbody>
-    </table>     	
+    </table>
+    </small>     	
 <% end %>
 
 <h3 align="center">ζ</h3>

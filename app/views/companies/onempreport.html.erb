@@ -13,7 +13,7 @@
   </ul>  
 </nav>
 
-<%= @condates.inspect %>
+<%= @condates.inspect %></br>
 
 <ul class="breadcrumb">
   <li><%= if (@fpr > 5) 
@@ -353,10 +353,10 @@
     <thead>
         <tr class="info">
       	   <th>ID</th>
-      	   <th>Наименоание</th>
+      	   <th>Наименование</th>
 		   <th title="Длина линии">L, км</th>
-		   <th title="Сопротивление линии">r, Ом</th>
-		   <th title="Сопротивление материала">r20, Ом</th>
+		   <th title="Сопротивление линии">R, Ом</th>
+		   <th title="Удельное cопротивление материала">ρ20, Ом*мм&sup2;/м</th>
 		   <th title="Коэффициент скрутки">Kr</th>
 		   <th title="Коэффициент трассы">Kr</th>
 		   <th title="Коэффициент пов. эффекта и близости">Kc</th>
@@ -376,7 +376,7 @@
    <% unless @lnp.nil? then %>
       <% @lnp.each do |item| %>
 	  <tr>
-      	 <td><%= item.id %></td>
+      	 <td><%= item.line.id %></td>
       	 <td><%= item.line.name %></td>
 		 <td title="Длина линии"><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
 		 <td title="Сопротивление линии"><%= number_with_delimiter(item.r, delimiter: " ") %></td>

@@ -144,6 +144,7 @@ before_filter :redirect_cancel, only: [:create, :update]
   end  
   
   def onempreport
+    @debug = nil
     @page = params[:page]
     @id = params[:id]
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end    
@@ -1090,16 +1091,16 @@ private
             end            
             # lines at the start of the current subperiod    
             otpaiki = mpoint.vlnparams.where(" mesubstation2_id is not null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b)
-            neotpaiki = mpoint.vlnparams.where(" mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b).order(:id)
+            neotpaiki = mpoint.vlnparams.where(" mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", tdddate_b, tdddate_b).order(:id) 
             mpoint1 = mpoint.id
-            if (otpaiki.exists? and !neotpaiki) then
+            if (otpaiki.exists? and !neotpaiki.exists?) then
               otpaiki.each do |otpaikaitem|
                 mpoints_list = Vmpointslnparam.where("(? = line_id) AND (? < condate_end) AND (? >= condate)", otpaikaitem.line_id, tdddate_b, tdddate_b).order(:id)
                 mpoints_list.each do |mpitem|
                   neotpaika = Vmpointslnparam.where("id = ? and mesubstation2_id is null AND (? < condate_end) AND (? >= condate)", mpitem.id, tdddate_b, tdddate_b).order(:id).first
                   if neotpaika then 
                     otpaiki = Vlnparam.where("mpoint_id=? AND mesubstation2_id is not null AND (? < condate_end) AND (? >= condate) ", mpitem.id, tdddate_b, tdddate_b)
-                    neotpaiki = Vlnparam.where("mpoint_id=? AND mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", mpitem.id, tdddate_b, tdddate_b).order(:id)                  
+                    neotpaiki = Vlnparam.where("mpoint_id=? AND mesubstation2_id is null AND (? < condate_end) AND (? >= condate) ", mpitem.id, tdddate_b, tdddate_b).order(:id)               
                     break 
                   end                
                 end
