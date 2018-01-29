@@ -1074,7 +1074,8 @@ private
           condates.sort!
           # analize each condate from the array
           i = 0
-          c = condates.size         
+          c = condates.size
+          sum_hoursbdates = 0          
           condates.each do |icondate|
             i += 1
             # taking start and end of the current subperiod
@@ -1082,7 +1083,11 @@ private
             if i < c then tdddate_e = condates[i] else tdddate_e = dddate_e end
             daysbdates =  (tdddate_e.to_date - tdddate_b.to_date).to_i   #number of days between dates
             hoursbdates = ((tdddate_e.to_datetime - tdddate_b.to_datetime) * 24).to_i   #number of full hours between dates
-            if hoursbdates > workt then hoursbdates = workt end
+            if i == c then
+              hoursbdates = workt - sum_hoursbdates
+            end
+            sum_hoursbdates += hoursbdates    
+          #  if hoursbdates > workt then hoursbdates = workt end
             if hoursbdates != workt then
               k_proportion_formula = "#{hoursbdates}/#{workt}"
               k_proportion = hoursbdates.to_f/workt
