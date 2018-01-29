@@ -1139,7 +1139,7 @@ private
                # neotpaikaitem = neotpaiki 
                 r = walk_around_line(neotpaikaitem, 'neotpaika', tdddate_b, hoursbdates, k_proportion, k_proportion_formula, unom, otpaiki_losses, otpaiki_wa, otpaiki_wr, otpaiki_wa_formula, otpaiki_wr_formula,mpoint.id,kwawr)
                 losses += r[:losses]
-                if losses_formula then losses_formula += r[:losses_formula] else losses_formula = r[:losses_formula] end
+                if losses_formula then losses_formula += ' + ' + r[:losses_formula] else losses_formula = r[:losses_formula] end
               end   # neotpaiki.each
               ln_losses_ng += losses
               result[:ln_losses_ng_formula] << [tdddate_b, tdddate_e, losses_formula, hoursbdates]
