@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => if @fpr < 6  then @mp.mesubstation.filial else @flr.id end), :class => "glyphicon glyphicon-level-up" %></li>
  <!--  <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> --> 
     <li><%= form_tag companies_onempreport_path(:id => @flr.id, :mp_id => @mp.id, :page => @page) do %>
