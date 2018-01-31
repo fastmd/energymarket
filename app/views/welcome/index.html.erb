@@ -36,6 +36,8 @@
 		   					              companies_simplereports_path(:id => item.id, :vc => controller.controller_name, :va => controller.action_name) %>
 		   					  <%= link_to image_tag('lampmoney.png', :alt => "Отчет", :width => 30, :height => 25, :title => "Отчет Lista consumatorilor directi"), 
 		   					              companies_regionreports_path(:id => item.id, :vc => controller.controller_name, :va => controller.action_name) %>
+		   					  <%= link_to image_tag('holub-cauta.png', :alt => "Отчет", :width => 30, :height => 25, :title => "Отчет Потребление за период"), 
+		   					              companies_graphreports_path(:id => item.id, :vc => controller.controller_name, :va => controller.action_name) %>		   					              
 		   </td>
 		   <td align="center"><%= item.comment %></td>
 		</tr>

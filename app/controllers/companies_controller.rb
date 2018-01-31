@@ -226,7 +226,7 @@ before_filter :redirect_cancel, only: [:create, :update]
            if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{mp.company_name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{mp.company_name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -343,7 +343,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         end
         if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
-            report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -364,10 +364,10 @@ before_filter :redirect_cancel, only: [:create, :update]
                 @report << report_rind[0..@title1.count]
                 report_rind[0..4] = [nil,nil,nil,nil,nil]
                 unless inditem[:date1].nil? then
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,nil,inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],inditem[:koef],inditem[:enrg_180],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,nil,inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],inditem[:koef],inditem[:enrg_280],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,nil,inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],inditem[:koef],inditem[:enrg_380],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,nil,inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],inditem[:koef],inditem[:enrg_480],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,nil,inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],inditem[:koef],inditem[:enrg_180],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,nil,inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],inditem[:koef],inditem[:enrg_280],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,nil,inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],inditem[:koef],inditem[:enrg_380],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,nil,inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],inditem[:koef],inditem[:enrg_480],nil,nil]
                 end
               end
               unless energies[:wasub].nil? then 
@@ -469,7 +469,7 @@ before_filter :redirect_cancel, only: [:create, :update]
           @report << [nil,"FRED #{region}",nil,nil,nil,nil,nil,nil,2]
         end
         nr += 1
-        report_rind = [nr,"#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.company_name}",nil,nil,nil,nil,nil]
+        report_rind = [nr,"#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.company_name}",nil,nil,nil,nil,nil]
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         indicii = energies[:indicii]
@@ -493,6 +493,118 @@ before_filter :redirect_cancel, only: [:create, :update]
     end  # mpoints.count                                                     
   end
  
+  def graphreports #holub cauta
+    @page = params[:page]
+    @id = params[:id] 
+    if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
+    @vc = params[:vc]
+    @va = params[:va] 
+    @fwa = params[:fwa]
+    @fwasimple = params[:fwasimple]
+    @fsub = params[:fsub] 
+    @fwr = params[:fwr]
+    @fned = params[:fned]
+    unless (@fwa or @fwr or @fned or @fwasimple or @fsub) then  
+      @fwa = 1 
+    end     
+    # month   
+    monthforreports
+    # title
+    @lista_title = []
+    @lista_title << "Потребление"
+    @lista_title << ("за период c #{@ddate.strftime('%m-%Y')} по #{@eddate_b.strftime('%m-%Y')}") 
+    @title1 = ['№','Потребитель','П/ст','Фидер','ТУ']
+    @title00 = ['№',1,2],['Потребитель',1,2],['П/ст',1,2],['Фидер',1,2],['ТУ',1,2]
+    @title01 = [] 
+    # filter
+    dataforfilterselect
+    filtertocookies
+    cookiesforreports
+    mpoints = mpointsforreports                             
+    # report init
+    @report = Array[]
+    nc = if @fwr then 1 else 0 end + if @fwa then 1 else 0 end + if @fned then 1 else 0 end + if @fsub then 1 else 0 end + if @fwasimple then 1 else 0 end
+    if nc == 0 then nc = 1 end 
+    #-------------
+    while @eddate_b >= @ddate_b do
+      @title00 << ["#{@ddate_b.strftime('%m-%Y')}",nc,1]
+      if @fwasimple then 
+        @title01 << ["Wa",1,1]
+        @title1 << "Wa #{@ddate_b.strftime('%m-%Y')}" 
+      end
+      if @fsub then 
+        @title01 << ["Суб.",1,1]
+        @title1 << "Потребление субабонента #{@ddate_b.strftime('%m-%Y')}" 
+      end           
+      if @fned then 
+        @title01 << ["Нед.",1,1]
+        @title1 << "Недоучет #{@ddate_b.strftime('%m-%Y')}" 
+      end        
+      if @fwa then 
+        @title01 << ["Wa(итог)",1,1]
+        @title1 << "Wa с недоучетом и субабонентом #{@ddate_b.strftime('%m-%Y')}" 
+      end
+      if @fwr then 
+        @title01 << ["Wr",1,1]
+        @title1 << "Wr #{@ddate_b.strftime('%m-%Y')}" 
+      end  
+      enrgsums = {}
+      nr = 0
+      # mpoints
+      if mpoints.count == 0 then
+        flash[:warning] = "Нет данных для отчета. #{@flr.name} не имеет точек учета." 
+      else
+        mpoints.each do |mp|
+         if mp.cod != 0 then #test for fake mpoint
+          # report rind
+          report_rind = @report[nr]        
+          nr += 1
+          if report_rind.nil? then report_rind = [nr,"#{mp.company_name}","#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end, "#{mp.clconname}"] end
+          # indicii si energie        
+          energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+          indicii = energies[:indicii]
+          if indicii.nil? then
+             if @fwasimple then report_rind << nil end 
+             if @fsub then report_rind << nil end 
+             if @fned then report_rind << nil end             
+             if @fwa then report_rind << nil end
+             if @fwr then report_rind << nil end   
+          else
+             enrgsums = add_one_mp_indicii(energies, enrgsums)       
+             # pierderi   
+             #losses = {} #one_mp_losses(mp.id, energies)
+             #enrgsums = add_one_mp_losses(losses, enrgsums) 
+             # report
+             if @fwasimple then report_rind << energies[:wa] end
+             if @fsub then report_rind << energies[:wasub] end
+             if @fned then report_rind << energies[:undercount] end 
+             if @fwa then report_rind << energies[:wa_without_wasub_with_undercount] end
+             if @fwr then report_rind << energies[:wr] end    
+             #report_rind << losses[:ln_losses]   
+             #report_rind << losses[:tr_losses_p]
+             #report_rind << losses[:consumteh]        
+          end # indicii null
+          if @eddate_b == @ddate_b then report_rind << nil end
+          @report[nr-1] = report_rind[0..report_rind.count]  
+         end  #test for fake mpoint       
+        end  # mpoints each
+        if @report[nr].nil? then @report[nr] = ['∑',nil,nil,nil,nil] end
+        if @fwasimple then @report[nr] << enrgsums[:wa] end
+        if @fsub then @report[nr] << enrgsums[:wasub] end                    
+        if @fned then @report[nr] << enrgsums[:undercount] end          
+        if @fwa then @report[nr] << enrgsums[:wa_without_wasub_with_undercount] end
+        if @fwr then @report[nr] << enrgsums[:wr] end                    
+      end  # mpoints.count
+      @ddate_b += 1.month
+      @ddate_e += 1.month 
+      @ddate_mb += 1.month 
+      @ddate_me += 1.month
+    end #while
+    if @report.count != 0 then @report.last << 4 end
+    titleforreports
+    #render inline: "<%= @nc.inspect %><br><br><%= @emonth_for_report.inspect %><br><br><%= @ddate_b.inspect %><br><br><%= @ddate_e.inspect %><br><br>" and return   
+  end
+ 
   def report  #kotik
     @page = params[:page]
     @id = params[:cp_id]
@@ -512,7 +624,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # report init
     @report = Array[]
     nr = 0
-    cp_enrgsums = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cp_enrgsums = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     trlosses = 0.0 
     lnlosses = 0.0
     consumteh = 0.0 
@@ -524,7 +636,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @mpoints.each do |mp|
        if mp.cod != 0 then #test for fake mpoint 
         nr += 1  
-        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", if mp.meconname.count("a-zA-Zа-яА-Я") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end, "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
+        report_rind = [nr, "#{mp.cod} #{mp.name} #{mp.mesubstation.name}", if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end, "#{mp.clconname}", nil, nil, nil, nil, nil, nil, nil, nil] 
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         indicii = energies[:indicii]
@@ -568,11 +680,11 @@ before_filter :redirect_cancel, only: [:create, :update]
           cp_enrgsums[3] += energies[:wrc]  
         end
         unless energies[:wasub].nil? then 
-          @report << [nil,'Energie a/pr subabonent',nil,nil,nil,nil,nil,nil,nil,energies[:wasub],nil]
+          @report << [nil,'Energie a/pr subabonat',nil,nil,nil,nil,nil,nil,nil,energies[:wasub],nil]
           cp_enrgsums[4] += energies[:wasub]  
         end
         unless energies[:wa_without_wasub].nil? then 
-          @report << [nil,'Energie a/pr fara subabonent',nil,nil,nil,nil,nil,nil,nil,energies[:wa_without_wasub],nil]
+          @report << [nil,'Energie a/pr fara subabonat',nil,nil,nil,nil,nil,nil,nil,energies[:wa_without_wasub],nil]
           cp_enrgsums[5] += energies[:wa_without_wasub]  
         end
         # Trab
@@ -626,8 +738,14 @@ private
 
   def monthforreports   
     # month 
-    @month_for_report = params[:month_for_report]   
-    if @month_for_report.nil? then @ddate = Date.current - 1.month else @ddate = Date.strptime(@month_for_report, '%Y-%m') end
+    @month_for_report = params[:month_for_report]
+    @emonth_for_report = params[:emonth_for_report]   
+    if @month_for_report.nil? then 
+      @ddate = Date.current - (if action_name != 'graphreports' then 1.month else 3.month end)
+      @month_for_report = (@ddate).to_formatted_s(:year_month) 
+    else 
+      @ddate = Date.strptime(@month_for_report, '%Y-%m') 
+    end 
     #if @month_for_report.nil? then @ddate = Date.current else @ddate = Date.strptime(@month_for_report, '%Y-%m') end   #changed for month to be liked by setsu
     @luna = $Luni[@ddate.month.to_i-1]
     @ddate_b = @ddate.change(day: 1)
@@ -638,6 +756,12 @@ private
     @ddate_me = @ddate_e.change(day: 1)   
     @luna_b = $Luni[@ddate_b.month.to_i-1] + ' ' + @ddate_b.year.to_s
     @luna_e = $Luni[@ddate_e.month.to_i-1] + ' ' + @ddate_e.year.to_s 
+    if (@emonth_for_report.nil? or @emonth_for_report<@month_for_report) then 
+      @eddate_b = @ddate_b + 2.month
+      @emonth_for_report = @eddate_b.to_formatted_s(:year_month) 
+    else 
+      @eddate_b = (Date.strptime(@emonth_for_report,'%Y-%m')) 
+    end 
   end
   
   def titleforreports  
@@ -934,9 +1058,25 @@ private
   def add_one_mp_indicii(energies, result = {})  
     mvnum = energies[:mvnum]
     if mvnum == 2 then
+      unless energies[:wa].nil? then 
+         if result[:wa].nil? then result[:wa] = 0.0 end           
+         result[:wa] += energies[:wa]
+      end
+      unless energies[:wasub].nil? then 
+         if result[:wasub].nil? then result[:wasub] = 0.0 end           
+         result[:wasub] += energies[:wasub]
+      end      
       unless energies[:wa_without_wasub_with_undercount].nil? then 
          if result[:wa_without_wasub_with_undercount].nil? then result[:wa_without_wasub_with_undercount] = 0.0 end           
          result[:wa_without_wasub_with_undercount] += energies[:wa_without_wasub_with_undercount]
+      end
+      unless energies[:wr].nil? then 
+         if result[:wr].nil? then result[:wr] = 0.0 end           
+         result[:wr] += energies[:wr]
+      end
+      unless energies[:undercount].nil? then 
+         if result[:undercount].nil? then result[:undercount] = 0.0 end           
+         result[:undercount] += energies[:undercount]
       end
     end # if mvnum
     result

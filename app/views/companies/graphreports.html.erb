@@ -1,0 +1,127 @@
+<% provide(:title, 'Отчет') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= link_to "Назад", case @vc when "companies" then companies_path(:id => @flr.id, :page => @page) 
+    	                              when "mpoints"   then mpoints_path(:id => @flr.id, :page => @page) 
+    	                              else welcome_index_path end, :class => "glyphicon glyphicon-level-up" %></li>
+ <!--   <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, 
+                    companies_regionreports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx", :vc => @vc, :va => @va, :page => @page) %></li> -->
+    <li><%= form_tag companies_graphreports_path(:id => @id, :vc => @vc, :va => @va, :page => @page) do %>
+    	        <%= label_tag(:month_for_report, "С:", class: "control-label") %>
+    	        <%= month_field_tag :month_for_report, @month_for_report ? @month_for_report : @ddate.to_formatted_s(:year_month) %>
+    	        <%= label_tag(:emonth_for_report, "По:", class: "control-label") %>
+    	        <%= month_field_tag :emonth_for_report, @emonth_for_report ? @emonth_for_report : @eddate_b.to_formatted_s(:year_month) %>
+    	        <%= label_tag(:fwasimple, "Wa", class: "control-label") %>
+    	        <%= check_box_tag(:fwasimple, @fwasimple, @fwasimple) %>
+    	        <%= label_tag(:fsub, "Субабонент", class: "control-label") %>
+    	        <%= check_box_tag(:fsub, @fsub, @fsub) %>
+    	        <%= label_tag(:fned, "Недоучет", class: "control-label") %>
+    	        <%= check_box_tag(:fned, @fned, @fned) %>     	        
+    	        <%= label_tag(:fwa, "Wa(итог)", class: "control-label") %>
+    	        <%= check_box_tag(:fwa, @fwa, @fwa) %>
+    	        <%= label_tag(:fwr, "Wr", class: "control-label") %>
+    	        <%= check_box_tag(:fwr, @fwr, @fwr) %>   	            	        
+                <%= image_submit_tag("holub-cauta.png",class: 'submit_button',:alt => "Пересчет", :width => 40, :height => 40, :title => "Пересчет") %>
+                <% end %></li>
+    <li><%= form_tag("/companies/graphreports", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:q, "Искать:", class: "control-label") %>
+		  <%= search_field_tag(:q, @data_for_search, placeholder: 'Enter your search query here', class: "form-control", title: "код, наименование, филиал, район, поставщик, подстанция, точка учета") %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= hidden_field_tag :page, @page %>
+		  <%= hidden_field_tag :vc, @vc %>
+		  <%= hidden_field_tag :va, @va %>
+		  <%= hidden_field_tag :month_for_report, @month_for_report %>
+		  <%= hidden_field_tag :emonth_for_report, @emonth_for_report %>
+		  <%= hidden_field_tag :fwa, @fwa %>
+		  <%= hidden_field_tag :fwasimple, @fwasimple %>
+		  <%= hidden_field_tag :fsub, @fsub %>
+		  <%= hidden_field_tag :fwr, @fwr %>
+		  <%= hidden_field_tag :fned, @fned %>
+		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование, филиал, район, поставщик, подстанция, точка учета") %>
+		</div>
+		<% end %></li>
+	<li><%= form_tag("/companies/graphreports", method: "get", class: 'form-inline') do %>
+    	<div class="form-group">
+		  <%= label_tag(:qcompany, "Фильтр:", class: "control-label") %>
+		  <%= select_tag(:qcompany, options_for_select(@fcomps, @qcompany), class: "form-control", prompt: "Потребитель...#{@qcompany}", include_blank: false, title: "Потребитель") %>
+		  <%= select_tag(:qfurnizor, options_for_select(@ffurns, @qfurnizor), class: "form-control", prompt: "Поставщик...#{@qfurnizor}", include_blank: false, title: "Поставщик") %>
+		  <%= select_tag(:qfilial, options_for_select(@ffils, @qfilial), class: "form-control", prompt: "Филиал...#{@qfilial}", include_blank: false, title: "Филиал") %>
+		  <%= select_tag(:qregion, options_for_select(@fregions, @qregion), class: "form-control", prompt: "Район...#{@qregion}", include_blank: false, title: "Район") %>
+		  <%= select_tag(:qmesubstation, options_for_select(@fsstations, @qmesubstation), class: "form-control", prompt: "Подстанция...#{@qmesubstation}", include_blank: false, title: "Подстанция") %>
+		  <%= hidden_field_tag :id, @flr.id %>
+		  <%= hidden_field_tag :page, @page %>
+		  <%= hidden_field_tag :vc, @vc %>
+		  <%= hidden_field_tag :va, @va %>
+		  <%= hidden_field_tag :month_for_report, @month_for_report %>
+		  <%= hidden_field_tag :emonth_for_report, @emonth_for_report %>
+		  <%= hidden_field_tag :fwa, @fwa %>
+		  <%= hidden_field_tag :fwasimple, @fwasimple %>
+		  <%= hidden_field_tag :fsub, @fsub %>		  
+		  <%= hidden_field_tag :fwr, @fwr %>
+		  <%= hidden_field_tag :fned, @fned %>		  		  
+		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter") %>
+		</div>
+		<% end %></li>	                               
+  </ul>  
+</nav>
+
+<ul class="breadcrumb">
+  <% if @fpr < 6 then %>
+	  <li><%=  link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>		
+	  <li class="active"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span><strong><%= "Филиал: #{@flr.name}" %></strong></li>  
+  <% elsif @fpr < 9 then %> 	
+	  <li><%=  link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
+	  <li class="active"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span><strong><%= "Поставщик: #{@flr.name}" %></strong></li> 	  
+  <% end %>
+</ul>
+
+<% @lista_title.each do |t| %>
+	<h4 align="center"><%= t %></h4>  
+<% end %>
+<center><% if @filter==1 then %><span class="glyphicon glyphicon-filter" aria-hidden="true"></span><% end %></center>
+
+<small>
+<div class="table-responsive">	
+<table class="table table-striped table-condensed table-hover">	
+  <thead>
+  	<tr class="success">
+      <% @title00.each do |t| %>	
+        <th colspan=<%= "#{t[1]}" %> rowspan=<%= "#{t[2]}" %>><%= "#{t[0]}" %></th>
+      <% end %>
+    </tr>
+  	<tr class="success">
+      <% @title01.each do |t| %>	
+        <th colspan=<%= "#{t[1]}" %> rowspan=<%= "#{t[2]}" %>><%= t[0] %></th>
+      <% end %>
+    </tr>     
+    <tr class="info">
+      <% @title2.each do |t| %>	
+        <th><%= t %></th>
+      <% end %>
+    </tr> 
+  </thead>
+  <tbody>
+    <% @report.each do |item| %>
+      <% color = item.last %>
+      <% item.pop %>
+      <% if color.nil? %>
+      <tr>
+      <% else %> 	
+      <tr class=<%= case color when 1 then "danger"
+      	                       when 2 then "warning" 
+      	                       when 3 then "info" 
+      	                       else "success" end %>>     
+      <% end %>	
+        <% i = 0 %>
+      	<% item.each do |x| %>
+      	   <td title="<%=@title1[i]%>"><%= x %></td>
+      	   <% i += 1 %>
+      	<% end %> 
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+</small>

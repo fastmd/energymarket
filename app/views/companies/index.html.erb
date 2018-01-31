@@ -10,6 +10,8 @@
                     companies_simplereports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>
     <li><%= link_to image_tag('lampmoney.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Lista consumatorilor directi"), 
                     companies_regionreports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>
+    <li><%= link_to image_tag('holub-cauta.png', :alt => "Отчет", :width => 30, :height => 30, :title => "Отчет Потребление за период"), 
+                    companies_graphreports_path(:id => @flr.id, :page => @page, :vc => controller.controller_name, :va => controller.action_name) %></li>                    
     <li><%= form_tag("/companies/index", method: "get", class: 'form-inline') do %>
     	<div class="form-group">
 		  <%= label_tag(:q, "Искать:", class: "control-label") %>
