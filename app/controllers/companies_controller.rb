@@ -579,7 +579,7 @@ before_filter :redirect_cancel, only: [:create, :update]
              if @fsub then report_rind << energies[:wasub] end
              if @fned then report_rind << energies[:undercount] end 
              if @fwa then report_rind << energies[:wa_without_wasub_with_undercount] end
-             if @fwr then report_rind << energies[:wr] end    
+             if @fwr then report_rind << energies[:wr].round(1) end    
              #report_rind << losses[:ln_losses]   
              #report_rind << losses[:tr_losses_p]
              #report_rind << losses[:consumteh]        
