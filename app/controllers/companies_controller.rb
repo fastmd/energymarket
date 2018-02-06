@@ -593,7 +593,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         if @fsub then @report[nr] << enrgsums[:wasub] end                    
         if @fned then @report[nr] << enrgsums[:undercount] end          
         if @fwa then @report[nr] << enrgsums[:wa_without_wasub_with_undercount] end
-        if @fwr then @report[nr] << enrgsums[:wr].round(1) end                    
+        if @fwr then @report[nr] << (unless enrgsums[:wr].nil? then enrgsums[:wr].round(1) end) end                    
       end  # mpoints.count
       @ddate_b += 1.month
       @ddate_e += 1.month 
