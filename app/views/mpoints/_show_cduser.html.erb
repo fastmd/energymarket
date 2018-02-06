@@ -162,7 +162,7 @@
 		   <th>Реактивная отдача</th>
 		   <th title="Вычитается из Wa до расчета потерь">Потребление <br>субабонента<br>, кВт*ч</th>
 		   <th title="Добавляется к Wa">Недоучет, кВт*ч</th>
-		   <th title="Включить недоучет в расчет потерь в линии"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
+		   <th title="Включить недоучет в расчет потерь"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
 		   <th title="Учет А-: не аннулировать отдачу"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
 		   <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Траб, часы</th>
 		   <th>Комментарий</th>
@@ -192,7 +192,7 @@
 					<td nowrap><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
 					<td nowrap title="Потребление субабонента, кВт*ч"><%= number_with_delimiter(item.dwa, delimiter: " ", precision: 4) %></td>
 					<td nowrap title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
-					<td title="Включить недоучет в расчет потерь в линии"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
+					<td title="Включить недоучет в расчет потерь"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
 					<td title="Учет А-: не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
 					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
 					<td><%= item.comment %></td>
