@@ -1,9 +1,23 @@
+  <script type="text/javascript">
+  /* <![CDATA[ */
+   function externalLinks() {
+    links = document.getElementsByTagName("a");
+    for (i=0; i<links.length; i++) {
+      link = links[i];
+      if (link.getAttribute("href") && link.getAttribute("rel") == "external")
+      link.target = "_blank";
+    }
+   }
+   window.onload = externalLinks;
+  /* ]]> */ 
+ </script>
+
 <% provide(:title, 'Показания') %>
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id, :flr_id => @mp.furnizor_id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign" %></li>
+    <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign", :rel => "external" %></li>
   </ul>  
 </nav>
 
@@ -51,6 +65,10 @@
 		   				<label for='comment' class="control-label">Счетчик</label>
 						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
 				</div><br><br>
+          <div class="row">					
+		    <div class="col-md-3">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">				
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Активный прием</label>
 						<%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
@@ -67,6 +85,12 @@
 		   				<label for='comment' class="control-label">Реактивная отдача</label>
 						<%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div><br><br>
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-3">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">	
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Потребление субабонента, кВт*ч</label>
 						<%= number_field_tag 'dwa', @mv_params[:dwa], min: 0, max: 1000000000, step: 0.0001, class: "form-control", title: 'если есть (необязательный параметр)' %>
@@ -75,14 +99,24 @@
 		   				<label for='comment' class="control-label">Недоучет, кВт*ч</label>
 						<%= number_field_tag 'undercount', @mv_params[:undercount], min: 0, max: 1000000000, step: 0.0001, class: "form-control", title: 'если есть (необязательный параметр)' %>
 				</div>
+				<div class="form-group">		
+		   				<label for='comment' class="control-label">Время работы электроустановки Траб, часы</label>
+						<%= number_field_tag 'trab', @mv_params[:trab], max: 1000000, step: 1, class: "form-control", title: 'если есть (необязательный параметр)' %>
+				</div>	
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+				<div class="form-group">
+		   				<label for='fnefact' class="control-label"><span class="glyphicon glyphicon-record" aria-hidden="true">Включить недоучет в расчет потерь</span></label>
+						<%= check_box_tag 'fnefact', 'yes', if (@mv_params[:fnefact])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div>
 				<div class="form-group">
 		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не аннулировать отдачу)</span></label>
 						<%= check_box_tag 'fanulare', 'yes', if (@mv_params[:fanulare])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div><br><br>
-				<div class="form-group">		
-		   				<label for='comment' class="control-label">Время работы электроустановки, часы</label>
-						<%= number_field_tag 'trab', @mv_params[:trab], max: 1000000, step: 1, class: "form-control", title: 'если есть (необязательный параметр)' %>
-				</div>		   		
+		   		</div>	   		
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Комментарий</label>
 						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
@@ -94,7 +128,11 @@
 		   		<div class="form-group">
 		   				<label for='r' class="control-label"><span class="glyphicon glyphicon-pushpin" aria-hidden="true">Расчетный день</span></label>
 						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>		
+		   		</div>
+			</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row -->			
 				<%= hidden_field_tag :mpoint_id, @mp.id %>
 				<%= hidden_field_tag :met, unless @met.nil? then @met.id else nil end %>
 				<%= hidden_field_tag :mv_id, @mv_params[:mv_id]%>
@@ -110,7 +148,7 @@
 </div>
 			
 <h3 align="center">История показаний <%= image_tag('indicii.png', :alt => "Показания", :width => 60, :height => 30) %></h3>
-
+<small>
 <table class="table table-striped  table-hover table-condensed">
 	<thead>
 		<tr class="info">
@@ -124,8 +162,9 @@
 		   <th>Реактивная отдача</th>
 		   <th title="Вычитается из Wa до расчета потерь">Потребление <br>субабонента<br>, кВт*ч</th>
 		   <th title="Добавляется к Wa">Недоучет, кВт*ч</th>
-		   <th title="Не анулировать отдачу">Учет<br> А-</th>
-		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
+		   <th title="Включить недоучет в расчет потерь в линии"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
+		   <th title="Учет А-: не аннулировать отдачу"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
+		   <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Траб, часы</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -144,16 +183,17 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
-					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-				    <td><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
-					<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
-					<td><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
-					<td title="Потребление субабонента, кВт*ч"><%= number_with_delimiter(item.dwa, delimiter: " ", precision: 4) %></td>
-					<td title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
-					<td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+					<td nowrap><%= item.actdate.to_formatted_s(:day_month_year) %></td>
+				    <td nowrap><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
+					<td nowrap><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
+					<td nowrap><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
+					<td nowrap title="Потребление субабонента, кВт*ч"><%= number_with_delimiter(item.dwa, delimiter: " ", precision: 4) %></td>
+					<td nowrap title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
+					<td title="Включить недоучет в расчет потерь в линии"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
+					<td title="Учет А-: не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
 					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
 					<td><%= item.comment %></td>
 					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
@@ -166,6 +206,7 @@
 	   <% end %>	
 	</tbody>
 </table>
+</small>
 
 <center><small><%= if !@mvs.nil? then will_paginate @mvs, renderer: BootstrapPagination::Rails end %></small></center>
 

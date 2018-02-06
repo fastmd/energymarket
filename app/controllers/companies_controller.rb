@@ -119,7 +119,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
-    @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id, :actdate, :mvalue_updated_at)
+    @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id => :asc, actdate: :desc, relevance_date: :desc, mvalue_updated_at: :desc)
     if @mvalues.count != 0
       @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
     end    
@@ -609,7 +609,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
-    if @fpr < 6 then  @flr =  Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end
+    if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     # month
     monthforreports
     # title
@@ -629,7 +629,6 @@ before_filter :redirect_cancel, only: [:create, :update]
     lnlosses = 0.0
     consumteh = 0.0 
     # mpoints 
-  #  @mpoints = @cp.mpoints.where(f: 'true').order(:name,:id)
     if @mpoints.count == 0 then
       flash[:warning] = "Нет данных для отчета. Потребитель #{@cp.name} не имеет точек учета." 
     else
@@ -848,7 +847,7 @@ private
     result = {}
     mpoint = Mpoint.find(mp_id)
     wa = waliv = wri = wrc = 0.0
-    wasub = waundercount = nil
+    wasub = waundercount = losundercount = nil
     indicii = []       
     mvnum = 0
     # billing days
@@ -921,7 +920,11 @@ private
               end
               unless undercount.nil? then 
                 if waundercount.nil? then waundercount = undercount else waundercount += undercount end
-                indicii0[:undercount] = undercount 
+                indicii0[:undercount] = undercount
+                if mvalue1.fnefact then
+                  indicii0[:losundercount] = undercount
+                  if losundercount.nil? then losundercount = undercount else losundercount += undercount end
+                end 
               end
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
@@ -1019,6 +1022,7 @@ private
          result[:wa] = wa
          unless wasub.nil? then result[:wasub] = wasub end
          unless waundercount.nil? then result[:undercount] = waundercount end
+         unless losundercount.nil? then result[:losundercount] = losundercount end  
          if !wasub.nil? then      
            result[:wa_without_wasub] = if wa > wasub then (wa - wasub) else 0.0 end 
            result[:wa_without_wasub_formula] = wa.to_s +  " - " + wasub.to_s 
@@ -1032,7 +1036,14 @@ private
          else
            result[:wa_without_wasub_with_undercount] = result[:wa_without_wasub]
            result[:wa_without_wasub_with_undercount_formula] = "#{result[:wa_without_wasub]} "           
-         end       
+         end
+         if !losundercount.nil? then     
+           result[:wa_without_wasub_with_losundercount] = result[:wa_without_wasub] + losundercount
+           result[:wa_without_wasub_with_losundercount_formula] = "#{result[:wa_without_wasub]} + #{losundercount} "
+         else
+           result[:wa_without_wasub_with_losundercount] = result[:wa_without_wasub]
+           result[:wa_without_wasub_with_losundercount_formula] = "#{result[:wa_without_wasub]} "           
+         end  
         # result[:wa_formula] += " = "
          result[:waliv] = waliv
         # result[:waliv_formula] += " = "
@@ -1078,6 +1089,10 @@ private
          if result[:undercount].nil? then result[:undercount] = 0.0 end           
          result[:undercount] += energies[:undercount]
       end
+      unless energies[:losundercount].nil? then 
+         if result[:losundercount].nil? then result[:losundercount] = 0.0 end           
+         result[:losundercount] += energies[:losundercount]
+      end      
     end # if mvnum
     result
   end
@@ -1102,8 +1117,8 @@ private
     result={}   
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 && (indicii[:wa_without_wasub]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
-      wa    = indicii[:wa_without_wasub] 
+    if mvnum == 2 && (indicii[:wa_without_wasub_with_losundercount]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
+      wa    = indicii[:wa_without_wasub_with_losundercount] 
       waliv = indicii[:waliv] 
       wri   = indicii[:wri]
       wrc   = indicii[:wrc]  
@@ -1360,12 +1375,12 @@ private
       if (f == 'otpaika'  and !fneotpaika) or (f == 'neotpaika') then
         energies = one_mp_indicii(mpitem.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         if energies[:mvnum] == 2 then 
-           wa += energies[:wa_without_wasub] 
-           wa_formula += unless wa_formula == '' then " + " else '' end + "#{energies[:wa_without_wasub]}" 
+           wa += energies[:wa_without_wasub_with_losundercount] 
+           wa_formula += unless wa_formula == '' then " + " else '' end + "#{energies[:wa_without_wasub_with_losundercount]}" 
            wr += energies[:wr]
            wr_formula += unless wr_formula == '' then " + " else '' end + "#{energies[:wr]}" 
            if (mpitem.id == mpoint1) then
-             kwawr = energies[:wa_without_wasub] + energies[:wr]
+             kwawr = energies[:wa_without_wasub_with_losundercount] + energies[:wr]
            end  
         end   # if mvnum              
       end # if otpaika or neopaika                   

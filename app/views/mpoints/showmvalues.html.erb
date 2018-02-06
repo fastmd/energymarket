@@ -14,7 +14,7 @@
 </ul>
 			
 <h3 align="center">История показаний <%= image_tag('indicii.png', :alt => "Показания", :width => 60, :height => 30) %></h3>
-
+<small>
 <table class="table table-striped  table-hover">
 	<thead>
 		<tr class="info">
@@ -28,8 +28,9 @@
 		   <th>Реактивная отдача</th>
 		   <th title="Вычитается из Wa до расчета потерь">Потребление<br> субабонента,<br> кВт*ч</th>
 		   <th title="Добавляется к Wa">Недоучет,<br> кВт*ч</th>
-		   <th title="Не аннулировать отдачу">Учет<br> А-</th>
-		   <th title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Время работы<br> электроустановки, часы</th>
+	       <th title="Включить недоучет в расчет потерь в линии"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
+	       <th title="Учет А-: не аннулировать отдачу"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
+	       <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Траб, часы</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 		   <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
@@ -47,17 +48,18 @@
 			   <% end %>			
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
-					<td><%= item.actdate.to_formatted_s(:day_month_year) %></td>
-				    <td><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
-					<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
-					<td><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
-					<td><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= item.actdate.to_formatted_s(:day_month_year) %></td>
+				    <td nowrap><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
+					<td nowrap><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
+					<td nowrap><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp280, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp380, delimiter: " ", precision: 4) %></td>
+					<td nowrap><%= number_with_precision(item.actp480, delimiter: " ", precision: 4) %></td>
 					<td title="Потребление субабонента, кВт*ч"><%= number_with_delimiter(item.dwa, delimiter: " ", precision: 4) %></td>
 					<td title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
-					<td title="Не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
-				    <td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
+					<td title="Включить недоучет в расчет потерь в линии"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
+					<td title="Учет А-: не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
 					<td><%= item.comment %></td>
 					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 					<td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>	
@@ -66,7 +68,7 @@
 	   <% end %>	
 	</tbody>
 </table>
-
+</small>
 <center><small><%= if !@mvs.nil? then will_paginate @mvs, renderer: BootstrapPagination::Rails end %></small></center>
 
 <h5><mark>Красных</mark> и <mark>желтых</mark> строк быть не должно!</h5>

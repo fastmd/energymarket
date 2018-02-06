@@ -205,7 +205,7 @@
     </tr>
     <tr>      
       <td>Энергия Wr=Wri+Wrc, kVAh</td>
-      <td><strong><%= number_with_delimiter(@energies[:wr], delimiter: " ") %></strong></td>
+      <td><strong><%= number_with_delimiter(if @energies[:wr] then @energies[:wr].round(2) end, delimiter: " ") %></strong></td>
       <td><%= @energies[:wr_formula] %></td>
     </tr>
     <tr>      

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180111065249) do
+ActiveRecord::Schema.define(version: 20180206093435) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,7 +98,9 @@ ActiveRecord::Schema.define(version: 20180111065249) do
     t.boolean  "f",              default: true,    null: false
     t.float    "koefcalc",       default: 1.0,     null: false
     t.integer  "thesauru_id"
+    t.index ["mpoint_id", "relevance_date"], name: "index_meters_on_mpoint_id_and_relevance_date", using: :btree
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
+    t.index ["relevance_date"], name: "index_meters_on_relevance_date", using: :btree
   end
 
   create_table "mpoints", force: :cascade do |t|
@@ -145,6 +147,9 @@ ActiveRecord::Schema.define(version: 20180111065249) do
     t.decimal  "dwa",        precision: 20, scale: 4
     t.boolean  "fanulare"
     t.decimal  "undercount", precision: 20, scale: 4
+    t.boolean  "fnefact"
+    t.index ["actdate"], name: "index_mvalues_on_actdate", using: :btree
+    t.index ["meter_id", "actdate"], name: "index_mvalues_on_meter_id_and_actdate", using: :btree
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree
   end
 

@@ -26,8 +26,8 @@
 		<tr>
 		   <% i = i + 1 %>	
 		   <td align="center"><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
-		   <td align="center"><%= item.name %> <%= if item.name.upcase.include?("FEE") then image_tag('fee.png', :alt => "FEE", :width => 25, :height => 25) 
-		   	                                       elsif item.name.upcase.include?("FENOSA") then image_tag('fenosa.png', :alt => "Fenosa", :width => 25, :height => 25) end %></td>
+		   <td align="center"><%= link_to "#{item.name} #{if item.name.upcase.include?("FEE") then image_tag('fee.png', :alt => "FEE", :width => 25, :height => 25) 
+		   	                                       elsif item.name.upcase.include?("FENOSA") then image_tag('fenosa.png', :alt => "Fenosa", :width => 25, :height => 25) end}".html_safe, companies_path(:id => item.id) %></td>
 		   <td align="center"><%= link_to "Открыть", companies_path(:id => item.id), :class=> "glyphicon glyphicon-lamp" %></td>
 		   <td align="center"><%= link_to "Открыть", mpoints_path(:id => item.id), :class=> "glyphicon glyphicon-lamp" %></td>
 		   <td align="center"><%= link_to image_tag('vjuh-suma.png', :alt => "Отчет", :width => 30, :height => 25, :title => "Отчет FidereDirecte"), 

@@ -147,14 +147,14 @@
 					<tr>
 			   <% end %>	
 						<% i = i + 1 %>
-						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>
-						<td><%= item.cod %></td>
+						<td><%= link_to (if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end), mpoint_path(item) %></td>
+						<td><%= link_to (if item.cod then item.cod else ' ' end), mpoint_path(item) %></td>
 						<td><%= if item.furnizor then item.furnizor.name end %></td>
 						<td><%= if item.filial then item.filial.name end %></td>
 						<td><%= if item.region then item.region.cvalue end %></td>
 						<td><%= if item.mesubstation then item.mesubstation.name end %></td>						
 						<td><%= if item.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then item.meconname else "#{item.voltcl} Î #{item.meconname} F" end %></td>
-						<td><%= item.clconname %></td>						
+						<td><%= link_to item.clconname, mpoint_path(item) %></td>						
 						<td><%= item.voltcl %></td> 
   						<td ><% if item.fct then %><%= image_tag('faract.png', :alt => "без СТ", :width => 30, :height => 20, :title => "Не считать тех расход") %><% end %>
                              <% if item.fctc then %><%= image_tag('c.png', :alt => "без СТ емк", :width => 30, :height => 20, :title => "Не считать емкостной тех расход") %><% end %>
@@ -167,14 +167,14 @@
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
 						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %></td>
-						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %></td>
-  						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %>
+						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %></td>
+  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
   						<% else %>
   						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
   						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %></td>      						
-                           <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
+                           <td><%= link_to image_tag('pokaz.png', :alt => "Показания", :width => 40, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "pdf") %></td>
   						<% end %>     						
