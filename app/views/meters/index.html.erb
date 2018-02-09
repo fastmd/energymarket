@@ -2,20 +2,25 @@
 	           
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", company_path(@mp.company.id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company, :flr_id => if @fpr < 6  then @mp.mesubstation.filial else @mp.furnizor end), :class => "glyphicon glyphicon-level-up" %></li>
     <li><%= link_to "Справка", meters_helpcounter_path(:id => @mp.id), :class => "glyphicon glyphicon-info-sign" %></li>
   </ul>  
 </nav>
 
 <ul class="breadcrumb">
-  <li><%= link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home" %></li>	
-  <li><%= link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  <li><%= if (@fpr > 5) 
+  	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
+  <li><%= if (@fpr > 5) 
+  	         then link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
   	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
-  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_index_path(:id => @mp.furnizor_id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-piggy-bank") %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.furnizor_id), :class => "glyphicon glyphicon-lamp" %></li>
-  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.clsstation}" %></strong></li>
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_path(:cp_id => @mp.company, :id => @mp.furnizor), :class => "glyphicon glyphicon-piggy-bank")
+  	         else link_to "Филиал: #{@mp.mesubstation.filial.name}", companies_path(:id => @mp.mesubstation.filial, :cp_id => @mp.company), :class => "glyphicon glyphicon-tower" end %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company, :flr_id => if (@fpr > 5) then @mp.furnizor else @mp.mesubstation.filial end), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
 
+<% if (@fpr > 5) %>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -71,6 +76,7 @@
     </div>
   </div>  
 </div>
+<% end %>
 
 <h2 align="center">Счетчики <%= image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 40) %></h2> 
            
@@ -87,7 +93,7 @@
 			   <th>Показания</th>
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>.........</th>	   
+			   <% if (@fpr > 5) %><th>.........</th><% end %>	   
 			</tr>	
 		</thead>
 		<tbody>
@@ -100,20 +106,20 @@
 			   <% end %>	
 						<% i = i + 1 %>
 						<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end %></td>						
-						<td><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
+						<td nowrap><%= if item.thesauru_id then item.thesauru.cvalue end %></td>
 						<td><%= item.meternum %></td>
 						<td><%= item.koeftt %></td>
 						<td><%= item.koeftn %></td>
 						<td><%= item.koefcalc %></td>
 						<td><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>						
-  						<td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(@mp,:met=>item.id) %>
+  						<td nowrap><% if (@fpr > 5) %><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(@mp,:met=>item.id) %><% end %>
   						    <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), meter_path(item,format: "xlsx") %>
   						    <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), meter_path(item,format: "pdf") %></td>
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-  						<td><%= link_to " " , meters_edit_path(:mt_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
+  						<% if (@fpr > 5) %><td><%= link_to " " , meters_edit_path(:mt_id => item.id), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , meters_destroy_path(:mt_id=>item.id), :class=> "glyphicon glyphicon-remove",
-  						                 data: { confirm: "Удалить счетчик № #{item.meternum}?" } %></td>       						
+  						                 data: { confirm: "Удалить счетчик № #{item.meternum}?" } %></td><% end %>       						
 					</tr>		
 				<% end %>			
 		</tbody>

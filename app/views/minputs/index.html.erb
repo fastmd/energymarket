@@ -1,0 +1,149 @@
+<% provide(:title, 'Ручной ввод') %>
+
+<nav class="navbar">
+  <ul class="nav nav-pills pull-left">
+    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => if @fpr < 6  then @mp.mesubstation.filial else @flr.id end), :class => "glyphicon glyphicon-level-up" %></li>
+  <!--  <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign", :rel => "external" %></li> -->
+  </ul>  
+</nav>
+
+<ul class="breadcrumb">
+  <li><%= if (@fpr > 5) 
+  	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
+  	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
+  <li><%= if (@fpr > 5) 
+  	         then link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_path(:cp_id => @mp.company_id, :id => @mp.furnizor_id), :class => "glyphicon glyphicon-piggy-bank") 
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-tower" end %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => if (@fpr > 5) then @mp.furnizor_id else @mp.mesubstation.filial end), :class => "glyphicon glyphicon-lamp" %></li>
+  <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
+</ul>
+
+<% if (@fpr > 5) %>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-info">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
+          <% if @flag=='edit' %>Редактировать ручной ввод<% else %>Добавить ручной ввод<% end %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
+      <div class="panel-body">
+		<%= form_for(@minput, html: { class: 'form-inline' }) do |f| %>
+          <div class="row">					
+		    <div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		   	<div class="form-group">		
+		   		<label for='mdate' class="control-label">Дата</label>
+				<%= date_field_tag 'mdate', @minput.mdate, class: "form-control" %>
+			</div><br><br>
+		   	<div class="form-group">		
+		   		<label for='comment' class="control-label">Комментарий</label>
+				<%= text_field_tag 'comment', @minput.comment, placeholder: 'Комментарий...',  :size=>"40", class: "form-control" %>
+		   	</div>			    		
+		   	<div class="form-group">
+		   		<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>		   			
+				<%= check_box_tag 'f', 'yes', if (@minput.f) then 'yes' else nil end, class: "form-control" %>
+		    </div>					
+			</div>
+		  	</div>
+		  	</div>			
+		    <div class="col-md-3">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		   		<div class="form-group">		
+		   				<label for='tplosses' class="control-label">Потери в трансформаторе активные</label>
+						<%= number_field_tag 'tplosses', @minput.tplosses, min: 0, max: 1000000, step: 0.01, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='trlosses' class="control-label">Потери в трансформаторе реактивные</label>
+						<%= number_field_tag 'trlosses', @minput.trlosses, min: 0, max: 1000000, step: 0.01, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='llosses' class="control-label">Потери в линии</label>
+						<%= number_field_tag 'llosses', @minput.llosses, min: 0, max: 1000000, step: 0.01, class: "form-control" %>
+				</div>
+			</div>
+		  	</div>
+		  	</div>
+		    <div class="col-md-3">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		   		<div class="form-group">		
+		   				<label for='cti' class="control-label">Технологический расход индуктивный</label>
+						<%= number_field_tag 'cti', @minput.cti, min: 0, max: 1000000, step: 0.01, class: "form-control" %>
+				</div>
+		   		<div class="form-group">		
+		   				<label for='ctc' class="control-label">Технологический расход емкостной</label>
+						<%= number_field_tag 'ctc', @minput.ctc, min: 0, max: 1000000, step: 0.01, class: "form-control" %>
+				</div>
+			</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row -->
+		   	<br>
+		   	    <%= hidden_field_tag :page, @page %>  			
+				<%= hidden_field_tag :mpoint_id, @mp.id %>
+				<%= hidden_field_tag :id, @minput.id %>
+	            <div  align="center"> 
+				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить параметры ?" } %>                            	                
+				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>
+	            </div> 			                
+		<% end %>
+      </div>
+    </div>
+  </div>  
+</div>
+<% end %>
+			
+<h3 align="center">Ручной ввод <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></h3>
+<small>
+<table class="table table-striped  table-hover table-condensed">
+	<thead>
+		<tr class="info">
+		   <th>Дата</th>
+		   <th>Потери в трансформаторе активные</th>
+		   <th>Потери в трансформаторе реактивные</th>
+		   <th>Потери в линии</th>
+		   <th>Технологический расход индуктивный</th>
+		   <th>Технологический расход емкостной</th>
+		   <th>Комментарий</th>
+		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+		   <% if (@fpr > 5) %><th>.........</th><% end %>
+		</tr>	
+	</thead>
+	<tbody>					
+	  <% if !@minputs.nil? %>
+	  	<% @minputs.each do |item| %>
+			    <% if item.updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success"><% else %><tr><% end %>		
+					<td nowrap><%= item.mdate.to_formatted_s(:day_month_year) %></td>
+					<td nowrap><%= number_with_precision(item.tplosses, delimiter: " ", precision: 2) %></td>
+					<td nowrap><%= number_with_precision(item.trlosses, delimiter: " ", precision: 2) %></td>
+					<td nowrap><%= number_with_precision(item.llosses, delimiter: " ", precision: 2) %></td>
+					<td nowrap><%= number_with_precision(item.cti, delimiter: " ", precision: 2) %></td>
+					<td nowrap><%= number_with_precision(item.ctc, delimiter: " ", precision: 2) %></td>				
+					<td><%= item.comment %></td>
+					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+  					<% if (@fpr > 5) %><td><%= link_to " " , minputs_edit_path(:id => item.id, :mpoint_id => item.mpoint_id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+  						<%= link_to " " , minputs_destroy_path(:id => item.id, :mpoint_id => item.mpoint_id, :page => @page), :class=> "glyphicon glyphicon-remove",
+  						                 data: { confirm: "Удалить параметры за #{item.mdate.to_formatted_s(:day_month_year)} ?" } %></td><% end %>  						
+				</tr>
+		 <% end %> 		  
+	   <% end %>	
+	</tbody>
+</table>
+</small>
+
+<center><small><%= if !@minputs.nil? then will_paginate @minputs, :params => {:mpoint_id => @mp.id}, renderer: BootstrapPagination::Rails end %></small></center>
+
+<h5>Введеная величина заменяет значение соответствующего расчетного параметра в отчетах за месяц, соотвествующий указанной дате.<br>
+	Дату выбирать внутри расчетного периода: больше расчетного дня на начало периода и меньше либо равную расчетному дню на конец периода.<br>
+	Если внутри расчетного периода будет больше 1 записи, то программа возьмет в расчет только последнюю.<br>
+	Дата пустой быть не может.<br>
+	Ввести более одной записи на одну и ту же дату нельзя.<br>	
+	Если какое-либо поле оставить пустым, то оно не оказывает никакого влияния на расчет.<br>
+</h5>

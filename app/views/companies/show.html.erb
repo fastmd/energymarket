@@ -112,11 +112,11 @@
 </div>
 	
 <h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3> 
-           
+<small>           
 <table class="table table-striped  table-hover">
 		<thead>
 			<tr class="info">
-			   <th>№</th>
+			   <th>ID</th>
 			   <th>Код</th>
 			   <th>Поставщик<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></th>
 			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
@@ -132,10 +132,9 @@
 			   <th title="Граница раздела и точка учета не совпадают"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></th> 	
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
+			   <th>................</th>
 			   <th>.....</th>
-			   <th>.....</th>
-			   <th>.....</th>		    
-			   <th>.....</th>	   
+			   <th>.....</th>		       
 			</tr>	
 		</thead>
 		<tbody>
@@ -147,7 +146,7 @@
 					<tr>
 			   <% end %>	
 						<% i = i + 1 %>
-						<td><%= link_to (if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end), mpoint_path(item) %></td>
+						<td><%= link_to item.id, mpoint_path(item) %></td>
 						<td><%= link_to (if item.cod then item.cod else ' ' end), mpoint_path(item) %></td>
 						<td><%= if item.furnizor then item.furnizor.name end %></td>
 						<td><%= if item.filial then item.filial.name end %></td>
@@ -166,15 +165,19 @@
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
-						   <td><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %></td>
-						   <td><%= link_to image_tag('indicii.png', :alt => "Показания", :width => 30, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %></td>
-  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>
+						   <td nowrap><%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %>
+						       <%= link_to image_tag('indicii.png', :alt => "Показания", :width => 40, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %>
+						       <%= link_to "", minputs_index_path(:mpoint_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-edit", :title => "Ручной ввод" %></td>						       
+  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>					       
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %></td>
   						<% else %>
-  						   <td><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
-  						   <td><%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %></td>      						
-                           <td><%= link_to image_tag('pokaz.png', :alt => "Показания", :width => 40, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
+  						   <td nowrap><%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
+  						   	   <%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>
+  						   	   <%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %>
+  						   	   <%= link_to "", minputs_index_path(:mpoint_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-edit", :title => "Ручной ввод" %>
+  						   </td>      						
+                           <td><%= link_to image_tag('pokaz.png', :alt => "Показания", :width => 30, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "pdf") %></td>
   						<% end %>     						
@@ -185,6 +188,7 @@
 				<% end %>			
 		</tbody>
 </table>
+</small>
 
 <center><small><%= if !@mp.nil? then will_paginate @mp, renderer: BootstrapPagination::Rails end %></small></center>
 

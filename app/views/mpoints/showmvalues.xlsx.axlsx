@@ -27,7 +27,7 @@ wb.styles do |style|
 	    sheet.add_row ["","Поставщик: #{@mp.furnizor.name}"]
 	    sheet.add_row ["","Потребитель: #{@mp.company.name}"]
 	    sheet.add_row ["","Филиал: #{@mp.mesubstation.filial.name}"]
-	    sheet.add_row ["","Регион: #{@mp.mesubstation.region.cvalue}"]
+	    if @mp.mesubstation.region then sheet.add_row ["","Регион: #{@mp.mesubstation.region.cvalue}"] end
 	    sheet.add_row ["","Подстанция (подключен потребитель): #{@mp.mesubstation.name}"]
 	    sheet.add_row ["","Присоединение (запитан потребитель): #{@mp.meconname}"]
 	    sheet.add_row ["","Объект установки учета: #{@mp.clsstation}"]

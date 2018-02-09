@@ -15,6 +15,17 @@ Rails.application.routes.draw do
 
   root 'welcome#index'
 
+
+  get 'minputs/index'
+  post 'minputs/index'
+  get 'minputs/edit'
+  post 'minputs/edit'
+  get 'minputs/destroy'
+  post 'minputs/destroy' 
+  resources :minputs do
+  end  
+
+
   get 'trparams/create'
   get 'trparams/update'
   get 'trparams/destroy'
@@ -160,6 +171,10 @@ end
 resources :lines  do  
   resources :wires
 end 
+
+resources :mpoints  do
+    resources :minputs
+end
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

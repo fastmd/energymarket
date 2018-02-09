@@ -10,6 +10,7 @@ class Mpoint < ApplicationRecord
  has_many   :valllnparams, inverse_of: :mpoint
  has_many   :lines, through: :lnparams, inverse_of: :mpoint
  has_many   :valllines, through: :lnparams, inverse_of: :mpoint
+ has_many   :minputs, inverse_of: :mpoint
  belongs_to :company, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :furnizor, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :mesubstation, inverse_of: :mpoints

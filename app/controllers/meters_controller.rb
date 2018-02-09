@@ -1,6 +1,6 @@
 class MetersController < ApplicationController
 before_filter :redirect_cancel, only: [:create, :update]
-before_filter :check_user, only: [:index]   
+before_filter :check_user  
   
   def helpcounter
     @pagename = 'Справка-Счетчики'
@@ -16,6 +16,7 @@ before_filter :check_user, only: [:index]
     @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc)
     @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)    
     @metertypes=Vmetertype.all.pluck(:cvalue, :id)
+    if @fpr < 6 then  @flr =  @mp.mesubstation.filial else @flr =  @mp.furnizor end
   end
 
   def new

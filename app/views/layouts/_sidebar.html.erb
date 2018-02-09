@@ -24,16 +24,16 @@
     	  		      <% if ((@navheader=='Филиалы') and (item.id==subitem.filial_id)) or ((@navheader!='Филиалы') and (item.id==subitem.furnizor_id)) %>
     	  		        <li>	
     	  		      	   <p>&#8194;
-    	  		           <small><a role="button" data-toggle="collapse" data-parent="#accordion" href="#leaf<%= subitemid %>" aria-expanded="false" aria-controls="leaf<%= subitemid %>" class = "glyphicon glyphicon-plus"></a></small>
-    	  		           <%= link_to "#{subitem.company_shname}", company_path(subitem.company_id, :flr_id => if (@navheader=='Филиалы') then subitem.filial_id else subitem.furnizor_id end), :class => "glyphicon glyphicon-lamp" %>
-    	  		           <% if (!@leaves.nil?) and (!@count_mpoints[subitem.company_id].nil?) then %><span class="badge"><%=@count_mpoints[subitem.company_id] %></span><% end %>
+    	  		           <small><a role="button" data-toggle="collapse" data-parent="#accordion" href="#leaf<%= subitemid %>" aria-expanded="false" aria-controls="leaf<%= subitemid %>" class = "glyphicon glyphicon-lamp"></a></small>
+    	  		           <%= link_to "#{subitem.company_shname.truncate(25)}", company_path(subitem.company_id, :flr_id => if (@navheader=='Филиалы') then subitem.filial_id else subitem.furnizor_id end) %>
+    	  		           <!--<% if (!@leaves.nil?) and (!@count_mpoints[subitem.company_id].nil?) then %><span class="badge"><%=@count_mpoints[subitem.company_id] %></span><% end %>-->
     	  		           </p>
     	  		           <ul id="leaf<%= subitemid %>" class="nav nav-list collapse noPadding">
     	  		           <% if (!@leaves.nil?) and (!@count_mpoints[subitem.company_id].nil?)  %>
     	  		           <% @leaves.each do |leaf| %>
     	  		              <% if (subitem.company_id==leaf.company_id) and (((@navheader=='Филиалы') and (subitem.filial_id==leaf.filial_id)) or ((@navheader!='Филиалы') and (subitem.furnizor_id==leaf.furnizor_id)))%>
     	  		           	  <li class="noPadding"><p>&#8194;&#8195; 
-    	  		           	  	<%= link_to " #{leaf.name}", mpoint_path(leaf), :class => "glyphicon glyphicon-object-align-horizontal" %></p>          
+    	  		           	  	<%= link_to " #{leaf.clconname.truncate(12)}", mpoint_path(leaf), :class => "glyphicon glyphicon-object-align-horizontal" %></p>          
     	  		          	  </li> 
     	  		           	  <% end %>
     	  		           <% end %>

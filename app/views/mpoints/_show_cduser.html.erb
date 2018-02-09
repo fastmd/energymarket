@@ -58,11 +58,11 @@
 		<h3 align="center"><% if @flag=='mvedit' %>Редактирование показаний<% else  %>Ввод новых показаний<% end %></h3>
 		<%= form_for([@mp,@mp.mvalues.build], html: { class: 'form-inline' }) do |f| %>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Дата актирования</label>
+		   				<label for='actdate' class="control-label">Дата актирования</label>
 						<%= date_field_tag 'actdate', @mv_params[:actdate], class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Счетчик</label>
+		   				<label for='meter_id' class="control-label">Счетчик</label>
 						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
 				</div><br><br>
           <div class="row">					
@@ -70,45 +70,49 @@
 		    <div class="panel  panel-default">
 		    <div class="panel-body">				
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Активный прием</label>
+		   				<label for='actp180' class="control-label">Активный прием</label>
 						<%= number_field_tag 'actp180', @mv_params[:actp180], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Активная отдача</label>
+		   				<label for='actp280' class="control-label">Активная отдача</label>
 						<%= number_field_tag 'actp280', @mv_params[:actp280], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Реактивный прием</label>
+		   				<label for='actp380' class="control-label">Реактивный прием</label>
 						<%= number_field_tag 'actp380', @mv_params[:actp380], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div>
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Реактивная отдача</label>
+		   				<label for='actp480' class="control-label">Реактивная отдача</label>
 						<%= number_field_tag 'actp480', @mv_params[:actp480], min: 0, max: 1000000, step: 0.0001, class: "form-control" %>
 				</div><br><br>
 			</div>
 		  	</div>
 		  	</div>
-		  	<div class="col-md-3">
+		  	<div class="col-md-4">
 		    <div class="panel  panel-default">
 		    <div class="panel-body">	
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Потребление субабонента, кВт*ч</label>
+		   				<label for='dwa' class="control-label">Потребление субабонента, кВт*ч</label>
 						<%= number_field_tag 'dwa', @mv_params[:dwa], min: 0, max: 1000000000, step: 0.0001, class: "form-control", title: 'если есть (необязательный параметр)' %>
 				</div>				
 		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Недоучет, кВт*ч</label>
+		   				<label for='undercount' class="control-label">Недоучет, кВт*ч</label>
 						<%= number_field_tag 'undercount', @mv_params[:undercount], min: 0, max: 1000000000, step: 0.0001, class: "form-control", title: 'если есть (необязательный параметр)' %>
 				</div>
 				<div class="form-group">		
-		   				<label for='comment' class="control-label">Время работы электроустановки Траб, часы</label>
+		   				<label for='trab' class="control-label">Время работы электроустановки Траб, часы</label>
 						<%= number_field_tag 'trab', @mv_params[:trab], max: 1000000, step: 1, class: "form-control", title: 'если есть (необязательный параметр)' %>
 				</div>	
 			</div>
 		  	</div>
 		  	</div>
-		  	<div class="col-md-6">
+		  	<div class="col-md-5">
 		    <div class="panel  panel-default">
 		    <div class="panel-body">
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Комментарий</label>
+						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"40", class: "form-control" %>
+		   		</div>			    	
 				<div class="form-group">
 		   				<label for='fnefact' class="control-label"><span class="glyphicon glyphicon-record" aria-hidden="true">Включить недоучет в расчет потерь</span></label>
 						<%= check_box_tag 'fnefact', 'yes', if (@mv_params[:fnefact])=='true' then 'yes' else nil end, class: "form-control" %>
@@ -116,19 +120,15 @@
 				<div class="form-group">
 		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не аннулировать отдачу)</span></label>
 						<%= check_box_tag 'fanulare', 'yes', if (@mv_params[:fanulare])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>	   		
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Комментарий</label>
-						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
-		   		</div>		
+		   		</div>	   			
+		   		<div class="form-group">
+		   				<label for='r' class="control-label"><span class="glyphicon glyphicon-pushpin" aria-hidden="true">Расчетный день</span></label>
+						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div>		   		
 		   		<div class="form-group">
 		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>		   			
 						<%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end, class: "form-control" %>
 		   		</div>		
-		   		<div class="form-group">
-		   				<label for='r' class="control-label"><span class="glyphicon glyphicon-pushpin" aria-hidden="true">Расчетный день</span></label>
-						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>
 			</div>
 		  	</div>
 		  	</div>		   		

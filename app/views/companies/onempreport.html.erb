@@ -2,7 +2,7 @@
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
-    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => if @fpr < 6  then @mp.mesubstation.filial else @flr.id end), :class => "glyphicon glyphicon-level-up" %></li>
+    <li><%= link_to "Назад", company_path(@mp.company_id, :flr_id => if @fpr < 6  then @mp.mesubstation.filial else @mp.furnizor end), :class => "glyphicon glyphicon-level-up" %></li>
  <!--  <li><%= link_to "#{image_tag('Excel-icon.png', :alt => "XLSX", :width => "25", :height => "25")}".html_safe, companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx") %></li>
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> --> 
     <li><%= form_tag companies_onempreport_path(:id => @flr.id, :mp_id => @mp.id, :page => @page) do %>
@@ -20,9 +20,11 @@
   	         then link_to "Поставщики", welcome_index_path, :class => "glyphicon glyphicon-home"
   	         else link_to "Филиалы", welcome_index_path, :class => "glyphicon glyphicon-home" end %></li>	
   <li><%= if (@fpr > 5) 
-  	         then link_to "Поставщик: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-piggy-bank"
-  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company_id), :class => "glyphicon glyphicon-tower" end %></li>
-  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company_id, :flr_id => @mp.mesubstation.filial), :class => "glyphicon glyphicon-lamp" %></li>
+  	         then link_to(if @mp.furnizor.name.upcase.include?("FEE") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fee.png', :size => 25)}".html_safe
+  	                      elsif @mp.furnizor.name.upcase.include?("FENOSA") then "Поставщик: #{@mp.furnizor.name} #{image_tag('fenosa.png', :size => 25)}".html_safe
+  	                      else "Поставщик: #{@mp.furnizor.name}" end, companies_path(:cp_id => @mp.company, :id => @mp.furnizor), :class => "glyphicon glyphicon-piggy-bank")
+  	         else link_to "Филиал: #{@flr.name}", companies_path(:id => @flr.id, :cp_id => @mp.company), :class => "glyphicon glyphicon-tower" end %></li>
+  <li><%= link_to "Потребитель: #{@mp.company.name}", company_path(@mp.company, :flr_id => if (@fpr > 5) then @mp.furnizor else @mp.mesubstation.filial end), :class => "glyphicon glyphicon-lamp" %></li>
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
 	
@@ -300,6 +302,7 @@
   </tbody>
 </table>
 </small>
+<% end %>
 
 <h4 align="center">Потери в трансформаторах</h4>
 <small>
@@ -333,21 +336,41 @@
       <td><%= @losses[:tr_losses_rkz_formula] %></td>
     </tr>
     <tr>
-      <td>P суммарные, kWh</td>
-      <td><strong><%= number_with_delimiter(@losses[:tr_losses_p], delimiter: " ") %></strong></td>	      
+      <td>Pсум расчет, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:calculated_tr_losses_p], delimiter: " ") %></strong></td>	      
       <td><%= @losses[:tr_losses_p_formula] %></td>
     </tr>
     <tr>
-      <td>R суммарные, kVAh</td> 	      
-      <td><strong><%= number_with_delimiter(@losses[:tr_losses_r], delimiter: " ") %></strong></td>
+      <td>Pсум руч ввод, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:minput_tplosses], delimiter: " ") %></strong></td>	      
+      <td></td>
+    </tr>
+    <tr>
+      <td>Итого Pсум, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_p], delimiter: " ") %></strong></td>	      
+      <td></td>
+    </tr>
+    <tr>
+      <td>Rсум расчет, kVAh</td> 	      
+      <td><strong><%= number_with_delimiter(@losses[:calculated_tr_losses_r], delimiter: " ") %></strong></td>
       <td><%= @losses[:tr_losses_r_formula] %></td>
     </tr>
+    <tr>
+      <td>Rсум руч ввод, kVAh</td> 	      
+      <td><strong><%= number_with_delimiter(@energies[:minput_trlosses], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Итого Rсум, kVAh</td> 	      
+      <td><strong><%= number_with_delimiter(@losses[:tr_losses_r], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>        
   </tbody>
 </table>
 </small>
-<% end %>
 
-<h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4> 
+<h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4><% if @lnp.empty? then %> - линий нет<% end %></h4>
+<% unless @lnp.empty? then %> 
 <small>
 <table class="table table-striped table-condensed  table-hover">	
     <thead>
@@ -400,13 +423,14 @@
    </tbody>
 </table>     	
 </small>
+<% end %>
 	
 <h4 align="center">Потери в ВЛ</h4>
 <small>
 <table class="table table-striped table-condensed  table-hover">	
   <thead>
     <tr class="success">
-      <th style="width:150px; max-width:150px;">Параметр</th>
+      <th style="width:180px; max-width:180px;">Параметр</th>
       <th style="width:100px; max-width:200px;">Значение</th>      
       <th>Расчет</th>    	
     </tr>  
@@ -438,13 +462,24 @@
       <td></td>
     </tr>
     <tr>      
-      <td>Суммарные, kWh</td>
-      <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
+      <td>Суммарные расчетные, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:calculated_ln_losses], delimiter: " ") %></strong></td>
       <td><%= @losses[:ln_losses_formula] %></td>
+    </tr>
+    <tr>      
+      <td>Суммарные ручной ввод, kWh</td>
+      <td><strong><%= number_with_delimiter(@energies[:minput_llosses], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>      
+      <td>Итого суммарные, kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
 </small>
+
 
 <h4 align="center">Технологический расход</h4>
 <small>
@@ -498,17 +533,37 @@
       <td><%= @losses[:wrcf_formula] %></td>
     </tr>    
     <tr>
-      <td>CTi</td>	
-      <td><strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
+      <td>CTi расчет</td>	
+      <td><strong><%= number_with_delimiter(@losses[:calculated_consumtehi], delimiter: " ") %></strong></td>
       <td><%= @losses[:consumtehi_formula] %></td>
     </tr>
     <tr>
-      <td>CTc</td>	
-      <td><strong><%= number_with_delimiter(@losses[:consumtehc], delimiter: " ") %></strong></td>
+      <td>CTi ручной ввод</td>	
+      <td><strong><%= number_with_delimiter(@energies[:minput_cti], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Итого CTi</td>	
+      <td><strong><%= number_with_delimiter(@losses[:consumtehi], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>CTc расчет</td>	
+      <td><strong><%= number_with_delimiter(@losses[:calculated_consumtehc], delimiter: " ") %></strong></td>
       <td><%= @losses[:consumtehc_formula] %></td>
     </tr>
     <tr>
-      <td>CT</td>	
+      <td>CTc ручной ввод</td>	
+      <td><strong><%= number_with_delimiter(@energies[:minput_ctc], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>    
+    <tr>
+      <td>Итого CTc</td>	
+      <td><strong><%= number_with_delimiter(@losses[:consumtehc], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>        
+    <tr>
+      <td>Итого CT</td>	
       <td><strong><%= number_with_delimiter(@losses[:consumteh], delimiter: " ") %></strong></td>
       <td><%= @losses[:consumteh_formula] %></td>
     </tr>

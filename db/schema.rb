@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180206093435) do
+ActiveRecord::Schema.define(version: 20180209065951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,21 @@ ActiveRecord::Schema.define(version: 20180206093435) do
     t.index ["mpoint_id", "relevance_date"], name: "index_meters_on_mpoint_id_and_relevance_date", using: :btree
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
     t.index ["relevance_date"], name: "index_meters_on_relevance_date", using: :btree
+  end
+
+  create_table "minputs", force: :cascade do |t|
+    t.decimal  "trlosses",   precision: 10, scale: 2
+    t.decimal  "llosses",    precision: 10, scale: 2
+    t.decimal  "ctc",        precision: 10, scale: 2
+    t.boolean  "f",                                   default: true
+    t.date     "mdate",                                              null: false
+    t.text     "comment"
+    t.integer  "mpoint_id",                                          null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.decimal  "tplosses",   precision: 10, scale: 2
+    t.decimal  "cti",        precision: 10, scale: 2
+    t.index ["mpoint_id"], name: "index_minputs_on_mpoint_id", using: :btree
   end
 
   create_table "mpoints", force: :cascade do |t|
@@ -248,6 +263,7 @@ ActiveRecord::Schema.define(version: 20180206093435) do
   add_foreign_key "mesubstations", "thesaurus", column: "region_id"
   add_foreign_key "meters", "mpoints"
   add_foreign_key "meters", "thesaurus"
+  add_foreign_key "minputs", "mpoints"
   add_foreign_key "mpoints", "companies"
   add_foreign_key "mpoints", "furnizors"
   add_foreign_key "mpoints", "mesubstations"

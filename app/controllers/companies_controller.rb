@@ -858,6 +858,15 @@ private
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate).first
     unless mvalues.nil? then dddate_e = mvalues.actdate end
     daysinperiod = (dddate_e - dddate_b).to_i   #number of days between report dates
+    #---manual-input---
+    minput = Minput.where("mpoint_id = ? AND mdate > ? AND mdate <= ? AND f = 'true'", mpoint.id, dddate_b, dddate_e).order(:mdate).last
+    if minput then
+      result[:minput_tplosses] = minput.tplosses
+      result[:minput_trlosses] = minput.trlosses
+      result[:minput_llosses] = minput.llosses
+      result[:minput_cti] = minput.cti
+      result[:minput_ctc] = minput.ctc
+    end
     #meters
     meters = Vmpointsmeter.where("id = ? AND (? <  relevance_end) AND (? > relevance_date)", mp_id, dddate_b, dddate_e).order(:meter_id)
     if meters.count != 0 then      
@@ -1203,12 +1212,16 @@ private
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
         tr_losses_rxx = result[:tr_losses_rxx] = tr_losses_rxx.round(4)
         tr_losses_rkz = result[:tr_losses_rkz] = tr_losses_rkz.round(4)
-        tr_losses_p = result[:tr_losses_p] = tr_losses_pxx + tr_losses_pkz
+        tr_losses_p = result[:tr_losses_p] = result[:calculated_tr_losses_p] = tr_losses_pxx + tr_losses_pkz
         result[:tr_losses_p_formula] = tr_losses_pxx.to_s + " + " + tr_losses_pkz.to_s 
-        tr_losses_r = result[:tr_losses_r] = tr_losses_rxx + tr_losses_rkz
+        tr_losses_r = result[:tr_losses_r] = result[:calculated_tr_losses_r] = tr_losses_rxx + tr_losses_rkz
         result[:tr_losses_r_formula] = tr_losses_rxx.to_s + " + " + tr_losses_rkz.to_s  
         result[:ttaus] = ttaus            
       end  # if tr.count
+      if !indicii[:minput_tplosses].nil? or !indicii[:minput_tplosses].nil? then # if was manual input
+        if !indicii[:minput_tplosses].nil? then tr_losses_p = result[:tr_losses_p] = indicii[:minput_tplosses] end
+        if !indicii[:minput_trlosses].nil? then tr_losses_r = result[:tr_losses_r] = indicii[:minput_trlosses] end  
+      end   # if was manual input  
       #========begin=линии=========================================================== 
       # start variables
       ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
@@ -1303,10 +1316,11 @@ private
           end # condates.each
           result[:ln_losses_ng] = ln_losses_ng     
           result[:ln_losses_kr] = ln_losses_kr
-          ln_losses = result[:ln_losses] = ln_losses_ng + ln_losses_kr
+          ln_losses = result[:ln_losses] = result[:calculated_ln_losses] = ln_losses_ng + ln_losses_kr
           result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"
         end # if voltcl != 0
-      end           
+      end
+      unless indicii[:minput_llosses].nil? then ln_losses= result[:ln_losses] = indicii[:minput_llosses] end   # if was manual input       
       #========end=линии===========================================================                
       #============================================================================
       # cos fi with losses
@@ -1346,20 +1360,26 @@ private
            cti = ctc = 0.0
            if mpoint.fctc.nil? or mpoint.fctc == false then
              if mpoint.fmargin.nil? or mpoint.fmargin == false then                     
-               result[:consumtehc] = ctc = ((wrc) * 0.1).round(4)
+               result[:consumtehc] = result[:calculated_consumtehc] = ctc = ((wrc) * 0.1).round(4)
                result[:consumtehc_formula] = wrc.to_s + " * 0.1"
              else
-               result[:consumtehc] = ctc = if wrcf > 0 then ((wrcf) * 0.1).round(4) else 0.0 end
+               result[:consumtehc] = result[:calculated_consumtehc] = ctc = if wrcf > 0 then ((wrcf) * 0.1).round(4) else 0.0 end
                result[:consumtehc_formula] = if wrcf > 0 then "#{wrcf} * 0.1" else "0.0" end
              end    
            end
            if (mpoint.fctl.nil? or mpoint.fctl == false) and cosf <= cosficonst then 
-             result[:consumtehi] = cti =((wrif ) * 0.1).round(4)
+             result[:consumtehi] = result[:calculated_consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
-           ct = result[:consumteh] = cti + ctc
+           ct = result[:consumteh] = result[:calculated_consumteh] = cti + ctc
            result[:consumteh_formula] = "#{cti} + #{ctc}"    
-       end #if wa               
+       end #if wa
+      if !indicii[:minput_cti].nil? or !indicii[:minput_ctc].nil? then # if was manual input
+        if !indicii[:minput_cti].nil? then result[:consumtehi] = cti = indicii[:minput_cti] end
+        if !indicii[:minput_ctc].nil? then result[:consumtehc] = ctc = indicii[:minput_ctc] end
+        ct = result[:consumteh] = cti + ctc
+        result[:consumteh_formula] = "#{cti} + #{ctc}"     
+      end   # if was manual input                       
      end # if mvnum  
    result
    end

@@ -36,7 +36,7 @@ class MpointsReport < Prawn::Document
     text "Поставщик:  #{mpoints.furnizor.name}", :size => 12, :style => :bold, :align => :left     
     text "Потребитель: #{mpoints.company.name}", :size => 12, :style => :bold, :align => :left
     text "Филиал: #{mpoints.mesubstation.filial.name}", :size => 12, :style => :bold, :align => :left
-    text "Регион: #{mpoints.mesubstation.region.cvalue}", :size => 12, :style => :bold, :align => :left
+    if mpoints.mesubstation.region then text "Регион: #{mpoints.mesubstation.region.cvalue}", :size => 12, :style => :bold, :align => :left end
     text "Подстанция (подключен потребитель): #{mpoints.mesubstation.name}", :size => 12, :style => :bold, :align => :left 
     text "Присоединение (запитан потребитель): #{mpoints.meconname}", :size => 12, :style => :bold, :align => :left 
     text "Объект установки учета: #{mpoints.clsstation}", :size => 12, :style => :bold, :align => :left 
