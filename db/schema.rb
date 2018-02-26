@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180209065951) do
+ActiveRecord::Schema.define(version: 20180221081449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,8 @@ ActiveRecord::Schema.define(version: 20180209065951) do
     t.boolean  "f",              default: true,    null: false
     t.float    "koefcalc",       default: 1.0,     null: false
     t.integer  "thesauru_id"
+    t.integer  "beforedigs"
+    t.integer  "afterdigs"
     t.index ["mpoint_id", "relevance_date"], name: "index_meters_on_mpoint_id_and_relevance_date", using: :btree
     t.index ["mpoint_id"], name: "index_meters_on_mpoint_id", using: :btree
     t.index ["relevance_date"], name: "index_meters_on_relevance_date", using: :btree
@@ -148,7 +150,7 @@ ActiveRecord::Schema.define(version: 20180209065951) do
     t.text     "comment"
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
-    t.date     "actdate",                                            null: false
+    t.datetime "actdate",                                            null: false
     t.integer  "meter_id",                                           null: false
     t.boolean  "f",                                   default: true, null: false
     t.decimal  "actp180",    precision: 14, scale: 4,                null: false
@@ -163,6 +165,7 @@ ActiveRecord::Schema.define(version: 20180209065951) do
     t.boolean  "fanulare"
     t.decimal  "undercount", precision: 20, scale: 4
     t.boolean  "fnefact"
+    t.boolean  "fnozero"
     t.index ["actdate"], name: "index_mvalues_on_actdate", using: :btree
     t.index ["meter_id", "actdate"], name: "index_mvalues_on_meter_id_and_actdate", using: :btree
     t.index ["meter_id"], name: "index_mvalues_on_meter_id", using: :btree

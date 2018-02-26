@@ -304,6 +304,14 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
  
   def simplereports #neznaika
+    #render inline: "<%= params.inspect %><br><br>" and return 
+    if ((params.has_key?(:pret)) and !params[:pret].empty? and !params[:pret].nil? and params[:pret] != '') then 
+      @pret = 1
+      pret = 4      
+    else  
+      pret = 0
+      @pret = nil 
+    end
     @page = params[:page]
     @id = params[:id] 
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
@@ -327,7 +335,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     mpoints = mpointsforreports    
     # mpoints
     if mpoints.count == 0 then
-          flash[:warning] = "Нет данных для отчета. Потребители не имеют точек учета." 
+       flash[:warning] = "Нет данных для отчета. Потребители не имеют точек учета." 
     else 
       nr = 0
       enrgsums = {}
@@ -364,10 +372,10 @@ before_filter :redirect_cancel, only: [:create, :update]
                 @report << report_rind[0..@title1.count]
                 report_rind[0..4] = [nil,nil,nil,nil,nil]
                 unless inditem[:date1].nil? then
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,nil,inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],inditem[:koef],inditem[:enrg_180],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,nil,inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],inditem[:koef],inditem[:enrg_280],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,nil,inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],inditem[:koef],inditem[:enrg_380],nil,nil]
-                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,nil,inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],inditem[:koef],inditem[:enrg_480],nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/pr", nil,nil,inditem[:ind1_180],inditem[:ind0_180],inditem[:dind_180],roundconfpret(inditem[:koef], pret),roundconfpret(inditem[:enrg_180], pret),nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " a/liv",nil,nil,inditem[:ind1_280],inditem[:ind0_280],inditem[:dind_280],roundconfpret(inditem[:koef], pret),roundconfpret(inditem[:enrg_280], pret),nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/pr", nil,nil,inditem[:ind1_380],inditem[:ind0_380],inditem[:dind_380],roundconfpret(inditem[:koef], pret),roundconfpret(inditem[:enrg_380], pret),nil,nil]
+                  @report << [nil,nil,if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else "#{mp.voltcl} Î #{mp.meconname} F" end + " r/liv",nil,nil,inditem[:ind1_480],inditem[:ind0_480],inditem[:dind_480],roundconfpret(inditem[:koef], pret),roundconfpret(inditem[:enrg_480], pret),nil,nil]
                 end
               end
               unless energies[:wasub].nil? then 
@@ -383,54 +391,65 @@ before_filter :redirect_cancel, only: [:create, :update]
               unless energies[:waliv].nil? then
                 if enrgsums[:waliv].nil? then enrgsums[:waliv] = energies[:waliv] else enrgsums[:waliv] += energies[:waliv] end
                 if enrgsums[:w].nil? then enrgsums[:w] = energies[:waliv]  else enrgsums[:w] += energies[:waliv] end 
-              end               
+              end
+              consum_pe_mp = energies[:wa_without_wasub_with_undercount]               
               # pierderi   
               losses = one_mp_losses(mp.id, energies)             
               # report Pierderi               
               unless losses.nil? then
                 # report Pierderi LEA                
                 unless losses[:ln_losses].nil? then
-                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end             
-                  report_rind = [nil,"Pierderi LEA, kWh",nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses].round(4),nil,nil]
+                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end
+                  consum_pe_mp += losses[:ln_losses]               
+                  report_rind = [nil,"Pierderi LEA, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
                   @report << report_rind[0..@title1.count]
                 end
                 # report Pierderi transf
                 unless losses[:tr_losses_p].nil? then
-                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:tr_losses_p] else enrgsums[:losses] += losses[:tr_losses_p] end                                     
-                  report_rind = [nil,"Pierderi transf, kWh",nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_p].round(4),nil,nil]
+                  if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:tr_losses_p] else enrgsums[:losses] += losses[:tr_losses_p] end 
+                  consum_pe_mp += losses[:tr_losses_p]                                      
+                  report_rind = [nil,"Pierderi transf, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:tr_losses_p], pret),nil,nil]
                   @report << report_rind[0..@title1.count]
                 end  
                 # report Consum Tehnologic inductiv                  
                 unless losses[:consumtehi].nil? then
-                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehi] else enrgsums[:consumteh] += losses[:consumtehi] end                   
-                  report_rind = [nil,"Consum Tehnologic inductiv",nil,nil,nil,nil,nil,nil,nil,losses[:consumtehi].round(4),nil,nil]
+                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehi] else enrgsums[:consumteh] += losses[:consumtehi] end
+                  consum_pe_mp += losses[:consumtehi]                     
+                  report_rind = [nil,"Consum Tehnologic inductiv",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:consumtehi], pret),nil,nil]
                   @report << report_rind[0..@title1.count] 
                 end              
                 # report Consum Tehnologic capacitiv
                 unless losses[:consumtehc].nil? then                
-                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehc] else enrgsums[:consumteh] += losses[:consumtehc]  end                 
-                  report_rind = [nil,"Consum Tehnologic capacitiv",nil,nil,nil,nil,nil,nil,nil,losses[:consumtehc].round(4),nil,nil]   
+                  if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehc] else enrgsums[:consumteh] += losses[:consumtehc]  end
+                  consum_pe_mp += losses[:consumtehc]                   
+                  report_rind = [nil,"Consum Tehnologic capacitiv",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:consumtehc], pret),nil,nil]   
                   @report << report_rind[0..@title1.count]
                 end    
-              end              
+              end # losses.nil?
+              unless consum_pe_mp.nil? then
+                report_rind = [nil,"Consum e/e + pierderi + CT",nil,nil,nil,nil,nil,nil,nil,roundconfpret(consum_pe_mp, pret),nil,nil]   
+                @report << report_rind[0..@title1.count]
+              end             
             end # indicii null 
        end 
        end  #test for fake mpoint 
       end  #mpoints each 
-      @report << ['∑','Consum subabonatului',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wasub],nil,4]
-      @report << ['∑','Consum nefacturat',nil,nil,nil,nil,nil,nil,nil,enrgsums[:undercount],nil,4]
-      @report << ['∑','Summa primirii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa],nil,4]      
-      @report << ['∑','Summa livrarii',nil,nil,nil,nil,nil,nil,nil,enrgsums[:waliv],nil,4]
-      @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,enrgsums[:w],nil,4]
-      @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,enrgsums[:consumteh],nil,nil]                 
-      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,enrgsums[:losses],nil,3]    
+      @report << ['∑','Consum subabonatului',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:wasub], pret),nil,4]
+      @report << ['∑','Consum nefacturat',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:undercount], pret),nil,4]
+      @report << ['∑','Suma primirii',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:wa], pret),nil,4]      
+      @report << ['∑','Suma livrarii',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:waliv], pret),nil,4]
+      @report << ['∑','În total, consum e/e (pr.+livr.+nef.-sub.)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:w], pret),nil,4]
+      @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:consumteh], pret),nil,nil]                 
+      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:losses], pret),nil,3]
+      total_consum = (enrgsums[:w].nil? ? 0 : enrgsums[:w]) + (enrgsums[:consumteh].nil? ? 0 : enrgsums[:consumteh]) + (enrgsums[:losses].nil? ? 0 : enrgsums[:losses])
+      @report << ['∑','Consum e/e + pierderi + CT',nil,nil,nil,nil,nil,nil,nil,roundconfpret(total_consum, pret),nil,4]     
     end  #mpoints.count
     respond_to do |format|
       format.html
       format.pdf { send_data ListaReports.new.to_pdf(@flr,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="lista.xlsx"' }
     end  
-  end
+  end #neznaika
  
   def regionreports #lamp
     @page = params[:page]
@@ -491,7 +510,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       end  # mpoints each
       @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
     end  # mpoints.count                                                     
-  end
+  end #lamp
  
   def graphreports #holub cauta
     @page = params[:page]
@@ -579,7 +598,7 @@ before_filter :redirect_cancel, only: [:create, :update]
              if @fsub then report_rind << energies[:wasub] end
              if @fned then report_rind << energies[:undercount] end 
              if @fwa then report_rind << energies[:wa_without_wasub_with_undercount] end
-             if @fwr then report_rind << energies[:wr].round(1) end    
+             if @fwr then report_rind << (energies[:wr] ? energies[:wr].round(1) : energies[:wr]) end    
              #report_rind << losses[:ln_losses]   
              #report_rind << losses[:tr_losses_p]
              #report_rind << losses[:consumteh]        
@@ -603,7 +622,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     if @report.count != 0 then @report.last << 4 end
     titleforreports
     #render inline: "<%= @nc.inspect %><br><br><%= @emonth_for_report.inspect %><br><br><%= @ddate_b.inspect %><br><br><%= @ddate_e.inspect %><br><br>" and return   
-  end
+  end #holub cauta
  
   def report  #kotik
     @page = params[:page]
@@ -731,9 +750,20 @@ before_filter :redirect_cancel, only: [:create, :update]
       format.pdf { send_data ListaReport.new.to_pdf(@cp,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="lista.xlsx"' }
     end      
-  end
+  end #kotik
   
-private 
+private
+
+  def roundconfpret(x, pret = 0)
+    pret = pret.nil? ? 0 : pret 
+    x = x.nil? ? x : x.round(pret)
+    if pret == 0 then
+      x = x.to_i 
+    else
+      x = x.to_i if x == x.to_i
+    end
+    x
+  end   
 
   def monthforreports   
     # month 
@@ -828,16 +858,19 @@ private
                                  "or upper(mesubstation_name) like upper(?)) " + " and company_id = ? ", 
                                  @flr.id, data_for_search, data_for_search, data_for_search, data_for_search, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
         when (action_name == 'reports' or action_name == 'simplereports') then
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
-                                 " and (?='' or furnizor_name=?)", 
-                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)                                     
-
+         mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+                                 "and (upper(company_name||company_shname) like upper(?) "+ 
+                                 "or upper(cod||name) like upper(?) "+ 
+                                 "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                                 "or upper(mesubstation_name) like upper(?))", 
+                                 @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
         else
           mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
-                                 "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
-                                 " and (?='' or furnizor_name=?)", 
-                                 @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name, :company_shname, :id)       
+                                 "and (upper(company_name||company_shname) like upper(?) "+ 
+                                 "or upper(cod||name) like upper(?) "+ 
+                                 "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
+                                 "or upper(mesubstation_name) like upper(?))", 
+                                 @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order(:region_name, :mesubstation_name, :company_shname, :id)       
        end                                       
     end
     mpoints 
@@ -857,7 +890,7 @@ private
     unless mvalues.nil? then dddate_b = mvalues.actdate end
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_me, ddate_e).order(:actdate).first
     unless mvalues.nil? then dddate_e = mvalues.actdate end
-    daysinperiod = (dddate_e - dddate_b).to_i   #number of days between report dates
+    daysinperiod = ((dddate_e.to_date - dddate_b.to_date)).to_i   #number of days between report dates
     #---manual-input---
     minput = Minput.where("mpoint_id = ? AND mdate > ? AND mdate <= ? AND f = 'true'", mpoint.id, dddate_b, dddate_e).order(:mdate).last
     if minput then
@@ -878,21 +911,24 @@ private
        result[:wri_formula] = ""
        result[:wrc_formula] = ""
        meters.each do |mitem|
-        if mitem.meternum != 0 then      #is it fake meter?    
+        if mitem.meternum != 0 then      #is it fake meter?
+         #---number-of-digits------------------------------- 
+         indlimit = mitem.beforedigs.nil?  ? nil : (10**mitem.beforedigs)
+         #--------------------------------------------------                                          
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
-         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate, :mvalue_updated_at)
+         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate)
          if mvalues.count != 0 then
               if mvalues.count != 1 then  mvnum = 2 end  
               mvalue0 = mvalues.first
               mvalue1 = mvalues.last               
-              date1 = mvalue1.actdate         #date1           
-              date0 = mvalue0.actdate         #date0
-              dt = (date1 - date0).to_i       #dt
+              date1 = mvalue1.actdate.to_date         #date1           
+              date0 = mvalue0.actdate.to_date         #date0
+              dt = ((date1 - date0)/1).to_i       #dt
               trab = mvalue1.trab             #trab from act
               dwa  = mvalue1.dwa              #dwa  from act
               undercount  = mvalue1.undercount  #undercount  from act
-              indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt} 
+              indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt, :fnefact => mvalue1.fnefact} 
               if trab.nil? or trab == 0 then 
                 dtsum += dt                     #dtsum
               else
@@ -905,7 +941,9 @@ private
               indicii0[:ind0_180] = mvalue0.actp180          #180 
               ind0 = if mvalue0.actp180.nil? then 0 else mvalue0.actp180 end
               dind = indicii0[:dind_180] = (ind1 - ind0).round(4)   #dind   180 
-              if dind < 0 then dind = indicii0[:dind_180] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   180  
+              if dind < 0 and mvalue1.fnozero.nil? then 
+                dind = indicii0[:dind_180] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
+              end   #dind   180  
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
               unless mpoint.fturn then
                 indicii0[:ind1_activ] = mvalue1.actp180          #indicii activ
@@ -940,7 +978,9 @@ private
               indicii0[:ind0_280] = mvalue0.actp280          #280
               ind0 = if mvalue0.actp280.nil? then 0 else mvalue0.actp280 end                
               dind = indicii0[:dind_280] = (ind1 - ind0).round(4)   #dind 280
-              if dind < 0 then dind = indicii0[:dind_280] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   280  
+              if dind < 0 and mvalue1.fnozero.nil? then 
+                dind = indicii0[:dind_280] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
+              end   #dind   280  
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
               unless mpoint.fturn then 
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
@@ -963,7 +1003,9 @@ private
               indicii0[:ind0_380] = mvalue0.actp380          #380
               ind0 = if mvalue0.actp380.nil? then 0 else mvalue0.actp380 end
               dind = indicii0[:dind_380] = (ind1 - ind0).round(4)   #dind 380
-              if dind < 0 then dind = indicii0[:dind_380] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   380           
+              if dind < 0 and mvalue1.fnozero.nil? then 
+                dind = indicii0[:dind_380] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
+              end   #dind   380           
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
               unless mpoint.fturn then
                 indicii0[:ind1_reactivl] = mvalue1.actp380          #indicii reactivL
@@ -985,7 +1027,9 @@ private
               indicii0[:ind0_480] = mvalue0.actp480          #480
               ind0 = if mvalue0.actp480.nil? then 0 else mvalue0.actp480 end
               dind = indicii0[:dind_480] = (ind1 - ind0).round(4)   #dind 480
-              if dind < 0 then dind = indicii0[:dind_480] = (dind + case when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) end   #dind   480           
+              if dind < 0 and mvalue1.fnozero.nil? then 
+                dind = indicii0[:dind_480] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
+              end   #dind   480           
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
               unless mpoint.fturn then
                 indicii0[:ind1_reactivc] = mvalue1.actp480          #indicii reactivC
@@ -1017,7 +1061,7 @@ private
           #setsu said that trasformator and line work all the period, not only when the meter is on 
           #result[:workt] = dtsum * 24          
           #result[:workt_formula] = dtsum.to_s + " * 24  = "
-          result[:workt] = daysinperiod * 24          
+          result[:workt] = (daysinperiod * 24)         
           result[:workt_formula] = daysinperiod.to_s + " * 24  = "          
          else
           result[:trab] = trabsum 

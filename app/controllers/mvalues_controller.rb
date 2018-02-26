@@ -17,11 +17,14 @@ before_filter :redirect_cancel, only: [:create, :update]
     mv.dwa = params[:dwa]
     mv.undercount = params[:undercount]
     mv.actdate = params[:actdate]
+    mv.actdate = mv.actdate.change(hour: (params[:date][:hour]).to_i, min: (params[:date][:minute]).to_i )
     mv.comment = params[:comment]
     mv.f = if params[:f].nil? then false else true end
     mv.r = if params[:r].nil? then false else true end
     mv.fanulare = if params[:fanulare].nil? then nil else true end
-    mv.fnefact = if params[:fnefact].nil? then nil else true end         
+    mv.fnefact = if params[:fnefact].nil? then nil else true end
+    mv.fnozero = if params[:fnozero].nil? then nil else true end 
+   # render inline: "<%= params.inspect %><br><br><%= params[:date][:minute] %><br><br><%= @mv.inspect %><br><br>" and return           
     begin  
       if mv.save! then redirect_to mpoint_path(mp, :met => params[:met]) end
     rescue
@@ -30,13 +33,13 @@ before_filter :redirect_cancel, only: [:create, :update]
             redirect_to mpoint_path(mp,:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
                                        :trab=>params[:trab],:dwa=>params[:dwa],:undercount=>params[:undercount], 
                                        :actdate =>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:fanulare=>params[:fanulare],
-                                       :fnefact=>params[:fnefact],:flag=>'mvadd',:met=>params[:met])
+                                       :fnefact=>params[:fnefact],:fnozero=>params[:fnozero],:flag=>'mvadd',:met=>params[:met])
           else
             redirect_to mpoint_path(mp,:mv_id=>mv.id,
                                        :meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280 =>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
                                        :trab=>params[:trab],:dwa=>params[:dwa],:undercount=>params[:undercount],
                                        :actdate=>params[:actdate],:comment=>params[:comment],:f=>params[:f],:r=>params[:r],:fanulare=>params[:fanulare],
-                                       :fnefact=>params[:fnefact],:flag=>'mvedit',:met=>params[:met])
+                                       :fnefact=>params[:fnefact],:fnozero=>params[:fnozero],:flag=>'mvedit',:met=>params[:met])
           end    
      end   
   end
@@ -51,7 +54,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     redirect_to mpoint_path(mp, :flag=>'mvedit', :met => params[:met], :mv_id => mv.id, 
                                 :meter_id=>mv.meter_id,:actp180=>mv.actp180,:actp280=>mv.actp280,:actp380=>mv.actp380,:actp480=>mv.actp480,
                                 :trab=>mv.trab,:dwa=>mv.dwa,:undercount=>mv.undercount,
-                                :actdate=>mv.actdate,:comment=>mv.comment,:f=>mv.f,:r=>mv.r,:fanulare=>mv.fanulare,:fnefact=>mv.fnefact)
+                                :actdate=>mv.actdate,:comment=>mv.comment,:f=>mv.f,:r=>mv.r,:fanulare=>mv.fanulare,:fnefact=>mv.fnefact,:fnozero=>mv.fnozero)
   end
 
   def show

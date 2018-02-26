@@ -54,8 +54,8 @@
       <tr>
       	 <td><%= number_with_delimiter(item[:meternum], delimiter: " ") %></td>
       	 <td>Дата съема</td>
-      	 <td><%= item[:date1] %></td>
-      	 <td><%= item[:date0] %></td>
+      	 <td nowrap><%= item[:date1] ? item[:date1].strftime("%d.%m.%Y") : nil %></td>
+      	 <td nowrap><%= item[:date0] ? item[:date0].strftime("%d.%m.%Y") : nil %></td>
       	 <td><strong><%= number_with_delimiter(item[:dt], delimiter: " ") %>, дни</strong></td>
       	 <td></td>
       	 <td></td>
@@ -117,7 +117,7 @@
       <tr>
       	 <td></td>
       	 <td>Недоучет, kWh</td>
-      	 <td><%= number_with_delimiter(item[:undercount], delimiter: " ") %></td>
+      	 <td><%= number_with_delimiter(item[:undercount], delimiter: " ") %> <% if item[:fnefact] then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
       	 <td></td>
       	 <td></td>
       	 <td></td>
@@ -369,7 +369,7 @@
 </table>
 </small>
 
-<h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4><% if @lnp.empty? then %> - линий нет<% end %></h4>
+<h4 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %><% if @lnp.empty? then %> - линий нет<% end %></h4>
 <% unless @lnp.empty? then %> 
 <small>
 <table class="table table-striped table-condensed  table-hover">	
@@ -414,7 +414,7 @@
 		 <td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
 		 <td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
 		 <td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
-		 <td><%= if item.condate then item.condate.strftime("%d.%m.%Y_%H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y_%H:%M") end %></td>
+		 <td nowrap><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y %H:%M") end %></td>
 		 <td><%= item.comment %></td>
 		 <td><%= item.line.comment %></td>
       </tr>

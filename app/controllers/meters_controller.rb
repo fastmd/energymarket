@@ -123,6 +123,8 @@ private
     meter.koeftt = koeftt
     meter.koeftn = koeftn
     meter.koefcalc = koefcalc.round(4)
+    meter.beforedigs = if params[:beforedigs] then params[:beforedigs] else 6 end
+    meter.afterdigs = if params[:afterdigs] then params[:afterdigs] else 4 end 
     meter    
   end
   

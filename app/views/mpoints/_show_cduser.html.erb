@@ -1,23 +1,9 @@
-  <script type="text/javascript">
-  /* <![CDATA[ */
-   function externalLinks() {
-    links = document.getElementsByTagName("a");
-    for (i=0; i<links.length; i++) {
-      link = links[i];
-      if (link.getAttribute("href") && link.getAttribute("rel") == "external")
-      link.target = "_blank";
-    }
-   }
-   window.onload = externalLinks;
-  /* ]]> */ 
- </script>
-
 <% provide(:title, 'Показания') %>
 
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", if @met.nil? then company_path(@mp.company.id, :flr_id => @mp.furnizor_id) else meters_index_path(:id => @mp.id) end , :class => "glyphicon glyphicon-level-up" %></li>
-    <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign", :rel => "external" %></li>
+    <li><%= link_to "Справка", mpoints_helpmvalue_path(:id => @mp.id, :met => @met), :class => "glyphicon glyphicon-info-sign", target: "_blank" %></li>
   </ul>  
 </nav>
 
@@ -38,7 +24,7 @@
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel panel-info">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -59,12 +45,17 @@
 		<%= form_for([@mp,@mp.mvalues.build], html: { class: 'form-inline' }) do |f| %>
 		   		<div class="form-group">		
 		   				<label for='actdate' class="control-label">Дата актирования</label>
-						<%= date_field_tag 'actdate', @mv_params[:actdate], class: "form-control" %>
+						<%= date_field_tag 'actdate', @mv_params[:actdate].to_date, class: "form-control" %>
 				</div>
+		   		<div class="form-group">
+		   			    <% acttime = @mv_params[:actdate].to_time %>		
+		   				<label for='acttime' class="control-label">Время актирования</label>				
+				        <%= select_time acttime, time_separator: ':', minute_step: 15, class: "form-control" %>
+				</div>					
 		   		<div class="form-group">		
 		   				<label for='meter_id' class="control-label">Счетчик</label>
 						<%= select_tag 'meter_id', options_for_select(@mets, @mv_params[:meter_id]), class: "form-control" %>
-				</div><br><br>
+				</div><br><br>				        
           <div class="row">					
 		    <div class="col-md-3">
 		    <div class="panel  panel-default">
@@ -112,19 +103,23 @@
 		   		<div class="form-group">		
 		   				<label for='comment' class="control-label">Комментарий</label>
 						<%= text_field_tag 'comment', @mv_params[:comment], placeholder: 'Комментарий...',  :size=>"40", class: "form-control" %>
-		   		</div>			    	
+		   		</div></br>				    	
 				<div class="form-group">
 		   				<label for='fnefact' class="control-label"><span class="glyphicon glyphicon-record" aria-hidden="true">Включить недоучет в расчет потерь</span></label>
 						<%= check_box_tag 'fnefact', 'yes', if (@mv_params[:fnefact])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>
+		   		</div></br>	
 				<div class="form-group">
 		   				<label for='fanulare' class="control-label"><span class="glyphicon glyphicon-flash" aria-hidden="true">Учет А- (не аннулировать отдачу)</span></label>
 						<%= check_box_tag 'fanulare', 'yes', if (@mv_params[:fanulare])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>	   			
+		   		</div></br>	   			
+				<div class="form-group">
+		   				<label for='fnozero' class="control-label"><span class="glyphicon glyphicon-off" aria-hidden="true">Нет перехода через ноль</span></label>
+						<%= check_box_tag 'fnozero', 'yes', if (@mv_params[:fnozero])=='true' then 'yes' else nil end, class: "form-control" %>
+		   		</div></br>	
 		   		<div class="form-group">
 		   				<label for='r' class="control-label"><span class="glyphicon glyphicon-pushpin" aria-hidden="true">Расчетный день</span></label>
 						<%= check_box_tag 'r', 'yes', if (@mv_params[:r])=='true' then 'yes' else nil end, class: "form-control" %>
-		   		</div>		   		
+		   		</div></br>			   		
 		   		<div class="form-group">
 		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>		   			
 						<%= check_box_tag 'f', 'yes', if (@mv_params[:f])=='true' then 'yes' else nil end, class: "form-control" %>
@@ -137,8 +132,8 @@
 				<%= hidden_field_tag :met, unless @met.nil? then @met.id else nil end %>
 				<%= hidden_field_tag :mv_id, @mv_params[:mv_id]%>
 	            <div  align="center"> 
-				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить показания ?" } %>                            	                
-				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить показания ?" } %>                            	                
+				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>
 	            </div> 			                
 		<% end %>
 	  <% end %>
@@ -153,9 +148,9 @@
 	<thead>
 		<tr class="info">
 		   <th>№</th>
-		   <th>Дата актирования</th>
+		   <th>Дата и время</br> актирования</th>
 		   <th title="№ счетчика"  width="8%" >Счетчик</th>
-		   <th title="Дата установки счетчика">Дата монтажа</th>
+		   <th title="Дата установки счетчика">Дата монтажа</br>счетчика</th>
 		   <th>Активный прием</th>
 		   <th>Активная отдача</th>
 		   <th>Реактивный прием</th>
@@ -164,6 +159,7 @@
 		   <th title="Добавляется к Wa">Недоучет, кВт*ч</th>
 		   <th title="Включить недоучет в расчет потерь"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
 		   <th title="Учет А-: не аннулировать отдачу"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
+		   <th title="Нет перехода через ноль"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></th>
 		   <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Траб, часы</th>
 		   <th>Комментарий</th>
 		   <th title="Включить данные в расчет"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
@@ -183,7 +179,7 @@
 			   <% end %>		
 					<% i = i + 1 %>
 					<td><%= if params[:page].nil? then i else (params[:page].to_i - 1) * @perpage + i end  %></td>
-					<td nowrap><%= item.actdate.to_formatted_s(:day_month_year) %></td>
+					<td nowrap><%= item.actdate.strftime("%d.%m.%Y %R") %></td>
 				    <td nowrap><%= number_with_delimiter(item.meternum, delimiter: " ") %></td>										
 					<td nowrap><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
 					<td nowrap><%= number_with_precision(item.actp180, delimiter: " ", precision: 4) %></td>
@@ -194,6 +190,7 @@
 					<td nowrap title="Недоучет, кВт*ч"><%= number_with_delimiter(item.undercount, delimiter: " ", precision: 4) %></td>
 					<td title="Включить недоучет в расчет потерь"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
 					<td title="Учет А-: не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
+					<td title="Нет перехода через ноль"><% if item.fnozero then %><span class="glyphicon glyphicon-off" aria-hidden="true"></span><% end %></td>
 					<td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
 					<td><%= item.comment %></td>
 					<td title="Включить данные в расчет"><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>

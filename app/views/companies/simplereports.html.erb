@@ -9,6 +9,8 @@
                     companies_simplereports_path(:id => @id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "xlsx", :vc => @vc, :va => @va, :page => @page) %></li>
     <li><%= form_tag companies_simplereports_path(:id => @id, :vc => @vc, :va => @va, :page => @page) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
+                <%= label_tag(:pret, "Не округлять", class: "control-label") %>
+    	        <%= check_box_tag(:pret, @pret, @pret) %>    	        
                 <%= image_submit_tag("nezna.png",class: 'submit_button',:alt => "Пересчет", :width => 40, :height => 40, :title => "Пересчет") %>
                 <% end %></li>
     <li><%= form_tag("/companies/simplereports", method: "get", class: 'form-inline') do %>
@@ -20,6 +22,7 @@
 		  <%= hidden_field_tag :vc, @vc %>
 		  <%= hidden_field_tag :va, @va %>
 		  <%= hidden_field_tag :month_for_report, @ddate.to_formatted_s(:year_month) %>
+		  <%= hidden_field_tag :pret, @pret %>
 		  <%= submit_tag("Поиск", class: "btn btn-primary", name: "search", title: "код, наименование, филиал, район, поставщик, подстанция, точка учета") %>
 		</div>
 		<% end %></li>
@@ -35,7 +38,8 @@
 		  <%= hidden_field_tag :page, @page %>
 		  <%= hidden_field_tag :vc, @vc %>
 		  <%= hidden_field_tag :va, @va %>
-		  <%= hidden_field_tag :month_for_report, @ddate.to_formatted_s(:year_month) %>		  
+		  <%= hidden_field_tag :month_for_report, @ddate.to_formatted_s(:year_month) %>
+		  <%= hidden_field_tag :pret, @pret%>		  
 		  <%= submit_tag("Фильтр", class: "btn btn-primary", name: "filter") %>
 		</div>
 		<% end %></li>
