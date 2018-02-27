@@ -24,7 +24,7 @@
 <h4 align="center">Справочник - Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h4>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel panel-info">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -36,28 +36,41 @@
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование линии<% else %>Ввод новой линии<% end %></h4>
 		<%= simple_form_for(@line, html: { class: 'form-inline' }) do |f| %>
-		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}  %>
+		    <div class="row">					
+		    <div class="col-md-7">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}  %><br>
 		      <%= f.input :mesubstation_id, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
 				    value_method: :id, include_blank: false, prompt: "Подстанция..." %>
 		      <%= f.input :mesubstation2_id, label: 'Подстанция2 (для отпаек) ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
-				    value_method: :id, include_blank: true, prompt: "Подстанция2..." %><br><br>	
+				    value_method: :id, include_blank: true, prompt: "Подстанция2..." %><br>
 		      <%= f.input :l, label: 'Длина линии L, км ', placeholder: 'L... ', as: :decimal %>
-		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %>
-		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br><br>		      
 			  <%= f.association :wire, label: 'Провод ', 
 				    :label_method => lambda { |wire| "#{wire.name} | q = #{wire.q} | ρ20 = #{wire.ro} | Kr = #{wire.k_scr} | Kc = #{wire.k_peb} "}, 
-				    value_method: :id, include_blank: false, prompt: "Провод..." %>
+				    value_method: :id, include_blank: false, prompt: "Провод..." %>		      
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-5">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">			      
+		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %><br>
+		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br>		      
 			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal %>	    		  
-			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 25}  %>
+			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 40}  %><br>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
   			  <%= hidden_field_tag :page, @page %>
-  			  </br></br>       
+			</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row -->  			         
   			  <div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
 				                data: { confirm: "Сохранить данные?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			 </div> 
 		<% end %>
       </div>
