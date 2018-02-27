@@ -390,7 +390,7 @@ before_filter :redirect_cancel, only: [:create, :update]
               end
               unless energies[:waliv].nil? then
                 if enrgsums[:waliv].nil? then enrgsums[:waliv] = energies[:waliv] else enrgsums[:waliv] += energies[:waliv] end
-                if enrgsums[:w].nil? then enrgsums[:w] = energies[:waliv]  else enrgsums[:w] += energies[:waliv] end 
+            #    if enrgsums[:w].nil? then enrgsums[:w] = energies[:waliv]  else enrgsums[:w] += energies[:waliv] end 
               end
               consum_pe_mp = energies[:wa_without_wasub_with_undercount]               
               # pierderi   
@@ -438,7 +438,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @report << ['∑','Consum nefacturat',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:undercount], pret),nil,4]
       @report << ['∑','Suma primirii',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:wa], pret),nil,4]      
       @report << ['∑','Suma livrarii',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:waliv], pret),nil,4]
-      @report << ['∑','În total, consum e/e (pr.+livr.+nef.-sub.)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:w], pret),nil,4]
+      @report << ['∑','În total, consum e/e (prim.+nef.-sub.)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:w], pret),nil,4]
       @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:consumteh], pret),nil,nil]                 
       @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:losses], pret),nil,3]
       total_consum = (enrgsums[:w].nil? ? 0 : enrgsums[:w]) + (enrgsums[:consumteh].nil? ? 0 : enrgsums[:consumteh]) + (enrgsums[:losses].nil? ? 0 : enrgsums[:losses])
