@@ -380,6 +380,8 @@ before_filter :redirect_cancel, only: [:create, :update]
               end
               unless energies[:wasub].nil? then 
                 if enrgsums[:wasub].nil? then enrgsums[:wasub] = energies[:wasub] else enrgsums[:wasub] += energies[:wasub] end
+                report_rind = [nil,"Consum subabonat, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(energies[:wasub], pret),nil,nil]
+                @report << report_rind[0..@title1.count]                  
               end
               unless energies[:undercount].nil? then 
                 if enrgsums[:undercount].nil? then enrgsums[:undercount] = energies[:undercount] else enrgsums[:undercount] += energies[:undercount] end
