@@ -400,10 +400,17 @@ before_filter :redirect_cancel, only: [:create, :update]
                 # report Pierderi LEA                
                 unless losses[:ln_losses].nil? then
                   if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end
-                  consum_pe_mp += losses[:ln_losses]               
-                  report_rind = [nil,"Pierderi LEA, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
+                  consum_pe_mp += losses[:ln_losses]              
+                  report_rind = [nil,"Pierderi LEA (cons.), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
                   @report << report_rind[0..@title1.count]
                 end
+                # report Pierderi LEA - ME               
+                unless losses[:ln_me_losses].nil? then
+                  if enrgsums[:me_losses].nil? then enrgsums[:me_losses] = losses[:ln_me_losses] else enrgsums[:me_losses] += losses[:ln_me_losses]  end
+                  consum_pe_mp -= losses[:ln_me_losses]              
+                  report_rind = [nil,"Pierderi LEA (ME), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_me_losses], pret),nil,nil]
+                  @report << report_rind[0..@title1.count]
+                end                
                 # report Pierderi transf
                 unless losses[:tr_losses_p].nil? then
                   if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:tr_losses_p] else enrgsums[:losses] += losses[:tr_losses_p] end 
@@ -440,7 +447,8 @@ before_filter :redirect_cancel, only: [:create, :update]
       @report << ['∑','Suma livrarii',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:waliv], pret),nil,4]
       @report << ['∑','În total, consum e/e (prim.+nef.-sub.)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:w], pret),nil,4]
       @report << ['∑','Consum Tehnologic',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:consumteh], pret),nil,nil]                 
-      @report << ['∑','Suma pierderi',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:losses], pret),nil,3]
+      @report << ['∑','Suma pierderi (consumator)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:losses], pret),nil,3]
+      @report << ['∑','Suma pierderi (ME)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:me_losses], pret),nil,3]
       total_consum = (enrgsums[:w].nil? ? 0 : enrgsums[:w]) + (enrgsums[:consumteh].nil? ? 0 : enrgsums[:consumteh]) + (enrgsums[:losses].nil? ? 0 : enrgsums[:losses])
       @report << ['∑','Consum e/e + pierderi + CT',nil,nil,nil,nil,nil,nil,nil,roundconfpret(total_consum, pret),nil,4]     
     end  #mpoints.count
@@ -1360,8 +1368,14 @@ private
           end # condates.each
           result[:ln_losses_ng] = ln_losses_ng     
           result[:ln_losses_kr] = ln_losses_kr
-          ln_losses = result[:ln_losses] = result[:calculated_ln_losses] = ln_losses_ng + ln_losses_kr
-          result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"
+          if mpoint.fminuslinelosses then
+            ln_losses = result[:ln_losses] = result[:calculated_ln_losses] = 0.0
+            result[:ln_losses_formula] = "0.0"            
+            result[:ln_me_losses] = ln_losses_ng + ln_losses_kr          
+          else
+            ln_losses = result[:ln_losses] = result[:calculated_ln_losses] = ln_losses_ng + ln_losses_kr
+            result[:ln_losses_formula] = "#{ln_losses_ng} + #{ln_losses_kr}"
+          end
         end # if voltcl != 0
       end
       unless indicii[:minput_llosses].nil? then ln_losses= result[:ln_losses] = indicii[:minput_llosses] end   # if was manual input       

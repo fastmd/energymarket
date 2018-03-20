@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180221081449) do
+ActiveRecord::Schema.define(version: 20180320073251) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,26 +121,27 @@ ActiveRecord::Schema.define(version: 20180221081449) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                                null: false
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
-    t.string   "meconname",                                                 null: false
-    t.string   "clsstation",                                                null: false
-    t.string   "clconname",                                                 null: false
+    t.integer  "company_id",                                                 null: false
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
+    t.string   "meconname",                                                  null: false
+    t.string   "clsstation",                                                 null: false
+    t.string   "clconname",                                                  null: false
     t.text     "comment"
-    t.string   "name",                                                      null: false
-    t.decimal  "voltcl",          precision: 14, scale: 4, default: "10.0", null: false
-    t.boolean  "f",                                        default: true,   null: false
+    t.string   "name",                                                       null: false
+    t.decimal  "voltcl",           precision: 14, scale: 4, default: "10.0", null: false
+    t.boolean  "f",                                         default: true,   null: false
     t.integer  "cod"
-    t.integer  "furnizor_id",                                               null: false
+    t.integer  "furnizor_id",                                                null: false
     t.integer  "mesubstation_id"
-    t.boolean  "fct",                                      default: false,  null: false
-    t.decimal  "cosfi",           precision: 3,  scale: 2
+    t.boolean  "fct",                                       default: false,  null: false
+    t.decimal  "cosfi",            precision: 3,  scale: 2
     t.boolean  "fctc"
     t.boolean  "four"
     t.boolean  "fturn"
     t.boolean  "fctl"
     t.boolean  "fmargin"
+    t.boolean  "fminuslinelosses"
     t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
     t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
     t.index ["mesubstation_id"], name: "index_mpoints_on_mesubstation_id", using: :btree

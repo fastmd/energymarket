@@ -21,7 +21,7 @@
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel  panel-info">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -33,6 +33,10 @@
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='edit' then %>Редактирование точки учета<% else %>Ввод новой точки учета<% end %></h3>
 		<%= form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
+		    <div class="row">					
+		    <div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
 				<div class="form-group"> 
 						<label for='cod' class="control-label">Код</label>
 	   					<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 0, max: 1000000000, step: 1 %>
@@ -60,50 +64,64 @@
 				<div class="form-group">
 		   				<label for='clconname' class="control-label">Точка учета (потребитель)</label>						
 						<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
-				</div>
+				</div><br />
     		   	<div class="form-group">		   				
 		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>		
 						<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
 		   		</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Комментарий</label>						
-						<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
-		   		</div>		
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">		   				
 		   		<div class="form-group">		
 		   				<label for='fct' class="control-label">Не считать тех.расход <%= image_tag('faract.png', :alt => "без СТ", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
+						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %><br />
 						<label for='fctc' class="control-label">Не считать емкостной тех расход <%= image_tag('c.png', :alt => "без СТ емк", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>
+						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %><br />
 					    <label for='fctl' class="control-label">Не считать индуктивный тех расход <%= image_tag('l1.png', :alt => "без СТ инд", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fctl', 'yes', @mpoint.fctl, class: "form-control" %>						
+						<%= check_box_tag 'fctl', 'yes', @mpoint.fctl, class: "form-control" %><br />						
 			    </div>
 			    <div class="form-group">		   				
 		   				<label for='cosfi' class="control-label">cos φ контрактный</label>		
 						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
-		   		</div>
+		   		</div><br />
 		   		<div class="form-group">		
 		   				<label for='four' class="control-label">Наш трансформатор <span class="glyphicon glyphicon-flag" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
-			    </div>
+			    </div><br />
 			    <div class="form-group">		
 		   				<label for='fturn' class="control-label">Обратное включение счетчика <span class="glyphicon glyphicon-random" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fturn', 'yes', @mpoint.fturn, class: "form-control" %>				
-			    </div>
+			    </div><br />
 			    <div class="form-group">		
 		   				<label for='fmargin' class="control-label">Граница раздела и точка учета не совпадают <span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></label>						
 						<%= check_box_tag 'fmargin', 'yes', @mpoint.fmargin, class: "form-control" %>				
-			    </div>			    
+			    </div><br />
+			    <div class="form-group">		
+		   				<label for='fminuslinelosses' class="control-label">Потери в линии ME <span class="glyphicon glyphicon-star" aria-hidden="true"></span></label>						
+						<%= check_box_tag 'fminuslinelosses', 'yes', @mpoint.fminuslinelosses, class: "form-control" %>				
+			    </div><br />			    
+		   		<div class="form-group">		
+		   				<label for='comment' class="control-label">Комментарий</label>						
+						<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
+		   		</div><br />			    			    
 		   		<div class="form-group">		
 		   				<label for='f' class="control-label">Активный</label>						
 						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>				
 			    </div>		   		
 	  			<%= hidden_field_tag :company_id, @mpoint.company.id %>
 	  			<%= hidden_field_tag :id, @mpoint.id %>
-	  			<%= hidden_field_tag :flr_id, @flr.id %> 
+	  			<%= hidden_field_tag :flr_id, @flr.id %>
+	  		</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row --> 
 	  			<div  align="center">
-					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
 					                data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
-					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 				</div> 
 		<% end %>
       </div>
@@ -129,7 +147,8 @@
 			   <th title="Сos из контракта">cos φ</th>
 			   <th title="Наш трансформатор - не считать потери хх в трансформаторе"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></th>
 			   <th title="Обратное включение счетчика"><span class="glyphicon glyphicon-random" aria-hidden="true"></span></th>
-			   <th title="Граница раздела и точка учета не совпадают"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></th> 	
+			   <th title="Граница раздела и точка учета не совпадают"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></th>
+			   <th title="Потери в линии ME"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></th> 	
 			   <th>Комментарий</th>
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>................</th>
@@ -161,7 +180,8 @@
   						<td title="Сos из контракта"><%= item.cosfi %></td>
   						<td title="Наш трансформатор - не считать потери хх в трансформаторе"><% if item.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
   						<td title="Обратное включение счетчика"><% if item.fturn then %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><% end %></td>
-  						<td title="Граница раздела и точка учета не совпадают"><% if item.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td> 	
+  						<td title="Граница раздела и точка учета не совпадают"><% if item.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td>
+  						<td title="Потери в линии ME"><% if item.fminuslinelosses then %><span class="glyphicon glyphicon-star" aria-hidden="true"></span><% end %></td> 	
   						<td><%= item.comment %></td>
   						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
