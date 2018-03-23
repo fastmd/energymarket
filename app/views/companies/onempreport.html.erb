@@ -7,7 +7,7 @@
     <li><%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "25", :height => "25"), companies_report_path(:flr_id => @flr.id,:cp_id => @mp.company_id,:month_for_report => @ddate.to_formatted_s(:year_month),format: "pdf") %></li> --> 
     <li><%= form_tag companies_onempreport_path(:id => @flr.id, :mp_id => @mp.id, :page => @page) do %>
     	        <%= month_field_tag :month_for_report,@ddate.to_formatted_s(:year_month) %>
-                <%= image_submit_tag("vjuh-recalc.png",class: 'submit_button',:alt => "Пересчет", :width => 50, :height => 40) %> 
+                <%= image_submit_tag('big_thumb.png', :alt => "Пересчет", :width => "45", :height => "30",class: 'submit_button') %> 
                 <%= button_tag "Пересчет", type: "submit", name: "ok", value: true, class: "btn btn-default glyphicon glyphicon-refresh" %>
                 <% end %></li>                   
   </ul>  
@@ -147,7 +147,8 @@
       <th class="warning" title="Особенности расчета тех расхода" class="warning">Тех. расход</th>
 	  <th class="warning" title="Не считать потери хх в трансформаторе">Наш тр-р</th>
 	  <th class="warning" title="Обратное включение счетчика">Обр.сч.</th>
-	  <th class="warning" title="Граница раздела и точка учета не совпадают">Граница</br>раздела</th> 
+	  <th class="warning" title="Граница раздела и точка учета не совпадают">Граница</br>раздела</th>
+	  <th class="warning" title="Потери ВЛ относятся к МЭ (не потребителю)">Потери</br>ВЛ МЭ</th>  
       <th class="warning">Время работы<br> электроустановки, часы</th>
       <th class="warning">cos φ контрактный</th>
       <th>tg φ контрактный</th>   
@@ -163,7 +164,8 @@
 	       <% if @mp.fctl then %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 30, :height => 20, :title => "Не считать индуктивный тех расход") %><% end %></td>
 	  <td title="Не считать потери хх в трансформаторе"><% if @mp.four then %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><% end %></td>
   	  <td title="Обратное включение счетчика"><% if @mp.fturn then %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><% end %></td>
-  	  <td title="Граница раздела и точка учета не совпадают"><% if @mp.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td>      	
+  	  <td title="Граница раздела и точка учета не совпадают"><% if @mp.fmargin then %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><% end %></td>
+  	  <td title="Потери ВЛ относятся к МЭ (не потребителю)"><% if @mp.fminuslinelosses then %><span class="glyphicon glyphicon-star" aria-hidden="true"></span><% end %></td>      	
       <td><strong><%= number_with_delimiter(@energies[:trab], delimiter: " ") %></strong></td>	
       <td><strong><%= number_with_delimiter(@energies[:cosfi_contract], delimiter: " ") %></strong></td>
       <td><%= @energies[:tgfi_contract_formula] %><strong><%= number_with_delimiter(@energies[:tgfi_contract], delimiter: " ") %></strong></td>
@@ -462,7 +464,7 @@
       <td></td>
     </tr>
     <tr>      
-      <td>Суммарные расчетные, kWh</td>
+      <td>Суммарные расчетные (потр.), kWh</td>
       <td><strong><%= number_with_delimiter(@losses[:calculated_ln_losses], delimiter: " ") %></strong></td>
       <td><%= @losses[:ln_losses_formula] %></td>
     </tr>
@@ -472,10 +474,15 @@
       <td></td>
     </tr>
     <tr>      
-      <td>Итого суммарные, kWh</td>
+      <td>Итого суммарные (потр.), kWh</td>
       <td><strong><%= number_with_delimiter(@losses[:ln_losses], delimiter: " ") %></strong></td>
       <td></td>
     </tr>
+    <tr>      
+      <td>Итого суммарные (МЭ), kWh</td>
+      <td><strong><%= number_with_delimiter(@losses[:ln_me_losses], delimiter: " ") %></strong></td>
+      <td></td>
+    </tr>    
   </tbody>
 </table>
 </small>

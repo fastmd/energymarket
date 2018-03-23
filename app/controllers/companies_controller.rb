@@ -197,14 +197,14 @@ before_filter :redirect_cancel, only: [:create, :update]
               ['Data citirii',1,2],['Indicaţii luna precedenta',3,1],
               ['Data citirii',1,2],['Indicaţii luna curenta',3,1],
               ['Coeficient contor',1,2],['ENERGIA, kWh',3,1],
-              ['Pierderi LEA, kWh',1,2],['Pierderi trans, kWh',1,2],["Consum\n Tehnologic,\n kWh inductiv",1,2],["Consum\n Tehnologic, kWh\n capacitiv",1,2]
-    @title01 = ['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1]            
-    @title0 = ['','','','','','','','Indicaţii luna precedenta','','Indicaţii luna curenta','','ENERGIA, kWh','','','','']
+              ['Pierderi LEA, kWh',2,1],['Pierderi trans, kWh',1,2],["Consum\n Tehnologic,\n kWh inductiv",1,2],["Consum\n Tehnologic, kWh\n capacitiv",1,2]
+    @title01 = ['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Activ',1,1],['Reactiv L',1,1],['Reactiv C',1,1],['Consumator',1,1],['ME',1,1]            
+    @title0 = ['','','','','','','','Indicaţii luna precedenta','','Indicaţii luna curenta','','ENERGIA, kWh','Pierderi LEA, kWh','','','']
     @title1 = ['№','№ locului de consum','Nume client','RRE,SE si liniilor','Conexiunea','№ contor.',
               'Data citirii','Indicatii activ','Indicatii reactiv L','Indicatii reactiv C',
               'Data citirii','Indicatii activ','Indicatii reactiv L','Indicatii reactiv C',
               'Coeficient contor','ENERGIA, kWh activ','ENERGIA, kWh reactiv L','ENERGIA, kWh reactiv C',
-              'Pierderi LEA, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv',"Consum Tehnologic, kWh capacitiv"]
+              'Pierderi LEA cons, kWh','Pierderi LEA ME, kWh','Pierderi trans, kWh','Consum Tehnologic, kWh inductiv',"Consum Tehnologic, kWh capacitiv"]
     titleforreports
     # report init
     @report = Array[]
@@ -226,7 +226,7 @@ before_filter :redirect_cancel, only: [:create, :update]
            if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
             nr += 1
-            report_rind = [nr,"#{mp.cod}","#{mp.company_name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nr,"#{mp.cod}","#{mp.company_name}","#{mp.mesubstation.name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -276,16 +276,20 @@ before_filter :redirect_cancel, only: [:create, :update]
                   report_rind[18]  = losses[:ln_losses]
                   if enrgsums[:ln_losses].nil? then enrgsums[:ln_losses] = losses[:ln_losses] else enrgsums[:ln_losses] += losses[:ln_losses] end 
                 end
+                unless losses[:ln_me_losses].nil? then 
+                  report_rind[19]  = losses[:ln_me_losses]
+                  if enrgsums[:ln_me_losses].nil? then enrgsums[:ln_me_losses] = losses[:ln_me_losses] else enrgsums[:ln_me_losses] += losses[:ln_me_losses] end 
+                end                
                 unless losses[:tr_losses_p].nil? then 
-                  report_rind[19]  = losses[:tr_losses_p]
+                  report_rind[20]  = losses[:tr_losses_p]
                   if enrgsums[:tr_losses_p].nil? then enrgsums[:tr_losses_p] = losses[:tr_losses_p] else enrgsums[:tr_losses_p] += losses[:tr_losses_p] end  
                 end                
                 unless losses[:consumtehi].nil? then 
-                  report_rind[20]  = losses[:consumtehi]
+                  report_rind[21]  = losses[:consumtehi]
                   if enrgsums[:consumtehi].nil? then enrgsums[:consumtehi] = losses[:consumtehi] else enrgsums[:consumtehi] += losses[:consumtehi] end  
                 end
                 unless losses[:consumtehc].nil? then 
-                  report_rind[21]  = losses[:consumtehc]
+                  report_rind[22]  = losses[:consumtehc]
                   if enrgsums[:consumtehc].nil? then enrgsums[:consumtehc] = losses[:consumtehc] else enrgsums[:consumtehc] += losses[:consumtehc] end  
                 end
               end # losses null               
@@ -294,14 +298,14 @@ before_filter :redirect_cancel, only: [:create, :update]
           end 
          end  #test for fake mpoint         
         end  # mpoints each
-        @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
+        @report << ['∑','În total:',nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:wri],enrgsums[:wrc],enrgsums[:ln_losses],enrgsums[:ln_me_losses],enrgsums[:tr_losses_p],enrgsums[:consumtehi],enrgsums[:consumtehc],3] 
        end  # mpoints.count  
     respond_to do |format|
       format.html
       format.pdf { send_data ListaReports.new.to_pdf(@flr,@report,@luna,@ddate,@luna_b,@luna_e), :type => 'application/pdf', :filename => "lista.pdf" }
       format.xlsx { response.headers['Content-Disposition'] = 'attachment; filename="lista.xlsx"' }
     end  
-  end
+  end #kotik s summoi
  
   def simplereports #neznaika
     #render inline: "<%= params.inspect %><br><br>" and return 
@@ -351,7 +355,7 @@ before_filter :redirect_cancel, only: [:create, :update]
         end
         if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
             # report rind
-            report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+            report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.clconname}",nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
             indicii = energies[:indicii]
@@ -474,7 +478,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @lista_title << "LISTA consumatorilor directi alimentati de la statiunile electrice Î.S. ”Moldelectrica”"
     @lista_title << ((if @fpr < 6 then " filiala RETÎ" else " furnizorul" end) + " #{@flr.name} pentru luna #{@luna} anul #{@ddate.year}") 
     @title1 = ['№','Statiunea Î.S. ”Moldelectrica” de unde este alimentat consumatorul','№ fider de unde este alimemtat TF al consumatorului',
-               'Denumirea consumatorului','Wa, kWh',"Pierderi LEA, kWh","Pierderile transformatorului, kWh",'Consum Tehnologic (CT), kWh']
+               'Denumirea consumatorului','Wa, kWh',"Pierderi LEA cons., kWh","Pierderi LEA ME, kWh","Pierderile transformatorului, kWh",'Consum Tehnologic (CT), kWh']
     titleforreports
     # filter
     dataforfilterselect
@@ -495,10 +499,10 @@ before_filter :redirect_cancel, only: [:create, :update]
         # report rind
         if region != mp.region_name then
           region = mp.region_name 
-          @report << [nil,"FRED #{region}",nil,nil,nil,nil,nil,nil,2]
+          @report << [nil,"FRED #{region}",nil,nil,nil,nil,nil,nil,nil,2]
         end
         nr += 1
-        report_rind = [nr,"#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.company_name}",nil,nil,nil,nil,nil]
+        report_rind = [nr,"#{mp.mesubstation_name}",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.company_name}",nil,nil,nil,nil,nil,nil]
         # indicii si energie        
         energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
         indicii = energies[:indicii]
@@ -511,14 +515,15 @@ before_filter :redirect_cancel, only: [:create, :update]
            enrgsums = add_one_mp_losses(losses, enrgsums) 
            # report
            report_rind[4] = energies[:wa_without_wasub_with_undercount]   
-           report_rind[5] = losses[:ln_losses]   
-           report_rind[6] = losses[:tr_losses_p]
-           report_rind[7] = losses[:consumteh]        
+           report_rind[5] = losses[:ln_losses]
+           report_rind[6] = losses[:ln_me_losses]   
+           report_rind[7] = losses[:tr_losses_p]
+           report_rind[8] = losses[:consumteh]        
         end # indicii null
         @report << report_rind[0..@title1.count]  
        end  #test for fake mpoint       
       end  # mpoints each
-      @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
+      @report << ['∑',nil,nil,nil,enrgsums[:wa_without_wasub_with_undercount],enrgsums[:ln_losses],enrgsums[:ln_me_losses],enrgsums[:tr_losses_p],enrgsums[:consumteh],4]        
     end  # mpoints.count                                                     
   end #lamp
  
@@ -655,7 +660,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     nr = 0
     cp_enrgsums = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     trlosses = 0.0 
-    lnlosses = 0.0
+    lnlosses = lnmelosses = 0.0
     consumteh = 0.0 
     # mpoints 
     if @mpoints.count == 0 then
@@ -731,12 +736,16 @@ before_filter :redirect_cancel, only: [:create, :update]
         unless losses[:tr_losses_rxx].nil? then @report << [nil,'Потери тр-ра Rxx',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_rxx],nil] end
         unless losses[:tr_losses_rkz].nil? then @report << [nil,'Потери тр-ра Rкз',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_rkz],nil] end
         unless losses[:tr_losses_r].nil? then @report << [nil,'Потери тр-ра R суммарные',nil,nil,nil,nil,nil,nil,nil,losses[:tr_losses_r],2] end
-        unless losses[:ln_losses_ng].nil? then @report << [nil,'Потери ВЛ нагрузочные',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses_ng],nil] end 
-        unless losses[:ln_losses_kr].nil? then @report << [nil,'Потери ВЛ на корону',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses_kr],nil] end
+        #unless losses[:ln_losses_ng].nil? then @report << [nil,'Потери ВЛ нагрузочные',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses_ng],nil] end 
+        #unless losses[:ln_losses_kr].nil? then @report << [nil,'Потери ВЛ на корону',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses_kr],nil] end
         unless losses[:ln_losses].nil? then 
-          @report << [nil,'Потери ВЛ суммарные',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses],2]
+          @report << [nil,'Потери ВЛ (потребитель)',nil,nil,nil,nil,nil,nil,nil,losses[:ln_losses],2]
           lnlosses += losses[:ln_losses] 
         end
+        unless losses[:ln_me_losses].nil? then 
+          @report << [nil,'Потери ВЛ (МЭ)',nil,nil,nil,nil,nil,nil,nil,losses[:ln_me_losses],2]
+          lnmelosses += losses[:ln_me_losses] 
+        end        
         unless losses[:cosf].nil? then @report << [nil,'cos φ с потерями',nil,nil,nil,nil,nil,nil,nil,losses[:cosf],nil] end       
         unless losses[:consumteh].nil? then 
           @report << [nil,'Технологический расход',nil,nil,nil,nil,nil,nil,nil,losses[:consumteh],2]
@@ -751,8 +760,9 @@ before_filter :redirect_cancel, only: [:create, :update]
     @report << ['∑','Итого Energie r/pr',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[2],4]       
     @report << ['∑','Итого Energie r/liv',nil,nil,nil,nil,nil,nil,nil,cp_enrgsums[3],4]            
     @report << ['∑','Итого Потери в трансформаторах',nil,nil,nil,nil,nil,nil,nil,trlosses,3]
-    @report << ['∑','Итого Потери ВЛ',nil,nil,nil,nil,nil,nil,nil,lnlosses,3]
-    @report << ['∑','Итого Потери в трансформаторах и ВЛ',nil,nil,nil,nil,nil,nil,nil,trlosses+lnlosses,3]  
+    @report << ['∑','Итого Потери ВЛ (потребитель)',nil,nil,nil,nil,nil,nil,nil,lnlosses,3]
+    @report << ['∑','Итого Потери ВЛ (МЭ)',nil,nil,nil,nil,nil,nil,nil,lnmelosses,3]    
+    @report << ['∑','Итого Потери в трансформаторах и ВЛ(потр)',nil,nil,nil,nil,nil,nil,nil,trlosses+lnlosses,3]  
     @report << ['∑','Итого Consum tehnologic',nil,nil,nil,nil,nil,nil,nil,consumteh,nil]          
     end  # if mpoint.count
     respond_to do |format|
@@ -1168,6 +1178,10 @@ private
     unless losses[:ln_losses].nil? then 
       if result[:ln_losses].nil? then result[:ln_losses] = 0.0 end           
       result[:ln_losses] += losses[:ln_losses]
+    end
+    unless losses[:ln_me_losses].nil? then 
+      if result[:ln_me_losses].nil? then result[:ln_me_losses] = 0.0 end           
+      result[:ln_me_losses] += losses[:ln_me_losses]
     end
     unless losses[:consumteh].nil? then 
       if result[:consumteh].nil? then result[:consumteh] = 0.0 end           

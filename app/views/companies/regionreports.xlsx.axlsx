@@ -53,7 +53,7 @@ wb.styles do |style|
 	wb.add_worksheet(name: "Lista", :page_margins => margins, :page_setup => setup, :print_options => options, :header_footer => header_footer ) do |sheet|
 	    sheet.add_row [nil, Time.now.strftime("Lista a fost generata %d.%m.%Y la %H:%M")] 
 	    sheet.add_row [""]
-	    widths = [5, 25, 15, 25, 15, 15, 15, 15]
+	    widths = [5, 25, 15, 25, 15, 15, 15, 15, 15]
 	    ltitle = []
 	    @lista_title.each do |item|
 	       ltitle[0] = item
@@ -63,24 +63,24 @@ wb.styles do |style|
         sheet.merge_cells('A4:H4')
 	    sheet.add_row [""] 	    
 	    sheet.add_row @title1, 
-    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
+    		           style: [theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell, theader_cell],
     		           :widths => widths    		           
 	    sheet.add_row @title2, 
-    		           style: [theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell],
+    		           style: [theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell, theaderb_cell],
     		           :widths => widths   		           
     	if !@report.nil? then	              
   			@report.each do |item|
   		    	case when (item[0].nil?) then
-    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
-    		              style: [simplese_cell, lsimples_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell],
+    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]], 
+    		              style: [simplese_cell, lsimples_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell, simplese_cell],
     		              :widths => widths  		    	
   		    	     when (item[0] == '∑') then
-    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
-    		              style: [simplesel_cell, lsimples_cell, simplese_cell, simplese_cell, simples_cell, simples_cell, simples_cell, simples_cell],
+    				    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]], 
+    		              style: [simplesel_cell, lsimples_cell, simplese_cell, simplese_cell, simples_cell, simples_cell, simples_cell, simples_cell, simples_cell],
     		              :widths => widths
     		         else       		    	
-    		  		    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]], 
-    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell],
+    		  		    sheet.add_row [item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]], 
+    		              style: [simple_cell, lsimple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell, simple_cell],
     		              :widths => widths 
     			end                   		
     		end             
