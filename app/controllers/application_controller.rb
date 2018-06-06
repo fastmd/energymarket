@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
-  before_filter :check_user
-  before_filter :nav_menu 
+  before_action :check_user
+  before_action :nav_menu 
   $GreenDelay = 60*60
   $PerPage = 10
   $Luni = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'] 
@@ -59,6 +59,12 @@ private
       if current_user.has_role? :"cduser-fee"      then  @fpr = 7 end
       if current_user.has_role? :"cduser-fenosa"   then  @fpr = 8 end     
     end      
-  end  
+  end 
+  
+  def mylrstreep(x)
+    y = x.lstrip
+    y = y.rstrip
+    y
+  end 
    
 end

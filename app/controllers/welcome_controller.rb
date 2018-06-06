@@ -1,5 +1,5 @@
 class WelcomeController < ApplicationController
-before_filter :check_user
+before_action :check_user
 helper_method :sort_column, :sort_direction   
   
   def index

@@ -109,7 +109,7 @@ private
     elsif !@lines.nil? &&  @lines.count < (@page.to_i - 1) * $PerPage then 
       @page = ((@lines.count-1) / $PerPage + 0.5).round    
     end  
-    unless @lines.nil? then @lines = @lines.paginate(:page => @page, :per_page => $PerPage ) end              
+    #unless @lines.nil? then @lines = @lines.paginate(:page => @page, :per_page => $PerPage ) end              
   end  
 
   def line_save
@@ -129,7 +129,8 @@ private
           render 'index' 
         end
       rescue
-        flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+        flash[:error] = "Данные не сохранены. #{@line.errors.full_messages}"
+        #render inline: "<%= @line.inspect %><br><br>" and return       
         indexviewall
         render 'index'
       end
@@ -148,7 +149,7 @@ private
   end
   
   def line_init(line)
-    wire = Wire.find(line_params[:wire_id])
+    wire = if (line_params[:wire_id]!='' and !line_params[:wire_id].nil?) then Wire.find(line_params[:wire_id]) else nil end
     if !wire.nil? and (wire.q.to_f != 0) then tmp = wire.k_scr.to_f * line_params[:k_tr].to_f * wire.k_peb.to_f  * wire.ro.to_f * line_params[:l].to_f * 1000 / wire.q.to_f else tmp = nil end 
     line.name = (line_params[:name]).lstrip.rstrip   
     line.l = line_params[:l]

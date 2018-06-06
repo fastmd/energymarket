@@ -49,7 +49,7 @@
 </ul>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel panel-info">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -61,81 +61,49 @@
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод точки учета для нового потребителя<% end %></h3>
 		<%= simple_form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
-				<div class="form-group"> 
-						<label for='cod' class="control-label">Код</label>
-						<%= number_field_tag 'cod', @mpoint.cod, class: "form-control",  placeholder: "Код", min: 1, max: 1000000000, step: 1 %>
-		        </div>
-		        <div class="form-group">
-						<label for='name'class="control-label">Наименование</label>
-						<%= text_field_tag('name', @mpoint.name, class: "form-control",  :size=>"50", placeholder: "Точка учета...") %>
-				</div>
-				<div class="form-group">		   				
-		   				<label for='voltcl' class="control-label">Класс напряжения, кВ</label>
-		   				<%= number_field_tag 'voltcl', @mpoint.voltcl,  placeholder: "Класс напряжения", min: 0.1, max: 1000000, step: 0.1, class: "form-control" %>
-		   		</div><br>
-				<div class="form-group">		
-						<label for='company_id' class="control-label">Потребитель</label>
-						<%= select_tag "company_id", options_for_select( @comps, if !@mpoint.company_id.nil? then @mpoint.company_id else nil end ), class: "form-control" %>
-				</div>		
-				<div class="form-group">		
-						<label for='furnizor_id' class="control-label">Поставщик</label>
-						<%= select_tag "furnizor_id", options_for_select( @furns, if !@mpoint.furnizor_id.nil? then @mpoint.furnizor_id else nil end ), class: "form-control" %>
-				</div>			       
-			    <div class="form-group">                   
-		   				<label for='thesauru_id' class="control-label">Подстанция (ME)</label>
-		   				<%= select_tag 'mesubstation_id', options_for_select( @sstations, if !@mpoint.mesubstation_id.nil? then @mpoint.mesubstation_id else nil end), include_blank: false, prompt: "Select something" , class: "form-control" %>
-		   		</div><br>		
-		   		<div class="form-group">		
-		   				<label for='meconname' class="control-label">Точка учета (МЕ)</label>
-		   				<%= text_field_tag 'meconname', @mpoint.meconname,  placeholder: "Присоединение (запитан потребитель)",  :size=>"50", class: "form-control" %>
-		   		</div>
-		   		<div class="form-group">		
-		   				<label for='clsstation' class="control-label">Объект установки учета</label>
-		   				<%= text_field_tag 'clsstation', @mpoint.clsstation, placeholder: "Объект установки учета",  :size=>"50", class: "form-control" %>
-				</div>
-				<div class="form-group">
-		   				<label for='clconname' class="control-label">Точка учета (потребитель)</label>
-		   				<%= text_field_tag 'clconname', @mpoint.clconname,  placeholder: "Присоединение установки учета",  :size=>"50", class: "form-control" %>
-    		   	</div>
-		   		<div class="form-group">		
-		   				<label for='comment' class="control-label">Комментарий</label>
-		   				<%= text_field_tag 'comment', @mpoint.comment, placeholder: 'Комментарий...',  :size=>"50", class: "form-control" %>
-		   		</div>		
-		   		<div class="form-group">		
-		   				<label for='fct' class="control-label">Не считать тех.расход <%= image_tag('faract.png', :alt => "без СТ", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fct', 'yes', @mpoint.fct, class: "form-control" %>
-						<label for='fctc' class="control-label">Не считать емкостной тех расход <%= image_tag('c.png', :alt => "без СТ емк", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fctc', 'yes', @mpoint.fctc, class: "form-control" %>
-					    <label for='fctl' class="control-label">Не считать индуктивный тех расход <%= image_tag('l1.png', :alt => "без СТ инд", :width => 35, :height => 25) %></label>						
-						<%= check_box_tag 'fctl', 'yes', @mpoint.fctl, class: "form-control" %>					
+		    <div class="row">
+		    <%= f.error_notification %>
+		      <% if @mpoint.errors.any? %>
+			    <div id="error_explanation">
+			      <h4><%= pluralize(@mpoint.errors.count, "error") %> prohibited this line from being saved:</h4>
+			      <ul>
+			        <% @mpoint.errors.full_messages.each do |msg| %>
+			          <li><%= msg %></li>
+			        <% end %>
+			      </ul>
 			    </div>
-			    <div class="form-group">		   				
-		   				<label for='cosfi' class="control-label">cos φ контрактный</label>		
-						<%= number_field_tag 'cosfi', @mpoint.cosfi,  placeholder: "cos φ", min: 0, max: 1, step: 0.01, class: "form-control", :title => "cos φ" %>
-		   		</div>
-		   		<div class="form-group">		
-		   				<label for='four' class="control-label">Наш трансформатор <span class="glyphicon glyphicon-flag" aria-hidden="true"></span></label>						
-						<%= check_box_tag 'four', 'yes', @mpoint.four, class: "form-control" %>				
-			    </div>
-			    <div class="form-group">		
-		   				<label for='fturn' class="control-label">Обратное включение счетчика <span class="glyphicon glyphicon-random" aria-hidden="true"></span></label>						
-						<%= check_box_tag 'fturn', 'yes', @mpoint.fturn, class: "form-control" %>				
-			    </div>
-			    <div class="form-group">		
-		   				<label for='fmargin' class="control-label">Граница раздела и точка учета не совпадают <span class="glyphicon glyphicon-adjust" aria-hidden="true"></span></label>						
-						<%= check_box_tag 'fmargin', 'yes', @mpoint.fmargin, class: "form-control" %>				
-			    </div>
-		   		<div class="form-group">		
-		   				<label for='f' class="control-label">Активный</label>						
-						<%= check_box_tag 'f', true, @mpoint.f, class: "form-control" %>						   				
-		   		</div><br>							        
-  			            <%= hidden_field_tag :flr_id, @flr.id %>
-  			            <%= hidden_field_tag :parentform, 'newcompanympoint' %>
-  			            <%= hidden_field_tag :page, @page %> 
+			  <% end %>							
+		    <div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		    	<%= f.input 'cod', label: 'Код', input_html: {min: 0, max: 1000000000, step: 1}, required: false,  placeholder: "Код" %><br />	
+		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %><br />	
+		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %><br />
+		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %><br />
+		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %><br />
+		    	<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %><br />			    	
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-6">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		    	<%= f.input 'clsstation', label: 'Объект (потребитель)', required: true,  placeholder: "Объект установки учета...", input_html: {:size=>"50"} %><br />
+		    	<%= f.input 'clconname', label: 'Присоединение (потребитель)', required: true,  placeholder: "Присоединение установки учета...", input_html: {:size=>"50"} %><br />			    	
+		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1}, required: true %><br />
+		    	<%= f.input :comment, label: 'Комментарий', as: :string, :input_html => { :size => 50} %><br />
+		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %><br />	   		
+	  		</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row --> 
+  			     <%= hidden_field_tag :flr_id, @flr.id %>
+  			     <%= hidden_field_tag :parentform, 'newcompanympoint' %>
+  			     <%= hidden_field_tag :page, @page %> 
   			<div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
 				                data: { confirm: "Сохранить данные для #{@flr.name} / #{@mpoint.name}?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                	
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                	
 			</div> 
 		<% end %>
       </div>

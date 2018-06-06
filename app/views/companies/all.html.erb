@@ -1,5 +1,54 @@
 <% provide(:title, 'Справочник-Потребители') %>
 
+
+<script>
+$(document).ready(function() {
+    var t = $('#companies').DataTable( {
+        "order": [[ 3, "asc" ],[ 2, "asc" ]],
+        "language": {
+            "lengthMenu": "Отображать _MENU_ строк на странице",
+            "zeroRecords": "Ничего не найдено - увы...",
+            "info": "Страница _PAGE_ из _PAGES_",
+            "infoEmpty": "Нет доступных строк",
+            "infoFiltered": "(Отфильтровано из _MAX_ строк)",
+            "search": "Поиск",
+             paginate: {
+                first:      "<<",
+                previous:   "<",
+                next:       ">",
+                last:       ">>"
+            }
+        },
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+         "fixedHeader": {
+               headerOffset: ($('#navMenu').outerHeight() - 1)
+         },
+        responsive: {
+            details: {
+                type: 'column'
+            }
+        },
+        columnDefs: [ {
+            className: 'control',
+            orderable: false,
+            targets:   0
+        }, {
+            "searchable": false,
+            "orderable": false,
+            "targets": 1
+            }
+         ]      
+    } ); 
+    
+    t.on( 'order.dt search.dt', function () {
+        t.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            cell.innerHTML = i+1;
+        } );
+    } ).draw();
+} );
+</script>
+
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= form_tag("/companies/all", method: "get", class: 'form-inline') do %>
@@ -15,7 +64,7 @@
 <h4 align="center">Справочник-Потребители <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span></h4>	 
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel panel-info"">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -27,6 +76,21 @@
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h4>
 		<%= form_for(@company, html: { class: 'form-inline' }) do |f| %>
+		    <div class="row">					
+		    <div class="col-md-7">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		      <% if @company.errors.any? %>
+			    <div id="error_explanation">
+			      <h4><%= pluralize(@company.errors.count, "error") %> prohibited this line from being saved:</h4>
+			      <ul>
+			        <% @company.errors.full_messages.each do |msg| %>
+			          <li><%= msg %></li>
+			        <% end %>
+			      </ul>
+			     <!-- <%= @line.inspect %> -->
+			    </div>
+			  <% end %>		
 		        <div class="form-group">
 						<label for='name'class="control-label">Наименование</label>		
 						<td><%= text_field_tag 'name', @company.name, class: "form-control",  :size=>"50", placeholder: "Наименование...", maxlength:"40" %></td>
@@ -39,20 +103,30 @@
 						<label for='name'class="control-label">Код</label>		
 						<td><%= text_field_tag 'cod', @company.cod, class: "form-control",  :size=>"20",  placeholder: "Код...", maxlength:"20" %></td>
 				</div>
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-5">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">				
 		        <div class="form-group">
 						<label for='name'class="control-label">Комментарий</label>		
-						<td><%= text_field_tag 'comment', @company.comment, class: "form-control",  :size=>"50", placeholder: 'Комментарий...' %></td>
+						<td><%= text_area_tag 'comment', @company.comment, class: "form-control", placeholder: 'Комментарий...' %></td>
 				</div>
 		        <div class="form-group">
 						<label for='name'class="control-label">Активный</label>		
 						<td><%= check_box_tag 'f', 'yes', @company.f, class: "form-control" %></td>
 				</div>
+			</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row --> 				
 	  			<%= hidden_field_tag :cp_id, @company.id %>
 	  			<%= hidden_field_tag :page, @page %>      
 	  			<div  align="center">
-					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
 					                data: { confirm: "Сохранить данные?" } %>
-					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			    </div> 
 		<% end %>
       </div>
@@ -60,10 +134,12 @@
   </div>  
 </div>		           
 
-<table  class="table table-striped  table-hover">
-		<thead>
+<table id="companies" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
+	   <% 2.times do |i| %>	
+	   <% if i==0 then %><thead><% else %><tfoot><% end %>
 			<tr class="info">
-			   <th>№</th>
+			   <th style="width:3%"></th>
+			   <th style="width:2%" class="all">№</th>
 			   <th>Наименование</th>
 			   <th>Краткое наименование</th>
 			   <th>Код</th>
@@ -71,17 +147,13 @@
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
 			</tr>	
-		</thead>
+	   <% if i==0 then %></thead><% else %></tfoot><% end %>
+	   <% end %>
 		<tbody>
-   			<% i = 0%>
 			<% @companies.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
-			    	<tr class="success">
-			   <% else %> 	
-					<tr>
-			   <% end %>
-						<% i = i + 1 %>						
-						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success"><% else %><tr><% end %>					
+						<td></td>
+						<td></td>
 						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.shname %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
@@ -94,6 +166,4 @@
 			<% end %>			
 		</tbody>
 </table>
-
-<center><small><%= if !@companies.nil? then will_paginate @companies, renderer: BootstrapPagination::Rails end %></small></center>
 

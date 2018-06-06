@@ -15,8 +15,17 @@
  *= require_self
  * */
 
+// "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "bootstrap/theme";
+@import "dataTables.bootstrap.min";
+@import "jquery.dataTables";
+@import "responsive.bootstrap.min";
+@import "fixedHeader.bootstrap.min";
+@import "fixedColumns.bootstrap.min";
+@import "toastr";
+@import "rowGroup.bootstrap.min";
 
 .table-hover thead tr:hover th, .table-hover tbody tr:hover td {
 background-color: #C0F2F7;

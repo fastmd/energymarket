@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180320073251) do
+ActiveRecord::Schema.define(version: 20180606125103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,19 +121,26 @@ ActiveRecord::Schema.define(version: 20180320073251) do
   end
 
   create_table "mpoints", force: :cascade do |t|
-    t.integer  "company_id",                                                 null: false
-    t.datetime "created_at",                                                 null: false
-    t.datetime "updated_at",                                                 null: false
-    t.string   "meconname",                                                  null: false
-    t.string   "clsstation",                                                 null: false
-    t.string   "clconname",                                                  null: false
+    t.integer  "company_id",                                                null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.string   "meconname",                                                 null: false
+    t.string   "clsstation",                                                null: false
+    t.string   "clconname",                                                 null: false
     t.text     "comment"
-    t.string   "name",                                                       null: false
-    t.decimal  "voltcl",           precision: 14, scale: 4, default: "10.0", null: false
-    t.boolean  "f",                                         default: true,   null: false
+    t.string   "name",                                                      null: false
+    t.decimal  "voltcl",          precision: 14, scale: 4, default: "10.0", null: false
+    t.boolean  "f",                                        default: true,   null: false
     t.integer  "cod"
-    t.integer  "furnizor_id",                                                null: false
-    t.integer  "mesubstation_id"
+    t.integer  "furnizor_id",                                               null: false
+    t.integer  "mesubstation_id",                                           null: false
+    t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
+    t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
+    t.index ["mesubstation_id"], name: "index_mpoints_on_mesubstation_id", using: :btree
+  end
+
+  create_table "mproperties", force: :cascade do |t|
+    t.decimal  "voltcl",           precision: 14, scale: 4, default: "10.0", null: false
     t.boolean  "fct",                                       default: false,  null: false
     t.decimal  "cosfi",            precision: 3,  scale: 2
     t.boolean  "fctc"
@@ -142,9 +149,13 @@ ActiveRecord::Schema.define(version: 20180320073251) do
     t.boolean  "fctl"
     t.boolean  "fmargin"
     t.boolean  "fminuslinelosses"
-    t.index ["company_id"], name: "index_mpoints_on_company_id", using: :btree
-    t.index ["furnizor_id"], name: "index_mpoints_on_furnizor_id", using: :btree
-    t.index ["mesubstation_id"], name: "index_mpoints_on_mesubstation_id", using: :btree
+    t.integer  "mpoint_id"
+    t.boolean  "f",                                         default: true
+    t.text     "comment"
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
+    t.datetime "propdate",                                                   null: false
+    t.index ["mpoint_id"], name: "index_mproperties_on_mpoint_id", using: :btree
   end
 
   create_table "mvalues", force: :cascade do |t|
@@ -271,6 +282,7 @@ ActiveRecord::Schema.define(version: 20180320073251) do
   add_foreign_key "mpoints", "companies"
   add_foreign_key "mpoints", "furnizors"
   add_foreign_key "mpoints", "mesubstations"
+  add_foreign_key "mproperties", "mpoints"
   add_foreign_key "mvalues", "meters"
   add_foreign_key "trparams", "mpoints"
   add_foreign_key "trparams", "transformators"

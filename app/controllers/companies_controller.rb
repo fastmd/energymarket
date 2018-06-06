@@ -1,6 +1,6 @@
 class CompaniesController < ApplicationController
-before_filter :check_user
-before_filter :redirect_cancel, only: [:create, :update] 
+before_action :check_user
+before_action :redirect_cancel, only: [:create, :update] 
   
   def helpmpoint
     @pagename = 'Справка-Точки учета'
@@ -21,7 +21,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       @company = Company.find(params[:cp_id])
       params[:cp_id] = nil
     end 
-    indexviewall  
+    indexviewall(1)  
   end
   
   def create
@@ -33,7 +33,7 @@ before_filter :redirect_cancel, only: [:create, :update]
       flash[:notice] = "Потребитель #{@company.name} сохранен." 
       redirect_to companies_all_path(:page=>params[:page])           
     rescue
-      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода.#{@company.errors.full_messages}"       
       @flag = 'add' 
       indexviewall
       render "all"          
@@ -65,12 +65,12 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
 
   def index
-    if params[:cp_id].nil? then
-      @company = Company.new
-    else
-      @company = Company.find(params[:cp_id])
-      params[:cp_id] = nil
-    end  
+  #  if params[:cp_id].nil? then
+  #    @company = Company.new
+  #  else
+  #    @company = Company.find(params[:cp_id])
+  #    params[:cp_id] = nil
+  #  end  
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end   
     @mpoint = Mpoint.new 
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
@@ -86,14 +86,32 @@ before_filter :redirect_cancel, only: [:create, :update]
   end
   
   def show     
-    @cp =  Company.find(params[:id])
-    if @fpr < 6  then  @flr = Filial.find(params[:flr_id]) else @flr =  Furnizor.find(params[:flr_id]) end 
+    #-------------------------------
+    @flag = params[:flag]
+    #-------------------------------
+    @cp = Company.find(params[:id])
     @mpoint = @cp.mpoints.build
-    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    if @fpr < 6  then  
+      @flr = Filial.find(params[:flr_id]) 
+    else 
+      @flr =  Furnizor.find(params[:flr_id])
+      @mpoint.furnizor_id = params[:flr_id] 
+    end 
+    @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)
+    #-------------------------------
+    if params[:mproperty_id] then 
+      @mproperty = Mproperty.find(params[:mproperty_id]) 
+    else 
+      @mproperty = Mproperty.new
+    end
+    #------------------------------- 
+    @companies = Company.where("id = ? and f = true", @cp.id)  
+    @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+    gon.mpoints = @mpoints
+    #-------------------------------
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
     @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
-    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end  
+    @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
   end
 
   def destroy
@@ -120,7 +138,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
     @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id => :asc, actdate: :desc, relevance_date: :desc, mvalue_updated_at: :desc)
-    if @mvalues.count != 0
+    if @mvalues.count != 0 then
       @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
     end    
   end  
@@ -155,7 +173,7 @@ before_filter :redirect_cancel, only: [:create, :update]
     # title
     @lista_title = []
     @lista_title << "Расчет потребления и потерь для потребителя #{@cp.name}"
-    @lista_title << "точка учета #{@mp.cod} #{@mp.mesubstation.name} #{@mp.voltcl} Î #{@mp.meconname} F #{@mp.clconname}" 
+    @lista_title << "точка учета #{@mp.cod} #{@mp.name} #{@mp.voltcl} Î #{@mp.meconname} F #{@mp.clconname} п/ст #{@mp.mesubstation.name}"
     @lista_title << "за месяц #{@luna} #{@ddate.year} года" 
     # report init
     @report = Array[] 
@@ -169,6 +187,8 @@ before_filter :redirect_cancel, only: [:create, :update]
     @trp = Vmpointstrparam.where("id = ?", @mp.id).order(:name, :id, :tr_id, :updated_at)
     dddate_b = @energies[:dddate_b]
     dddate_e = @energies[:dddate_e]
+    @mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", @mp.id, dddate_b).order(propdate: :asc, updated_at: :asc).last
+    #render inline: "<%= params.inspect %><br><br><%= @mp.inspect %><br><br><%= @mproperty.inspect %><br><br>" and return 
     @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:condate,:line_id)
     @condates = @mp.vlnparams.select(:condate).distinct.where("(? < condate_end) AND (? > condate) AND (condate > ?)", dddate_b, dddate_e, dddate_b).pluck(:condate)
     @condates += @mp.vlnparams.select(:condate_end).distinct.where("(? < condate_end) AND (? > condate) AND (condate_end < ?)", dddate_b, dddate_e, dddate_e).pluck(:condate_end)
@@ -406,38 +426,38 @@ before_filter :redirect_cancel, only: [:create, :update]
                 # report Pierderi LEA                
                 unless losses[:ln_losses].nil? then
                   if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end
-                  consum_pe_mp += losses[:ln_losses]              
-                  report_rind = [nil,"Pierderi LEA (cons.), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
-                  @report << report_rind[0..@title1.count]
-                end
+                  consum_pe_mp += losses[:ln_losses]
+                end                
+                report_rind = [nil,"Pierderi LEA (cons.), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
+                @report << report_rind[0..@title1.count]
                 # report Pierderi LEA - ME               
                 unless losses[:ln_me_losses].nil? then
                   if enrgsums[:me_losses].nil? then enrgsums[:me_losses] = losses[:ln_me_losses] else enrgsums[:me_losses] += losses[:ln_me_losses]  end
-                  consum_pe_mp -= losses[:ln_me_losses]              
-                  report_rind = [nil,"Pierderi LEA (ME), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_me_losses], pret),nil,nil]
-                  @report << report_rind[0..@title1.count]
+                  consum_pe_mp -= losses[:ln_me_losses]
                 end                
+                report_rind = [nil,"Pierderi LEA (ME), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_me_losses], pret),nil,nil]
+                @report << report_rind[0..@title1.count]                
                 # report Pierderi transf
                 unless losses[:tr_losses_p].nil? then
                   if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:tr_losses_p] else enrgsums[:losses] += losses[:tr_losses_p] end 
-                  consum_pe_mp += losses[:tr_losses_p]                                      
+                  consum_pe_mp += losses[:tr_losses_p]
+                end                                        
                   report_rind = [nil,"Pierderi transf, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:tr_losses_p], pret),nil,nil]
-                  @report << report_rind[0..@title1.count]
-                end  
+                  @report << report_rind[0..@title1.count]  
                 # report Consum Tehnologic inductiv                  
                 unless losses[:consumtehi].nil? then
                   if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehi] else enrgsums[:consumteh] += losses[:consumtehi] end
-                  consum_pe_mp += losses[:consumtehi]                     
+                  consum_pe_mp += losses[:consumtehi]
+                end                       
                   report_rind = [nil,"Consum Tehnologic inductiv",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:consumtehi], pret),nil,nil]
-                  @report << report_rind[0..@title1.count] 
-                end              
+                  @report << report_rind[0..@title1.count]               
                 # report Consum Tehnologic capacitiv
                 unless losses[:consumtehc].nil? then                
                   if enrgsums[:consumteh].nil? then enrgsums[:consumteh] = losses[:consumtehc] else enrgsums[:consumteh] += losses[:consumtehc]  end
-                  consum_pe_mp += losses[:consumtehc]                   
+                  consum_pe_mp += losses[:consumtehc]
+                end                     
                   report_rind = [nil,"Consum Tehnologic capacitiv",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:consumtehc], pret),nil,nil]   
-                  @report << report_rind[0..@title1.count]
-                end    
+                  @report << report_rind[0..@title1.count]    
               end # losses.nil?
               unless consum_pe_mp.nil? then
                 report_rind = [nil,"Consum e/e + pierderi + CT",nil,nil,nil,nil,nil,nil,nil,roundconfpret(consum_pe_mp, pret),nil,nil]   
@@ -905,6 +925,7 @@ private
     mvnum = 0
     # billing days
     dddate_b = ddate_b
+    mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", mpoint.id, dddate_b).order(propdate: :asc, created_at: :asc).last
     dddate_e = ddate_e
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate).first
     unless mvalues.nil? then dddate_b = mvalues.actdate end
@@ -965,7 +986,7 @@ private
                 dind = indicii0[:dind_180] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   180  
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
-              unless mpoint.fturn then
+              unless mproperty.fturn then
                 indicii0[:ind1_activ] = mvalue1.actp180          #indicii activ
                 indicii0[:ind0_activ] = mvalue0.actp180          #indicii activ
                 indicii0[:wa] = energy                           #wa                 
@@ -1002,7 +1023,7 @@ private
                 dind = indicii0[:dind_280] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   280  
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
-              unless mpoint.fturn then 
+              unless mproperty.fturn then 
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
                 result[:waliv_formula] += dind.to_s + " * " + koef.to_s 
                 indicii0[:waliv] = energy                        #waliv                
@@ -1027,7 +1048,7 @@ private
                 dind = indicii0[:dind_380] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   380           
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
-              unless mpoint.fturn then
+              unless mproperty.fturn then
                 indicii0[:ind1_reactivl] = mvalue1.actp380          #indicii reactivL
                 indicii0[:ind0_reactivl] = mvalue0.actp380          #indicii reactivL
                 indicii0[:wri] = energy                             #wri                 
@@ -1051,7 +1072,7 @@ private
                 dind = indicii0[:dind_480] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   480           
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
-              unless mpoint.fturn then
+              unless mproperty.fturn then
                 indicii0[:ind1_reactivc] = mvalue1.actp480          #indicii reactivC
                 indicii0[:ind0_reactivc] = mvalue0.actp480          #indicii reactivC
                 indicii0[:wrc] = energy                             #wrc                   
@@ -1127,7 +1148,7 @@ private
          result[:wr] = wri + wrc
          result[:wr_formula] = " #{wri} + #{wrc} "
          # косинус фи контрактный
-         result[:cosfi_contract] = cosfi_contract = mpoint.cosfi
+         result[:cosfi_contract] = cosfi_contract = mproperty.cosfi
          if !cosfi_contract.nil? and cosfi_contract != 0 then
            result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
            result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 " # tg fi
@@ -1202,6 +1223,8 @@ private
       wr    = indicii[:wr]
       workt = indicii[:workt]
       dddate_b = indicii[:dddate_b]
+      mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", mpoint.id, dddate_b).order(propdate: :asc, created_at: :asc).last
+      #render inline: "<%= params.inspect %><br><br><%= mporperty.inspect %><br><br>" and return  
       dddate_e = indicii[:dddate_e]
       daysinperiod = indicii[:daysinperiod]       
       # косинус фи 
@@ -1226,7 +1249,7 @@ private
       result[:tr_losses_rkz_formula] = ""
       if tr.count != 0 then
         tr.each do |tritem|                  
-          unless mpoint.four then
+          unless mproperty.four then
             tr_losses_pxx += workt * tritem.transformator.pxx
             if result[:tr_losses_pxx_formula] != "" then result[:tr_losses_pxx_formula] += " + "  end
             result[:tr_losses_pxx_formula] += workt.to_s + " * " + (tritem.transformator.pxx).to_s
@@ -1255,7 +1278,7 @@ private
           else 
             if result[:tr_losses_pkz_formula] != "" then result[:tr_losses_pkz_formula] += " + "  end
             if result[:tr_losses_rkz_formula] != "" then result[:tr_losses_rkz_formula] += " + "  end              
-            unless mpoint.four then
+            unless mproperty.four then
                 result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
                 result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * " + tau.to_s + " * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + tm.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2 ) "
                 tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
@@ -1267,7 +1290,7 @@ private
                 tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
             end                             
           end
-          unless mpoint.four then
+          unless mproperty.four then
             tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
             if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
             result[:tr_losses_rxx_formula] += " (" + tritem.transformator.i0.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2  / 10000 - " + tritem.transformator.pxx.to_s + " ^2 ) ^0.5 * " + workt.to_s
@@ -1296,10 +1319,10 @@ private
       # varifing if any lines exist
       flines = mpoint.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).exists?
       if flines && workt then
-        if mpoint.voltcl == 0 then
+        if mproperty.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else
-          unom = mpoint.voltcl               
+          unom = mproperty.voltcl               
           result[:ln_losses_ng_formula] = Array.new 
           result[:otpaika_losses_formula] = []    
           # making of array of uniq dates whithin report period    
@@ -1384,7 +1407,7 @@ private
           end # condates.each
           result[:ln_losses_ng] = ln_losses_ng     
           result[:ln_losses_kr] = ln_losses_kr
-          if mpoint.fminuslinelosses then
+          if mproperty.fminuslinelosses then
             ln_losses = result[:ln_losses] = result[:calculated_ln_losses] = 0.0
             result[:ln_losses_formula] = "0.0"            
             result[:ln_me_losses] = ln_losses_ng + ln_losses_kr          
@@ -1400,19 +1423,19 @@ private
       # cos fi with losses
       wal = result[:wal] = wa + waliv + tr_losses_p + ln_losses
       result[:wal_formula] = "#{wa} + #{waliv} + #{tr_losses_p} + #{ln_losses} ;            " + if wa >= 10000 then "#{wa} >= 10000 ► считать СТ" else "#{wa} < 10000 ► не считать СТ" end 
-      if mpoint.voltcl > 10 then result[:wal_formula] += "; #{mpoint.voltcl} кВ > 10 кВ ► не считать СТ " end
-      if mpoint.fct then result[:wal_formula] += "; установлен флаг ► не считать СТ " end
+      if mproperty.voltcl > 10 then result[:wal_formula] += "; #{mproperty.voltcl} кВ > 10 кВ ► не считать СТ " end
+      if mproperty.fct then result[:wal_formula] += "; установлен флаг ► не считать СТ " end
       wrl = result[:wrl] = wri + tr_losses_r
       result[:wrl_formula] = "#{wri} + #{tr_losses_r}"          
-      if wa >= 10000 and not(mpoint.fct) and mpoint.voltcl <= 10 then
-           if mpoint.fctc then result[:wal_formula] += "; установлен флаг ► не считать СТ(С) " end
-           if mpoint.fctl then result[:wal_formula] += "; установлен флаг ► не считать СТ(L) " end
-           if mpoint.fmargin then result[:wal_formula] += "; установлен флаг граница раздела " end
+      if wa >= 10000 and not(mproperty.fct) and mproperty.voltcl <= 10 then
+           if mproperty.fctc then result[:wal_formula] += "; установлен флаг ► не считать СТ(С) " end
+           if mproperty.fctl then result[:wal_formula] += "; установлен флаг ► не считать СТ(L) " end
+           if mproperty.fmargin then result[:wal_formula] += "; установлен флаг граница раздела " end
            wrcf = result[:wrcf] = wrc - tr_losses_r
            result[:wrcf_formula] = wrc.to_s + " - " + tr_losses_r.to_s           
            cosf = result[:cosf] = (wal / ((wal ** 2 + wrl ** 2) ** 0.5)).round(4)
            result[:cosf_formula] = wal.to_s + " / (( " + wal.to_s + "^2 + " + wrl.to_s + "^2) ^0.5)"
-           if mpoint.voltcl == 0.4 then  
+           if mproperty.voltcl == 0.4 then  
              tgficonst = 0.426
              cosficonst = 0.92 
            else 
@@ -1432,8 +1455,8 @@ private
              result[:wrif_formula] = "0.0"
            end
            cti = ctc = 0.0
-           if mpoint.fctc.nil? or mpoint.fctc == false then
-             if mpoint.fmargin.nil? or mpoint.fmargin == false then                     
+           if mproperty.fctc.nil? or mproperty.fctc == false then
+             if mproperty.fmargin.nil? or mproperty.fmargin == false then                     
                result[:consumtehc] = result[:calculated_consumtehc] = ctc = ((wrc) * 0.1).round(4)
                result[:consumtehc_formula] = wrc.to_s + " * 0.1"
              else
@@ -1441,7 +1464,7 @@ private
                result[:consumtehc_formula] = if wrcf > 0 then "#{wrcf} * 0.1" else "0.0" end
              end    
            end
-           if (mpoint.fctl.nil? or mpoint.fctl == false) and cosf <= cosficonst then 
+           if (mproperty.fctl.nil? or mproperty.fctl == false) and cosf <= cosficonst then 
              result[:consumtehi] = result[:calculated_consumtehi] = cti =((wrif ) * 0.1).round(4)
              result[:consumtehi_formula] = wrif.to_s + " * 0.1"              
            end
@@ -1605,7 +1628,7 @@ private
     unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
   end  
   
-  def indexviewall
+  def indexviewall(f=0)
     #-----------------------------------------
     if params[:search] then
        cookies[:company_search] = @data_for_search = params[:company_search].to_s
@@ -1635,8 +1658,10 @@ private
       @page = 1
     elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
       @page = ((@companies.count-1) / $PerPage + 0.5).round    
-    end  
-    unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end               
+    end
+    unless (f) then 
+      unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end     
+    end              
   end  
  
   def redirect_cancel
@@ -1651,23 +1676,12 @@ private
   end
       
   def company_init(company)
-    t = params[:name]
-    t = t.lstrip
-    t = t.rstrip
-    company.name = t
-    t1 = params[:shname]
-    t1 = t1.lstrip
-    t1 = t1.rstrip 
+    t = company.name = mylrstreep(params[:name])
+    t1 = mylrstreep(params[:shname])
     if t1.size == 0 then t1 = t[0,14] end      
-    company.shname = t1
-    t = params[:cod]
-    t = t.lstrip
-    t = t.rstrip     
-    company.cod = t 
-    t = params[:comment]
-    t = t.lstrip
-    t = t.rstrip   
-    company.comment = t
+    company.shname = t1  
+    company.cod = mylrstreep(params[:cod]) 
+    company.comment = mylrstreep(params[:comment])
     company.f = if params[:f].nil? then false else true end  
     company    
   end        

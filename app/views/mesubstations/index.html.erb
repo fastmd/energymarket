@@ -1,5 +1,56 @@
 <% provide(:title, 'Справочник-Подстанции') %>
 
+
+<script>
+$(document).ready(function() {
+    var t = $('#mesubs').DataTable( {
+        "order": [[ 3, "asc" ],[ 4, "asc" ]],
+        "language": {
+            "lengthMenu": "Отображать _MENU_ строк на странице",
+            "zeroRecords": "Ничего не найдено - увы...",
+            "info": "Страница _PAGE_ из _PAGES_",
+            "infoEmpty": "Нет доступных строк",
+            "infoFiltered": "(Отфильтровано из _MAX_ строк)",
+            "search": "Поиск",
+             paginate: {
+                first:      "<<",
+                previous:   "<",
+                next:       ">",
+                last:       ">>"
+            }
+        },
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+         "fixedHeader": {
+               headerOffset: ($('#navMenu').outerHeight() - 1)
+         },
+        responsive: {
+            details: {
+                type: 'column'
+            }
+        },
+        columnDefs: [ {
+            className: 'control',
+            orderable: false,
+            targets:   0
+        }, {
+            "searchable": false,
+            "orderable": false,
+            "targets": 1
+            }
+         ]      
+    } ); 
+    
+    t.on( 'order.dt search.dt', function () {
+        t.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            cell.innerHTML = i+1;
+        } );
+    } ).draw();
+} );
+</script>
+
+
+
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= form_tag("/mesubstations/index", method: "get", class: 'form-inline') do %>
@@ -23,7 +74,7 @@
 <h4 align="center">Справочник - Подстанции <%= image_tag('consumator.png', :alt => "Подстанции", :width => 60, :height => 40) %></h4>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
+  <div class="panel panel-info"">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -35,17 +86,42 @@
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование подстанции<% else %>Ввод новой подстанции<% end %></h4>
 		<%= simple_form_for(@mesubstation, html: { class: 'form-inline' }) do |f| %>
+		   <div class="row">					
+		    <div class="col-md-7">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
+		      <%= f.error_notification %>
+		      <% if @mesubstation.errors.any? %>
+			    <div id="error_explanation">
+			      <h4><%= pluralize(@mesubstation.errors.count, "error") %> prohibited this line from being saved:</h4>
+			      <ul>
+			        <% @mesubstation.errors.full_messages.each do |msg| %>
+			          <li><%= msg %></li>
+			        <% end %>
+			      </ul>
+			     <!-- <%= @line.inspect %> -->
+			    </div>
+			  <% end %>
 		      <%= f.input :cod, label: 'Код ', placeholder: 'Код ' %>
 			  <%= f.input :name, label: 'Наименование ', placeholder: 'Подстанция', as: :string, :input_html => { :size => 50}  %>
+			</div>
+		  	</div>
+		  	</div>
+		  	<div class="col-md-5">
+		    <div class="panel  panel-default">
+		    <div class="panel-body">
 			  <%= f.association :filial, label: 'Филиал ', include_blank: true %>
 			  <%= f.association :region, label: 'Регион ', label_method: :cvalue, value_method: :id, include_blank: true %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
   			  <%= hidden_field_tag :page, @page %>
-  			  </br></br>       
+			</div>
+		  	</div>
+		  	</div>		   		
+		   	</div> <!--  row -->       
   			  <div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", 
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
 				                data: { confirm: "Сохранить данные?" } %>
-				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>                
+				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			 </div> 
 		<% end %>
       </div>
@@ -53,10 +129,12 @@
   </div>  
 </div>		           	           
 
-<table  class="table table-striped  table-hover table-condensed">
-		<thead>
+<table id="mesubs" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
+	   <% 2.times do |i| %>	
+	   <% if i==0 then %><thead><% else %><tfoot><% end %>
 			<tr class="info">
-			   <th>№</th>
+			   <th style="width:3%"></th>
+			   <th style="width:2%" class="all">№</th>
 			   <th>Код</th>			   
 			   <th>Наименование</th>
 			   <th>Филиал<span class="glyphicon glyphicon-tower" aria-hidden="true"></span></th>
@@ -64,17 +142,13 @@
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th>.........</th>			   
 			</tr>	
-		</thead>
+	   <% if i==0 then %></thead><% else %></tfoot><% end %>
+	   <% end %>
 		<tbody>
-   			<% i = 0%>
 			<% @mesubstations.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
-			    	<tr class="success">
-			   <% else %> 	
-					<tr>
-			   <% end %>
-						<% i = i + 1 %>						
-						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success"><% else %><tr><% end %>					
+						<td></td>
+						<td></td>
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.filial_name %><% if item.f == false then %></em><% end %></td>
@@ -87,6 +161,4 @@
 			<% end %>			
 		</tbody>
 </table>
-
-<center><small><%= if !@mesubstations.nil? then will_paginate @mesubstations, renderer: BootstrapPagination::Rails end %></small></center>
 

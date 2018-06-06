@@ -12,8 +12,14 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.dataTables.min
+//= require dataTables.bootstrap.min
+//= require dataTables.responsive.min
+//= require responsive.bootstrap.min
+//= require dataTables.fixedHeader.min
+//= require dataTables.fixedColumns.min
+//= require dataTables.rowGroup.min
 //= require bootstrap-sprockets
-//= require turbolinks
+//= require date-de
+//= require toastr
 //= require_tree .
-
-

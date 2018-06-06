@@ -1,3 +1,14 @@
+
+<% unless flash.empty? %>
+     <script type="text/javascript">
+          <% flash.each do |f| %>
+	      <% type = f[0].to_s.gsub('alert', 'error').gsub('notice', 'info') %>
+	     	 toastr['<%= type %>']('<%= f[1] %>');
+	   <% end %>
+     </script>
+<% end %>
+
+<!--
 <% flash.each do |name, msg| %>
 	<div class="alert alert-<%= case name when 'notice'  then 'success' 
 	                                      when 'alert'   then 'warning'
@@ -7,3 +18,4 @@
 	  <%= content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String) %>
 	</div>    
 <% end %>
+-->

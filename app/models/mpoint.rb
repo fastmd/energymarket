@@ -1,4 +1,5 @@
 class Mpoint < ApplicationRecord
+ has_many   :mproperties, inverse_of: :mpoint
  has_many   :meters, inverse_of: :mpoint
  has_many   :vallmeters, inverse_of: :mpoint
  has_many   :vallmetersmvalues, inverse_of: :mpoint
@@ -14,14 +15,20 @@ class Mpoint < ApplicationRecord
  belongs_to :company, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :furnizor, inverse_of: :mpoints, counter_cache: :mpoints_count
  belongs_to :mesubstation, inverse_of: :mpoints
- belongs_to :filial, inverse_of: :mpoints, counter_cache: :mpoints_count
- belongs_to :region, inverse_of: :mpoints
- validates  :name, presence: true
- validates  :mesubstation_id, presence: true
+ validates  :name, presence: true, allow_blank: false, length: { in: 3..30 }
+ validates  :mesubstation_id, presence: true, numericality: { only_integer: true }
  validates  :meconname, presence: true
  validates  :clsstation, presence: true
  validates  :clconname, presence: true
- validates  :voltcl, presence: true
- validates  :company_id, presence: true
- validates  :furnizor_id, presence: true
+ validates  :voltcl, presence: true, numericality: {:greater_than_or_equal_to => (0.4), :less_than_or_equal_to => 35}
+ validates  :company_id, presence: true, numericality: { only_integer: true }
+ validates  :furnizor_id, presence: true, numericality: { only_integer: true }
+ validates  :cod, presence: false, numericality: { only_integer: true }, allow_blank: true
+ 
+ #before_validation :stripblank
+
+  def stripblank
+    if !self.name.nil? then self.name = mylrstreep(self.name) end
+    return true
+  end
 end

@@ -8,7 +8,7 @@ class MesubstationsController < ApplicationController
     else
       @mesubstation = Mesubstation.find(params[:id])
     end 
-    indexviewall 
+    indexviewall(1) 
     @flag = params[:flag]
   end
   
@@ -50,7 +50,7 @@ class MesubstationsController < ApplicationController
   
 private  
 
-  def indexviewall
+  def indexviewall(f=0)
     @ffils  = Filial.select(:name).distinct.order(name: :asc).pluck(:name) 
     @fregions = Thesauru.select(:cvalue).distinct.where("name = ? ", 'region').order(cvalue: :asc).pluck(:cvalue)
     if params[:filter] then
@@ -100,8 +100,10 @@ private
       @page = 1
     elsif !@mesubstations.nil? &&  @mesubstations.count < (@page.to_i - 1) * $PerPage then 
       @page = ((@mesubstations.count-1) / $PerPage + 0.5).round    
-    end  
-    unless @mesubstations.nil? then @mesubstations = @mesubstations.paginate(:page => @page, :per_page => $PerPage ) end              
+    end
+    unless (f) then 
+      unless @mesubstations.nil? then @mesubstations = @mesubstations.paginate(:page => @page, :per_page => $PerPage ) end
+    end              
   end  
 
   def mesubstation_save

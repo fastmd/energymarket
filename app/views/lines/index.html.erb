@@ -1,5 +1,53 @@
 <% provide(:title, 'Справочник-Линии') %>
 
+<script>
+$(document).ready(function() {
+    var t = $('#lines').DataTable( {
+        "order": [[ 4, "asc" ],[ 6, "asc" ]],
+        "language": {
+            "lengthMenu": "Отображать _MENU_ строк на странице",
+            "zeroRecords": "Ничего не найдено - увы...",
+            "info": "Страница _PAGE_ из _PAGES_",
+            "infoEmpty": "Нет доступных строк",
+            "infoFiltered": "(Отфильтровано из _MAX_ строк)",
+            "search": "Поиск",
+             paginate: {
+                first:      "<<",
+                previous:   "<",
+                next:       ">",
+                last:       ">>"
+            }
+        },
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+         "fixedHeader": {
+               headerOffset: ($('#navMenu').outerHeight() - 1)
+         },
+        responsive: {
+            details: {
+                type: 'column'
+            }
+        },
+        columnDefs: [ {
+            className: 'control',
+            orderable: false,
+            targets:   0
+        }, {
+            "searchable": false,
+            "orderable": false,
+            "targets": 1
+            }
+         ]      
+    } ); 
+    
+    t.on( 'order.dt search.dt', function () {
+        t.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            cell.innerHTML = i+1;
+        } );
+    } ).draw();
+} );
+</script>
+
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= form_tag("/lines/index", method: "get", class: 'form-inline') do %>
@@ -40,17 +88,29 @@
 		    <div class="col-md-7">
 		    <div class="panel  panel-default">
 		    <div class="panel-body">
-		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}  %><br>
-		      <%= f.input :mesubstation_id, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
+		      <%= f.error_notification %>
+		      <% if @line.errors.any? %>
+			    <div id="error_explanation">
+			      <h4><%= pluralize(@line.errors.count, "error") %> prohibited this line from being saved:</h4>
+			      <ul>
+			        <% @line.errors.full_messages.each do |msg| %>
+			          <li><%= msg %></li>
+			        <% end %>
+			      </ul>
+			     <!-- <%= @line.inspect %> -->
+			    </div>
+			  <% end %>	
+		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}, required: true  %><br>
+		      <%= f.association :mesubstation, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
-				    value_method: :id, include_blank: false, prompt: "Подстанция..." %>
-		      <%= f.input :mesubstation2_id, label: 'Подстанция2 (для отпаек) ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
+				    value_method: :id, include_blank: false, prompt: "Подстанция...", error: 'Подстанция is mandatory, please specify one' %>
+		      <%= f.association :mesubstation2, label: 'Подстанция2 (для отпаек) ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
-				    value_method: :id, include_blank: true, prompt: "Подстанция2..." %><br>
-		      <%= f.input :l, label: 'Длина линии L, км ', placeholder: 'L... ', as: :decimal %>
+				    value_method: :id, include_blank: true, prompt: "Подстанция2...", error: 'Подстанция2 is mandatory, please specify one' %><br>
+		      <%= f.input :l, label: 'Длина линии L, км ', placeholder: 'L... ', as: :decimal, required: true %>
 			  <%= f.association :wire, label: 'Провод ', 
 				    :label_method => lambda { |wire| "#{wire.name} | q = #{wire.q} | ρ20 = #{wire.ro} | Kr = #{wire.k_scr} | Kc = #{wire.k_peb} "}, 
-				    value_method: :id, include_blank: false, prompt: "Провод..." %>		      
+				    value_method: :id, include_blank: false, prompt: "Провод...", error: 'Провод is mandatory, please specify one' %>		      
 			</div>
 		  	</div>
 		  	</div>
@@ -59,9 +119,9 @@
 		    <div class="panel-body">			      
 		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %><br>
 		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br>		      
-			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal %>	    		  
-			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 40}  %><br>
-			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
+			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal, required: false %>	    		  
+			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 40} , required: false %><br>
+			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный', required: false %>   				
   			  <%= hidden_field_tag :page, @page %>
 			</div>
 		  	</div>
@@ -78,11 +138,13 @@
   </div>  
 </div>		           	           
 
-<small>
-<table  class="table table-striped  table-hover table-condensed">
-		<thead>
+</small>
+<table id="lines" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
+	   <% 2.times do |i| %>	
+	   <% if i==0 then %><thead><% else %><tfoot><% end %>
 			<tr class="info">
-			   <th>№</th>
+			   <th style="width:3%"></th>
+			   <th style="width:2%" class="all">№</th>				
 			   <th>ID</th>
 			   <th>Наименование</th>
 			   <th>Филиал</th>
@@ -93,29 +155,25 @@
 			   <th title="Сопротивление линии">R, Ом</th>
 			   <th title="Коэффициент трассы">Ktr</th>
 			   <th title="Коэффициент формы">Кф</th>
+			   <th title="Используется вместо Uном точки учета">Uном, кВ</th>
+			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
+			   <th>Комментарий</th>
 			   <th title="Марка провода">Провод</th>
 			   <th title="Сечение провода">q, мм&sup2</th>
 			   <th title="Удельное cопротивление материала">ρ20, Ом*мм&sup2;/м</th>
 			   <th title="Коэффициент скрутки">Kr</th>
-			   <th title="Коэффициент пов. эффекта и близости">Kc</th>
-			   <th title="Используется вместо Uном точки учета">Uном, кВ</th>
-			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
-			   <th>Комментарий</th>
+			   <th title="Коэффициент пов. эффекта и близости">Kc</th>			   
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-			   <th>.........</th>
-			   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>			   
+			   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
+			   <th>.........</th>		   			   
 			</tr>	
-		</thead>
+	   <% if i==0 then %></thead><% else %></tfoot><% end %>
+	   <% end %>
 		<tbody>
-   			<% i = 0%>
 			<% @lines.each do |item| %>
-			   <% if item.updated_at > (Time.now.ago($GreenDelay)) %>
-			    	<tr class="success">
-			   <% else %> 	
-					<tr>
-			   <% end %>
-						<% i = i + 1 %>						
-						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
+			   <% if item.updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success"><% else %><tr><% end %>
+					    <td></td>
+				   	    <td></td>						
 						<td><%= item.id %></td>
 						<td><%= item.name %></td>
 						<td><%= item.filial_name %></td>
@@ -126,26 +184,27 @@
 						<td title="Сопротивление линии"><%= item.r %></td>
 						<td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
 						<td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>
+						<td title="Используется вместо Uном точки учета"><%= item.unom %></td>
+						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+						<td><%= item.comment %></td>
 						<td title="Марка провода"><%= if item.l!=0 then item.wire_name end %></td>
 						<td title="Сечение провода"><%= if item.l!=0 then item.q end %></td>
 						<td title="Удельное cопротивление материала"><%= if item.l!=0 then number_with_delimiter(item.ro, delimiter: " ") end %></td>
 						<td title="Коэффициент скрутки"><%= if item.l!=0 then number_with_delimiter(item.k_scr, delimiter: " ") end %></td>	
-						<td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>
-						<td title="Используется вместо Uном точки учета"><%= item.unom %></td>	
-						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
-						<td><%= item.comment %></td>
+						<td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>						
 						<td><span class="glyphicon glyphicon-<%= if item.wire_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
+						<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.id).count %></td> 
                         <td><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , lines_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию #{item.name} ?" } %></td>
-  						<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.id).count %></td>                  
+  						                 
 					</tr>		
 			<% end %>			
 		</tbody>
 </table>
 </small>
 
-<center><small><%= if !@lines.nil? then will_paginate @lines, renderer: BootstrapPagination::Rails end %></small></center>
+
 
 <h5><mark>Рекомендация:</mark> для удобства, наименование линии заменить, например, на наименование фидера вместо наименования подстанции, тогда вы будете сразу видеть, что это за линия, а не угадывать по ее длине.<br>
 </h5>

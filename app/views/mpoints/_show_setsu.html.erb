@@ -107,7 +107,7 @@
 				<%= f.association :line, label: 'Линия ', 
 				    :collection => @lines, value_method: :id,
 				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.mesubstation2_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
-				    include_blank: false, prompt: "Линия..." %><br></br>   				    
+				    include_blank: false, prompt: "Линия...", hint: 'Настройки будут учитываться при расчетах, начиная с этой даты.' %><br>   				    
 				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %><br></br>
 				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %><br>
 				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
@@ -170,7 +170,7 @@
 					<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.line_id).count %></td>
 					<td title="<%= item.mesubstation_name %>"><%= item.mesubstation_id %></td>
 					<td title="<%= item.mesubstation2_name %>"><%= item.mesubstation2_id %></td>
-					<td><%= if item.condate then item.condate.strftime("%d.%m.%Y_%H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y_%H:%M") end %></td>
+					<td nowrap><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></br><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y %H:%M") end %></td>
 					<td><%= item.comment %></td>
 					<td><%= item.line.comment %></td>		
 					<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>

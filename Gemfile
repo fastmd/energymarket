@@ -1,11 +1,7 @@
 source 'http://rubygems.org'
 
-gem 'jquery-datatables-rails', '~> 3.4.0'
-
-gem 'will_paginate'
-
+gem 'gon'
 gem 'devise'
-gem 'cancancan'
 gem 'rolify'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -26,7 +22,7 @@ gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
+#gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -45,17 +41,22 @@ if RUBY_PLATFORM == "i386-mingw32"
 end
 
 #gem for pdf
-gem 'prawn'
-gem 'prawn-table'
+gem 'prawn', '~> 2.2', '>= 2.2.2'
+gem 'prawn-table', '~> 0.2.2'
 
 #gem for xlsx
 gem 'axlsx_rails'
 
-gem 'bootstrap-sass', '~> 3.3.6'
-gem 'autoprefixer-rails'
+gem 'autoprefixer-rails', '~> 7.1', '>= 7.1.6'
+gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
+gem 'will_paginate'
 gem 'will_paginate-bootstrap'
 
 gem 'simple_form', '~> 3.4'
+gem 'cancancan', '~> 2.1', '>= 2.1.4'
+gem 'toastr-rails', '~> 1.0', '>= 1.0.3'
+
+gem 'rails-i18n'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

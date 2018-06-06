@@ -1,0 +1,2 @@
+module MpropertiesHelper
+end

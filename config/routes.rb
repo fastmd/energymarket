@@ -75,6 +75,10 @@ Rails.application.routes.draw do
   
   resources :thesaurus do
   end
+
+  get  'mproperties/destroy'
+  resources :mproperties do
+  end
   
   get  'mesubstations/index'
   post 'mesubstations/index'

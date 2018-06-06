@@ -1,7 +1,6 @@
 class MpointsController < ApplicationController
-before_filter :check_user   
-before_filter :redirect_cancel, only: [:create, :update]
-helper_method :sort_column, :sort_direction   
+before_action :check_user   
+before_action :redirect_cancel, only: [:create, :update]
   
   def helpmvalue
     @pagename = 'Справка-Показания'
@@ -13,22 +12,63 @@ helper_method :sort_column, :sort_direction
   end
   
   def create 
-    begin   
-      @cp =  Company.find(params[:company_id])
-      @mpoint = @cp.mpoints.build
-      @mpoint = mpoint_init(@mpoint)  
-      @mpoint.save! 
-      flash.discard
-      redirect_to company_path(:id => @cp.id, :flr_id => params[:flr_id])       
+    begin        
+      @mpoint = Mpoint.new(mpoint_params)
+      @mpoint = mpoint_init(@mpoint)
+      if @mpoint.save! then
+          flash[:notice] = "Точка учета #{@mpoint.id} #{@mpoint.name} сохранена."
+          redirect_to company_path(:flag => nil, :id => @mpoint.company_id, :flr_id => params[:flr_id]) 
+      end     
     rescue
-      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      #if !@mpoint.valid? then render inline: "<%= params.inspect %><br><br><%= @mpoint.inspect %><br><br><%= @mpoint.errors.inspect %><br><br>" and return 
+      #  else render inline: "<%= 'cucu' %><br><br><%= @mpoint.inspect %><br><br>" and return end
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода.#{@mpoint.errors.full_messages}"
+      #render inline: "<%= @mpoint.inspect %><br><br>" and return       
       @flag = 'add'
-      if @fpr < 6 then @flr = @mpoint.filial else @flr = @mpoint.furnizor end
-      @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
-      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage ) 
+      if @fpr < 6 then @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
       @sstations = Mesubstation.all.pluck(:name, :id)
-      filial_furnizor     
-      render "companies/show" 
+      @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
+      @fils  = if (@flr.nil? || (@fpr >= 6)) then Filial.all.pluck(:name, :id)   else [[@flr.name, @flr.id]] end   
+      #----------------------------------
+      @fcomps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)
+      @fsstations = Vallmpoint.select(:mesubstation_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(mesubstation_name: :asc).pluck(:mesubstation_name)
+      @ffurns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
+      @ffils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
+      @fregions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name)          
+      #-------------------------------
+      #render inline: "<%= params.inspect %><br><br><%= @mpoint.inspect %><br><br>" and return        
+      if (params[:parentform] == 'newcompanympoint') then
+        @comps = Company.where("f = ?", true).order(name: :asc).pluck(:name, :id)
+        company_list = @flr.vallmpoints.pluck(:company_id).uniq
+        @companies = (Company.order(shname: :asc).find(company_list)) 
+        #-------------------------------
+        @page = params[:page] 
+        if !@company.nil? && !@company.id.nil? then 
+          i = 0
+          n = 0
+          @companies.each do |item|
+            if item.id == @company.id then n = i end
+            i += 1   
+          end
+          @page = (n / $PerPage + 0.5).round       
+        end  
+        if @page.nil? then 
+          @page = 1
+        elsif !@companies.nil? &&  @companies.count < (@page.to_i - 1) * $PerPage then 
+          @page = ((@companies.count-1) / $PerPage + 0.5).round    
+        end  
+        unless @companies.nil? then @companies = @companies.paginate(:page => @page, :per_page => $PerPage ) end         
+        render "companies/index"
+      else
+        #-------------------------------
+        @cp =  Company.find(params[:company_id])
+        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+        @mproperty = Mproperty.new
+        @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+        gon.mpoints = @mpoints
+        @companies = Company.where("id = ? and f = true", @cp.id)  
+        render "companies/show"   
+      end              
     end   
   end
   
@@ -37,15 +77,23 @@ helper_method :sort_column, :sort_direction
     @mpoint = mpoint_init(@mpoint)
     @cp  = @mpoint.company
     begin
-      @mpoint.save! 
       flash.discard
-      redirect_to company_path(:id => @cp.id, :flr_id => params[:flr_id]) 
+      if @mpoint.save! then
+        flash[:notice] = "Точка учета #{@mpoint.id} #{@mpoint.name} сохранена."      
+        redirect_to company_path(:id => @cp.id, :flr_id => params[:flr_id])
+      end    
     rescue
-      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+      flash[:warning] = "Данные не сохранены. Проверьте правильность ввода. #{@mpoint.errors.full_messages}"
+      #render inline: "<%= @mpoint.inspect %><br><br>" and return         
       @flag = 'edit'
       if @fpr < 6 then @flr = @mpoint.filial else @flr = @mpoint.furnizor end
       @mp = Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
-      @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+      #-------------------------------
+      @mproperty = Mproperty.new
+      @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+      gon.mpoints = @mpoints
+      #-------------------------------
+      @companies = Company.where("id = ? and f = true", @cp.id)  
       @sstations = Mesubstation.all.pluck(:name, :id)  
       filial_furnizor         
       render "companies/show" 
@@ -56,10 +104,14 @@ helper_method :sort_column, :sort_direction
     @flag = 'edit'
     @mpoint = Mpoint.find(params[:mp_id])
     @cp  = @mpoint.company
+    @companies = Company.where("id = ? and f = true", @cp.id)  
     if @fpr < 6 then @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     @sstations = Mesubstation.all.pluck(:name, :id)
+    @mproperty = Mproperty.new
+    @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+    gon.mpoints = @mpoints
     filial_furnizor    
     flash.discard 
     render "companies/show"    
@@ -215,39 +267,35 @@ def showmvalues
     end
     if @data_for_search.nil? or @data_for_search.empty? then
       if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then   
-       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}")
+       @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id)
       else
        @filter = 1         
-       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+       @mp = Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                " and (?='' or furnizor_name=?)", 
-                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order("#{sort_column} #{sort_direction}")
+                               @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor)
       end  
     else
        @filter = 1
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
-       @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+       @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                "and (upper(company_name||company_shname) like upper(?) "+ 
                                "or upper(cod||name) like upper(?) "+ 
                                "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
                                "or upper(mesubstation_name) like upper(?)) ", 
-                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order("#{sort_column} #{sort_direction}")
+                               @flr.id, data_for_search, data_for_search, data_for_search, data_for_search)
     end 
     @comps = Vallmpoint.select(:company_shname).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(company_shname: :asc).pluck(:company_shname)
     @sstations = Vallmpoint.select(:mesubstation_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(mesubstation_name: :asc).pluck(:mesubstation_name)
     @furns = if (@flr.nil? || (@fpr < 6))  then Vallmpoint.select(:furnizor_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(furnizor_name: :asc).pluck(:furnizor_name) else [[@flr.name]] end
     @fils  = if (@flr.nil? || (@fpr >= 6)) then Vallmpoint.select(:filial_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(filial_name: :asc).pluck(:filial_name)   else [[@flr.name]] end 
-    @regions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name) 
-    @page = params[:page]
-    if @page.nil? then @page = 1 end 
-    @mp =  @mp.paginate(:page => @page, :per_page => @perpage = $PerPage )        
+    @regions = Vallmpoint.select(:region_name).distinct.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(region_name: :asc).pluck(:region_name)       
   end
   
   def search
     if @fpr < 6 then  @flr =  Filial.find(params[:id]) else @flr =  Furnizor.find(params[:id]) end
-    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id).order("#{sort_column} #{sort_direction}") 
-    @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
+    @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ?" else "furnizor_id = ?" end, @flr.id)
     render "index"       
   end  
   
@@ -271,6 +319,10 @@ def showmvalues
      
 private
 
+  def mpoint_params
+    params.require(:mpoint).permit(:id,:company_id,:furnizor_id,:voltcl,:mesubstation_id,:cod,:meconname,:clsstation,:clconname,:name,:comment,:f)
+  end
+
   def filial_furnizor
     if @fpr < 6 then  @flr = @mp.first.filial else @flr =  @mp.first.furnizor end
     @furns = if (@flr.nil? || (@fpr < 6)) then Furnizor.all.pluck(:name, :id)  else [[@flr.name, @flr.id]] end
@@ -285,53 +337,22 @@ private
       else
         redirect_to company_path(:id => params[:company_id], :flag => nil, :flr_id => params[:flr_id])  
       end      
-    end   
+    end
+    return true   
   end 
   
   def mpoint_init(mpoint)
-    mpoint.cod = params[:cod]
-    t = params[:name]
-    t = t.lstrip
-    t = t.rstrip
-    mpoint.name = t
-    mpoint.mesubstation_id = params[:mesubstation_id]
-    mpoint.furnizor_id = params[:furnizor_id]
-    t = params[:meconname]
-    t = t.lstrip
-    t = t.rstrip    
-    mpoint.meconname = t
-    t = params[:clsstation]
-    t = t.lstrip
-    t = t.rstrip    
-    mpoint.clsstation = t
-    t = params[:clconname]
-    t = t.lstrip
-    t = t.rstrip    
-    mpoint.clconname = t
-    mpoint.voltcl = params[:voltcl]  
-    mpoint.comment = params[:comment]
-    mpoint.f = if params[:f].nil? then false else true end
-    mpoint.fct = if params[:fct].nil? then false else true end
-    mpoint.fctc = if params[:fctc].nil? then nil else true end
-    mpoint.fctl = if params[:fctl].nil? then nil else true end
-    mpoint.four = if params[:four].nil? then nil else true end
-    mpoint.fturn = if params[:fturn].nil? then nil else true end
-    mpoint.fmargin = if params[:fmargin].nil? then nil else true end
-    mpoint.fminuslinelosses = if params[:fminuslinelosses].nil? then nil else true end    
-    mpoint.cosfi = params[:cosfi]      
+    mpoint.cod = mpoint_params[:cod]
+    mpoint.name = mylrstreep(mpoint_params[:name])
+    mpoint.mesubstation_id = mpoint_params[:mesubstation_id]
+    mpoint.furnizor_id = mpoint_params[:furnizor_id]   
+    mpoint.meconname = mylrstreep(mpoint_params[:meconname])
+    mpoint.clsstation = mylrstreep(mpoint_params[:clsstation]) 
+    mpoint.clconname = mylrstreep(mpoint_params[:clconname])
+    mpoint.voltcl = mpoint_params[:voltcl]  
+    mpoint.comment = mpoint_params[:comment]
+    mpoint.f = if mpoint_params[:f].nil? then false else true end 
     mpoint    
   end      
-  
-  def sortable_columns
-    ["name", "company_shname", "furnizor_name", "filial_name", "region_name", "mesubstation_name", "cod"]
-  end
-
-  def sort_column
-    sortable_columns.include?(params[:column]) ? params[:column] : "name"
-  end
-
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
-  end  
-     
+       
 end

@@ -98,7 +98,7 @@ private
     elsif !@wires.nil? &&  @wires.count < (@page.to_i - 1) * $PerPage then 
       @page = ((@wires.count-1) / $PerPage + 0.5).round    
     end  
-    unless @wires.nil? then @wires = @wires.paginate(:page => @page, :per_page => $PerPage ) end              
+    #unless @wires.nil? then @wires = @wires.paginate(:page => @page, :per_page => $PerPage ) end              
   end  
 
   def wire_save
