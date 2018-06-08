@@ -36,7 +36,7 @@ $(document).ready(function() {
         }, {
             "searchable": false,
             "orderable": false,
-            "targets": 1
+            "targets": [1,6,7]
             }
          ]      
     } ); 
@@ -85,12 +85,9 @@ $(document).ready(function() {
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование подстанции<% else %>Ввод новой подстанции<% end %></h4>
-		<%= simple_form_for(@mesubstation, html: { class: 'form-inline' }) do |f| %>
-		   <div class="row">					
-		    <div class="col-md-7">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		      <%= f.error_notification %>
+		<%= simple_form_for(@mesubstation) do |f| %>
+		   <div class="row">
+		    <%= f.error_notification %>
 		      <% if @mesubstation.errors.any? %>
 			    <div id="error_explanation">
 			      <h4><%= pluralize(@mesubstation.errors.count, "error") %> prohibited this line from being saved:</h4>
@@ -99,28 +96,21 @@ $(document).ready(function() {
 			          <li><%= msg %></li>
 			        <% end %>
 			      </ul>
-			     <!-- <%= @line.inspect %> -->
 			    </div>
 			  <% end %>
-		      <%= f.input :cod, label: 'Код ', placeholder: 'Код ' %>
-			  <%= f.input :name, label: 'Наименование ', placeholder: 'Подстанция', as: :string, :input_html => { :size => 50}  %>
-			</div>
-		  	</div>
+		    <div class="col-md-7">
+		      <%= f.input :name, label: 'Наименование ', placeholder: 'Подстанция', as: :string, :input_html => { :size => 50}  %>	
+		      <%= f.input :cod, label: 'Код ', placeholder: 'Код ', hint: 'Условный код для отчетов.' %>			  
 		  	</div>
 		  	<div class="col-md-5">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
 			  <%= f.association :filial, label: 'Филиал ', include_blank: true %>
-			  <%= f.association :region, label: 'Регион ', label_method: :cvalue, value_method: :id, include_blank: true %>
+			  <%= f.association :region, label: 'Район ', label_method: :cvalue, value_method: :id, include_blank: true %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
   			  <%= hidden_field_tag :page, @page %>
-			</div>
-		  	</div>
 		  	</div>		   		
 		   	</div> <!--  row -->       
   			  <div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить данные?" } %>
 				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			 </div> 
 		<% end %>

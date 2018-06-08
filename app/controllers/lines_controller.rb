@@ -44,7 +44,9 @@ class LinesController < ApplicationController
     ss_count = line.lnparams.count
     if ss_count!=0 then 
       flash[:warning] = "Нельзя удалить линию #{line.name}, которая принадлежит точкам учета (#{ss_count} шт.)" 
-    else line.destroy 
+    else 
+      line.destroy
+      flash[:info] = "Линия #{line.name} удалена." 
     end
     redirect_to lines_index_path(:page => @page)
   end  
@@ -160,7 +162,7 @@ private
     line.mesubstation_id = line_params[:mesubstation_id]
     line.mesubstation2_id = line_params[:mesubstation2_id]
     line.comment = line_params[:comment] 
-    line.f = line_params[:f]
+    line.f = if line_params[:f].nil? then false else true end
     line.unom = line_params[:unom] 
     line    
   end

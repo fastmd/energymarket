@@ -35,7 +35,7 @@ $(document).ready(function() {
         }, {
             "searchable": false,
             "orderable": false,
-            "targets": 1
+            "targets": [1,13,20,21,22]
             }
          ]      
     } ); 
@@ -83,11 +83,8 @@ $(document).ready(function() {
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование линии<% else %>Ввод новой линии<% end %></h4>
-		<%= simple_form_for(@line, html: { class: 'form-inline' }) do |f| %>
-		    <div class="row">					
-		    <div class="col-md-7">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
+		<%= simple_form_for(@line) do |f| %>
+		    <div class="row">
 		      <%= f.error_notification %>
 		      <% if @line.errors.any? %>
 			    <div id="error_explanation">
@@ -97,39 +94,33 @@ $(document).ready(function() {
 			          <li><%= msg %></li>
 			        <% end %>
 			      </ul>
-			     <!-- <%= @line.inspect %> -->
 			    </div>
-			  <% end %>	
-		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}, required: true  %><br>
+			  <% end %>			    						
+		    <div class="col-md-7">
+		      <%= f.input :name, label: 'Наименование ', placeholder: 'Наименование линии ...', as: :string, :input_html => { :size => 25}, required: true  %>
 		      <%= f.association :mesubstation, label: 'Подстанция ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
 				    value_method: :id, include_blank: false, prompt: "Подстанция...", error: 'Подстанция is mandatory, please specify one' %>
 		      <%= f.association :mesubstation2, label: 'Подстанция2 (для отпаек) ', :collection => Mesubstation.all.order(filial_id: :asc, region_id: :asc,name: :asc), value_method: :id,
 				    :label_method => lambda { |mesubstation| "#{if mesubstation.filial then mesubstation.filial.name end } | #{if mesubstation.region then mesubstation.region.cvalue end} | #{mesubstation.name} "}, 
-				    value_method: :id, include_blank: true, prompt: "Подстанция2...", error: 'Подстанция2 is mandatory, please specify one' %><br>
+				    value_method: :id, include_blank: true, prompt: "Подстанция2...", error: 'Подстанция2 is mandatory, please specify one', hint: 'Указывать, если линия является отпайкой.' %>
 		      <%= f.input :l, label: 'Длина линии L, км ', placeholder: 'L... ', as: :decimal, required: true %>
 			  <%= f.association :wire, label: 'Провод ', 
 				    :label_method => lambda { |wire| "#{wire.name} | q = #{wire.q} | ρ20 = #{wire.ro} | Kr = #{wire.k_scr} | Kc = #{wire.k_peb} "}, 
 				    value_method: :id, include_blank: false, prompt: "Провод...", error: 'Провод is mandatory, please specify one' %>		      
-			</div>
 		  	</div>
-		  	</div>
-		  	<div class="col-md-5">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">			      
-		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %><br>
-		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %><br>		      
-			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal, required: false %>	    		  
-			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 40} , required: false %><br>
+		  	<div class="col-md-5">		      
+		      <%= f.input :k_tr, label: 'Коэффициент трассы Ktr ', placeholder: 'Ktr... ', priority: [ 1.03 ], collection: [ 1.03 ], include_blank: false %>
+		      <%= f.input :k_f, label: 'Коэффициент формы Kf ', placeholder: 'Kf... ', priority: [ 1.15 ], collection: [ 1.15 ], include_blank: false %>		      
+			  <%= f.input :unom, label: 'Номинальное напряжение, кВ ', placeholder: 'Unom... ', as: :decimal, required: false, 
+			      hint: 'При расчетах имеет приоритет над номинальным напряжением точки учета.' %>	    		  
+			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :text, required: false %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный', required: false %>   				
   			  <%= hidden_field_tag :page, @page %>
-			</div>
-		  	</div>
 		  	</div>		   		
 		   	</div> <!--  row -->  			         
   			  <div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить данные?" } %>
 				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			 </div> 
 		<% end %>
@@ -153,9 +144,9 @@ $(document).ready(function() {
 			   <th title="Подстанция2 (для отпаек)">ПСТ2</th>
 			   <th title="Длина линии">L, км</th>
 			   <th title="Сопротивление линии">R, Ом</th>
-			   <th title="Коэффициент трассы">Ktr</th>
-			   <th title="Коэффициент формы">Кф</th>
 			   <th title="Используется вместо Uном точки учета">Uном, кВ</th>
+			   <th title="Коэффициент трассы">Ktr</th>
+			   <th title="Коэффициент формы">Кф</th>			   
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th> 		   		   
 			   <th>Комментарий</th>
 			   <th title="Марка провода">Провод</th>
@@ -165,7 +156,7 @@ $(document).ready(function() {
 			   <th title="Коэффициент пов. эффекта и близости">Kc</th>			   
 			   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
 			   <th title="Кол-во точек учета, которым принадлежит линия"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></th>
-			   <th>.........</th>		   			   
+			   <th></th>		   			   
 			</tr>	
 	   <% if i==0 then %></thead><% else %></tfoot><% end %>
 	   <% end %>
@@ -182,9 +173,9 @@ $(document).ready(function() {
 						<td title="Подстанция2 (для отпаек)"><%= item.mesubstation2_name %></td>
 						<td title="Длина линии"><%= item.l %></td>									
 						<td title="Сопротивление линии"><%= item.r %></td>
-						<td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
-						<td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>
 						<td title="Используется вместо Uном точки учета"><%= item.unom %></td>
+						<td title="Коэффициент трассы"><%= if item.l!=0 then number_with_delimiter(item.k_tr, delimiter: " ") end %></td>
+						<td title="Коэффициент формы"><%= if item.l!=0 then number_with_delimiter(item.k_f, delimiter: " ") end %></td>						
 						<td><span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<td><%= item.comment %></td>
 						<td title="Марка провода"><%= if item.l!=0 then item.wire_name end %></td>
@@ -194,7 +185,7 @@ $(document).ready(function() {
 						<td title="Коэффициент пов. эффекта и близости"><%= if item.l!=0 then number_with_delimiter(item.k_peb, delimiter: " ") end %></td>						
 						<td><span class="glyphicon glyphicon-<%= if item.wire_f then 'ok' else 'minus' end %>" aria-hidden="true"></span></td>
 						<td title="Кол-во точек учета, которым принадлежит линия"><%= Vmpointslnparam.select(:id).distinct.where("line_id = ?", item.id).count %></td> 
-                        <td><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
+                        <td nowrap><%= link_to " " , lines_edit_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-pencil" %>
   						    <%= link_to " " , lines_destroy_path(:id => item.id, :page => @page), :class=> "glyphicon glyphicon-remove",
   						                 data: { confirm: "Удалить линию #{item.name} ?" } %></td>
   						                 

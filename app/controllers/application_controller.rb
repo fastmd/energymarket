@@ -62,9 +62,11 @@ private
   end 
   
   def mylrstreep(x)
-    y = x.lstrip
-    y = y.rstrip
-    y
+    unless x.nil? then 
+      x = x.lstrip
+      x = x.rstrip
+    end
+    x
   end 
    
 end

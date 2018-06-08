@@ -35,7 +35,7 @@ $(document).ready(function() {
         }, {
             "searchable": false,
             "orderable": false,
-            "targets": 1
+            "targets": [1,8,9]
             }
          ]      
     } ); 
@@ -82,12 +82,9 @@ $(document).ready(function() {
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование провода<% else %>Ввод нового провода<% end %></h4>
-		<%= simple_form_for(@wire, html: { class: 'form-inline' }) do |f| %>
-		    <div class="row">					
-		    <div class="col-md-7">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		      <%= f.error_notification %>
+		<%= simple_form_for(@wire) do |f| %>
+		    <div class="row">
+		    <%= f.error_notification %>
 		      <% if @wire.errors.any? %>
 			    <div id="error_explanation">
 			      <h4><%= pluralize(@wire.errors.count, "error") %> prohibited this line from being saved:</h4>
@@ -97,28 +94,22 @@ $(document).ready(function() {
 			        <% end %>
 			      </ul>
 			    </div>
-			  <% end %>		
+			  <% end %>	
+		    <div class="col-md-6">
 		      <%= f.input :name, label: 'Марка провода ', placeholder: 'Марка провода ...', as: :string, :input_html => { :size => 25}  %>
 		      <%= f.input :k_scr, label: 'Коэффициент скрутки Kr ', placeholder: 'Kr... ', priority: [ 1 ], collection: [ 1, 1.02 ], include_blank: false %>		      
-			  <%= f.input :ro, label: 'ρ20, Ом*мм2/м ', placeholder: 'ρ20 ... ', priority: [ 0.0295 ], collection: [ 0.0295, 0.0175, 0.134 ], include_blank: false %><br><br>
-			  <%= f.input :q, label: 'Сечение провода q, мм2; ', placeholder: 'Сечение провода... ', as: :decimal %>
-			</div>
+			  <%= f.input :ro, label: 'ρ20, Ом*мм2/м ', placeholder: 'ρ20 ... ', priority: [ 0.0295 ], collection: [ 0.0295, 0.0175, 0.134 ], include_blank: false %>
 		  	</div>
-		  	</div>
-		  	<div class="col-md-5">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">			  
+		  	<div class="col-md-6">
+		  	  <%= f.input :q, label: 'Сечение провода q, мм2; ', placeholder: 'Сечение провода... ', as: :decimal %>				  
 			  <%= f.input :k_peb, label: 'Коэффициент пов. эффекта и близости Kc ', placeholder: 'Kc... ', as: :decimal %>
-			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :string, :input_html => { :size => 25}  %>
+			  <%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий', as: :text, :input_html => { :size => 25}  %>
 			  <%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>   				
   			  <%= hidden_field_tag :page, @page %>
-			</div>
-		  	</div>
 		  	</div>		   		
 		   	</div> <!--  row -->        
   			  <div  align="center">
-				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
-				                data: { confirm: "Сохранить данные?" } %>
+				<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить данные?" } %>
 				<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			 </div> 
 		<% end %>
@@ -127,7 +118,7 @@ $(document).ready(function() {
   </div>  
 </div>		           	           
 
-<table id="wires" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
+<table id="wires" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
 	   <% 2.times do |i| %>	
 	   <% if i==0 then %><thead><% else %><tfoot><% end %>
 			<tr class="info">
@@ -149,7 +140,7 @@ $(document).ready(function() {
 			   <% if item.updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success"><% else %><tr><% end %>
 			   			<td></td>
 				   	    <td></td>
-						<td><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
+						<td nowrap><% if item.f == false then %><em><% end %><%= item.name %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.k_scr %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.ro %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.q %><% if item.f == false then %></em><% end %></td>

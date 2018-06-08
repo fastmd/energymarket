@@ -107,6 +107,7 @@ private
   end  
 
   def mesubstation_save
+    flash.discard
     t = Mesubstation.where("cod = ? or UPPER(name) = ?", @mesubstation.cod, (@mesubstation.name).upcase).count
     if (t != 0) and (@mesubstation.nil?)  then
       flash[:warning] = "Такой объект уже существует. Проверьте правильность ввода."       
@@ -144,7 +145,7 @@ private
   def mesubstation_init(mesubstation)  
     mesubstation.name = mesubstation_params[:name]
     mesubstation.cod = mesubstation_params[:cod] 
-    mesubstation.f = mesubstation_params[:f]   
+    mesubstation.f = if mesubstation_params[:f].nil? then false else true end   
     mesubstation.filial_id = mesubstation_params[:filial_id]
     mesubstation.region_id = mesubstation_params[:region_id]
     mesubstation    

@@ -44,7 +44,9 @@ class WiresController < ApplicationController
     ss_count = wire.lines.count
     if ss_count!=0 then 
       flash[:warning] = "Нельзя удалить провод #{wire.name}, которому принадлежат линии (#{ss_count} шт.)" 
-    else wire.destroy 
+    else 
+      wire.destroy
+      flash[:info] = "Провод #{wire.name} удален.)" 
     end
     redirect_to wires_index_path(:page => @page)
   end  
@@ -143,7 +145,7 @@ private
     wire.q = wire_params[:q]
     wire.k_peb = wire_params[:k_peb]
     wire.comment = wire_params[:comment] 
-    wire.f = wire_params[:f] 
+    wire.f = if wire_params[:f].nil? then false else true end  
     wire    
   end
    

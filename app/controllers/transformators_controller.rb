@@ -41,10 +41,12 @@ class TransformatorsController < ApplicationController
   
   def destroy
     transformator = Transformator.find(params[:id])
-    ss_count = transformator.mpoints.count
+    ss_count = transformator.trparams.count
     if ss_count!=0 then 
       flash[:warning] = "Нельзя удалить трансформатор #{transformator.name}, которому принадлежат точки учета (#{ss_count} шт.)" 
-    else transformator.destroy 
+    else 
+      transformator.destroy
+      flash[:notice] = "Трансформатор #{transformator.name} удален." 
     end
     redirect_to transformators_index_path(:page => @page)
   end  
@@ -91,27 +93,11 @@ private
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        @transformators = Transformator.where("upper(name) like upper(?) ", data_for_search).order(unom: :asc, snom: :asc, ukz: :asc, name: :asc)
-    end 
-    #-----------------------------     
-    @page = params[:page] 
-    if !@transformator.nil? && !@transformator.id.nil? then 
-      i = 0
-      n = 0
-      @transformators.each do |item|
-        if item.id == @transformator.id then n = i end
-        i += 1   
-      end
-      @page = (n / $PerPage + 0.5).round       
-    end  
-    if @page.nil? then 
-      @page = 1
-    elsif !@transformators.nil? &&  @transformators.count < (@page.to_i - 1) * $PerPage then 
-      @page = ((@transformators.count-1) / $PerPage + 0.5).round    
-    end  
-    unless @transformators.nil? then @transformators = @transformators.paginate(:page => @page, :per_page => $PerPage ) end              
+    end              
   end  
 
   def transformator_save
+    flash.discard    
     t = Transformator.where("UPPER(name) = ?", (@transformator.name).upcase).count
     if (t != 0) and (@transformator.nil?)  then
       flash[:warning] = "Такой объект уже существует. Проверьте правильность ввода."       
@@ -165,7 +151,7 @@ private
     transformator.qkz = tmp   
     transformator.name = (transformator_params[:name]).lstrip.rstrip
     transformator.comment = transformator_params[:comment] 
-    transformator.f = transformator_params[:f] 
+    transformator.f = if transformator_params[:f].nil? then false else true end 
     transformator    
   end
    

@@ -87,7 +87,7 @@
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='edit' then %>Редактирование точки учета<% else %>Ввод новой точки учета<% end %></h3>
-		<%= simple_form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
+		<%= simple_form_for(@mpoint) do |f| %>
 		    <div class="row">
 		    <%= f.error_notification %>
 		      <% if @mpoint.errors.any? %>
@@ -101,33 +101,25 @@
 			    </div>
 			  <% end %>							
 		    <div class="col-md-6">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		    	<%= f.input 'cod', label: 'Код', input_html: {min: 0, max: 1000000000, step: 1}, required: false,  placeholder: "Код" %><br />	
-		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %><br />	
-		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %><br />
-		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %><br />
-		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %><br />
-		    	<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %><br />			    	
-			</div>
-		  	</div>
+		    	<%= f.input 'cod', label: 'Код', input_html: {min: 0, max: 1000000000, step: 1}, required: false,  placeholder: "Код" %>	
+		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %>	
+		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %>
+		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %>
+		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %>		    			    	
 		  	</div>
 		  	<div class="col-md-6">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		    	<%= f.input 'clsstation', label: 'Объект (потребитель)', required: true,  placeholder: "Объект установки учета...", input_html: {:size=>"50"} %><br />
-		    	<%= f.input 'clconname', label: 'Присоединение (потребитель)', required: true,  placeholder: "Присоединение установки учета...", input_html: {:size=>"50"} %><br />			    	
-		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1}, required: true %><br />
-		    	<%= f.input :comment, label: 'Комментарий', as: :string, :input_html => { :size => 50} %><br />
-		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %><br />	   		
+		  		<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %>	
+		    	<%= f.input 'clsstation', label: 'Объект (потребитель)', required: true,  placeholder: "Объект установки учета...", input_html: {:size=>"50"} %>
+		    	<%= f.input 'clconname', label: 'Присоединение (потребитель)', required: true,  placeholder: "Присоединение установки учета...", input_html: {:size=>"50"} %>		    	
+		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1}, required: true %>
+		    	<%= f.input :comment, label: 'Комментарий', as: :text, :input_html => { :size => 50} %>
+		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %>	   		
 	  			<%= hidden_field_tag :company_id, @cp.id %>
 	  			<%= hidden_field_tag :flr_id, @flr.id %>
-	  		</div>
-		  	</div>
 		  	</div>		   		
 		   	</div> <!--  row --> 
 	  			<div  align="center">
-					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center",data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить данные для #{@flr.name} / #{@cp.name}?" } %>
 					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 				</div> 
 		<% end %>
@@ -145,7 +137,7 @@
     <div id="collapseTwo" class="panel-collapse <%= if (@flag!='deepedit' && @flag!='deepadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingTwo">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='deepedit' then %>Редактирование параметров точки учета<% else %>Добавление параметров для точки учета<% end %></h3>
-		<%= simple_form_for(@mproperty, html: { class: 'form-inline' }) do |f| %>
+		<%= simple_form_for(@mproperty) do |f| %>
 		    <div class="row">
 		    <%= f.error_notification %>
 		      <% if @mproperty.errors.any? %>
@@ -158,35 +150,27 @@
 			      </ul>
 			    </div>
 			  <% end %>							
-		    <div class="col-md-7">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
+		    <div class="col-md-6">
 		    	<%= f.association :mpoint, collection: @mpoints, label: ('Точка учета'), prompt: "Выбрать точку учета...", required: true, value_method: :id,
 				      :label_method => lambda { |mpoint| "#{mpoint.name} | #{mpoint.meconname} | #{mpoint.clconname}"}, error: 'Mpoint is mandatory, please specify one', 
-				      :input_html => { :onchange => "whenchangeMpoint(this.id)"}, :id => "mpoint_id" %><br />
+				      :input_html => { :onchange => "whenchangeMpoint(this.id)"}, :id => "mpoint_id" %>
 		    	<%= f.input :propdate, label: 'Дата', as: :datetime, start_year: 2016 , end_year: Date.today.year, input_html: { value: f.object.propdate || DateTime.current().beginning_of_day() }, 
-		    	      order: [:day, :month, :year], minute_step: 15, required: true, hint: 'Настройки будут учитываться при расчетах, начиная с этой даты.' %><br />
-		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1, :id => "propvoltcl"}, required: true %><br />
-		    	<%= f.input :cosfi, label: 'cos φ контрактный', input_html: { min: 0, max: 1, step: 0.01} %><br />
-		    	<%= f.input :comment, label: 'Комментарий', as: :string, :input_html => { :size => 50} %><br />
-			</div>
+		    	      order: [:day, :month, :year], minute_step: 15, required: true, hint: 'Настройки будут учитываться при расчетах, начиная с этой даты.' %>
+		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1, :id => "propvoltcl"}, required: true %>
+		    	<%= f.input :cosfi, label: 'cos φ контрактный', input_html: { min: 0, max: 1, step: 0.01} %>
 		  	</div>
-		  	</div>
-		  	<div class="col-md-5">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		    	<%= f.input :fct, label: ('Не считать тех.расход') %><%= image_tag('faract.png', :alt => "без СТ", :width => 35, :height => 25) %><br />
-		    	<%= f.input :fctc, label: ('Не считать емкостной тех расход') %><%= image_tag('c.png', :alt => "без СТ емк", :width => 35, :height => 25) %><br />
-		    	<%= f.input :fctl, label: ('Не считать индуктивный тех расход') %><%= image_tag('l1.png', :alt => "без СТ инд", :width => 35, :height => 25) %><br />
-		    	<%= f.input :four, label: 'Наш трансформатор' %><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><br />		    	
-		    	<%= f.input :fturn, label: 'Обратное включение счетчика' %><span class="glyphicon glyphicon-random" aria-hidden="true"></span><br />
-		    	<%= f.input :fmargin, label: 'Граница раздела и точка учета не совпадают' %><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span><br />
-		    	<%= f.input :fminuslinelosses, label: 'Потери в линии ME' %><span class="glyphicon glyphicon-star" aria-hidden="true"></span><br />
-		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %><br />
+		  	<div class="col-md-6">
+		    	<%= f.input :fct, inline_label: ("Не считать тех.расход #{image_tag('faract.png', :alt => 'без СТ', :width => 35, :height => 25)}".html_safe) %>
+		    	<%= f.input :fctc, inline_label: ("Не считать емкостной тех расход #{image_tag('c.png', :alt => 'без СТ емк', :width => 35, :height => 25)}".html_safe) %>
+		    	<%= f.input :fctl, inline_label: ("Не считать индуктивный тех расход #{image_tag('l1.png', :alt => 'без СТ инд', :width => 35, :height => 25)}".html_safe) %>
+		    	<%= f.input :four, inline_label: ("Наш трансформатор <span class='glyphicon glyphicon-flag' aria-hidden='false'></span>".html_safe) %>	    	
+		    	<%= f.input :fturn, inline_label: ("Обратное включение счетчика <span class='glyphicon glyphicon-random' aria-hidden='true'></span>".html_safe) %>
+		    	<%= f.input :fmargin, inline_label: ("Граница раздела и точка учета не совпадают <span class='glyphicon glyphicon-adjust' aria-hidden='true'></span>".html_safe) %>
+		    	<%= f.input :fminuslinelosses, inline_label: ("Потери в линии за счет ME <span class='glyphicon glyphicon-star' aria-hidden='true'></span>".html_safe) %>
+		    	<%= f.input :comment, label: 'Комментарий', as: :text, :input_html => { :size => 50} %>
+		    	<%= f.input :f, inline_label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %>
 		        <%= hidden_field_tag :company_id, @cp.id %>
 		        <%= hidden_field_tag :flr_id, @flr.id %>		   				
-	  		</div>
-		  	</div>
 		  	</div>		   		
 		   	</div> <!--  row --> 
 	  			<div  align="center">
@@ -201,8 +185,7 @@
   </div>  
 </div>
 
-<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3> 
-<small>           
+<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3>            
 <table id="example" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
 	   <% 2.times do |i| %>	
 	   <% if i==0 then %><thead><% else %><tfoot><% end %>
@@ -237,26 +220,30 @@
 						<%= if item.mesubstation then item.mesubstation.name end %> |
 						<%= "#{item.voltcl}кВ" %> |    						
 						<%= if item.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then item.meconname else "#{item.voltcl} Î #{item.meconname} F" end %> | 
-						<%= link_to item.clconname, mpoint_path(item) %> | <%= item.comment %> | <span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span> 
+						<%= link_to item.clconname, mpoint_path(item) %> | <%= item.comment %> | <span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span> |
+						<%= link_to " ", mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
+  						<%= link_to " ", mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
+  						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %>	|					
 						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
-						       <%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %>
-						       <%= link_to image_tag('indicii.png', :alt => "Показания", :width => 40, :height => 20), mpoint_path(item), :title => "Показания счетчиков" %>
 						       <%= link_to "", minputs_index_path(:mpoint_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-edit", :title => "Ручной ввод" %>					       
   						       <%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>					       
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoint_path(item,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoint_path(item,format: "pdf") %>
   						<% else %>
-  						       <%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 30, :height => 20) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
   						   	   <%= link_to image_tag('big_thumb.png', :alt => "Formula", :width => "30", :height => "20"), companies_onempreport_path(:id => @flr.id, :mp_id => item.id, :page => @page), :title => "Расчет потерь с расшифровкой" %>
   						   	   <%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 20, :height => 20) , meters_index_path(:id => item.id), :title => "Счетчики" %>
   						   	   <%= link_to "", minputs_index_path(:mpoint_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-edit", :title => "Ручной ввод" %>
   						       <%= link_to image_tag('pokaz.png', :alt => "Показания", :width => 30, :height => 20), mpoints_showmvalues_path(:id => item.id), :title => "Показания счетчиков" %>
   						       <%= link_to image_tag('Excel-icon.png', :alt => "XLSX", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "xlsx") %>
   						       <%= link_to image_tag('Apps-Pdf-B-icon.png', :alt => "PDF", :width => "20", :height => "20"), mpoints_showmvalues_path(:id => item.id,format: "pdf") %>
-  						<% end %>
-						<%= link_to " ", mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
-  						<%= link_to " ", mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
-  						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %></td>
+  						<% end %> | 
+						<% if (current_user.has_role? :cduser) || (@fpr > 5) %> 
+						       <%= link_to image_tag('meter.png', :alt => "Счетчики", :width => 25, :height => 25) , meters_index_path(:id => item.id), :title => "Счетчики" %>
+						       <%= link_to image_tag('indicii.png', :alt => "Показания", :width => 45, :height => 25), mpoint_path(item), :title => "Показания счетчиков" %>
+  						<% else %>
+  						       <%= link_to image_tag('tr-lep.png', :alt => "Параметры", :width => 35, :height => 25) , mpoint_path(item), :title => "Параметры трансформаторов и линий" %>
+  						<% end %>  						                 
+  						</td>
 						<td nowrap><%= if item.propdate then item.propdate.strftime("%d.%m.%Y %H:%M") end %></td>						
 						<td><%= item.mproperty_voltcl %></td> 
   						<td ><% if item.fct then %><%= image_tag('faract.png', :alt => "без СТ", :width => 30, :height => 20, :title => "Не считать тех расход") %><% end %>
@@ -276,6 +263,5 @@
 				<% end %>			
 		</tbody>
 </table>
-</small>
 
 

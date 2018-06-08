@@ -36,7 +36,7 @@ $(document).ready(function() {
         }, {
             "searchable": false,
             "orderable": false,
-            "targets": 1
+            "targets": [1,6,7]
             }
          ]      
     } ); 
@@ -75,11 +75,8 @@ $(document).ready(function() {
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h4 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод нового потребителя<% end %></h4>
-		<%= form_for(@company, html: { class: 'form-inline' }) do |f| %>
-		    <div class="row">					
-		    <div class="col-md-7">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
+		<%= simple_form_for(@company) do |f| %>
+		    <div class="row">
 		      <% if @company.errors.any? %>
 			    <div id="error_explanation">
 			      <h4><%= pluralize(@company.errors.count, "error") %> prohibited this line from being saved:</h4>
@@ -88,44 +85,23 @@ $(document).ready(function() {
 			          <li><%= msg %></li>
 			        <% end %>
 			      </ul>
-			     <!-- <%= @line.inspect %> -->
 			    </div>
-			  <% end %>		
-		        <div class="form-group">
-						<label for='name'class="control-label">Наименование</label>		
-						<td><%= text_field_tag 'name', @company.name, class: "form-control",  :size=>"50", placeholder: "Наименование...", maxlength:"40" %></td>
-				</div>
-		        <div class="form-group">
-						<label for='name'class="control-label">Краткое наименование</label>		
-						<td><%= text_field_tag 'shname', @company.shname, class: "form-control",  :size=>"50", placeholder: "Краткое наименование...", maxlength:"15" %></td>
-				</div>
-		        <div class="form-group">
-						<label for='name'class="control-label">Код</label>		
-						<td><%= text_field_tag 'cod', @company.cod, class: "form-control",  :size=>"20",  placeholder: "Код...", maxlength:"20" %></td>
-				</div>
+			  <% end %>			    						
+		    <div class="col-md-7">
+				<%= f.input :name, label: 'Наименование', input_html: { maxlength:"40"}, placeholder: "Наименование...", required: true %>
+				<%= f.input :shname, label: 'Краткое наименование', input_html: { maxlength:"15"},  placeholder: "Краткое наименование...", 
+				    hint: 'Сокращенное наименование без SA, SRL, IS, кавычек и пр. для упрощения сортировки по названию.' %>				
 			</div>
-		  	</div>
-		  	</div>
 		  	<div class="col-md-5">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">				
-		        <div class="form-group">
-						<label for='name'class="control-label">Комментарий</label>		
-						<td><%= text_area_tag 'comment', @company.comment, class: "form-control", placeholder: 'Комментарий...' %></td>
-				</div>
-		        <div class="form-group">
-						<label for='name'class="control-label">Активный</label>		
-						<td><%= check_box_tag 'f', 'yes', @company.f, class: "form-control" %></td>
-				</div>
-			</div>
-		  	</div>
+		  		<%= f.input :cod, label: 'Код', input_html: { maxlength:"20"},  placeholder: "Код...", hint: 'Условный код для отчетов.' %>	
+		        <%= f.input :comment, label: 'Комментарий', as: :text, :input_html => { :size => 50} %>
+		        <%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %>
 		  	</div>		   		
 		   	</div> <!--  row --> 				
 	  			<%= hidden_field_tag :cp_id, @company.id %>
 	  			<%= hidden_field_tag :page, @page %>      
 	  			<div  align="center">
-					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", 
-					                data: { confirm: "Сохранить данные?" } %>
+					<%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить данные?" } %>
 					<%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>                
 			    </div> 
 		<% end %>

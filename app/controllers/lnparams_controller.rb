@@ -76,7 +76,7 @@ private
     lnparam.mpoint_id = lnparam_params[:mpoint_id]
     lnparam.line_id = lnparam_params[:line_id]
     lnparam.comment = lnparam_params[:comment]    
-    lnparam.f = lnparam_params[:f]
+    lnparam.f = if lnparam_params[:f].nil? then false else true end
     if !(lnparam_params['condate(1i)'].nil?) then
       #d = (params[:stdate]).to_datetime.in_time_zone 
       lnparam.condate = DateTime.new( lnparam_params['condate(1i)'].to_i, lnparam_params['condate(2i)'].to_i, lnparam_params['condate(3i)'].to_i, lnparam_params['condate(4i)'].to_i, lnparam_params['condate(5i)'].to_i )

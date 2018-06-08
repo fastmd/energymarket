@@ -13,7 +13,7 @@
   <li class="active"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span><strong><%= "Точка учета: #{@mp.name}, #{@mp.mesubstation.name}, #{@mp.meconname}" %></strong></li>
 </ul>
 	
-<div class="panel panel-default">
+<div class="panel panel-info">
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"  aria-expanded="false" aria-controls="collapseOne" class = "glyphicon glyphicon-wrench">
@@ -24,16 +24,33 @@
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='tedit' && @flag!='tadd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='tedit' %>Редактирование параметров трансформатора<% else  %>Подключение нового транcформатора<% end %></h3>
-		<%= simple_form_for(@tr, html: { class: 'form-inline' }) do |f| %>
+		<%= simple_form_for(@tr) do |f| %>
+		<div class="row">
+			    <%= f.error_notification %>
+			      <% if @tr.errors.any? %>
+				    <div id="error_explanation">
+				      <h4><%= pluralize(@tr.errors.count, "error") %> prohibited this line from being saved:</h4>
+				      <ul>
+				        <% @tr.errors.full_messages.each do |msg| %>
+				          <li><%= msg %></li>
+				        <% end %>
+				      </ul>
+				    </div>
+				  <% end %>
+			<div class="col-md-6">	  			
 				<%= f.association :transformator, label: 'Тип трансформатора ', 
 				    :label_method => lambda { |transformator| "Unom = #{transformator.unom} кВ | Snom = #{transformator.snom} кВА | Usc = #{transformator.ukz} % | Марка: #{transformator.name}"}, 
 				    value_method: :id, include_blank: false, prompt: "Тип трансформатора..." %>
-				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %>
+			</div>
+			<div class="col-md-6">	
+				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :text, :input_html => { :size => 50}  %>
 				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
 				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
+			</div>
+		</div> <!--  row --> 
 	            <div  align="center"> 
-				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить трансформатор?" } %>                            	                
-				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить трансформатор?" } %>                            	                
+				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>
 	            </div> 	                
 		<% end %>
       </div>
@@ -55,9 +72,9 @@
 		   <th>Потери холостого хода Рхх, кВт</th>
 		   <th>I0, %</th>
 		   <th>Qкз, квар</th>
-		   <th>Комментарий</th>
+		   <th>Комментарий при трансформаторе</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>
-		   <th>Комментарий</th>
+		   <th>Комментарий при подключении</th>
 		   <th><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></th>		   
 		   <th colspan="3">.........</th>
 		</tr>	
@@ -91,7 +108,7 @@
 </table>
 </small>
 
-<div class="panel panel-default">
+<div class="panel  panel-info">
     <div class="panel-heading" role="tab" id="headingTwo">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" class = "glyphicon glyphicon-wrench">
@@ -102,18 +119,36 @@
     <div id="collapseTwo" class="panel-collapse <%= if (@flag!='ledit' && @flag!='ladd') then "collapse" end %>" role="tabpanel" aria-labelledby="headingTwo">
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='ledit' %>Редактирование параметров линии<% else  %>Подключение новой линии<% end %></h3>
-		<%= simple_form_for(@ln, html: { class: 'form-inline' }) do |f| %>
-				<%= f.input :condate, label: 'Дата ', as: :datetime, start_year: 2016 , end_year: Date.today.year,  order: [:day, :month, :year], minute_step: 15  %></br></br>		
+		<%= simple_form_for(@ln) do |f| %>
+		<div class="row">
+			    <%= f.error_notification %>
+			      <% if @ln.errors.any? %>
+				    <div id="error_explanation">
+				      <h4><%= pluralize(@ln.errors.count, "error") %> prohibited this line from being saved:</h4>
+				      <ul>
+				        <% @ln.errors.full_messages.each do |msg| %>
+				          <li><%= msg %></li>
+				        <% end %>
+				      </ul>
+				    </div>
+				  <% end %>
+			<div class="col-md-6">			
+				<%= f.input :condate, label: 'Дата ', as: :datetime, start_year: 2016 , end_year: Date.today.year,  order: [:day, :month, :year], minute_step: 15, 
+				    hint: 'Настройки будут учитываться при расчетах, начиная с этой даты.', required: true  %>	
 				<%= f.association :line, label: 'Линия ', 
 				    :collection => @lines, value_method: :id,
 				    :label_method => lambda { |line| "#{line.mesubstation_name} | #{line.mesubstation2_name} | #{line.name}  | L = #{line.l} км | R = #{line.r} Ом | Марка провода: #{line.wire_name}"},  
-				    include_blank: false, prompt: "Линия...", hint: 'Настройки будут учитываться при расчетах, начиная с этой даты.' %><br>   				    
-				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :string, :input_html => { :size => 50}  %><br></br>
-				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %><br>
+				    include_blank: false, prompt: "Линия..." %>
+			</div>
+			<div class="col-md-6">   				    
+				<%= f.input :comment, label: 'Комментарий ', placeholder: 'Комментарий...', as: :text, :input_html => { :size => 50}  %>
+				<%= f.input :f, as: :boolean, checked_value: true, unchecked_value: false, inline_label: 'Активный' %>
 				<%= f.input :mpoint_id, as: :integer, as: :hidden %>
+			</div>
+		</div> <!--  row --> 
 	            <div  align="center"> 
-				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-default glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить линию?" } %>                            	                
-				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-default glyphicon glyphicon-remove pull-center" %>
+				  <%= button_tag "Сохранить", type: 'submit', class: "btn btn-info glyphicon glyphicon-ok pull-center", data: { confirm: "Сохранить линию?" } %>                            	                
+				  <%= button_tag "Отмена", type: "submit", name: "cancel", value: true, class: "btn btn-warning glyphicon glyphicon-remove pull-center" %>
 	            </div> 	                
 		<% end %>
       </div>
@@ -182,7 +217,10 @@
 			<% end %>	  
 	</tbody>
 </table>
-<h5>При <mark>изменении СХЕМЫ питания потребителя</mark> добавляется новая линия с меткой времени. Т.е. если до 1.10.2017 счетчики питались от Ф54, а с 01.10.2017 - от Ф33, нужно на 01.10.2017 добавить 2 линии: Ф33 (пометить ее активной), Ф54 (пометить неактивной).(пример: Knauf-Gips август 2017)</h5>
+<h5><mark>ВНИМАНИЕ!</mark> Не следует редактировать уже существующие записи при изменении схемы питания. Это приведет к невозможности расчета предыдущих периодов. 
+	При изменении СХЕМЫ питания потребителя добавляется новая линия с меткой времени (даже если эта линия уже подключена!!!). 
+	Т.е., если до 1.10.2017 счетчики питались от Ф54, а с 01.10.2017 - от Ф33, нужно на 01.10.2017 добавить 2 линии: Ф33 (пометить ее активной), Ф54 (пометить неактивной).
+	Пример: Knauf-Gips август 2017.</h5>
 </small>
 	
 <h3 align="center">ζ</h3>

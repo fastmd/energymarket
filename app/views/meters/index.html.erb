@@ -35,8 +35,18 @@
 		<h3 align="center">
           <% if @flag=='edit' then %>Редактирование счетчика<% else %>Ввод нового счетчика<% end %>			
 		</h3>		
-	        <%= form_for(@meter, html: { class: 'form-inline' }) do |f| %>
-	        <div class="row">					
+	        <%= form_for(@meter) do |f| %>
+	        <div class="row">
+			      <% if @meter.errors.any? %>
+				    <div id="error_explanation">
+				      <h4><%= pluralize(@meter.errors.count, "error") %> prohibited this line from being saved:</h4>
+				      <ul>
+				        <% @meter.errors.full_messages.each do |msg| %>
+				          <li><%= msg %></li>
+				        <% end %>
+				      </ul>
+				    </div>
+				  <% end %>	        						
 		    <div class="col-md-6">
 		    <div class="panel  panel-default">
 		    <div class="panel-body">
@@ -51,7 +61,7 @@
 		   		<div class="form-group">		
 		   				<label for='meternum' class="control-label">Заводской № счетчика</label>	
 						<%= number_field_tag 'meternum', @meter.meternum, min: 0, max: 9999999999, step: 1, class: "form-control" %>
-		   		</div><br />
+		   		</div>
 		   		<div class="form-group">		
 		   				<label for='beforedigs' class="control-label">Цифр до запятой</label>							
 						<%= select_tag 'beforedigs', options_for_select( [8,7,6,5], if !@meter.beforedigs.nil? then @meter.beforedigs else nil end), include_blank: false, prompt: "Select something", class: "form-control" %>
@@ -80,7 +90,7 @@
 		   		</div>						
 		   		<div class="form-group">		
 		   				<label for='f' class="control-label"><span class="glyphicon glyphicon-ok" aria-hidden="true">Активный</span></label>						
-						<%= check_box_tag 'f', 'yes', @meter.f, class: "form-control" %>
+						<%= check_box_tag 'f', 'yes', @meter.f %>
 	            </div>
 			</div>
 		  	</div>

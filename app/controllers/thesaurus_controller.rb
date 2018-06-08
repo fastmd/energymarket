@@ -37,12 +37,14 @@ class ThesaurusController < ApplicationController
     thesauru = Thesauru.find(params[:th_id])
     @current = thesauru.name
     case thesauru.name when 'meter'  then th_count = thesauru.meters.count
-                       when 'region' then th_count = thesauru.mesubstations.count
+                       when 'region' then th_count = Mesubstation.where("region_id = ?", thesauru.id).count
                        else  th_count = 0   
     end
     if th_count!=0 then 
       flash[:warning] = "Нельзя #{thesauru.cvalue}, которому принадлежат объекты (#{th_count} шт.)" 
-    else thesauru.destroy 
+    else 
+      thesauru.destroy
+      flash[:info] = "#{thesauru.cvalue} удален."  
     end
     redirect_to thesaurus_index_path(:current => @current)
   end

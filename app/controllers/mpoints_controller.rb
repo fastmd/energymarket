@@ -62,9 +62,9 @@ before_action :redirect_cancel, only: [:create, :update]
       else
         #-------------------------------
         @cp =  Company.find(params[:company_id])
-        @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+        @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
         @mproperty = Mproperty.new
-        @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+        @mpoints= Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
         gon.mpoints = @mpoints
         @companies = Company.where("id = ? and f = true", @cp.id)  
         render "companies/show"   
@@ -87,10 +87,10 @@ before_action :redirect_cancel, only: [:create, :update]
       #render inline: "<%= @mpoint.inspect %><br><br>" and return         
       @flag = 'edit'
       if @fpr < 6 then @flr = @mpoint.filial else @flr = @mpoint.furnizor end
-      @mp = Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+      @mp = Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
       #-------------------------------
       @mproperty = Mproperty.new
-      @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+      @mpoints= Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
       gon.mpoints = @mpoints
       #-------------------------------
       @companies = Company.where("id = ? and f = true", @cp.id)  
@@ -106,11 +106,11 @@ before_action :redirect_cancel, only: [:create, :update]
     @cp  = @mpoint.company
     @companies = Company.where("id = ? and f = true", @cp.id)  
     if @fpr < 6 then @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
-    @mp =  Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
+    @mp =  Vallmpointsproperty.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ?" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc) 
     @mp =  @mp.paginate(:page => params[:page], :per_page => @perpage = $PerPage )
     @sstations = Mesubstation.all.pluck(:name, :id)
     @mproperty = Mproperty.new
-    @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+    @mpoints= Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
     gon.mpoints = @mpoints
     filial_furnizor    
     flash.discard 

@@ -68,7 +68,7 @@ private
     trparam.mpoint_id = trparam_params[:mpoint_id]
     trparam.transformator_id = trparam_params[:transformator_id]
     trparam.comment = trparam_params[:comment]    
-    trparam.f = trparam_params[:f]   
+    trparam.f = if trparam_params[:f].nil? then false else true end   
     trparam    
   end   
    

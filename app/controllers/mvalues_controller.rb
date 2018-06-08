@@ -24,11 +24,16 @@ before_filter :redirect_cancel, only: [:create, :update]
     mv.fanulare = if params[:fanulare].nil? then nil else true end
     mv.fnefact = if params[:fnefact].nil? then nil else true end
     mv.fnozero = if params[:fnozero].nil? then nil else true end 
-   # render inline: "<%= params.inspect %><br><br><%= params[:date][:minute] %><br><br><%= @mv.inspect %><br><br>" and return           
+    #@mv=mv  
+    #render inline: "<%= params.inspect %><br><br><%= params[:date][:minute] %><br><br><%= @mv.inspect %><br><br>" and return           
     begin  
-      if mv.save! then redirect_to mpoint_path(mp, :met => params[:met]) end
+      if mv.save! then 
+        flash[:notice] = "Показания сохранены."
+        redirect_to mpoint_path(mp, :met => params[:met]) 
+      end
     rescue
-          flash[:warning] = "Данные не сохранены. Проверьте правильность ввода."       
+          mv.valid?
+          flash[:warning] = "Данные не сохранены. Проверьте правильность ввода. #{mv.errors.full_messages}"       
           if params[:mv_id].nil? or params[:mv_id]=='' then
             redirect_to mpoint_path(mp,:meter_id=>params[:meter_id],:actp180=>params[:actp180],:actp280=>params[:actp280],:actp380=>params[:actp380],:actp480=>params[:actp480],
                                        :trab=>params[:trab],:dwa=>params[:dwa],:undercount=>params[:undercount], 
@@ -68,10 +73,15 @@ before_filter :redirect_cancel, only: [:create, :update]
     met = Meter.find(mv.meter_id)
     mp = Mpoint.find(met.mpoint_id)    
     mv.destroy
+    flash[:notice] = "Показания удалены."
     redirect_to mpoint_path(mp)
   end
   
 private
+
+  def mvalue_params
+    params.require(:mvalue).permit(:meter_id,:actp180,:actp280,:actp380,:actp480,:trab,:dwa,:undercount,:actdate,:r,:fanulare,:fnefact,:fnozero,:comment,:f)
+  end
 
   def redirect_cancel
     mp = Mpoint.find(params[:mpoint_id])

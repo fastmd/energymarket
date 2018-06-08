@@ -29,6 +29,7 @@ before_filter :check_user
     begin
       if @meter.save! then 
         flash.discard
+        flash[:notice] = "Счетчик #{@meter.meternum} сохранен."
         redirect_to meters_index_path(:id => @meter.mpoint_id) 
       end
     rescue
@@ -36,6 +37,7 @@ before_filter :check_user
       @flag = 'add'
       @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
       @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+      @metertypes=Vmetertype.all.pluck(:cvalue, :id)
       render 'index'
     end   
   end
@@ -46,7 +48,8 @@ before_filter :check_user
     @mp  = @meter.mpoint
     begin
       if @meter.save! then
-        flash.discard 
+        flash.discard
+        flash[:notice] = "Счетчик #{@meter.meternum} сохранен." 
         redirect_to meters_index_path(:id => @meter.mpoint_id) 
       end
     rescue
@@ -54,6 +57,7 @@ before_filter :check_user
       @flag = 'edit'
       @met = @mp.meters.order('relevance_date desc nulls last', created_at: :desc) 
       @met = @met.paginate(:page => params[:page], :per_page => @perpage = $PerPage)
+      @metertypes=Vmetertype.all.pluck(:cvalue, :id)
       render 'index'
     end      
   end
@@ -88,7 +92,9 @@ before_filter :check_user
     mv_count = meter.mvalues.count
     if  mv_count!=0 then 
       flash[:warning] = "Нельзя удалить счетчик  № #{meter.meternum}, которому принадлежат показания (#{mv_count} шт.)" 
-    else meter.destroy 
+    else 
+      meter.destroy
+      flash[:notice] = "Счетчик #{meter.meternum} удален." 
     end
     redirect_to meters_path(:id => mp.id)
   end

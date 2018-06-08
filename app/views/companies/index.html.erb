@@ -60,7 +60,7 @@
     <div id="collapseOne" class="panel-collapse <%= if (@flag!='edit' && @flag!='add') then "collapse" end %>" role="tabpanel" aria-labelledby="headingOne">	
       <div class="panel-body">
 		<h3 align="center"><% if @flag=='edit' then %>Редактирование потребителя<% else %>Ввод точки учета для нового потребителя<% end %></h3>
-		<%= simple_form_for(@mpoint, html: { class: 'form-inline' }) do |f| %>
+		<%= simple_form_for(@mpoint) do |f| %>
 		    <div class="row">
 		    <%= f.error_notification %>
 		      <% if @mpoint.errors.any? %>
@@ -74,27 +74,19 @@
 			    </div>
 			  <% end %>							
 		    <div class="col-md-6">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		    	<%= f.input 'cod', label: 'Код', input_html: {min: 0, max: 1000000000, step: 1}, required: false,  placeholder: "Код" %><br />	
-		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %><br />	
-		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %><br />
-		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %><br />
-		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %><br />
-		    	<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %><br />			    	
+		    	<%= f.input 'cod', label: 'Код', input_html: {min: 0, max: 1000000000, step: 1}, required: false,  placeholder: "Код" %>	
+		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %>	
+		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %>
+		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %>
+		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %>			    	
 			</div>
-		  	</div>
-		  	</div>
 		  	<div class="col-md-6">
-		    <div class="panel  panel-default">
-		    <div class="panel-body">
-		    	<%= f.input 'clsstation', label: 'Объект (потребитель)', required: true,  placeholder: "Объект установки учета...", input_html: {:size=>"50"} %><br />
-		    	<%= f.input 'clconname', label: 'Присоединение (потребитель)', required: true,  placeholder: "Присоединение установки учета...", input_html: {:size=>"50"} %><br />			    	
-		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1}, required: true %><br />
-		    	<%= f.input :comment, label: 'Комментарий', as: :string, :input_html => { :size => 50} %><br />
-		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %><br />	   		
-	  		</div>
-		  	</div>
+		  		<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %>
+		    	<%= f.input 'clsstation', label: 'Объект (потребитель)', required: true,  placeholder: "Объект установки учета...", input_html: {:size=>"50"} %>
+		    	<%= f.input 'clconname', label: 'Присоединение (потребитель)', required: true,  placeholder: "Присоединение установки учета...", input_html: {:size=>"50"} %>		    	
+		    	<%= f.input :voltcl, label: 'Класс напряжения, кВ', input_html: { value: f.object.voltcl || 10, min: 0.4, max: 35, step: 0.1}, required: true %>
+		    	<%= f.input :comment, label: 'Комментарий', as: :text, :input_html => { :size => 50} %>
+		    	<%= f.input :f, label: 'Активный', as: :boolean, checked_value: true, unchecked_value: false %>	   		
 		  	</div>		   		
 		   	</div> <!--  row --> 
   			     <%= hidden_field_tag :flr_id, @flr.id %>
@@ -117,7 +109,8 @@
 		<thead>
 			<tr class="info">
 			   <th>№</th>
-			   <th>Наименование</th>
+			   <th>Наименование краткое</th>
+			   <th>Наименование полное</th>
 			   <th>Код</th>
 			   <th>Точки учета</th>
 			   <th>Отчеты</th>
@@ -137,6 +130,7 @@
 						<% i = i + 1 %>						
 						<td><%= if @page.nil? then i else (@page.to_i - 1) * $PerPage + i end %></td>
 						<td><% if item.f == false then %><em><% end %><%= link_to item.shname, company_path(item,:flr_id => @flr.id) %><% if item.f == false then %></em><% end %></td>
+						<td><% if item.f == false then %><em><% end %><%= link_to item.name, company_path(item,:flr_id => @flr.id) %><% if item.f == false then %></em><% end %></td>
 						<td><% if item.f == false then %><em><% end %><%= item.cod %><% if item.f == false then %></em><% end %></td>						
 						<td><%= link_to "Открыть", company_path(item,:flr_id => @flr.id), :class=> "glyphicon glyphicon-object-align-horizontal" %></td>
                         <td><%= link_to image_tag('vjuh-report.png', :alt => "Отчет", :width => 30, :height => 20, :title => "Отчет по потребителю за месяц"), companies_report_path(:flr_id => @flr.id, :cp_id => item.id, :page => @page) %></td>

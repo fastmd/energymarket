@@ -106,7 +106,7 @@ before_action :redirect_cancel, only: [:create, :update]
     end
     #------------------------------- 
     @companies = Company.where("id = ? and f = true", @cp.id)  
-    @mpoints= Mpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
+    @mpoints = Vallmpoint.where(if @fpr < 6 then "filial_id = ? and company_id = ?" else "furnizor_id = ? and company_id = ? and f = true" end, @flr.id, @cp.id).order(name: :asc, created_at: :asc)  
     gon.mpoints = @mpoints
     #-------------------------------
     @sstations = Mesubstation.where("f = ?", true).order(name: :asc).pluck(:name, :id)
@@ -188,6 +188,11 @@ before_action :redirect_cancel, only: [:create, :update]
     dddate_b = @energies[:dddate_b]
     dddate_e = @energies[:dddate_e]
     @mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", @mp.id, dddate_b).order(propdate: :asc, updated_at: :asc).last
+    if @mproperty.nil? then
+      @mproperty = Mproperty.new
+      @mproperty.mpoint_id = @mp.id
+      @mproperty.voltcl = @mp.voltcl
+    end     
     #render inline: "<%= params.inspect %><br><br><%= @mp.inspect %><br><br><%= @mproperty.inspect %><br><br>" and return 
     @lnp = @mp.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).order(:condate,:line_id)
     @condates = @mp.vlnparams.select(:condate).distinct.where("(? < condate_end) AND (? > condate) AND (condate > ?)", dddate_b, dddate_e, dddate_b).pluck(:condate)
@@ -239,7 +244,7 @@ before_action :redirect_cancel, only: [:create, :update]
       enrgsums = {}
         # mpoints 
         if mpoints.count == 0 then
-          flash[:warning] = "Нет данных для отчета. Потребитель #{cp.name} не имеет точек учета." 
+          flash[:warning] = "Нет данных для отчета. Потребители не имеют точек учета." 
         else
           mpoints.each do |mp|
            if mp.cod != 0 then #test for fake mpoint 
@@ -370,7 +375,7 @@ before_action :redirect_cancel, only: [:create, :update]
         if cp != mp.company_id then
           cp = mp.company_id
           nr += 1
-          report_rind = [nr,"#{mp.company_name}",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+          report_rind = [nr,"#{mp.company_name}",nil,nil,nil,nil,nil,nil,nil,nil,nil,2]
           @report << report_rind[0..@title1.count] 
         end
         if (@flr.class.name.demodulize == 'Filial' && mp.mesubstation.filial_id == @flr.id) || (@flr.class.name.demodulize == 'Furnizor' && mp.furnizor_id == @flr.id)  then
@@ -378,7 +383,10 @@ before_action :redirect_cancel, only: [:create, :update]
             report_rind = [nil,"(#{mp.mesubstation.name})",if mp.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then mp.meconname else"#{mp.voltcl} Î #{mp.meconname} F" end,"#{mp.clconname}",nil,nil,nil,nil,nil,nil,nil,nil]
             # indicii si energie        
             energies = one_mp_indicii(mp.id, @ddate_b, @ddate_e, @ddate_mb, @ddate_me)
+            #render inline: "<%= params.inspect %><br><br><%= @temp.inspect %><br><br>" and return
             indicii = energies[:indicii]
+            #@ttt = indicii
+            #render inline: "<%= @ttt.inspect %><br><br><%= @temp.inspect %><br><br>" and return
             if indicii.nil? then
               report_rind[@title1.count] = 1
               @report << report_rind[0..@title1.count] 
@@ -406,7 +414,7 @@ before_action :redirect_cancel, only: [:create, :update]
                 if enrgsums[:wasub].nil? then enrgsums[:wasub] = energies[:wasub] else enrgsums[:wasub] += energies[:wasub] end
                 report_rind = [nil,"Consum subabonat, kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(energies[:wasub], pret),nil,nil]
                 @report << report_rind[0..@title1.count]                  
-              end
+              end              
               unless energies[:undercount].nil? then 
                 if enrgsums[:undercount].nil? then enrgsums[:undercount] = energies[:undercount] else enrgsums[:undercount] += energies[:undercount] end
               end
@@ -428,7 +436,8 @@ before_action :redirect_cancel, only: [:create, :update]
                   if enrgsums[:losses].nil? then enrgsums[:losses] = losses[:ln_losses] else enrgsums[:losses] += losses[:ln_losses]  end
                   consum_pe_mp += losses[:ln_losses]
                 end                
-                report_rind = [nil,"Pierderi LEA (cons.), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]
+                report_rind = [nil,"Pierderi LEA (cons.), kWh",nil,nil,nil,nil,nil,nil,nil,roundconfpret(losses[:ln_losses], pret),nil,nil]                  
+                #render inline: "<%= @report.inspect %><br><br><%= 'cucu' %><br><br>" and return                          
                 @report << report_rind[0..@title1.count]
                 # report Pierderi LEA - ME               
                 unless losses[:ln_me_losses].nil? then
@@ -476,7 +485,7 @@ before_action :redirect_cancel, only: [:create, :update]
       @report << ['∑','Suma pierderi (consumator)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:losses], pret),nil,3]
       @report << ['∑','Suma pierderi (ME)',nil,nil,nil,nil,nil,nil,nil,roundconfpret(enrgsums[:me_losses], pret),nil,3]
       total_consum = (enrgsums[:w].nil? ? 0 : enrgsums[:w]) + (enrgsums[:consumteh].nil? ? 0 : enrgsums[:consumteh]) + (enrgsums[:losses].nil? ? 0 : enrgsums[:losses])
-      @report << ['∑','Consum e/e + pierderi + CT',nil,nil,nil,nil,nil,nil,nil,roundconfpret(total_consum, pret),nil,4]     
+      @report << ['∑','Consum e/e + pierderi + CT',nil,nil,nil,nil,nil,nil,nil,roundconfpret(total_consum, pret),nil,4]        
     end  #mpoints.count
     respond_to do |format|
       format.html
@@ -796,12 +805,15 @@ private
 
   def roundconfpret(x, pret = 0)
     pret = pret.nil? ? 0 : pret 
-    x = x.nil? ? x : x.round(pret)
-    if pret == 0 then
-      x = x.to_i 
-    else
-      x = x.to_i if x == x.to_i
-    end
+    x = x.nil? ? 0 : x.round(pret)
+    begin
+      if pret == 0 then
+        x = x.to_i 
+      else
+        x = x.to_i if x == x.to_i
+      end
+    rescue
+    end  
     x
   end   
 
@@ -861,26 +873,27 @@ private
       if (@qmesubstation.nil? or @qmesubstation.empty?) and (@qcompany.nil? or @qcompany.empty?) and (@qregion.nil? or @qregion.empty?) and (@qfilial.nil? or @qfilial.empty?) and (@qfurnizor.nil? or @qfurnizor.empty?) then
         @filter = 0
         case when action_name == 'report' then
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " and company_id = ? ", @flr.id, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + " and company_id = ? ", @flr.id, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
          when (action_name == 'reports' or action_name == 'simplereports') then
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
+          #render inline: "<%= mpoints.inspect %><br><br>" and return         
          else
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:region_name, :mesubstation_name, :company_shname, :id)  
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end, @flr.id).order(:region_name, :mesubstation_name, :company_shname, :id)  
         end 
       else     
         @filter = 1
         case when action_name == 'report' then                
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                  " and (?='' or furnizor_name=?)" + " and company_id = ? ", 
                                  @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
          when (action_name == 'reports' or action_name == 'simplereports') then
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                  " and (?='' or furnizor_name=?)", 
                                  @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
          else
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (?='' or mesubstation_name=?) and (?='' or region_name=?) and (?='' or company_shname=?) and (?='' or filial_name=?)" +
                                  " and (?='' or furnizor_name=?)", 
                                  @flr.id, @qmesubstation, @qmesubstation, @qregion, @qregion, @qcompany, @qcompany, @qfilial, @qfilial, @qfurnizor, @qfurnizor).order(:region_name, :mesubstation_name, :company_shname, :id)          
@@ -891,21 +904,21 @@ private
        @data_for_search = @data_for_search.upcase
        data_for_search = "%" + @data_for_search + "%"
        case when action_name == 'report' then      
-         mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+         mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (upper(company_name||company_shname) like upper(?) "+ 
                                  "or upper(cod||name) like upper(?) "+ 
                                  "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
                                  "or upper(mesubstation_name) like upper(?)) " + " and company_id = ? ", 
                                  @flr.id, data_for_search, data_for_search, data_for_search, data_for_search, @cp.id).order(:region_name, :mesubstation_name, :company_shname, :id)
         when (action_name == 'reports' or action_name == 'simplereports') then
-         mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+         mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (upper(company_name||company_shname) like upper(?) "+ 
                                  "or upper(cod||name) like upper(?) "+ 
                                  "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
                                  "or upper(mesubstation_name) like upper(?))", 
                                  @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).order(:company_shname, :region_name, :mesubstation_name, :cod, :id)
         else
-          mpoints = @flr.vallmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
+          mpoints = @flr.vmpoints.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + 
                                  "and (upper(company_name||company_shname) like upper(?) "+ 
                                  "or upper(cod||name) like upper(?) "+ 
                                  "or upper(filial_name||region_name||furnizor_name) like upper(?) "+ 
@@ -926,6 +939,13 @@ private
     # billing days
     dddate_b = ddate_b
     mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", mpoint.id, dddate_b).order(propdate: :asc, created_at: :asc).last
+    if mproperty.nil? then
+      mproperty = Mproperty.new
+      mproperty.mpoint_id = mpoint.id
+      mproperty.voltcl = mpoint.voltcl
+    end
+    @temp = mproperty
+
     dddate_e = ddate_e
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate).first
     unless mvalues.nil? then dddate_b = mvalues.actdate end
@@ -1151,7 +1171,7 @@ private
          result[:cosfi_contract] = cosfi_contract = mproperty.cosfi
          if !cosfi_contract.nil? and cosfi_contract != 0 then
            result[:tgfi_contract] = tgfi_contract = ((1 / (cosfi_contract ** 2) - 1 ) ** 0.5).round(8) # tg fi
-           result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 " # tg fi
+           result[:tgfi_contract_formula] = "(1 / (#{cosfi_contract} ^2) - 1 ) ^0.5 = " # tg fi
            result[:wr] = result[:wa_without_wasub] * tgfi_contract
            result[:wr_formula] = " #{result[:wa_without_wasub]} * #{tgfi_contract} "           
          end 
@@ -1224,15 +1244,22 @@ private
       workt = indicii[:workt]
       dddate_b = indicii[:dddate_b]
       mproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", mpoint.id, dddate_b).order(propdate: :asc, created_at: :asc).last
+      if mproperty.nil? then
+        mproperty = Mproperty.new
+        mproperty.mpoint_id = mpoint.id
+        mproperty.voltcl = mpoint.voltcl
+      end      
       #render inline: "<%= params.inspect %><br><br><%= mporperty.inspect %><br><br>" and return  
       dddate_e = indicii[:dddate_e]
       daysinperiod = indicii[:daysinperiod]       
       # косинус фи 
       if wa != 0 || wri != 0 then 
-        cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi 
-        result[:cosfi] = cosfi
-        result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
-      end
+        cosfi = ((wa ** 2 / (wa ** 2 + wri ** 2)) ** 0.5).round(4)  #cos fi
+      else
+        cosfi = 0
+      end 
+      result[:cosfi] = cosfi
+      result[:cosfi_formula] = "(" + wa.to_s + "^2 / (" + wa.to_s + " ^2 + " + wri.to_s + " ^2 )) ^0.5 = "       
       # косинус фи контрактный
       unless indicii[:cosfi_contract].nil? then cosfi = result[:cosfi_contract] = indicii[:cosfi_contract] end  
       result[:tgfi_contract] = indicii[:tgfi_contract] # tg fi
@@ -1528,14 +1555,16 @@ private
        wa += otpaiki_losses 
        wa_formula += " + #{otpaiki_losses}"        
     end
-    if kwawr then
+    if kwawr == 0 then
+      kw = 0
+    elsif !kwawr.to_f.nan? and !kkwawr.to_f.nan? and kkwawr then
       kw =  kwawr / kkwawr
     end
     losses_formula = "#{lineitem.r} * #{lineitem.k_f} ^2 * ( (#{wa_formula}) ^2 + (#{wr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
     losses = ( lineitem.r * (lineitem.k_f ** 2) * (wa ** 2 + wr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) )        
-    if (f == 'neotpaika' and kw and kw != 1) then
-      losses_formula += " * #{kw.round(4)}"
-      losses *= kw  
+    if (f == 'neotpaika' and !kw.to_f.nan? and kw and kw != 1) then
+       losses_formula += " * #{kw.round(4)}"
+       losses *= kw  
     end 
     losses = losses.round(4)      
     rez[:losses_formula] = losses_formula
@@ -1674,15 +1703,19 @@ private
       end    
     end   
   end
+
+  def company_params
+    params.require(:company).permit(:id,:name,:shname,:cod,:comment,:f)
+  end
       
   def company_init(company)
-    t = company.name = mylrstreep(params[:name])
-    t1 = mylrstreep(params[:shname])
+    t = company.name = mylrstreep(company_params[:name])
+    t1 = mylrstreep(company_params[:shname])
     if t1.size == 0 then t1 = t[0,14] end      
     company.shname = t1  
-    company.cod = mylrstreep(params[:cod]) 
-    company.comment = mylrstreep(params[:comment])
-    company.f = if params[:f].nil? then false else true end  
+    company.cod = mylrstreep(company_params[:cod]) 
+    company.comment = mylrstreep(company_params[:comment])
+    company.f = if company_params[:f].nil? then false else true end  
     company    
   end        
      
