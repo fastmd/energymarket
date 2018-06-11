@@ -1555,10 +1555,10 @@ private
        wa += otpaiki_losses 
        wa_formula += " + #{otpaiki_losses}"        
     end
-    if kwawr == 0 then
+    if kwawr.to_f == 0 then
       kw = 0
     elsif !kwawr.to_f.nan? and !kkwawr.to_f.nan? and kkwawr then
-      kw =  kwawr / kkwawr
+      kw =  kwawr.to_f / kkwawr
     end
     losses_formula = "#{lineitem.r} * #{lineitem.k_f} ^2 * ( (#{wa_formula}) ^2 + (#{wr_formula}) ^2 ) / (1000 * #{unom} ^2 * #{hoursbdates}) "
     losses = ( lineitem.r * (lineitem.k_f ** 2) * (wa ** 2 + wr ** 2) / (1000 * ((unom) ** 2) * hoursbdates) )        
