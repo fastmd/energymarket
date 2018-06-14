@@ -1,5 +1,42 @@
 <% provide(:title, 'Показания') %>
 
+<script>
+	$(document).ready(function() {
+	    var table = $('#mvreport').DataTable({
+	        "order": [[ 0, "asc" ],[ 1, "desc" ]],
+	        "language": {
+	            "lengthMenu": "Отображать _MENU_ строк на странице",
+	            "zeroRecords": "Ничего не найдено - увы...",
+	            "info": "Страница _PAGE_ из _PAGES_",
+	            "infoEmpty": "Нет доступных строк",
+	            "infoFiltered": "(Отфильтровано из _MAX_ строк)",
+	            "search": "Поиск",
+	             paginate: {
+	                first:      "<<",
+	                previous:   "<",
+	                next:       ">",
+	                last:       ">>"
+	            }
+	        },
+	        "pagingType": "full_numbers",
+	        "pageLength": 10,
+	        columnDefs: [ 
+	           {"orderable": false, targets: 1}, 
+               {
+	            "searchable": false,
+	            "orderable": false,
+	            "targets": [2,3,4,5,6,7,8,9,10,11,12,13]
+	           },
+	            { "visible": false, "targets": 0 },
+                { type: 'de_datetime', targets: [1] }
+	         ],
+	        rowGroup: {
+	           dataSrc: 0
+	        }      
+	    } ); 
+	} );        
+</script>
+
 <nav class="navbar">
   <ul class="nav nav-pills pull-left">
     <li><%= link_to "Назад", companies_path(:id => @flr.id, :cp_id => @cp), :class => "glyphicon glyphicon-level-up" %></li>                  
@@ -18,58 +55,55 @@
 				
 <h3 align="center"><%= "Показания счетчиков (валидные) #{@cp.name} " %><%= image_tag('indicii.png', :alt => "Показания", :width => 60, :height => 30) %></h3>
 <small>
-<% x = 0 %> 
-<table class="table table-striped table-condensed  table-hover">	
-  <thead>
-    <tr class="info">     
-      <th>№ счетчика</th>
-      <th>Дата актирования</th>      
-      <th>Активный<br> прием A+</th>
-      <th>Активная<br> отдача A-</th>
-      <th>Реактивный<br> прием R+</th>
-      <th>Реактивная<br> отдача R-</th>
-	  <th>Потребление<br> субабонента,<br> кВт*ч</th>
-	  <th>Недоучет,<br> кВт*ч</th>
-	  <th title="Включить недоучет в расчет потерь"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
-	  <th title="Учет А-: не аннулировать отдачу"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
-	  <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)">Траб, часы</th>
-	  <th>Комментарий</th>        
-      <th title="Расчетный день"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
-    </tr>  
-  </thead>
+<table id="mvreport" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
+	   <% 2.times do |i| %>	
+	   <% if i==0 then %><thead><% else %><tfoot><% end %>
+			<tr class="info">
+			  <th></th>	
+			  <th style="padding-right:0">Дата актирования</th>	    
+		      <th style="padding-right:0">№ счетчика</th>
+		      <th title="Дата установки счетчика">Дата монтажа</br>счетчика</th>
+		      <th style="padding-right:0">Активный<br> прием A+</th>
+		      <th style="padding-right:0">Активная<br> отдача A-</th>
+		      <th style="padding-right:0">Реактивный<br> прием R+</th>
+		      <th style="padding-right:0">Реактивная<br> отдача R-</th>
+			  <th style="padding-right:0">Потребление<br> субабонента,<br> кВт*ч</th>
+			  <th style="padding-right:0">Недоучет,<br> кВт*ч</th>
+			  <th title="Расчетный день" style="padding-right:0"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></th>
+			  <th title="Включить недоучет в расчет потерь" style="padding-right:0"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></th>		   
+			  <th title="Учет А-: не аннулировать отдачу" style="padding-right:0"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></th>
+			  <th title="Время работы электроустановки Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)" style="padding-right:0">Траб,<br /> часы</th>
+			  <th style="padding-right:0">Комментарий</th>        		      
+		    </tr>  
+	   <% if i==0 then %></thead><% else %></tfoot><% end %>
+	   <% end %>
   <tbody>	
     <% @mvalues.each do |item| %>     	
-       <% if x != item.id then %>
-          <% x = item.id %>
-          <tr>
-       <td colspan=12><h5><center><%= "Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation} ") + " #{item.meconname}" %></center></h5></td>   
-       <% else %>
 	     <% case when item.frfail then %><tr class="warning">	
 		   <% when item.fzero then %><tr class="info">						   
 		   <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
 		   <% else %><tr>
-	     <% end %>         		 
+	     <% end %>
+	     <td nowrap><%= "Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation} ") + " #{item.meconname}" %></td>         		 
+      	 <td nowrap><%= item.actdate.strftime("%d.%m.%Y %H:%M") %></td>
       	 <td nowrap><%= number_with_delimiter(item.meternum, delimiter: " ", separator: ".") %></td>
-      	 <td nowrap><%= item.actdate.to_formatted_s(:day_month_year) %></td>
+      	 <td nowrap><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
       	 <td nowrap><%= number_with_delimiter(item.actp180, delimiter: " ", separator: ".", precision: 4) %></td>
       	 <td nowrap><%= number_with_delimiter(item.actp280, delimiter: " ", separator: ".", precision: 4) %></td>
       	 <td nowrap><%= number_with_delimiter(item.actp380, delimiter: " ", separator: ".", precision: 4) %></td>
       	 <td nowrap><%= number_with_delimiter(item.actp480, delimiter: " ", separator: ".", precision: 4) %></td>
 		 <td nowrap><%= number_with_delimiter(item.dwa, delimiter: " ", separator: ".", precision: 4) %></td>
 		 <td nowrap><%= number_with_delimiter(item.undercount, delimiter: " ", separator: ".", precision: 4) %></td>
+		 <td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
 		 <td title="Включить недоучет в расчет потерь"><% if item.fnefact then %><span class="glyphicon glyphicon-record" aria-hidden="true"></span><% end %></td>
 		 <td title="Учет А-: не аннулировать отдачу"><% if item.fanulare then %><span class="glyphicon glyphicon-flash" aria-hidden="true"></span><% end %></td>
 		 <td title="Tраб (если пусто, то Траб=часы между текущей и предыдущей датами)(0 = пусто)"><%= item.trab %></td>						
-		 <td><%= item.comment %></td>     	 
-      	 <td title="Расчетный день"><% if item.r then %><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span><% end %></td>
-      <% end %>      	 
+		 <td><%= item.comment %></td>     	      	     	 
       </tr>
     <% end %>
   </tbody>
 </table>
 </small>
-
-<center><small><%= if @mvalues.count!=0 then will_paginate @mvalues, renderer: BootstrapPagination::Rails end %></small></center>
 
 <h5><mark>Желтых</mark> строк быть не должно!</h5>
 <h5><mark>Желтая</mark> строка  - проверить расчетный день <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>(выбрано больше одного расчетного дня в месяце или вообще ни одного)</h5>

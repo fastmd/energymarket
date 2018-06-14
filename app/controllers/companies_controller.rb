@@ -131,20 +131,15 @@ before_action :redirect_cancel, only: [:create, :update]
   end    
 
   def mvreport
-    @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
     @ddate_b = Date.new(2000, 1, 1)  
     @ddate_e = Date.new(3000, 1, 1)   
-    @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id => :asc, actdate: :desc, relevance_date: :desc, mvalue_updated_at: :desc)
-    if @mvalues.count != 0 then
-      @mvalues = @mvalues.paginate(:page => @page, :per_page => $PerPage*2 )
-    end    
+    @mvalues = Vmpointsmetersvalue.where(if @fpr < 6 then "filial_id = ? " else "furnizor_id = ? " end + "AND company_id = ? AND (actdate between ? AND  ?)", @flr.id, @id, @ddate_b, @ddate_e).order(:id => :asc, actdate: :desc, relevance_date: :desc, mvalue_updated_at: :desc)  
   end  
  
   def mtreport
-    @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end
@@ -152,7 +147,6 @@ before_action :redirect_cancel, only: [:create, :update]
   end  
  
   def paramreport
-    @page = params[:page]
     @id = params[:cp_id]
     @cp = Company.find(@id)
     if @fpr < 6 then  @flr = Filial.find(params[:flr_id]) else @flr = Furnizor.find(params[:flr_id]) end 
@@ -1499,8 +1493,8 @@ private
            result[:consumteh_formula] = "#{cti} + #{ctc}"    
        end #if wa
       if !indicii[:minput_cti].nil? or !indicii[:minput_ctc].nil? then # if was manual input
-        if !indicii[:minput_cti].nil? then result[:consumtehi] = cti = indicii[:minput_cti] end
-        if !indicii[:minput_ctc].nil? then result[:consumtehc] = ctc = indicii[:minput_ctc] end
+        if !indicii[:minput_cti].nil? then result[:consumtehi] = cti = indicii[:minput_cti] else cti = 0 end
+        if !indicii[:minput_ctc].nil? then result[:consumtehc] = ctc = indicii[:minput_ctc] else ctc = 0 end
         ct = result[:consumteh] = cti + ctc
         result[:consumteh_formula] = "#{cti} + #{ctc}"     
       end   # if was manual input                       
