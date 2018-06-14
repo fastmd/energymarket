@@ -939,7 +939,6 @@ private
       mproperty.voltcl = mpoint.voltcl
     end
     @temp = mproperty
-
     dddate_e = ddate_e
     mvalues = Vmpointsmetersvalue.where("id = ? AND (actdate between ? AND  ?) AND r = 'true'", mpoint.id, ddate_b, ddate_mb).order(:actdate).first
     unless mvalues.nil? then dddate_b = mvalues.actdate end
@@ -979,6 +978,8 @@ private
               mvalue1 = mvalues.last               
               date1 = mvalue1.actdate.to_date         #date1           
               date0 = mvalue0.actdate.to_date         #date0
+              tmproperty = Mproperty.where("mpoint_id = ? and propdate <= ? and f = true", mpoint.id, date0).order(propdate: :asc, created_at: :asc).last
+              if tmproperty.nil? then tmproperty = mproperty end              
               dt = ((date1 - date0)/1).to_i       #dt
               trab = mvalue1.trab             #trab from act
               dwa  = mvalue1.dwa              #dwa  from act
@@ -1000,7 +1001,7 @@ private
                 dind = indicii0[:dind_180] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   180  
               energy = indicii0[:enrg_180] = (dind * koef).round(4) #energy 180
-              unless mproperty.fturn then
+              unless tmproperty.fturn then
                 indicii0[:ind1_activ] = mvalue1.actp180          #indicii activ
                 indicii0[:ind0_activ] = mvalue0.actp180          #indicii activ
                 indicii0[:wa] = energy                           #wa                 
@@ -1037,7 +1038,7 @@ private
                 dind = indicii0[:dind_280] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   280  
               energy = indicii0[:enrg_280] = (dind * koef).round(4) #energy 280
-              unless mproperty.fturn then 
+              unless tmproperty.fturn then 
                 if result[:waliv_formula] != "" then result[:waliv_formula] += " + "  end
                 result[:waliv_formula] += dind.to_s + " * " + koef.to_s 
                 indicii0[:waliv] = energy                        #waliv                
@@ -1062,7 +1063,7 @@ private
                 dind = indicii0[:dind_380] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   380           
               energy = indicii0[:enrg_380] = (dind * koef).round(4) #energy 380
-              unless mproperty.fturn then
+              unless tmproperty.fturn then
                 indicii0[:ind1_reactivl] = mvalue1.actp380          #indicii reactivL
                 indicii0[:ind0_reactivl] = mvalue0.actp380          #indicii reactivL
                 indicii0[:wri] = energy                             #wri                 
@@ -1086,7 +1087,7 @@ private
                 dind = indicii0[:dind_480] = (dind + case when !indlimit.nil? then indlimit when ind0>=10000 then 100000 when ind0<1000 then 1000 else 10000 end).round(4) 
               end   #dind   480           
               energy = indicii0[:enrg_480] = (dind * koef).round(4) #energy 480              
-              unless mproperty.fturn then
+              unless tmproperty.fturn then
                 indicii0[:ind1_reactivc] = mvalue1.actp480          #indicii reactivC
                 indicii0[:ind0_reactivc] = mvalue0.actp480          #indicii reactivC
                 indicii0[:wrc] = energy                             #wrc                   

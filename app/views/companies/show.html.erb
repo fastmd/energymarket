@@ -185,7 +185,9 @@
   </div>  
 </div>
 
-<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3>            
+<h3 align="center">Точки учета <span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></h3>
+<h4 align="center"><%= "Потребитель: #{@cp.name} ( #{@cp.shname} )" %></h4>            
+<small>
 <table id="example" class="table table-bordered table-condensed table-hover table-striped dt-responsive nowrap compact" style="width:100%">
 	   <% 2.times do |i| %>	
 	   <% if i==0 then %><thead><% else %><tfoot><% end %>
@@ -212,15 +214,14 @@
 			   <% else %> 	
 					<tr>
 			   <% end %>	
-						<td nowrap><%= link_to item.id, mpoint_path(item) %> <%= link_to (if item.cod then item.cod else ' ' end), mpoint_path(item) %>
-						<%= item.name %> |  
+						<td nowrap><%= link_to item.id, mpoint_path(item) %> <%= link_to (if item.cod then item.cod else ' ' end), mpoint_path(item) %> 
 						<%= if item.furnizor then item.furnizor.name end %> | 
 						<%= if item.filial then item.filial.name end %> | 
 						<%= if item.region then item.region.cvalue end %> | 
 						<%= if item.mesubstation then item.mesubstation.name end %> |
 						<%= "#{item.voltcl}кВ" %> |    						
 						<%= if item.meconname.count("a-zA-Zа-яА-ЯîÎ") > 0 then item.meconname else "#{item.voltcl} Î #{item.meconname} F" end %> | 
-						<%= link_to item.clconname, mpoint_path(item) %> | <%= item.comment %> | <span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span> |
+						<%= link_to item.clconname, mpoint_path(item) %> | <span class="glyphicon glyphicon-<%= if item.f then 'ok' else 'minus' end %>" aria-hidden="true"></span> |
 						<%= link_to " ", mpoints_edit_path(:mp_id => item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-pencil", :title => "Редактировать" %>
   						<%= link_to " ", mpoints_destroy_path(:mp_id=>item.id,:flr_id=>@flr.id), :class=> "glyphicon glyphicon-remove", :title => "Удалить",
   						                 data: { confirm: "Удалить точку учета #{item.name} ?" } %>	|					
@@ -263,5 +264,8 @@
 				<% end %>			
 		</tbody>
 </table>
+</small>
 
-<p><mark> С 11.06.2018</mark> параметры точки учета, такие как "Обратное включение счетчика", "Не считать тех. расход", "cos по контракту" и пр., теперь фиксируются с меткой времени. При формировании отчета принимаются к расчету параметры точки учета, действующие на начало отчетного периода. При изменении параметров точки учета следует добавлять новую запись с параметрами и соотвествующей меткой времени.</p>
+<p><mark>11.06.2018</mark> Параметры точки учета, такие как "Обратное включение счетчика", "Не считать тех. расход", "cos по контракту" и пр., теперь фиксируются с меткой времени. При формировании отчета принимаются к расчету параметры точки учета, действующие на начало отчетного периода. 
+	"Обратное включение счетчика" анализируется также на дату монтажа счетчика (если внутри отчетного периода произошла замена счетчика). 
+	При изменении параметров точки учета следует добавлять новую запись с параметрами и соотвествующей меткой времени (меньшей или равной началу отчетного периода).</p>

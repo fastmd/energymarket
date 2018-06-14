@@ -88,7 +88,8 @@
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 
-<h3 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %></h3> 
+<h3 align="center">Транcформаторы <%= image_tag('tr-r.png', :alt => "Транcформаторы", :width => 40, :height => 30) %></h3>
+<h4 align="center"><%= "Потребитель: #{@cp.name} ( #{@cp.shname} )" %></h4>   
 
 <small>
 <table id="trreport" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
@@ -112,7 +113,7 @@
   	<tbody>
   	   <% @trp.each do |item| %>	
 	   <% if item.updated_at > (Time.now.ago($GreenDelay)) %><tr class="success"><% else %><tr><% end %>
-      	 <td><%= "Точка учета:  #{item.cod} #{item.name} #{item.mesubstation} #{item.region} #{item.voltcl} #{item.meconname}" %></td>
+      	 <td><%= "Точка учета:  #{item.cod} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname} | #{item.clconname}" %></td>
       	 <td><%= item.tr_id %></td>
 		 <td><%= item.mark %></td>
 		 <td><%= item.unom %></td>
@@ -130,6 +131,7 @@
 </small>
 			
 <h3 align="center">Линии <%= image_tag('lep.png', :alt => "Линии", :width => 40, :height => 30) %></h3>
+<h4 align="center"><%= "Потребитель: #{@cp.name} ( #{@cp.shname} )" %></h4>  
        
 <small>
 <table id="lnreport" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
@@ -154,14 +156,14 @@
 		   <th title="Коэффициент трассы" style="padding-right:0">Ktr</th>
 		   <th title="Коэффициент пов. эффекта и близости" style="padding-right:0">Kc</th>
 		   <th title="Коэффициент формы" style="padding-right:0">Кф</th>
-		   <th title="Сечение провода" style="padding-right:0">q, мм&sup2</th>		   		   
+		   <th title="Сечение провода" style="padding-right:0">q, мм&sup2</th>	   		   
     	</tr>  
 	   <% if i==0 then %></thead><% else %></tfoot><% end %>
 	   <% end %>
   	  <tbody>
   	  	<% @lnp.each do |item| %>
 	    <% if item.updated_at > (Time.now.ago($GreenDelay)) %><tr class="success"><% else %><tr><% end %>
-			      	<td><%= "Точка учета:  #{item.cod} #{item.name} #{item.mesubstation} #{item.region} #{item.voltcl} #{item.meconname}" %></td>
+			      	<td><%= "Точка учета:  #{item.cod} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname} | #{item.clconname}" %></td>
 			      	<td><%= item.line_id %></td>
 			      	<td><%= item.line_name %></td>
 					<td title="Длина линии"><%= number_with_delimiter(item.l, delimiter: " ") %></td>									
@@ -172,7 +174,7 @@
 					<td title="<%= item.mesubstation2_id %>"><%= item.mesubstation2_name %></td>
 					<td nowrap><%= if item.condate then item.condate.strftime("%d.%m.%Y %H:%M") end %></td>
 					<td nowrap><%= if item.condate_end then item.condate_end.strftime("%d.%m.%Y %H:%M") end %></td>
-					<td><%= item.comment %></td>
+					<td><%= item.mpoint_comment %></td>
 					<td title="Марка провода"><%= if item.l!=0 then item.mark end %></td>
 					<td title="Сопротивление материала"><%= if item.l!=0 then number_with_delimiter(item.ro, delimiter: " ") end %></td>
 					<td title="Коэффициент скрутки"><%= if item.l!=0 then number_with_delimiter(item.k_scr, delimiter: " ") end %></td>

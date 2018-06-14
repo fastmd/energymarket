@@ -52,7 +52,8 @@
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 				
-<h3 align="center"><%= "Счетчики (валидные) #{@cp.name} " %><%= image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 30) %></h3>
+<h3 align="center"><%= "Счетчики (валидные) " %><%= image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 30) %></h3>
+<h4 align="center"><%= "Потребитель: #{@cp.name} ( #{@cp.shname} )" %></h4>  
 <small>
 <table id="mtt" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
 	   <% 2.times do |i| %>	
@@ -75,7 +76,7 @@
   <tbody>
       <% @meters.each do |item| %>
 	   <% if item.updated_at > (Time.now.ago($GreenDelay)) %><tr class="success"><% else %><tr><% end %>
-	     <td><%= "Точка учета:  #{item.cod} | #{item.name} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname}" %></td>
+	     <td><%= "Точка учета:  #{item.cod} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname} | #{item.clconname}" %></td>
       	 <td><%= item.metertype %></td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.koeftt %></td>

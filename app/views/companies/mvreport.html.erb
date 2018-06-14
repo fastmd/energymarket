@@ -53,7 +53,8 @@
   <li class="active"><span class="glyphicon glyphicon-lamp" aria-hidden="true"></span><strong><%= "Потребитель: #{@cp.name}" %></strong></li>
 </ul>
 				
-<h3 align="center"><%= "Показания счетчиков (валидные) #{@cp.name} " %><%= image_tag('indicii.png', :alt => "Показания", :width => 60, :height => 30) %></h3>
+<h3 align="center"><%= "Показания счетчиков (валидные) " %><%= image_tag('indicii.png', :alt => "Показания", :width => 60, :height => 30) %></h3>
+<h4 align="center"><%= "Потребитель: #{@cp.name} ( #{@cp.shname} )" %></h4>  
 <small>
 <table id="mvreport" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
 	   <% 2.times do |i| %>	
@@ -84,7 +85,7 @@
 		   <% when item.mvalue_updated_at > (Time.now.ago($GreenDelay)) then %><tr class="success">
 		   <% else %><tr>
 	     <% end %>
-	     <td nowrap><%= "Точка учета: " + (item.cod.nil? ? '' : " #{item.cod}") + (item.name.nil? ? '' : " #{item.name}") + (item.mesubstation.nil? ? '' : " #{item.mesubstation} ") + " #{item.meconname}" %></td>         		 
+	     <td nowrap><%= "Точка учета:  #{item.cod} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname} | #{item.clconname}" %></td>         		 
       	 <td nowrap><%= item.actdate.strftime("%d.%m.%Y %H:%M") %></td>
       	 <td nowrap><%= number_with_delimiter(item.meternum, delimiter: " ", separator: ".") %></td>
       	 <td nowrap><%= if !item.relevance_date.nil? then item.relevance_date.to_formatted_s(:day_month_year) end %></td>
