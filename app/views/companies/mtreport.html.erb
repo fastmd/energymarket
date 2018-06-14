@@ -2,7 +2,7 @@
 
 <script>
 	$(document).ready(function() {
-	    var table = $('#mtreport').DataTable({
+	    var table = $('#mtt').DataTable({
 	        "order": [[ 0, "asc" ],[ 6, "desc" ]],
 	        "language": {
 	            "lengthMenu": "Отображать _MENU_ строк на странице",
@@ -23,12 +23,11 @@
 	        columnDefs: [ 
 	           {"orderable": false, targets: 1}, 
                {
-	            "searchable": false,
 	            "orderable": false,
-	            "targets": [1,2,3,4,5,7,8,9,10]
+	            "targets": [2,3,4,5,6,7,8,9,10]
 	           },
 	            { "visible": false, "targets": 0 },
-                { type: 'de_datetime', targets: [6] }
+                { type: 'de_date', targets: [6] }
 	         ],
 	        rowGroup: {
 	           dataSrc: 0
@@ -55,7 +54,7 @@
 				
 <h3 align="center"><%= "Счетчики (валидные) #{@cp.name} " %><%= image_tag('meter.png', :alt => "Счетчики", :width => 40, :height => 30) %></h3>
 <small>
-<table id="mtreport" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
+<table id="mtt" class="table table-bordered table-condensed table-hover table-striped dt-responsive compact" style="width:100%">
 	   <% 2.times do |i| %>	
 	   <% if i==0 then %><thead><% else %><tfoot><% end %>
 			<tr class="info">
@@ -76,7 +75,7 @@
   <tbody>
       <% @meters.each do |item| %>
 	   <% if item.updated_at > (Time.now.ago($GreenDelay)) %><tr class="success"><% else %><tr><% end %>
-	     <td><%= "Точка учета:  #{item.cod} #{item.name} #{item.mesubstation} #{item.region} #{item.voltcl} #{item.meconname}" %></td>
+	     <td><%= "Точка учета:  #{item.cod} | #{item.name} | #{item.mesubstation} | #{item.region} | #{item.voltcl} | #{item.meconname}" %></td>
       	 <td><%= item.metertype %></td>
       	 <td><%= item.meternum %></td>
       	 <td><%= item.koeftt %></td>
