@@ -1017,18 +1017,7 @@ private
                   indicii0[:fanulare] = mvalue1.fanulare
                 end
               end  
-              unless dwa.nil? then 
-                if wasub.nil? then wasub = dwa else wasub += dwa end
-                indicii0[:dwa] = dwa 
-              end
-              unless undercount.nil? then 
-                if waundercount.nil? then waundercount = undercount else waundercount += undercount end
-                indicii0[:undercount] = undercount
-                if mvalue1.fnefact then
-                  indicii0[:losundercount] = undercount
-                  if losundercount.nil? then losundercount = undercount else losundercount += undercount end
-                end 
-              end
+
               indicii0[:ind1_280] = mvalue1.actp280          #280
               ind1 = if mvalue1.actp280.nil? then 0 else mvalue1.actp280 end
               indicii0[:ind0_280] = mvalue0.actp280          #280
@@ -1282,13 +1271,6 @@ private
           #tau
           tau = taus.last.taum
           tm = taus.last.tm
-          taus.each do |itau|
-            if wa <= 0.9 * itau.tm * cosfi * (tritem.transformator.snom) then 
-              tau = itau.taum
-              tm = itau.tm
-              break                       
-            end
-          end
           result[:tau] = tau
           result[:tm] = tm 
           ttaus << {:tm => tm, :tau => tau, :cosfi => cosfi, :snom => tritem.transformator.snom, 
@@ -1311,15 +1293,7 @@ private
                 tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
             end                             
-          end
-          unless mproperty.four then
-            tr_losses_rxx += (((tritem.transformator.i0 ** 2) * (tritem.transformator.snom ** 2) / 10000 - tritem.transformator.pxx ** 2) ** 0.5) * workt
-            if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
-            result[:tr_losses_rxx_formula] += " (" + tritem.transformator.i0.to_s + " ^2 * " + tritem.transformator.snom.to_s + " ^2  / 10000 - " + tritem.transformator.pxx.to_s + " ^2 ) ^0.5 * " + workt.to_s
-          else
-            if result[:tr_losses_rxx_formula] != "" then result[:tr_losses_rxx_formula] += " + "  end
-            result[:tr_losses_rxx_formula] += "наш трансформатор"
-          end           
+          end        
         end  # tr.each
         tr_losses_pxx = result[:tr_losses_pxx] = tr_losses_pxx.round(4)
         tr_losses_pkz = result[:tr_losses_pkz] = tr_losses_pkz.round(4)
@@ -1419,8 +1393,6 @@ private
               neotpaiki.each do |neotpaikaitem|
                # neotpaikaitem = neotpaiki 
                 r = walk_around_line(neotpaikaitem, 'neotpaika', tdddate_b, hoursbdates, k_proportion, k_proportion_formula, unom, otpaiki_losses, otpaiki_wa, otpaiki_wr, otpaiki_wa_formula, otpaiki_wr_formula,mpoint.id,kwawr)
-                losses += r[:losses]
-                if losses_formula then losses_formula += ' + ' + r[:losses_formula] else losses_formula = r[:losses_formula] end
               end   # neotpaiki.each
               ln_losses_ng += losses
               result[:ln_losses_ng_formula] << [tdddate_b, tdddate_e, losses_formula, hoursbdates]
