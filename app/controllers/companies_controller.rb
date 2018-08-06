@@ -955,7 +955,7 @@ private
       result[:minput_ctc] = minput.ctc
     end
     #meters
-    meters = Vmpointsmeter.where("id = ? AND (? <  relevance_end) AND (? > relevance_date)", mp_id, dddate_b, dddate_e).order(:meter_id)
+    meters = Vmpointsmeter.where("id = ? AND (? <  relevance_end) AND (? > relevance_date)", mp_id, dddate_b, dddate_e).order(:relevance_date,:updated_at,:meter_id)
     if meters.count != 0 then      
        # indicii      
        dtsum  = 0
@@ -971,7 +971,7 @@ private
          #--------------------------------------------------                                          
          koef = mitem.koefcalc           #koef 
          indicii0 = {:meternum => mitem.meternum, :koef => koef}
-         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate)
+         mvalues = Vmpointsmetersvalue.where("id = ? AND meter_id = ? AND (actdate between ? AND  ?)", mpoint.id, mitem.meter_id, dddate_b, dddate_e).order(:actdate, :mvalue_updated_at)
          if mvalues.count != 0 then
               if mvalues.count != 1 then  mvnum = 2 end  
               mvalue0 = mvalues.first
