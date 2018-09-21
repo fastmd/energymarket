@@ -1633,7 +1633,8 @@ private
                                "or upper(mesubstation_name) like upper(?)) ", 
                                @flr.id, data_for_search, data_for_search, data_for_search, data_for_search).pluck(:company_id).uniq
     end
-    @companies = (Company.order(shname: :asc).find(company_list))     
+    @companies = (Company.order(shname: :asc).find(company_list))
+    @all_companies = (Vcompany.order(shname: :asc))     
     @page = params[:page] 
     if !@company.nil? && !@company.id.nil? then 
       i = 0

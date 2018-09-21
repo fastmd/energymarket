@@ -78,7 +78,7 @@
 		    	<%= f.input 'name', label: 'Наименование', required: true,  placeholder: "Наименование точки учета...", input_html: {:size=>"50"} %>	
 		    	<%= f.association :furnizor, collection: @furns, label: ('Поставщик'), prompt: "Выбрать поставщика...", required: true %>
 		    	<%= f.association :mesubstation, collection: @sstations, label: ('Подстанция (МЕ)'), prompt: "Выбрать подстанцию...", required: true %>
-		    	<%= f.association :company, collection: @companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %>			    	
+		    	<%= f.association :company, collection: @all_companies, value_method: :id, :label_method => lambda { |с| "#{с.name} | #{с.shname}"}, label: ('Потребитель'), prompt: "Выбрать потребителя...", required: true %>			    	
 			</div>
 		  	<div class="col-md-6">
 		  		<%= f.input 'meconname', label: 'Присоединение (ME)', required: true,  placeholder: "Присоединение (запитан потребитель)...", input_html: {:size=>"50"} %>
