@@ -985,7 +985,8 @@ private
               dwa  = mvalue1.dwa              #dwa  from act
               undercount  = mvalue1.undercount  #undercount  from act
               indicii0 = {:meternum => mitem.meternum, :koef => koef, :date0 => date0, :date1 => date1, :dt => dt, :fnefact => mvalue1.fnefact} 
-              if trab.nil? or trab == 0 then 
+              #02/10/2018 if trab.nil? or trab == 0 then
+              if trab.nil? then 
                 dtsum += dt                     #dtsum
               else
                 if trabsum.nil? then trabsum = 0 end 
@@ -1306,10 +1307,12 @@ private
                 tr_losses_pkz += tritem.transformator.pkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
                 tr_losses_rkz += tritem.transformator.qkz * tau * (wa ** 2 + wr ** 2) / ((tm ** 2) * ((tritem.transformator.snom) ** 2))
             else
-                result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
-                tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
-                tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))                
+                if workt != 0 then #02/10/2018 
+                  result[:tr_losses_pkz_formula] += tritem.transformator.pkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "
+                  result[:tr_losses_rkz_formula] += tritem.transformator.qkz.to_s + " * 1.15 ^2 * (" + wa.to_s + " ^2 + " + wr.to_s + " ^2 ) / (" + workt.to_s + " * " + tritem.transformator.snom.to_s + " ^2 ) "      
+                  tr_losses_pkz += tritem.transformator.pkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
+                  tr_losses_rkz += tritem.transformator.qkz * 1.15 * 1.15 * (wa ** 2 + wr ** 2) / ((workt) * ((tritem.transformator.snom) ** 2))
+                end                  
             end                             
           end
           unless mproperty.four then
@@ -1340,7 +1343,7 @@ private
       ln_losses = ln_losses_ng = ln_losses_kr = 0.0  
       # varifing if any lines exist
       flines = mpoint.vlnparams.where("(? < condate_end) AND (? > condate)", dddate_b, dddate_e).exists?
-      if flines && workt then
+      if flines && workt && workt!=0 then #02/10/2018 added && workt!=0
         if mproperty.voltcl == 0 then
           flash[:warning] = "Невозможно рассчитать потери в линии для #{mpoint.name}, т.к. voltcl = 0 !" 
         else
