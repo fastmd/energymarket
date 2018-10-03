@@ -1231,7 +1231,8 @@ private
     result={}   
     mpoint = Mpoint.find(mp_id)
     mvnum = indicii[:mvnum]       
-    if mvnum == 2 && (indicii[:wa_without_wasub_with_losundercount]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
+    if mvnum == 2 then
+    #03/10/2018 if mvnum == 2 && (indicii[:wa_without_wasub_with_losundercount]!=0 || indicii[:waliv]!=0 || indicii[:wri]!=0 || indicii[:wrc]!=0) then
       wa    = indicii[:wa_without_wasub_with_losundercount] 
       waliv = indicii[:waliv] 
       wri   = indicii[:wri]
